@@ -1,323 +1,281 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Client Dashboard & Admin Panel</title>
-  <style>
-    :root {
-      --bg: #0f0f13;
-      --card: #181820;
-      --accent: #6c5ce7;
-      --accent-hover: #5b4bc4;
-      --text: #ffffff;
-      --text-dim: #a0a0b0;
-      --danger: #ff4757;
-      --success: #2ed573;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VerseDLC — Вход / Регистрация</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-    body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+        }
 
-    .container { background: var(--card); border-radius: 12px; padding: 30px; width: 100%; max-width: 450px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
-    .container.wide { max-width: 800px; }
+        /* Тёмный текстурный фон */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 80% 50%, rgba(30, 30, 30, 0.4) 0%, rgba(5, 5, 5, 1) 70%);
+            z-index: 1;
+        }
 
-    h2 { margin-bottom: 20px; text-align: center; color: var(--accent); }
-    
-    .nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-    .tab-btn { flex: 1; padding: 10px; background: #22222e; border: none; color: var(--text-dim); border-radius: 6px; cursor: pointer; font-weight: bold; }
-    .tab-btn.active { background: var(--accent); color: var(--text); }
+        .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 40px 20px;
+        }
 
-    .form-group { margin-bottom: 15px; }
-    label { display: block; margin-bottom: 5px; color: var(--text-dim); font-size: 14px; }
-    input, select { width: 100%; padding: 12px; background: #0f0f13; border: 1px solid #2e2e3e; border-radius: 6px; color: #fff; outline: none; }
-    input:focus { border-color: var(--accent); }
+        /* ЛЕВАЯ ЧАСТЬ: ФОРМА */
+        .form-section {
+            width: 100%;
+            max-width: 420px;
+        }
 
-    button.btn { width: 100%; padding: 12px; background: var(--accent); border: none; border-radius: 6px; color: #fff; font-weight: bold; cursor: pointer; transition: 0.2s; margin-top: 10px; }
-    button.btn:hover { background: var(--accent-hover); }
-    button.btn-danger { background: var(--danger); }
+        .logo-container {
+            margin-bottom: 24px;
+        }
 
-    .link { color: var(--accent); text-align: center; display: block; margin-top: 15px; cursor: pointer; text-decoration: none; font-size: 14px; }
-    .message { margin-top: 15px; padding: 10px; border-radius: 6px; text-align: center; font-size: 14px; display: none; }
-    .message.error { background: rgba(255, 71, 87, 0.2); color: var(--danger); display: block; }
-    .message.success { background: rgba(46, 213, 115, 0.2); color: var(--success); display: block; }
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+            fill: #ffffff;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+        }
 
-    .hidden { display: none !important; }
-    .user-info { background: #0f0f13; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
-    .user-info p { margin-bottom: 8px; font-size: 15px; }
-    .user-info span { color: var(--accent); font-weight: bold; }
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
 
-    .admin-section { border-top: 1px solid #2e2e3e; padding-top: 20px; margin-top: 20px; }
-  </style>
+        .subtitle {
+            color: #888888;
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 13px;
+            color: #aaaaaa;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            width: 18px;
+            height: 18px;
+            fill: #666666;
+            transition: fill 0.2s;
+        }
+
+        .input-field {
+            width: 100%;
+            background: #111111;
+            border: 1px solid #222222;
+            border-radius: 20px;
+            padding: 14px 16px 14px 46px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .input-field:focus {
+            border-color: #444444;
+            background: #141414;
+        }
+
+        .input-field:focus + .input-icon {
+            fill: #ffffff;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0 28px 0;
+            font-size: 13px;
+            color: #aaaaaa;
+            cursor: pointer;
+        }
+
+        .checkbox-container input {
+            accent-color: #ffffff;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 20px;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        .submit-btn:hover {
+            background: #e6e6e6;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.99);
+        }
+
+        /* ПРАВАЯ ЧАСТЬ: 3D ИКОНКА ВХОДА */
+        .visual-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 450px;
+            height: 450px;
+        }
+
+        .door-icon-3d {
+            width: 280px;
+            height: 280px;
+            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8));
+        }
+
+        @media (max-width: 900px) {
+            .visual-section {
+                display: none;
+            }
+            .container {
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <!-- БЛОК АВТОРИЗАЦИИ / РЕГИСТРАЦИИ -->
-  <div id="authContainer" class="container">
-    <div class="nav-tabs">
-      <button class="tab-btn active" onclick="switchAuthTab('login')">Вход</button>
-      <button class="tab-btn" onclick="switchAuthTab('register')">Регистрация</button>
+    <div class="container">
+        <!-- Левая колонка с формой -->
+        <div class="form-section">
+            <div class="logo-container">
+                <!-- Буква A (Ваш логотип без фона) -->
+                <svg class="brand-logo" viewBox="0 0 100 100">
+                    <path d="M50 10 L15 85 L35 85 L44 65 L66 65 L50 28 L58 45 L78 85 L95 85 Z M48 55 L52 55 L50 50 Z" fill="currentColor"/>
+                </svg>
+            </div>
+
+            <h1>Create Account</h1>
+            <p class="subtitle">Join the elite community today.</p>
+
+            <form id="authForm">
+                <div class="input-group">
+                    <label class="input-label">Username</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="username" class="input-field" placeholder="Enter your username" required>
+                        <svg class="input-icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" class="input-field" placeholder="Enter Password" required>
+                        <svg class="input-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                    </div>
+                </div>
+
+                <label class="checkbox-container">
+                    <input type="checkbox" required checked>
+                    I agree to the Terms of Service.
+                </label>
+
+                <button type="submit" class="submit-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+                    Sign In / Sign Up
+                </button>
+            </form>
+        </div>
+
+        <!-- Правая колонка с 3D артом дверного проема -->
+        <div class="visual-section">
+            <svg class="door-icon-3d" viewBox="0 0 200 200">
+                <defs>
+                    <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#ffffff" />
+                        <stop offset="50%" stop-color="#888888" />
+                        <stop offset="100%" stop-color="#222222" />
+                    </linearGradient>
+                </defs>
+                <!-- Закругленная рамка -->
+                <rect x="50" y="30" width="100" height="140" rx="35" fill="none" stroke="url(#metalGrad)" stroke-width="8"/>
+                <!-- Стрелка входа -->
+                <path d="M20 100 L110 100 M90 80 L110 100 L90 120" fill="none" stroke="url(#metalGrad)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
     </div>
 
-    <!-- Форма Входа -->
-    <form id="loginForm">
-      <div class="form-group">
-        <label>Логин</label>
-        <input type="text" id="loginUsername" required>
-      </div>
-      <div class="form-group">
-        <label>Пароль</label>
-        <input type="password" id="loginPassword" required>
-      </div>
-      <button type="submit" class="btn">Войти</button>
-      <a class="link" onclick="switchAuthTab('forgot')">Забыли пароль?</a>
-    </form>
+    <script>
+        document.getElementById('authForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
 
-    <!-- Форма Регистрации -->
-    <form id="registerForm" class="hidden">
-      <div class="form-group">
-        <label>Никнейм</label>
-        <input type="text" id="regNickname" required>
-      </div>
-      <div class="form-group">
-        <label>Логин</label>
-        <input type="text" id="regLogin" required>
-      </div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="regEmail" required>
-      </div>
-      <div class="form-group">
-        <label>Пароль</label>
-        <input type="password" id="regPassword" required>
-      </div>
-      <button type="submit" class="btn">Зарегистрироваться</button>
-    </form>
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
 
-    <!-- Восстановление Пароля -->
-    <form id="forgotForm" class="hidden">
-      <div class="form-group">
-        <label>Email аккаунта</label>
-        <input type="email" id="forgotEmail" required>
-      </div>
-      <button type="button" class="btn" onclick="sendOtpCode()">Получить код</button>
-
-      <div id="otpSection" class="hidden" style="margin-top: 15px;">
-        <div class="form-group">
-          <label>Код из консоли/почты</label>
-          <input type="text" id="otpCode">
-        </div>
-        <div class="form-group">
-          <label>Новый пароль</label>
-          <input type="password" id="newPassword">
-        </div>
-        <button type="button" class="btn" onclick="resetPassword()">Сменить пароль</button>
-      </div>
-      <a class="link" onclick="switchAuthTab('login')">Назад ко входу</a>
-    </form>
-
-    <div id="authMsg" class="message"></div>
-  </div>
-
-  <!-- ЛИЧНЫЙ КАБИНЕТ И АДМИНКА -->
-  <div id="dashboardContainer" class="container wide hidden">
-    <h2>Личный Кабинет</h2>
-    
-    <div class="user-info">
-      <p>Никнейм: <span id="dashNick">-</span></p>
-      <p>Роль: <span id="dashRole">-</span></p>
-      <p>Подписка до: <span id="dashSub">-</span></p>
-    </div>
-
-    <a href="/download/launcher" class="btn" style="text-align: center; text-decoration: none; display: block;">Скачать Лаунчер (.exe)</a>
-    <button class="btn btn-danger" onclick="logout()">Выйти</button>
-
-    <!-- Админ-панель (Видна только owner/moderator) -->
-    <div id="adminPanel" class="admin-section hidden">
-      <h2>Админ Панель</h2>
-
-      <div class="form-group">
-        <label>Поиск игрока (Никнейм)</label>
-        <input type="text" id="searchNick">
-        <button class="btn" onclick="searchUser()">Найти</button>
-      </div>
-
-      <div id="targetUserInfo" class="user-info hidden">
-        <p>ID: <span id="targetId"></span> | Ник: <span id="targetNick"></span></p>
-        <p>Текущая роль: <span id="targetRole"></span></p>
-        <p>HWID: <span id="targetHwid">Не привязан</span></p>
-        
-        <div class="form-group" style="margin-top: 10px;">
-          <label>Изменить роль</label>
-          <select id="newRoleSelect">
-            <option value="user">User</option>
-            <option value="media">Media</option>
-            <option value="moderator">Moderator</option>
-            <option value="owner">Owner</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Добавить дней подписки</label>
-          <input type="number" id="addDays" value="0">
-        </div>
-
-        <button class="btn" onclick="updateUser()">Сохранить изменения</button>
-        <button class="btn btn-danger" onclick="resetHwid()">Сбросить HWID</button>
-      </div>
-
-      <!-- Управление Тех. работами -->
-      <div class="admin-section">
-        <h3>Управление сервером</h3>
-        <button class="btn btn-danger" onclick="toggleMaintenance(true)">Включить Тех. работы</button>
-        <button class="btn" onclick="toggleMaintenance(false)">Выключить Тех. работы</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    let currentUser = null;
-
-    function showMsg(text, isError = false) {
-      const msg = document.getElementById('authMsg');
-      msg.textContent = text;
-      msg.className = `message ${isError ? 'error' : 'success'}`;
-    }
-
-    function switchAuthTab(tab) {
-      document.getElementById('loginForm').classList.add('hidden');
-      document.getElementById('registerForm').classList.add('hidden');
-      document.getElementById('forgotForm').classList.add('hidden');
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-
-      if (tab === 'login') {
-        document.getElementById('loginForm').classList.remove('hidden');
-        event.target.classList.add('active');
-      } else if (tab === 'register') {
-        document.getElementById('registerForm').classList.remove('hidden');
-        event.target.classList.add('active');
-      } else if (tab === 'forgot') {
-        document.getElementById('forgotForm').classList.remove('hidden');
-      }
-    }
-
-    // Регистрация
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nickname: document.getElementById('regNickname').value,
-          login: document.getElementById('regLogin').value,
-          email: document.getElementById('regEmail').value,
-          password: document.getElementById('regPassword').value
-        })
-      });
-      const data = await res.json();
-      showMsg(data.message, !data.success);
-    });
-
-    // Вход
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          login: document.getElementById('loginUsername').value,
-          password: document.getElementById('loginPassword').value
-        })
-      });
-      const data = await res.json();
-      if (data.success) {
-        currentUser = data.user;
-        openDashboard();
-      } else {
-        showMsg(data.message, true);
-      }
-    });
-
-    function openDashboard() {
-      document.getElementById('authContainer').classList.add('hidden');
-      document.getElementById('dashboardContainer').classList.remove('hidden');
-
-      document.getElementById('dashNick').textContent = currentUser.nickname;
-      document.getElementById('dashRole').textContent = currentUser.role;
-      document.getElementById('dashSub').textContent = currentUser.sub_expires_at ? new Date(currentUser.sub_expires_at).toLocaleString() : 'Нет активной подписки';
-
-      if (currentUser.role === 'owner' || currentUser.role === 'moderator') {
-        document.getElementById('adminPanel').classList.remove('hidden');
-      }
-    }
-
-    function logout() {
-      location.reload();
-    }
-
-    // Поиск игрока для админки
-    async function searchUser() {
-      const nick = document.getElementById('searchNick').value;
-      const res = await fetch(`/api/admin/user/${nick}`);
-      const data = await res.json();
-
-      if (res.ok) {
-        document.getElementById('targetUserInfo').classList.remove('hidden');
-        document.getElementById('targetId').textContent = data.id;
-        document.getElementById('targetNick').textContent = data.nickname;
-        document.getElementById('targetRole').textContent = data.role;
-        document.getElementById('targetHwid').textContent = data.hwid || 'Не привязан';
-        document.getElementById('newRoleSelect').value = data.role;
-      } else {
-        alert(data.message);
-      }
-    }
-
-    // Изменение прав/подписки
-    async function updateUser() {
-      const targetId = document.getElementById('targetId').textContent;
-      const res = await fetch('/api/admin/update-user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          adminUserId: currentUser.id,
-          adminRole: currentUser.role,
-          targetUserId: targetId,
-          newRole: document.getElementById('newRoleSelect').value,
-          daysToAdd: document.getElementById('addDays').value
-        })
-      });
-      const data = await res.json();
-      alert(data.message);
-      if (data.success) searchUser();
-    }
-
-    // Сброс HWID
-    async function resetHwid() {
-      const targetId = document.getElementById('targetId').textContent;
-      const res = await fetch('/api/admin/reset-hwid', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          adminRole: currentUser.role,
-          targetUserId: targetId
-        })
-      });
-      const data = await res.json();
-      alert(data.message);
-      if (data.success) searchUser();
-    }
-
-    // Технически работы
-    async function toggleMaintenance(enable) {
-      const res = await fetch('/api/admin/maintenance', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ enable })
-      });
-      const data = await res.json();
-      alert(data.message);
-    }
-  </script>
+                if (data.success) {
+                    alert('Успешный вход!');
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Ошибка входа');
+                }
+            } catch (err) {
+                alert('Ошибка соединения с сервером');
+            }
+        });
+    </script>
 </body>
 </html>
