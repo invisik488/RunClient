@@ -9,119 +9,85 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: #050505; color: #ffffff; min-height: 100vh; position: relative; overflow-x: hidden; }
 
-        body::before {
-            content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle at 80% 50%, rgba(30, 30, 30, 0.3) 0%, rgba(5, 5, 5, 1) 80%);
-            z-index: 0; pointer-events: none;
-        }
-
         .screen { position: relative; z-index: 1; width: 100%; min-height: 100vh; }
         .hidden { display: none !important; }
 
-        /* ================= 1. ФОРМА ВХОДА / РЕГИСТРАЦИИ ================= */
-        .auth-container {
-            max-width: 1000px; margin: 0 auto; min-height: 100vh;
-            display: flex; align-items: center; justify-content: space-between; padding: 40px 20px;
-        }
-
+        /* ================= 1. АВТОРИЗАЦИЯ / РЕГИСТРАЦИЯ ================= */
+        .auth-container { max-width: 1000px; margin: 0 auto; min-height: 100vh; display: flex; align-items: center; justify-content: space-between; padding: 40px 20px; }
         .form-section { width: 100%; max-width: 400px; }
         .brand-logo { width: 40px; height: 40px; fill: #ffffff; margin-bottom: 20px; }
-
-        /* Табы: Вход / Регистрация */
         .tabs { display: flex; gap: 10px; margin-bottom: 24px; background: #111; padding: 4px; border-radius: 14px; border: 1px solid #222; }
-        .tab-btn {
-            flex: 1; background: none; border: none; color: #777; padding: 10px;
-            font-weight: 600; font-size: 13px; border-radius: 10px; cursor: pointer; transition: 0.2s;
-        }
+        .tab-btn { flex: 1; background: none; border: none; color: #777; padding: 10px; font-weight: 600; font-size: 13px; border-radius: 10px; cursor: pointer; transition: 0.2s; }
         .tab-btn.active { background: #222; color: #fff; }
-
         h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
         .subtitle { color: #666; font-size: 13px; margin-bottom: 24px; }
-
         .input-group { margin-bottom: 16px; }
         .input-label { display: block; font-size: 12px; color: #888; margin-bottom: 6px; }
-
-        .input-field {
-            width: 100%; background: #111; border: 1px solid #222; border-radius: 16px;
-            padding: 14px 18px; color: #fff; font-size: 14px; outline: none; transition: 0.2s;
-        }
-        .input-field:focus { border-color: #444; background: #141414; }
-
-        .checkbox-container {
-            display: flex; align-items: center; gap: 10px; margin: 18px 0 24px 0;
-            font-size: 12px; color: #888; cursor: pointer;
-        }
-        .checkbox-container input { accent-color: #fff; }
-
-        .submit-btn {
-            width: 100%; background: #ffffff; color: #000000; border: none;
-            border-radius: 16px; padding: 14px; font-size: 14px; font-weight: 700;
-            cursor: pointer; transition: background 0.2s;
-        }
+        .input-field { width: 100%; background: #111; border: 1px solid #222; border-radius: 16px; padding: 14px 18px; color: #fff; font-size: 14px; outline: none; }
+        .input-field:focus { border-color: #444; }
+        .submit-btn { width: 100%; background: #ffffff; color: #000000; border: none; border-radius: 16px; padding: 14px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; }
         .submit-btn:hover { background: #e0e0e0; }
 
-        .visual-section { display: flex; align-items: center; justify-content: center; width: 350px; height: 350px; }
-        .door-icon-3d { width: 240px; height: 240px; }
-
         /* ================= 2. ЛИЧНЫЙ КАБИНЕТ ================= */
-        header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 16px 40px; border-bottom: 1px solid #151515; background: #080808;
-        }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 16px 40px; border-bottom: 1px solid #151515; background: #080808; }
         .header-nav { display: flex; gap: 20px; font-size: 13px; color: #888; }
         .header-right { display: flex; align-items: center; gap: 15px; }
+        .user-click-wrap { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 4px 8px; border-radius: 12px; transition: background 0.2s; }
+        .user-click-wrap:hover { background: #111; }
         .balance-btn { background: #111; border: 1px solid #222; padding: 6px 14px; border-radius: 20px; font-size: 13px; }
         .logout-btn { background: #fff; color: #000; border: none; padding: 8px 18px; border-radius: 20px; font-weight: 600; cursor: pointer; }
 
         .dashboard-container { display: flex; padding: 30px 40px; gap: 30px; }
-
         .sidebar { width: 240px; }
         .user-mini { display: flex; align-items: center; gap: 12px; padding: 12px; background: #0c0c0c; border: 1px solid #1a1a1a; border-radius: 12px; margin-bottom: 20px; }
-        .mini-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+        .mini-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background: #222; }
 
-        .menu-item { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 12px; color: #666; font-size: 13px; cursor: pointer; margin-bottom: 4px; }
+        .menu-item { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 12px; color: #666; font-size: 13px; cursor: pointer; margin-bottom: 4px; transition: 0.2s; }
+        .menu-item:hover { color: #aaa; }
         .menu-item.active { background: #fff; color: #000; font-weight: 600; }
+        .menu-item.admin-tab { border: 1px dashed rgba(255, 0, 0, 0.4); color: #ff5555; }
+        .menu-item.admin-tab.active { background: #ff3333; color: #fff; border: none; }
 
-        .main-content { flex: 1; display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .main-content { flex: 1; }
+        .tab-content { display: flex; flex-direction: column; gap: 20px; }
         .card { background: #0a0a0a; border: 1px solid #181818; border-radius: 16px; padding: 20px; }
-        .card-title { font-size: 12px; color: #555; font-weight: 600; margin-bottom: 16px; }
+        .card-title { font-size: 12px; color: #555; font-weight: 600; margin-bottom: 16px; text-transform: uppercase; }
 
         .profile-box { display: flex; align-items: center; gap: 20px; }
-        .avatar-upload-wrap {
-            position: relative; width: 70px; height: 70px; border-radius: 12px; overflow: hidden; cursor: pointer; border: 1px solid #222;
-        }
+        .avatar-upload-wrap { position: relative; width: 70px; height: 70px; border-radius: 12px; overflow: hidden; cursor: pointer; border: 1px solid #222; background: #111; }
         .avatar-upload-wrap img { width: 100%; height: 100%; object-fit: cover; }
-        .avatar-overlay {
-            position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7);
-            display: flex; align-items: center; justify-content: center; font-size: 10px; opacity: 0; transition: 0.2s;
-        }
+        .avatar-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; font-size: 10px; opacity: 0; transition: 0.2s; }
         .avatar-upload-wrap:hover .avatar-overlay { opacity: 1; }
 
         .user-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-        .badge-user { background: #222; color: #888; font-size: 10px; padding: 2px 6px; border-radius: 4px; }
+        .badge-role { background: #fff; color: #000; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 4px; }
+        .badge-role.OWNER { background: #ff3333; color: #fff; }
+        .badge-role.ADMIN { background: #ffaa00; color: #000; }
         .user-meta { display: flex; gap: 30px; margin-top: 15px; font-size: 12px; color: #555; }
         .user-meta span { color: #fff; display: block; margin-top: 2px; }
 
         .setting-row { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 12px 16px; border-radius: 12px; margin-bottom: 10px; font-size: 13px; }
+        .btn-action { background: #fff; color: #000; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; }
         .btn-change { background: #222; color: #fff; border: none; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; }
-        .btn-plan { width: 100%; background: #fff; color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: 700; margin-top: 15px; cursor: pointer; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #181818; }
+        th { color: #555; font-size: 11px; }
     </style>
 </head>
 <body>
 
-    <!-- ================= 1. ЭКРАН ВХОДА / РЕГИСТРАЦИИ ================= -->
+    <!-- ================= 1. АВТОРИЗАЦИЯ / РЕГИСТРАЦИЯ ================= -->
     <div id="authScreen" class="screen">
         <div class="auth-container">
             <div class="form-section">
-                <!-- Логотип Буква A -->
                 <svg class="brand-logo" viewBox="0 0 100 100">
                     <path d="M50 10 L15 85 L35 85 L44 65 L66 65 L50 28 L58 45 L78 85 L95 85 Z M48 55 L52 55 L50 50 Z"/>
                 </svg>
 
-                <!-- Вкладки раздела Вход / Регистрация -->
                 <div class="tabs">
-                    <button class="tab-btn active" id="tabLogin" onclick="switchTab('login')">Вход</button>
-                    <button class="tab-btn" id="tabRegister" onclick="switchTab('register')">Регистрация</button>
+                    <button class="tab-btn active" id="tabLogin" onclick="switchAuthTab('login')">Вход</button>
+                    <button class="tab-btn" id="tabRegister" onclick="switchAuthTab('register')">Регистрация</button>
                 </div>
 
                 <h1 id="formTitle">Sign In</h1>
@@ -130,34 +96,21 @@
                 <form id="authForm">
                     <div class="input-group">
                         <label class="input-label">Username</label>
-                        <input type="text" id="usernameInput" class="input-field" placeholder="Enter your username" required>
+                        <input type="text" id="usernameInput" class="input-field" placeholder="Enter username" required>
                     </div>
 
                     <div class="input-group">
                         <label class="input-label">Password</label>
-                        <input type="password" id="passwordInput" class="input-field" placeholder="Enter Password" required>
+                        <input type="password" id="passwordInput" class="input-field" placeholder="Enter password" required>
                     </div>
-
-                    <label class="checkbox-container">
-                        <input type="checkbox" checked required>
-                        I agree to the Terms of Service.
-                    </label>
 
                     <button type="submit" class="submit-btn" id="submitBtn">Sign In</button>
                 </form>
             </div>
-
-            <!-- Иконка сбоку -->
-            <div class="visual-section">
-                <svg class="door-icon-3d" viewBox="0 0 200 200">
-                    <rect x="50" y="30" width="100" height="140" rx="35" fill="none" stroke="#333" stroke-width="6"/>
-                    <path d="M20 100 L110 100 M90 80 L110 100 L90 120" fill="none" stroke="#666" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </div>
         </div>
     </div>
 
-    <!-- ================= 2. ЭКРАН ЛИЧНОГО КАБИНЕТА ================= -->
+    <!-- ================= 2. ЛИЧНЫЙ КАБИНЕТ ================= -->
     <div id="dashboardScreen" class="screen hidden">
         <header>
             <div class="header-nav">
@@ -165,32 +118,48 @@
             </div>
             <div class="header-right">
                 <div class="balance-btn">0 ₽ +</div>
-                <span id="navUsername" style="font-size: 14px; font-weight: 600;">invisik</span>
+                
+                <!-- НАЖАТИЕ НА НИК/АККАУНТ В УГЛУ ВОЗВРАЩАЕТ В ПРОФИЛЬ -->
+                <div class="user-click-wrap" onclick="switchSideTab('profile')">
+                    <img id="headerAvatar" class="mini-avatar" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>">
+                    <span id="navUsername" style="font-size: 14px; font-weight: 600;">invisik</span>
+                </div>
+
                 <button class="logout-btn" id="logoutBtn">Log Out</button>
             </div>
         </header>
 
         <div class="dashboard-container">
+            <!-- БОКОВОЕ МЕНЮ (РАБОЧИЕ ВКЛАДКИ) -->
             <div class="sidebar">
-                <div class="user-mini">
-                    <img id="miniAvatar" src="https://via.placeholder.com/100" class="mini-avatar">
-                    <span id="sideUsername" style="font-size: 13px; font-weight: 600;">invisik</span>
+                <div class="user-mini" onclick="switchSideTab('profile')" style="cursor: pointer;">
+                    <img id="miniAvatar" class="mini-avatar" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>">
+                    <div>
+                        <div id="sideUsername" style="font-size: 13px; font-weight: 600;">invisik</div>
+                        <div id="sideRole" style="font-size: 10px; color: #ff3333; font-weight: 700;">OWNER</div>
+                    </div>
                 </div>
-                <div class="menu-item active">Profile</div>
-                <div class="menu-item">Download Loader</div>
-                <div class="menu-item">License Activation</div>
-                <div class="menu-item">Wallet</div>
-                <div class="menu-item">Security & Settings</div>
+
+                <div class="menu-item active" id="menu-profile" onclick="switchSideTab('profile')">👤 Profile</div>
+                <div class="menu-item" id="menu-loader" onclick="switchSideTab('loader')">⚡ Download Loader</div>
+                <div class="menu-item" id="menu-license" onclick="switchSideTab('license')">🔑 License Activation</div>
+                <div class="menu-item" id="menu-wallet" onclick="switchSideTab('wallet')">💳 Wallet</div>
+                <div class="menu-item" id="menu-security" onclick="switchSideTab('security')">⚙️ Security & Settings</div>
+                
+                <!-- АДМИН ПАНЕЛЬ (ПОКАЗЫВАЕТСЯ ТОЛЬКО ДЛЯ OWNER / ADMIN) -->
+                <div class="menu-item admin-tab hidden" id="menu-admin" onclick="switchSideTab('admin')">👑 Admin Panel</div>
             </div>
 
+            <!-- ОСНОВНЫЕ РАЗДЕЛЫ КОНТЕНТА -->
             <div class="main-content">
-                <div style="display: flex; flex-direction: column; gap: 20px;">
-                    <!-- Блок с профилем -->
+                
+                <!-- 1. ВКЛАДКА: PROFILE -->
+                <div id="tab-profile" class="tab-content">
                     <div class="card">
                         <div class="card-title">User Profile</div>
                         <div class="profile-box">
                             <div class="avatar-upload-wrap" onclick="document.getElementById('fileInput').click()">
-                                <img id="mainAvatar" src="https://via.placeholder.com/100">
+                                <img id="mainAvatar" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>">
                                 <div class="avatar-overlay">Изменить</div>
                             </div>
                             <input type="file" id="fileInput" accept="image/*" style="display: none;">
@@ -198,78 +167,131 @@
                             <div>
                                 <div class="user-title">
                                     <span id="displayUsername">invisik</span>
-                                    <span id="displayRole" class="badge-user">USER</span>
+                                    <span id="displayRoleBadge" class="badge-role OWNER">OWNER</span>
                                 </div>
                                 <div class="user-meta">
                                     <div>Member Since <span>2026-08-14</span></div>
-                                    <div>HWID <span id="displayHwid">Не привязан</span></div>
+                                    <div>HWID <span id="displayHwid">Привязан</span></div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Подписка -->
                     <div class="card">
                         <div class="card-title">Client Subscription</div>
-                        <h3>No active subscription</h3>
-                        <p style="color: #555; font-size: 12px; margin-top: 4px;">Pick a plan on the Products page to unlock the client.</p>
-                        <button class="btn-plan">Browse plans</button>
+                        <h3 id="subStatus">Active (Lifetime Access)</h3>
+                        <p style="color: #555; font-size: 12px; margin-top: 4px;">VerseDLC Client 1.21.11 Fabric</p>
                     </div>
+                </div>
 
-                    <!-- Настройки -->
+                <!-- 2. ВКЛАДКА: DOWNLOAD LOADER -->
+                <div id="tab-loader" class="tab-content hidden">
+                    <div class="card">
+                        <div class="card-title">Download VerseDLC Client</div>
+                        <h3>VerseDLC Loader v2.1 (Fabric 1.21.11)</h3>
+                        <p style="color: #666; font-size: 13px; margin: 10px 0 20px 0;">Скачайте лаунчер для автоматической инъекции клиента в Minecraft.</p>
+                        <button class="btn-action" onclick="alert('Скачивание VerseDLC_Loader.exe началось!')">Download .EXE Loader</button>
+                    </div>
+                </div>
+
+                <!-- 3. ВКЛАДКА: LICENSE ACTIVATION -->
+                <div id="tab-license" class="tab-content hidden">
+                    <div class="card">
+                        <div class="card-title">Activate Key</div>
+                        <p style="color: #666; font-size: 13px; margin-bottom: 12px;">Введите промокод или ключ активации подписки:</p>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" class="input-field" placeholder="XXXX-XXXX-XXXX-XXXX" style="max-width: 300px;">
+                            <button class="btn-action" onclick="alert('Ключ успешно активирован!')">Activate</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. ВКЛАДКА: WALLET -->
+                <div id="tab-wallet" class="tab-content hidden">
+                    <div class="card">
+                        <div class="card-title">Your Balance</div>
+                        <h2>0 ₽</h2>
+                        <button class="btn-action" style="margin-top: 15px;" onclick="alert('Переход на платежный шлюз...')">Пополнить баланс</button>
+                    </div>
+                </div>
+
+                <!-- 5. ВКЛАДКА: SECURITY & SETTINGS -->
+                <div id="tab-security" class="tab-content hidden">
                     <div class="card">
                         <div class="card-title">Account Settings</div>
                         <div class="setting-row">
-                            <div>Email <br><strong style="color:#aaa;">taniasafonova27@gmail.com</strong></div>
-                            <button class="btn-change">Change</button>
+                            <div>Password <br><strong style="color:#aaa;">••••••••••••</strong></div>
+                            <button class="btn-change" onclick="alert('Сброс пароля отправлен на почту')">Change</button>
                         </div>
                         <div class="setting-row">
-                            <div>Password <br><strong style="color:#aaa;">••••••••••••</strong></div>
-                            <button class="btn-change">Change</button>
+                            <div>HWID Reset <br><strong id="hwidVal" style="color:#aaa;">Привязан</strong></div>
+                            <button class="btn-change" onclick="alert('Заявка на сброс HWID отправлена')">Reset HWID</button>
                         </div>
                     </div>
                 </div>
 
-                <div>
-                    <div class="card">
-                        <div class="card-title">Your Stats</div>
-                        <p style="color: #666; font-size: 13px;">Total Injections: 0</p>
-                        <p style="color: #666; font-size: 13px; margin-top: 10px;">Saved Configs: 0</p>
+                <!-- 6. ВКЛАДКА: ADMIN PANEL (ТОЛЬКО ДЛЯ АДМИНОВ) -->
+                <div id="tab-admin" class="tab-content hidden">
+                    <div class="card" style="border-color: #ff3333;">
+                        <div class="card-title" style="color: #ff3333;">Управление Пользователями (Admin Controls)</div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Пользователь</th>
+                                    <th>Роль</th>
+                                    <th>HWID</th>
+                                    <th>Действие</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>invisik</strong></td>
+                                    <td><span class="badge-role OWNER">OWNER</span></td>
+                                    <td>Привязан</td>
+                                    <td><button class="btn-change" onclick="alert('Нельзя изменить владельца')">Edit</button></td>
+                                </tr>
+                                <tr>
+                                    <td>test_user</td>
+                                    <td><span class="badge-role">USER</span></td>
+                                    <td>null</td>
+                                    <td><button class="btn-change" onclick="alert('Роль изменена!')">Выдать ADMIN</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 
     <!-- ================= 3. ЛОГИКА (JS) ================= -->
     <script>
-        let currentMode = 'login'; // 'login' или 'register'
+        let currentAuthMode = 'login';
 
-        // Переключение между вкладками Вход / Регистрация
-        function switchTab(mode) {
-            currentMode = mode;
-            const tabLogin = document.getElementById('tabLogin');
-            const tabRegister = document.getElementById('tabRegister');
-            const formTitle = document.getElementById('formTitle');
-            const formSubtitle = document.getElementById('formSubtitle');
-            const submitBtn = document.getElementById('submitBtn');
-
-            if (mode === 'login') {
-                tabLogin.classList.add('active');
-                tabRegister.classList.remove('active');
-                formTitle.innerText = 'Sign In';
-                formSubtitle.innerText = 'Welcome back to VerseDLC.';
-                submitBtn.innerText = 'Sign In';
-            } else {
-                tabRegister.classList.add('active');
-                tabLogin.classList.remove('active');
-                formTitle.innerText = 'Create Account';
-                formSubtitle.innerText = 'Join the elite community today.';
-                submitBtn.innerText = 'Sign Up';
-            }
+        function switchAuthTab(mode) {
+            currentAuthMode = mode;
+            document.getElementById('tabLogin').classList.toggle('active', mode === 'login');
+            document.getElementById('tabRegister').classList.toggle('active', mode === 'register');
+            document.getElementById('formTitle').innerText = mode === 'login' ? 'Sign In' : 'Create Account';
+            document.getElementById('formSubtitle').innerText = mode === 'login' ? 'Welcome back to VerseDLC.' : 'Join the elite community today.';
+            document.getElementById('submitBtn').innerText = mode === 'login' ? 'Sign In' : 'Sign Up';
         }
 
-        // Проверка при загрузке страницы: вошел ли уже юзер
+        // ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК В ЛИЧНОМ КАБИНЕТЕ
+        function switchSideTab(tabName) {
+            const tabs = ['profile', 'loader', 'license', 'wallet', 'security', 'admin'];
+            
+            tabs.forEach(t => {
+                const menuEl = document.getElementById('menu-' + t);
+                const contentEl = document.getElementById('tab-' + t);
+
+                if (menuEl) menuEl.classList.toggle('active', t === tabName);
+                if (contentEl) contentEl.classList.toggle('hidden', t !== tabName);
+            });
+        }
+
+        // Проверка при входе
         window.addEventListener('DOMContentLoaded', () => {
             const savedUser = localStorage.getItem('versedlc_user');
             if (savedUser) {
@@ -277,38 +299,18 @@
             }
         });
 
-        // Отправка формы (Вход или Регистрация)
-        document.getElementById('authForm').addEventListener('submit', async (e) => {
+        document.getElementById('authForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const username = document.getElementById('usernameInput').value.trim();
-            const password = document.getElementById('passwordInput').value;
 
-            const endpoint = currentMode === 'login' ? '/api/auth/login' : '/api/auth/register';
+            // Если ник invisik — автоматически выдаем OWNER
+            const role = (username.toLowerCase() === 'invisik') ? 'OWNER' : 'USER';
+            const user = { username: username, role: role, hwid: 'Привязан' };
 
-            try {
-                const res = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-                const data = await res.json();
-
-                if (data.success) {
-                    const userData = data.user || { username: username, role: 'user' };
-                    localStorage.setItem('versedlc_user', JSON.stringify(userData));
-                    openDashboard(userData);
-                } else {
-                    alert(data.message || 'Ошибка!');
-                }
-            } catch (err) {
-                // Если сервер временно не отвечает — войти локально
-                const localUser = { username: username, role: 'user', hwid: 'Не привязан' };
-                localStorage.setItem('versedlc_user', JSON.stringify(localUser));
-                openDashboard(localUser);
-            }
+            localStorage.setItem('versedlc_user', JSON.stringify(user));
+            openDashboard(user);
         });
 
-        // Открытие Личного Кабинета
         function openDashboard(user) {
             document.getElementById('authScreen').classList.add('hidden');
             document.getElementById('dashboardScreen').classList.remove('hidden');
@@ -316,18 +318,34 @@
             document.getElementById('navUsername').innerText = user.username;
             document.getElementById('sideUsername').innerText = user.username;
             document.getElementById('displayUsername').innerText = user.username;
-            document.getElementById('displayRole').innerText = (user.role || 'USER').toUpperCase();
-            document.getElementById('displayHwid').innerText = user.hwid || 'Не привязан';
 
-            // Восстановление аватарки
+            const userRole = (user.role || 'USER').toUpperCase();
+            document.getElementById('sideRole').innerText = userRole;
+
+            const badge = document.getElementById('displayRoleBadge');
+            badge.innerText = userRole;
+            badge.className = 'badge-role ' + userRole;
+
+            // ПОКАЗЫВАЕМ АДМИН-ПАНЕЛЬ ЕСЛИ РОЛЬ OWNER ИЛИ ADMIN
+            if (userRole === 'OWNER' || userRole === 'ADMIN') {
+                document.getElementById('menu-admin').classList.remove('hidden');
+            } else {
+                document.getElementById('menu-admin').classList.add('hidden');
+            }
+
+            // Загрузка сохраненной аватарки
             const savedAvatar = localStorage.getItem('avatar_' + user.username);
             if (savedAvatar) {
                 document.getElementById('mainAvatar').src = savedAvatar;
                 document.getElementById('miniAvatar').src = savedAvatar;
+                document.getElementById('headerAvatar').src = savedAvatar;
             }
+
+            // По умолчанию открываем вкладку профиля
+            switchSideTab('profile');
         }
 
-        // Смена аватарки по клику
+        // Загрузка аватарки
         document.getElementById('fileInput').addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -336,6 +354,7 @@
                     const imgBase64 = evt.target.result;
                     document.getElementById('mainAvatar').src = imgBase64;
                     document.getElementById('miniAvatar').src = imgBase64;
+                    document.getElementById('headerAvatar').src = imgBase64;
 
                     const user = JSON.parse(localStorage.getItem('versedlc_user') || '{}');
                     if (user.username) {
@@ -346,7 +365,6 @@
             }
         });
 
-        // Кнопка Выхода
         document.getElementById('logoutBtn').addEventListener('click', () => {
             localStorage.removeItem('versedlc_user');
             document.getElementById('dashboardScreen').classList.add('hidden');
