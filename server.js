@@ -9,7 +9,8 @@ app.use(express.static(path.join(__dirname)));
 
 // База данных в памяти
 const users = [
-    { id: 1, username: 'invisik', role: 'owner', isOwner: true }
+    { id: 1, username: 'invisik', role: 'owner', isOwner: true },
+    { id: 2, username: 'skqu1ze', role: 'user', isOwner: false }
 ];
 
 function isSameName(name1, name2) {
@@ -84,35 +85,39 @@ app.post('/api/auth/register', (req, res) => {
     });
 });
 
-// 🔍 ВСЕВОЗМОЖНЫЕ ЭНДПОИНТЫ ПОИСКА (Ответит на любой запрос фронтенда)
-const handleSearch = (req, res) => {
-    const q = (req.query.search || req.query.q || req.query.query || req.query.username || req.query.name || '').trim().toLowerCase();
+// 🎯 ВОТ ЭТОТ РОУТ ИСКАЛ ТВОЙ САЙТ! (/api/admin/user/skqu1ze)
+app.get('/api/admin/user/:username', (req, res) => {
+    const reqUsername = req.params.username.trim();
+    let user = users.find(u => isSameName(u.username, reqUsername));
 
-    let filtered = users;
-    if (q) {
-        filtered = users.filter(u => u.username.toLowerCase().includes(q));
+    if (!user) {
+        // Если пользователя еще не было в памяти — создаем его запись для админки
+        user = {
+            id: Date.now(),
+            username: reqUsername,
+            login: reqUsername,
+            nickname: reqUsername,
+            role: isSameName(reqUsername, 'invisik') ? 'owner' : 'user',
+            isOwner: isSameName(reqUsername, 'invisik')
+        };
+        users.push(user);
     }
 
-    const resultList = filtered.map(u => ({
-        id: u.id,
-        username: u.username,
-        login: u.username,
-        nickname: u.username,
-        name: u.username,
-        role: u.role || 'user'
-    }));
+    return res.json({
+        success: true,
+        user: {
+            id: user.id,
+            username: user.username,
+            login: user.username,
+            nickname: user.username,
+            role: user.role,
+            isOwner: user.role === 'owner',
+            isAdmin: user.role === 'admin' || user.role === 'owner'
+        }
+    });
+});
 
-    // Отдаем массив и в поле users, и в data, и напрямую массивом
-    res.json({ success: true, users: resultList, data: resultList, result: resultList });
-};
-
-app.get('/api/admin/users', handleSearch);
-app.get('/api/users/search', handleSearch);
-app.get('/api/users/find', handleSearch);
-app.get('/api/users', handleSearch);
-app.get('/api/search', handleSearch);
-
-// 👑 ВЫДАЧА И СМЕНА РОЛИ
+// 👑 ИЗМЕНЕНИЕ РОЛИ (Для кнопок в карточке пользователя)
 const handleChangeRole = (req, res) => {
     const { targetUser, username, nickname, user, role } = req.body;
     const target = targetUser || username || nickname || user;
@@ -138,14 +143,14 @@ const handleChangeRole = (req, res) => {
 
     return res.json({ 
         success: true, 
-        message: `Роль пользователя ${found.username} изменена на ${role.toUpperCase()}!`,
+        message: `Роль ${found.username} изменена на ${role.toUpperCase()}!`,
         user: { username: found.username, role: found.role }
     });
 };
 
 app.post('/api/admin/change-role', handleChangeRole);
 app.post('/api/admin/set-role', handleChangeRole);
-app.post('/api/users/set-role', handleChangeRole);
+app.post('/api/admin/user/:username/role', handleChangeRole);
 
 app.get('/api/status', (req, res) => res.json({ status: 'ok' }));
 
