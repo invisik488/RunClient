@@ -3,31 +3,28 @@ const path = require('path');
 
 const app = express();
 
-// Настройка правильного декодирования UTF-8 для кириллицы
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static(path.join(__dirname)));
 
-// Хранилище в памяти
+// База данных в памяти
 const users = [
     { id: 1, username: 'invisik', role: 'owner', isOwner: true }
 ];
 
-// Функция безопасного сравнения ников (учитывает русский язык и регистр)
 function isSameName(name1, name2) {
     if (!name1 || !name2) return false;
     return name1.trim().localeCompare(name2.trim(), 'ru', { sensitivity: 'accent' }) === 0;
 }
 
-// Главная
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// АВТОРИЗАЦИЯ
+// 1. АВТОРИЗАЦИЯ
 app.post('/api/auth/login', (req, res) => {
-    const { username, password, login } = req.body;
-    const userLogin = username || login;
+    const { username, password, login, nickname } = req.body;
+    const userLogin = (username || login || nickname || '').trim();
 
     if (!userLogin) {
         return res.status(400).json({ success: false, message: 'Заполните поля!' });
@@ -38,15 +35,22 @@ app.post('/api/auth/login', (req, res) => {
     if (!user && isSameName(userLogin, 'invisik')) {
         user = { id: Date.now(), username: userLogin, role: 'owner', isOwner: true };
         users.push(user);
+    } else if (!user) {
+        user = { id: Date.now(), username: userLogin, role: 'user', isOwner: false };
+        users.push(user);
     }
 
-    const userRole = user ? user.role : 'user';
+    const userRole = user.role || 'user';
 
+    // Отдаем ник во ВСЕХ возможных полях, чтобы фронтенд точно отобразил его в ЛК!
     return res.json({ 
         success: true, 
         message: 'Успешный вход!', 
         user: { 
-            username: user ? user.username : userLogin,
+            id: user.id,
+            username: user.username,
+            login: user.username,
+            nickname: user.username,
             role: userRole,
             isAdmin: userRole === 'admin' || userRole === 'owner',
             isOwner: userRole === 'owner'
@@ -55,10 +59,10 @@ app.post('/api/auth/login', (req, res) => {
     });
 });
 
-// РЕГИСТРАЦИЯ
+// 2. РЕГИСТРАЦИЯ
 app.post('/api/auth/register', (req, res) => {
-    const { username, password, login } = req.body;
-    const userLogin = username || login;
+    const { username, password, login, nickname } = req.body;
+    const userLogin = (username || login || nickname || '').trim();
 
     if (!userLogin) {
         return res.status(400).json({ success: false, message: 'Заполните поля!' });
@@ -73,7 +77,7 @@ app.post('/api/auth/register', (req, res) => {
 
     const newUser = { 
         id: Date.now(), 
-        username: userLogin.trim(), 
+        username: userLogin, 
         password: password || '',
         role: defaultRole,
         isOwner: defaultRole === 'owner'
@@ -83,29 +87,52 @@ app.post('/api/auth/register', (req, res) => {
     return res.json({ 
         success: true, 
         message: 'Регистрация успешна!', 
-        user: { username: newUser.username, role: newUser.role } 
+        user: { 
+            username: newUser.username, 
+            login: newUser.username,
+            nickname: newUser.username,
+            role: newUser.role 
+        } 
     });
 });
 
-// 👑 ВЫДАЧА РОЛИ (С ПОДДЕРЖКОЙ КИРИЛЛИЦЫ)
-app.post('/api/admin/set-role', (req, res) => {
-    const { secretKey, username, role } = req.body;
+// 🔍 3. ПОИСК И ПОЛУЧЕНИЕ СПИСКА ПОЛЬЗОВАТЕЛЕЙ (ДЛЯ АДМИН-ПАНЕЛИ)
+app.get('/api/admin/users', (req, res) => {
+    const query = (req.query.search || req.query.q || '').trim().toLowerCase();
 
-    if (secretKey !== 'versedlc-secret-owner-key-123') {
-        return res.status(403).json({ success: false, message: 'Неверный секретный ключ!' });
+    let result = users;
+    if (query) {
+        result = users.filter(u => u.username.toLowerCase().includes(query));
     }
 
-    if (!username || !role) {
-        return res.status(400).json({ success: false, message: 'Укажите username и role!' });
+    // Возвращаем юзеров с понятной структурой для фронтенда
+    const formattedUsers = result.map(u => ({
+        id: u.id,
+        username: u.username,
+        login: u.username,
+        nickname: u.username,
+        role: u.role || 'user'
+    }));
+
+    res.json({ success: true, users: formattedUsers });
+});
+
+// 👑 4. СМЕНА РОЛИ ПРЯМО ИЗ АДМИНКИ НА САЙТЕ
+app.post('/api/admin/change-role', (req, res) => {
+    const { targetUser, username, role } = req.body;
+    const userToFind = targetUser || username;
+
+    if (!userToFind || !role) {
+        return res.status(400).json({ success: false, message: 'Укажите пользователя и роль!' });
     }
 
-    const cleanUsername = username.trim();
-    let user = users.find(u => isSameName(u.username, cleanUsername));
+    let user = users.find(u => isSameName(u.username, userToFind));
 
     if (!user) {
+        // Если юзера ещё не было в массиве — создаём запись с этой ролью
         user = { 
             id: Date.now(), 
-            username: cleanUsername, 
+            username: userToFind.trim(), 
             role: role.toLowerCase(),
             isOwner: role.toLowerCase() === 'owner'
         };
@@ -117,13 +144,12 @@ app.post('/api/admin/set-role', (req, res) => {
 
     return res.json({ 
         success: true, 
-        message: `[VerseDLC] Пользователю ${cleanUsername} успешно выдана роль: ${role.toUpperCase()}!` 
+        message: `Роль пользователя ${user.username} успешно изменена на ${role.toUpperCase()}!`,
+        user: {
+            username: user.username,
+            role: user.role
+        }
     });
-});
-
-// ПОИСК / СПИСОК ЮЗЕРОВ (Для работы поиска на сайте)
-app.get('/api/users', (req, res) => {
-    res.json({ success: true, users });
 });
 
 app.get('/api/status', (req, res) => {
