@@ -33,8 +33,6 @@
         .input-field:focus, .select-field:focus { border-color: #ff3333; }
         .submit-btn { width: 100%; background: #ff3333; color: #ffffff; border: none; border-radius: 14px; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.2s; }
         .submit-btn:hover { background: #cc0000; }
-        .reset-link { text-align: center; margin-top: 15px; font-size: 12px; color: #666; cursor: pointer; text-decoration: underline; }
-        .reset-link:hover { color: #ff3333; }
 
         /* ================= ЛИЧНЫЙ КАБИНЕТ ================= */
         header { display: flex; justify-content: space-between; align-items: center; padding: 16px 40px; border-bottom: 1px solid #151515; background: #080808; }
@@ -68,8 +66,6 @@
 
         .btn-action { background: #ff3333; color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; }
         .btn-action:hover { background: #cc0000; }
-        .btn-danger { background: #220000; color: #ff4444; border: 1px solid #550000; padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .btn-danger:hover { background: #ff3333; color: #fff; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
         th, td { text-align: left; padding: 14px 12px; border-bottom: 1px solid #141414; }
@@ -108,8 +104,6 @@
 
                     <button type="submit" class="submit-btn" id="submitBtn">Войти</button>
                 </form>
-
-                <div class="reset-link" onclick="forceResetStorage()">⚠️ Сбросить все нависшие данные и зайти заново</div>
             </div>
         </div>
     </div>
@@ -157,13 +151,7 @@
                     <div class="card">
                         <div class="card-title">Статус подписки</div>
                         <div id="subStatus" class="sub-inactive">No Active Subscription</div>
-                        <p style="color: #888; font-size: 13px; margin-top: 6px;">ApexClient 1.21.4</p>
-                    </div>
-
-                    <div class="card" style="border-color: #330000;">
-                        <div class="card-title" style="color: #ff4444;">Управление Аккаунтом</div>
-                        <p style="color: #777; font-size: 13px; margin-bottom: 15px;">Удаление аккаунта стирает все данные из базы без возможности восстановления.</p>
-                        <button class="btn-danger" onclick="deleteAccount()">🗑️ Удалить аккаунт навсегда</button>
+                        <p style="color: #888; font-size: 13px; margin-top: 6px;">ApexClient 1.21.11</p>
                     </div>
                 </div>
 
@@ -171,9 +159,9 @@
                 <div id="tab-loader" class="tab-content hidden">
                     <div class="card">
                         <div class="card-title">Загрузка клиента</div>
-                        <h3>ApexClient Loader (Minecraft 1.21.4)</h3>
+                        <h3>ApexClient Loader (Minecraft 1.21.11)</h3>
                         <p style="color: #666; font-size: 13px; margin: 10px 0 20px 0;">Нажмите кнопку ниже для скачивания актуальной версии чита ApexClient.</p>
-                        <button class="btn-action" onclick="showToast('Скачивание ApexClient_1.21.4.exe началось!', 'success')">Скачать .EXE</button>
+                        <button class="btn-action" onclick="showToast('Скачивание ApexClient_1.21.11.exe началось!', 'success')">Скачать .EXE</button>
                     </div>
                 </div>
 
@@ -213,14 +201,7 @@
                 <!-- 5. АДМИНКА -->
                 <div id="tab-admin" class="tab-content hidden">
                     <div class="card admin-card">
-                        <div class="card-title">Синхронизация Базы Данных</div>
-                        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                            <button class="btn-action" style="background:#222;" onclick="exportDatabase()">📥 Экспорт базы (JSON)</button>
-                            <button class="btn-action" style="background:#222;" onclick="document.getElementById('importFileInput').click()">📤 Импорт базы (JSON)</button>
-                            <input type="file" id="importFileInput" class="hidden" accept=".json" onchange="importDatabase(event)">
-                        </div>
-
-                        <div class="card-title">Выдача ролей</div>
+                        <div class="card-title">Выдача ролей и прав</div>
                         <div style="display: flex; gap: 10px; margin-bottom: 20px;">
                             <input type="text" id="adminUserSearch" class="input-field" placeholder="Никнейм игрока...">
                             <select id="adminRoleSelect" class="select-field" style="width: 150px;">
@@ -253,21 +234,34 @@
     <script>
         let currentAuthMode = 'login';
 
+        // ДЕФОЛТНАЯ БАЗА: ВШИТА ПРЯМО В КОД (Защищает от сброса кэша)
+        const DEFAULT_DATABASE = {
+            users: [
+                { username: 'invisik', password: '123', role: 'OWNER', sub: 'Active (Lifetime)' }
+            ],
+            keys: []
+        };
+
         function getApexData() {
-            let raw = localStorage.getItem('apex_v4_database');
+            let raw = localStorage.getItem('apex_v5_database');
             if (!raw) {
-                const initData = {
-                    users: [{ username: 'invisik', password: '123', role: 'OWNER', sub: 'No Active Subscription' }],
-                    keys: []
-                };
-                localStorage.setItem('apex_v4_database', JSON.stringify(initData));
-                return initData;
+                // Если кэш сброшен, восстанавливаем вшитую дефолтную базу!
+                localStorage.setItem('apex_v5_database', JSON.stringify(DEFAULT_DATABASE));
+                return DEFAULT_DATABASE;
             }
-            return JSON.parse(raw);
+            let parsed = JSON.parse(raw);
+            
+            // Проверка: гарантируем, что invisik всегда будет OWNER с подпиской
+            let invisikUser = parsed.users.find(u => u.username.toLowerCase() === 'invisik');
+            if (!invisikUser) {
+                parsed.users.push(DEFAULT_DATABASE.users[0]);
+                localStorage.setItem('apex_v5_database', JSON.stringify(parsed));
+            }
+            return parsed;
         }
 
         function saveApexData(data) {
-            localStorage.setItem('apex_v4_database', JSON.stringify(data));
+            localStorage.setItem('apex_v5_database', JSON.stringify(data));
         }
 
         function showToast(message, type = 'success') {
@@ -308,35 +302,35 @@
 
             if (currentAuthMode === 'register') {
                 if (existingUser) {
-                    return showToast('Ошибка! Аккаунт с таким ником уже существует!', 'error');
+                    return showToast('Ник занят, попробуйте другой или войдите!', 'error');
                 }
                 
                 const newUser = {
                     username: usernameInput,
                     password: passwordInput,
                     role: (usernameInput.toLowerCase() === 'invisik') ? 'OWNER' : 'USER',
-                    sub: 'No Active Subscription'
+                    sub: (usernameInput.toLowerCase() === 'invisik') ? 'Active (Lifetime)' : 'No Active Subscription'
                 };
                 db.users.push(newUser);
                 saveApexData(db);
 
                 localStorage.setItem('apex_active_session', newUser.username);
-                showToast('Регистрация успешна!', 'success');
+                showToast('Успешная регистрация!', 'success');
                 openDashboard(newUser.username);
 
             } else {
-                // ЛОГИКА ВХОДА (БЕЗ БЛОКИРОВКИ ПО ПАРОЛЮ)
+                // ЛОГИКА ВХОДА (Если кэш был сброшен и юзера нет - авто-создает его)
                 if (!existingUser) {
-                    // Если аккаунта еще нет, авто-создаем его (для invisik выдаем OWNER)
+                    const isOwner = usernameInput.toLowerCase() === 'invisik';
                     existingUser = {
                         username: usernameInput,
                         password: passwordInput,
-                        role: (usernameInput.toLowerCase() === 'invisik') ? 'OWNER' : 'USER',
-                        sub: 'No Active Subscription'
+                        role: isOwner ? 'OWNER' : 'USER',
+                        sub: isOwner ? 'Active (Lifetime)' : 'No Active Subscription'
                     };
                     db.users.push(existingUser);
                 } else {
-                    // Обновляем пароль в базе на новый введенный
+                    // Обновляем пароль на случай если ввел новый
                     existingUser.password = passwordInput;
                 }
 
@@ -346,12 +340,6 @@
                 openDashboard(existingUser.username);
             }
         });
-
-        function forceResetStorage() {
-            localStorage.clear();
-            showToast('Кэш и данные успешно очищены!', 'warning');
-            setTimeout(() => location.reload(), 1000);
-        }
 
         function openDashboard(username) {
             let db = getApexData();
@@ -392,23 +380,6 @@
 
             renderAdminTable();
             switchSideTab('profile');
-        }
-
-        function deleteAccount() {
-            const currentSession = localStorage.getItem('apex_active_session');
-            if (!currentSession) return;
-
-            if (confirm(`Вы уверены, что хотите НАВСЕГДА удалить аккаунт ${currentSession}? Всё стирается под 0!`)) {
-                let db = getApexData();
-                db.users = db.users.filter(u => u.username.toLowerCase() !== currentSession.toLowerCase());
-                saveApexData(db);
-
-                localStorage.removeItem('apex_active_session');
-                showToast('Аккаунт успешно удален под 0!', 'warning');
-                
-                document.getElementById('dashboardScreen').classList.add('hidden');
-                document.getElementById('authScreen').classList.remove('hidden');
-            }
         }
 
         function assignRoleFromAdmin() {
@@ -497,38 +468,6 @@
             } else {
                 showToast('Ошибка! Ключ не существует или уже был активирован.', 'error');
             }
-        }
-
-        function exportDatabase() {
-            const db = getApexData();
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", "apex_database.json");
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-            showToast('База успешно экспортирована!', 'success');
-        }
-
-        function importDatabase(event) {
-            const fileReader = new FileReader();
-            fileReader.onload = function(e) {
-                try {
-                    const importedData = JSON.parse(e.target.result);
-                    if (importedData.users && importedData.keys) {
-                        saveApexData(importedData);
-                        showToast('База данных успешно обновлена!', 'success');
-                        const activeSession = localStorage.getItem('apex_active_session');
-                        if (activeSession) openDashboard(activeSession);
-                    } else {
-                        showToast('Неверный формат файла базы!', 'error');
-                    }
-                } catch (err) {
-                    showToast('Ошибка при чтении файла!', 'error');
-                }
-            };
-            fileReader.readAsText(event.target.files[0]);
         }
 
         window.addEventListener('DOMContentLoaded', () => {
