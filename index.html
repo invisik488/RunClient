@@ -72,7 +72,7 @@
 
         .sub-active { color: #00ff66 !important; font-size: 22px; font-weight: 700; }
         .sub-inactive { color: #ff3333 !important; font-size: 22px; font-weight: 700; }
-        .key-display { background: #111; border: 1px dashed #333; padding: 12px; border-radius: 10px; font-family: monospace; font-size: 15px; color: #00ff66; word-break: break-all; text-align: center; margin-top: 10px; }
+        .key-display { background: #111; border: 1px dashed #333; padding: 12px; border-radius: 10px; font-family: monospace; font-size: 15px; color: #00ff66; word-break: break-all; text-align: center; margin-top: 10px; user-select: all; }
     </style>
 </head>
 <body>
@@ -232,24 +232,21 @@
 
     <!-- ================= СКРИПТЫ ================= -->
     <script>
-        // Единая База Данных в памяти
         function getApexData() {
-            let data = localStorage.getItem('apex_data');
-            if (!data) {
-                const defaultData = {
-                    users: [
-                        { username: 'invisik', role: 'OWNER', sub: 'No Active Subscription' }
-                    ],
+            let raw = localStorage.getItem('apex_db_data');
+            if (!raw) {
+                const initData = {
+                    users: [{ username: 'invisik', role: 'OWNER', sub: 'No Active Subscription' }],
                     keys: []
                 };
-                localStorage.setItem('apex_data', JSON.stringify(defaultData));
-                return defaultData;
+                localStorage.setItem('apex_db_data', JSON.stringify(initData));
+                return initData;
             }
-            return JSON.parse(data);
+            return JSON.parse(raw);
         }
 
         function saveApexData(data) {
-            localStorage.setItem('apex_data', JSON.stringify(data));
+            localStorage.setItem('apex_db_data', JSON.stringify(data));
         }
 
         function showToast(message, type = 'success') {
@@ -279,30 +276,35 @@
 
         document.getElementById('authForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            const username = document.getElementById('usernameInput').value.trim();
-            let db = getApexData();
+            const inputUsername = document.getElementById('usernameInput').value.trim();
+            if(!inputUsername) return;
 
-            let user = db.users.find(u => u.username.toLowerCase() === username.toLowerCase());
+            let db = getApexData();
+            let user = db.users.find(u => u.username.toLowerCase() === inputUsername.toLowerCase());
 
             if (!user) {
-                // Все новые пользователи получают роль USER и СТРОГО без подписки
                 user = { 
-                    username: username, 
-                    role: (username.toLowerCase() === 'invisik') ? 'OWNER' : 'USER', 
+                    username: inputUsername, 
+                    role: (inputUsername.toLowerCase() === 'invisik') ? 'OWNER' : 'USER', 
                     sub: 'No Active Subscription' 
                 };
                 db.users.push(user);
                 saveApexData(db);
             }
 
-            localStorage.setItem('apex_session', username);
-            openDashboard(user);
+            localStorage.setItem('apex_current_session', user.username);
+            openDashboard(user.username);
         });
 
-        function openDashboard(user) {
+        function openDashboard(username) {
             let db = getApexData();
-            // Всегда берем свежие данные юзера из базы
-            let freshUser = db.users.find(u => u.username.toLowerCase() === user.username.toLowerCase()) || user;
+            let freshUser = db.users.find(u => u.username.toLowerCase() === username.toLowerCase());
+
+            if (!freshUser) {
+                freshUser = { username: username, role: 'USER', sub: 'No Active Subscription' };
+                db.users.push(freshUser);
+                saveApexData(db);
+            }
 
             document.getElementById('authScreen').classList.add('hidden');
             document.getElementById('dashboardScreen').classList.remove('hidden');
@@ -311,7 +313,6 @@
             document.getElementById('sideUsername').innerText = freshUser.username;
             document.getElementById('displayUsername').innerText = freshUser.username;
 
-            // Отображение статуса подписки
             const subElement = document.getElementById('subStatus');
             const currentSub = freshUser.sub || 'No Active Subscription';
             subElement.innerText = currentSub;
@@ -322,14 +323,12 @@
                 subElement.className = 'sub-inactive';
             }
 
-            // Роль
-            const role = freshUser.role.toUpperCase();
+            const role = (freshUser.role || 'USER').toUpperCase();
             document.getElementById('sideRole').innerText = role;
             const badge = document.getElementById('displayRoleBadge');
             badge.innerText = role;
             badge.className = 'badge-role ' + role;
 
-            // Показ админских вкладок
             document.getElementById('menu-generator').classList.toggle('hidden', role === 'USER');
             document.getElementById('menu-admin').classList.toggle('hidden', !(role === 'OWNER' || role === 'ADMIN'));
 
@@ -337,7 +336,6 @@
             switchSideTab('profile');
         }
 
-        // Выдача роли через админку
         function assignRoleFromAdmin() {
             const targetUsername = document.getElementById('adminUserSearch').value.trim();
             const selectedRole = document.getElementById('adminRoleSelect').value;
@@ -350,19 +348,20 @@
             if (user) {
                 user.role = selectedRole;
             } else {
-                db.users.push({
+                user = {
                     username: targetUsername,
                     role: selectedRole,
                     sub: 'No Active Subscription'
-                });
+                };
+                db.users.push(user);
             }
 
             saveApexData(db);
-            showToast(`Роль ${selectedRole} успешно присвоена для ${targetUsername}!`, 'success');
+            showToast(`Роль ${selectedRole} успешно выдана игроку ${targetUsername}!`, 'success');
 
-            const sessionUser = localStorage.getItem('apex_session');
-            if (sessionUser && sessionUser.toLowerCase() === targetUsername.toLowerCase()) {
-                openDashboard(user || { username: targetUsername, role: selectedRole, sub: 'No Active Subscription' });
+            const currentSession = localStorage.getItem('apex_current_session');
+            if (currentSession && currentSession.toLowerCase() === targetUsername.toLowerCase()) {
+                openDashboard(currentSession);
             }
 
             renderAdminTable();
@@ -385,57 +384,62 @@
             });
         }
 
-        // Генерация ключа
         function generateKey() {
             const days = parseInt(document.getElementById('genDays').value);
-            const newKey = 'APEX-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+            const part1 = Math.random().toString(36).substring(2, 6).toUpperCase();
+            const part2 = Math.random().toString(36).substring(2, 6).toUpperCase();
+            const newKey = `APEX-${part1}-${part2}`;
 
             let db = getApexData();
+            if (!db.keys) db.keys = [];
+            
             db.keys.push({ key: newKey, days: days });
             saveApexData(db);
 
             const resBox = document.getElementById('generatedResult');
-            resBox.innerText = `Ключ: ${newKey} (${days >= 3650 ? 'Lifetime' : days + ' дней'})`;
+            resBox.innerText = newKey;
             resBox.classList.remove('hidden');
-            showToast('Ключ успешно создан!', 'success');
+            showToast('Ключ успешно создан и сохранен!', 'success');
         }
 
-        // Активация ключа
         function activateKey() {
-            const keyInput = document.getElementById('licenseKeyInput').value.trim();
+            const keyInput = document.getElementById('licenseKeyInput').value.trim().toUpperCase();
+            if(!keyInput) return showToast('Введите ключ!', 'error');
+
             let db = getApexData();
-            const keyIndex = db.keys.findIndex(k => k.key === keyInput);
+            if (!db.keys) db.keys = [];
+
+            const keyIndex = db.keys.findIndex(k => k.key.toUpperCase() === keyInput);
 
             if (keyIndex !== -1) {
                 const keyData = db.keys[keyIndex];
-                const sessionUser = localStorage.getItem('apex_session');
-                let user = db.users.find(u => u.username.toLowerCase() === sessionUser.toLowerCase());
+                const currentSession = localStorage.getItem('apex_current_session');
+                
+                let user = db.users.find(u => u.username.toLowerCase() === currentSession.toLowerCase());
 
                 const subText = keyData.days >= 3650 ? 'Active (Lifetime)' : `Active (${keyData.days} Days)`;
                 user.sub = subText;
 
-                // Удаляем использованный ключ
                 db.keys.splice(keyIndex, 1);
                 saveApexData(db);
 
-                showToast(`Ключ активирован! Подписка: ${subText}`, 'success');
-                openDashboard(user);
+                showToast(`Успешно! Подписка: ${subText}`, 'success');
+                document.getElementById('licenseKeyInput').value = '';
+                openDashboard(user.username);
             } else {
-                showToast('Ошибка! Неверный ключ или он уже был использован.', 'error');
+                showToast('Ошибка! Неверный ключ или он уже активирован.', 'error');
             }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            const sessionUser = localStorage.getItem('apex_session');
+            const sessionUser = localStorage.getItem('apex_current_session');
             if (sessionUser) {
-                let db = getApexData();
-                let user = db.users.find(u => u.username.toLowerCase() === sessionUser.toLowerCase());
-                if (user) openDashboard(user);
+                openDashboard(sessionUser);
             }
         });
 
         document.getElementById('logoutBtn').addEventListener('click', () => {
-            localStorage.removeItem('apex_session');
+            localStorage.removeItem('apex_current_session');
             document.getElementById('dashboardScreen').classList.add('hidden');
             document.getElementById('authScreen').classList.remove('hidden');
         });
