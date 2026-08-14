@@ -9,8 +9,8 @@ app.use(express.static(path.join(__dirname)));
 
 // База данных в памяти
 const users = [
-    { id: 1, username: 'invisik', role: 'owner', isOwner: true },
-    { id: 2, username: 'skqu1ze', role: 'user', isOwner: false }
+    { id: 1, username: 'invisik', role: 'owner', hwid: 'Привязан (HWID-1)' },
+    { id: 2, username: 'skqu1ze', role: 'user', hwid: 'Не привязан' }
 ];
 
 function isSameName(name1, name2) {
@@ -18,11 +18,26 @@ function isSameName(name1, name2) {
     return name1.trim().localeCompare(name2.trim(), 'ru', { sensitivity: 'accent' }) === 0;
 }
 
+// Форматирование объекта юзера под верстку фронтенда (ID, Ник, HWID, Роль)
+function formatUserForFrontend(u) {
+    return {
+        id: u.id || 1,
+        username: u.username,
+        login: u.username,
+        nickname: u.username,
+        name: u.username,
+        role: u.role || 'user',
+        hwid: u.hwid || 'Не привязан',
+        isOwner: u.role === 'owner',
+        isAdmin: u.role === 'admin' || u.role === 'owner'
+    };
+}
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// АВТОРИЗАЦИЯ
+// 1. АВТОРИЗАЦИЯ
 app.post('/api/auth/login', (req, res) => {
     const { username, password, login, nickname } = req.body;
     const userLogin = (username || login || nickname || '').trim();
@@ -32,32 +47,25 @@ app.post('/api/auth/login', (req, res) => {
     let user = users.find(u => isSameName(u.username, userLogin));
 
     if (!user && isSameName(userLogin, 'invisik')) {
-        user = { id: Date.now(), username: userLogin, role: 'owner', isOwner: true };
+        user = { id: Date.now(), username: userLogin, role: 'owner', hwid: 'Не привязан' };
         users.push(user);
     } else if (!user) {
-        user = { id: Date.now(), username: userLogin, role: 'user', isOwner: false };
+        user = { id: Date.now(), username: userLogin, role: 'user', hwid: 'Не привязан' };
         users.push(user);
     }
 
-    const userRole = user.role || 'user';
+    const formatted = formatUserForFrontend(user);
 
     return res.json({ 
         success: true, 
         message: 'Успешный вход!', 
-        user: { 
-            id: user.id,
-            username: user.username,
-            login: user.username,
-            nickname: user.username,
-            role: userRole,
-            isAdmin: userRole === 'admin' || userRole === 'owner',
-            isOwner: userRole === 'owner'
-        },
+        user: formatted,
+        data: formatted,
         token: 'versedlc-token-123'
     });
 });
 
-// РЕГИСТРАЦИЯ
+// 2. РЕГИСТРАЦИЯ
 app.post('/api/auth/register', (req, res) => {
     const { username, password, login, nickname } = req.body;
     const userLogin = (username || login || nickname || '').trim();
@@ -74,83 +82,90 @@ app.post('/api/auth/register', (req, res) => {
         username: userLogin, 
         password: password || '',
         role: defaultRole,
-        isOwner: defaultRole === 'owner'
+        hwid: 'Не привязан'
     };
     users.push(newUser);
+
+    const formatted = formatUserForFrontend(newUser);
 
     return res.json({ 
         success: true, 
         message: 'Регистрация успешна!', 
-        user: { username: newUser.username, login: newUser.username, nickname: newUser.username, role: newUser.role } 
+        user: formatted,
+        data: formatted
     });
 });
 
-// 🎯 ВОТ ЭТОТ РОУТ ИСКАЛ ТВОЙ САЙТ! (/api/admin/user/skqu1ze)
+// 🎯 3. ПОИСК ИГРОКА ДЛЯ АДМИНКИ (/api/admin/user/:username)
 app.get('/api/admin/user/:username', (req, res) => {
     const reqUsername = req.params.username.trim();
     let user = users.find(u => isSameName(u.username, reqUsername));
 
     if (!user) {
-        // Если пользователя еще не было в памяти — создаем его запись для админки
         user = {
-            id: Date.now(),
+            id: Math.floor(Math.random() * 8999) + 1000,
             username: reqUsername,
-            login: reqUsername,
-            nickname: reqUsername,
             role: isSameName(reqUsername, 'invisik') ? 'owner' : 'user',
-            isOwner: isSameName(reqUsername, 'invisik')
+            hwid: 'Не привязан'
         };
         users.push(user);
     }
 
+    const formatted = formatUserForFrontend(user);
+
+    // Возвращаем данные во всех возможных форматах для JS админки
     return res.json({
         success: true,
-        user: {
-            id: user.id,
-            username: user.username,
-            login: user.username,
-            nickname: user.username,
-            role: user.role,
-            isOwner: user.role === 'owner',
-            isAdmin: user.role === 'admin' || user.role === 'owner'
-        }
+        user: formatted,
+        data: formatted,
+        result: formatted,
+        ...formatted
     });
 });
 
-// 👑 ИЗМЕНЕНИЕ РОЛИ (Для кнопок в карточке пользователя)
-const handleChangeRole = (req, res) => {
-    const { targetUser, username, nickname, user, role } = req.body;
-    const target = targetUser || username || nickname || user;
+// 💾 4. СОХРАНЕНИЕ ИЗМЕНЕНИЙ (СМЕНА РОЛИ + СВОРАЧИВАНИЕ ФОРМЫ)
+const saveUserChanges = (req, res) => {
+    const paramUser = req.params.username;
+    const { targetUser, username, nickname, user, role, selectedRole, newRole } = req.body;
+    
+    const target = paramUser || targetUser || username || nickname || user;
+    const finalRole = role || selectedRole || newRole || 'user';
 
-    if (!target || !role) {
-        return res.status(400).json({ success: false, message: 'Укажите пользователя и роль!' });
+    if (!target) {
+        return res.status(400).json({ success: false, message: 'Не указан игрок!' });
     }
 
     let found = users.find(u => isSameName(u.username, target));
 
     if (!found) {
         found = { 
-            id: Date.now(), 
+            id: Math.floor(Math.random() * 8999) + 1000, 
             username: target.trim(), 
-            role: role.toLowerCase(),
-            isOwner: role.toLowerCase() === 'owner'
+            role: String(finalRole).toLowerCase(),
+            hwid: 'Не привязан'
         };
         users.push(found);
     } else {
-        found.role = role.toLowerCase();
-        found.isOwner = role.toLowerCase() === 'owner';
+        found.role = String(finalRole).toLowerCase();
     }
+
+    const formatted = formatUserForFrontend(found);
 
     return res.json({ 
         success: true, 
-        message: `Роль ${found.username} изменена на ${role.toUpperCase()}!`,
-        user: { username: found.username, role: found.role }
+        message: 'Изменения успешно сохранены!',
+        user: formatted,
+        data: formatted
     });
 };
 
-app.post('/api/admin/change-role', handleChangeRole);
-app.post('/api/admin/set-role', handleChangeRole);
-app.post('/api/admin/user/:username/role', handleChangeRole);
+// Все варианты вызовов при клике "Сохранить изменения"
+app.post('/api/admin/user/:username', saveUserChanges);
+app.put('/api/admin/user/:username', saveUserChanges);
+app.post('/api/admin/user/:username/update', saveUserChanges);
+app.post('/api/admin/user/:username/role', saveUserChanges);
+app.post('/api/admin/change-role', saveUserChanges);
+app.post('/api/admin/set-role', saveUserChanges);
 
 app.get('/api/status', (req, res) => res.json({ status: 'ok' }));
 
