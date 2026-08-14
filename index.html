@@ -12,7 +12,7 @@
         .screen { position: relative; z-index: 1; width: 100%; min-height: 100vh; }
         .hidden { display: none !important; }
 
-        /* ================= TOAST NOTIFICATIONS (КАСТОМНЫЕ УВЕДОМЛЕНИЯ) ================= */
+        /* ================= TOAST NOTIFICATIONS ================= */
         #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
         .toast { background: #111; border: 1px solid #222; border-left: 4px solid #fff; padding: 14px 20px; border-radius: 12px; color: #fff; font-size: 13px; font-weight: 500; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s ease; }
         .toast.success { border-left-color: #00ff66; }
@@ -90,13 +90,16 @@
 
         .gen-box { display: flex; flex-direction: column; gap: 15px; max-width: 450px; margin-top: 10px; }
         .key-display { background: #111; border: 1px dashed #333; padding: 12px; border-radius: 10px; font-family: monospace; font-size: 15px; color: #00ff66; word-break: break-all; text-align: center; }
+        
+        .sub-active { color: #00ff66 !important; }
+        .sub-inactive { color: #ff3333 !important; }
     </style>
 </head>
 <body>
 
     <div id="toast-container"></div>
 
-    <!-- ================= 1. АВТОРИЗАЦИЯ / РЕГИСТРАЦИЯ ================= -->
+    <!-- ================= 1. АВТОРИЗАЦИЯ ================= -->
     <div id="authScreen" class="screen">
         <div class="auth-container">
             <div class="form-section">
@@ -195,7 +198,7 @@
 
                     <div class="card">
                         <div class="card-title" style="color:#555;">Client Subscription</div>
-                        <h3 id="subStatus" style="color:#00ff66;">No Active Subscription</h3>
+                        <h3 id="subStatus" class="sub-inactive">No Active Subscription</h3>
                         <p style="color: #555; font-size: 12px; margin-top: 4px;">VerseDLC Client 1.21.11 Fabric</p>
                     </div>
                 </div>
@@ -222,7 +225,7 @@
                     </div>
                 </div>
 
-                <!-- 4. KEY GENERATOR (ДЛЯ ВСЕХ КРОМЕ USER) -->
+                <!-- 4. KEY GENERATOR -->
                 <div id="tab-generator" class="tab-content hidden">
                     <div class="card">
                         <div class="card-title" style="color:#a855f7;">Key Generator</div>
@@ -272,12 +275,11 @@
                     </div>
                 </div>
 
-                <!-- 7. ADMIN PANEL (ОФОРМЛЕННАЯ С ПОИСКОМ И ВЫДОЧЕЙ РОЛЕЙ) -->
+                <!-- 7. ADMIN PANEL -->
                 <div id="tab-admin" class="tab-content hidden">
                     <div class="card admin-card">
                         <div class="card-title">Управление пользователями (Admin Controls)</div>
                         
-                        <!-- Форма выдачи ролей -->
                         <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
                             <input type="text" id="adminUserSearch" class="input-field" placeholder="Введите никнейм пользователя..." style="flex: 2; min-width: 200px;">
                             <select id="adminRoleSelect" class="select-field" style="flex: 1; min-width: 130px;">
@@ -289,7 +291,6 @@
                             <button class="btn-action" style="background: #ff3333; color: #fff;" onclick="assignRoleFromAdmin()">Выдать роль</button>
                         </div>
 
-                        <!-- Таблица пользователей -->
                         <table>
                             <thead>
                                 <tr>
@@ -300,7 +301,7 @@
                                 </tr>
                             </thead>
                             <tbody id="userTableBody">
-                                <!-- Динамически заполняется -->
+                                <!-- Динамически -->
                             </tbody>
                         </table>
                     </div>
@@ -310,22 +311,26 @@
         </div>
     </div>
 
-    <!-- ================= 3. СКРИПТЫ И ЛОГИКА ================= -->
+    <!-- ================= 3. СКРИПТЫ ================= -->
     <script>
-        // Инициализация базы данных в LocalStorage
-        if (!localStorage.getItem('v_users')) {
-            const initialUsers = [
-                { username: 'invisik', role: 'OWNER', hwid: 'Привязан', sub: 'Lifetime Access' },
-                { username: 'test_user', role: 'USER', hwid: 'null', sub: 'No Active Subscription' }
-            ];
-            localStorage.setItem('v_users', JSON.stringify(initialUsers));
+        // Инициализация базы данных пользователей в браузерном хранилище
+        function getUsersDB() {
+            let db = localStorage.getItem('v_users');
+            if (!db) {
+                // Если база еще не создана, инициализируем владельца
+                const initDB = [
+                    { username: 'invisik', role: 'OWNER', hwid: 'Привязан', sub: 'No Active Subscription' }
+                ];
+                localStorage.setItem('v_users', JSON.stringify(initDB));
+                return initDB;
+            }
+            return JSON.parse(db);
         }
 
-        if (!localStorage.getItem('v_keys')) {
-            localStorage.setItem('v_keys', JSON.stringify([]));
+        function saveUsersDB(users) {
+            localStorage.setItem('v_users', JSON.stringify(users));
         }
 
-        // Кастомные всплывающие уведомления (Toast)
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -373,15 +378,16 @@
         document.getElementById('authForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const username = document.getElementById('usernameInput').value.trim();
-            let users = JSON.parse(localStorage.getItem('v_users'));
+            let users = getUsersDB();
 
             let user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
 
             if (!user) {
+                // Новый пользователь получает подписку No Active Subscription по умолчанию
                 const role = (username.toLowerCase() === 'invisik') ? 'OWNER' : 'USER';
                 user = { username: username, role: role, hwid: 'null', sub: 'No Active Subscription' };
                 users.push(user);
-                localStorage.setItem('v_users', JSON.stringify(users));
+                saveUsersDB(users);
             }
 
             localStorage.setItem('versedlc_current_user', JSON.stringify(user));
@@ -390,29 +396,41 @@
         });
 
         function openDashboard(user) {
+            // Синхронизируем актуальные данные пользователя из БД
+            let users = getUsersDB();
+            let freshUser = users.find(u => u.username.toLowerCase() === user.username.toLowerCase()) || user;
+
             document.getElementById('authScreen').classList.add('hidden');
             document.getElementById('dashboardScreen').classList.remove('hidden');
 
-            document.getElementById('navUsername').innerText = user.username;
-            document.getElementById('sideUsername').innerText = user.username;
-            document.getElementById('displayUsername').innerText = user.username;
-            document.getElementById('subStatus').innerText = user.sub || 'No Active Subscription';
+            document.getElementById('navUsername').innerText = freshUser.username;
+            document.getElementById('sideUsername').innerText = freshUser.username;
+            document.getElementById('displayUsername').innerText = freshUser.username;
 
-            const userRole = (user.role || 'USER').toUpperCase();
+            // ЧЕСТНАЯ ПРОВЕРКА ПОДПИСКИ
+            const subElement = document.getElementById('subStatus');
+            const userSub = freshUser.sub || 'No Active Subscription';
+            subElement.innerText = userSub;
+
+            if (userSub.includes('Active') || userSub.includes('Lifetime')) {
+                subElement.className = 'sub-active';
+            } else {
+                subElement.className = 'sub-inactive';
+            }
+
+            const userRole = (freshUser.role || 'USER').toUpperCase();
             document.getElementById('sideRole').innerText = userRole;
 
             const badge = document.getElementById('displayRoleBadge');
             badge.innerText = userRole;
             badge.className = 'badge-role ' + userRole;
 
-            // Генератор ключей доступен всем, КРОМЕ USER
             if (userRole !== 'USER') {
                 document.getElementById('menu-generator').classList.remove('hidden');
             } else {
                 document.getElementById('menu-generator').classList.add('hidden');
             }
 
-            // Админка только для OWNER и ADMIN
             if (userRole === 'OWNER' || userRole === 'ADMIN') {
                 document.getElementById('menu-admin').classList.remove('hidden');
             } else {
@@ -424,7 +442,7 @@
             switchSideTab('profile');
         }
 
-        // Выдача роли через Админ-Панель
+        // ВЫДАЧА РОЛИ В АДМИНКЕ (СОЗДАЕТ ЮЗЕРА ЕСЛИ ЕГО НЕТ!)
         function assignRoleFromAdmin() {
             const targetUsername = document.getElementById('adminUserSearch').value.trim();
             const selectedRole = document.getElementById('adminRoleSelect').value;
@@ -434,35 +452,44 @@
                 return;
             }
 
-            let users = JSON.parse(localStorage.getItem('v_users'));
+            let users = getUsersDB();
             let userIndex = users.findIndex(u => u.username.toLowerCase() === targetUsername.toLowerCase());
 
             if (userIndex !== -1) {
+                // Если пользователь найден — меняем роль
                 users[userIndex].role = selectedRole;
-                localStorage.setItem('v_users', JSON.stringify(users));
-
-                // Если меняем роль самому себе
-                let currentUser = JSON.parse(localStorage.getItem('versedlc_current_user'));
-                if (currentUser.username.toLowerCase() === targetUsername.toLowerCase()) {
-                    currentUser.role = selectedRole;
-                    localStorage.setItem('versedlc_current_user', JSON.stringify(currentUser));
-                    openDashboard(currentUser);
-                }
-
-                showToast(`Роль пользователю ${users[userIndex].username} успешно изменена на ${selectedRole}!`, 'success');
-                renderAdminTable();
-                document.getElementById('adminUserSearch').value = '';
+                showToast(`Роль пользователю ${users[userIndex].username} изменена на ${selectedRole}!`, 'success');
             } else {
-                showToast(`Пользователь "${targetUsername}" не найден!`, 'error');
+                // ЕСЛИ ПОЛЬЗОВАТЕЛЬ НЕ НАЙДЕН — СОЗДАЕМ ЕГО В БАЗЕ МГНОВЕННО
+                const newUser = {
+                    username: targetUsername,
+                    role: selectedRole,
+                    hwid: 'null',
+                    sub: 'No Active Subscription'
+                };
+                users.push(newUser);
+                showToast(`Пользователь ${targetUsername} успешно создан с ролью ${selectedRole}!`, 'success');
             }
+
+            saveUsersDB(users);
+
+            // Если меняем роль текущему авторизованному аккаунту
+            let currentUser = JSON.parse(localStorage.getItem('versedlc_current_user'));
+            if (currentUser && currentUser.username.toLowerCase() === targetUsername.toLowerCase()) {
+                currentUser.role = selectedRole;
+                localStorage.setItem('versedlc_current_user', JSON.stringify(currentUser));
+                openDashboard(currentUser);
+            }
+
+            renderAdminTable();
+            document.getElementById('adminUserSearch').value = '';
         }
 
-        // Отображение таблицы пользователей
         function renderAdminTable() {
             const tbody = document.getElementById('userTableBody');
             tbody.innerHTML = '';
 
-            const users = JSON.parse(localStorage.getItem('v_users')) || [];
+            const users = getUsersDB();
 
             users.forEach(u => {
                 const tr = document.createElement('tr');
@@ -478,17 +505,16 @@
 
         function quickEditUser(username) {
             document.getElementById('adminUserSearch').value = username;
-            showToast(`Имя ${username} подставлено в поле редактирования.`, 'warning');
+            showToast(`Имя ${username} подставлено в поле поиска.`, 'warning');
         }
 
-        // ГЕНЕРАЦИЯ КЛЮЧЕЙ С КУЛДАУНОМ
+        // ГЕНЕРАЦИЯ КЛЮЧЕЙ
         function generateKey() {
             const currentUser = JSON.parse(localStorage.getItem('versedlc_current_user'));
             const role = currentUser.role;
 
-            // Проверка кулдауна
             const lastGenTime = localStorage.getItem('last_gen_' + currentUser.username);
-            const cdTime = getCooldownByRole(role); // Время задержки в миллисекундах
+            const cdTime = getCooldownByRole(role);
 
             if (lastGenTime && (Date.now() - lastGenTime < cdTime)) {
                 showToast('Задержка еще не прошла!', 'error');
@@ -504,7 +530,6 @@
             keys.push({ key: newKey, days: days, uses: uses });
             localStorage.setItem('v_keys', JSON.stringify(keys));
 
-            // Сохраняем время последней генерации
             localStorage.setItem('last_gen_' + currentUser.username, Date.now());
 
             const resBox = document.getElementById('generatedResult');
@@ -516,8 +541,8 @@
         }
 
         function getCooldownByRole(role) {
-            if (role === 'OWNER' || role === 'ADMIN') return 0; // Без задержки
-            if (role === 'MEDIA') return 7 * 24 * 60 * 60 * 1000; // 7 дней
+            if (role === 'OWNER' || role === 'ADMIN') return 0;
+            if (role === 'MEDIA') return 7 * 24 * 60 * 60 * 1000;
             return 24 * 60 * 60 * 1000;
         }
 
@@ -557,12 +582,21 @@
             if (keyIndex !== -1) {
                 const foundKey = keys[keyIndex];
                 
-                // Обновляем подписку
                 let currentUser = JSON.parse(localStorage.getItem('versedlc_current_user'));
-                currentUser.sub = `Active (${foundKey.days} Days)`;
+                let users = getUsersDB();
+                let userIndex = users.findIndex(u => u.username.toLowerCase() === currentUser.username.toLowerCase());
+
+                const subText = (foundKey.days >= 3650) ? 'Active (Lifetime Access)' : `Active (${foundKey.days} Days)`;
+
+                // Обновляем в локальной сессии и в общей БД
+                currentUser.sub = subText;
+                if (userIndex !== -1) {
+                    users[userIndex].sub = subText;
+                    saveUsersDB(users);
+                }
                 localStorage.setItem('versedlc_current_user', JSON.stringify(currentUser));
 
-                // Уменьшаем использования ключа
+                // Уменьшаем количество активаций
                 foundKey.uses -= 1;
                 if (foundKey.uses <= 0) {
                     keys.splice(keyIndex, 1);
@@ -571,15 +605,14 @@
                 }
                 localStorage.setItem('v_keys', JSON.stringify(keys));
 
-                showToast(`Ключ успешно активирован! Подписка выдана на ${foundKey.days} дн.`, 'success');
+                showToast(`Ключ активирован! Подписка: ${subText}`, 'success');
                 document.getElementById('licenseKeyInput').value = '';
                 openDashboard(currentUser);
             } else {
-                showToast('Ошибка! Такого ключа не существует или он исчерпан.', 'error');
+                showToast('Ошибка! Ключ не существует или уже активирован.', 'error');
             }
         }
 
-        // Загрузка
         window.addEventListener('DOMContentLoaded', () => {
             const savedUser = localStorage.getItem('versedlc_current_user');
             if (savedUser) {
