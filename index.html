@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VerseDLC — Вход / Регистрация</title>
+    <title>VerseDLC</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -17,9 +17,6 @@
             background-color: #050505;
             color: #ffffff;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             overflow-x: hidden;
             position: relative;
         }
@@ -27,236 +24,290 @@
         /* Тёмный текстурный фон */
         body::before {
             content: '';
-            position: absolute;
+            position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle at 80% 50%, rgba(30, 30, 30, 0.4) 0%, rgba(5, 5, 5, 1) 70%);
-            z-index: 1;
+            background: radial-gradient(circle at 80% 50%, rgba(30, 30, 30, 0.3) 0%, rgba(5, 5, 5, 1) 80%);
+            z-index: 0;
+            pointer-events: none;
         }
 
-        .container {
+        .screen {
             position: relative;
-            z-index: 2;
+            z-index: 1;
             width: 100%;
+            min-height: 100vh;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ------------------- ЭКРАН 1: АВТОРИЗАЦИЯ ------------------- */
+        .auth-container {
             max-width: 1100px;
+            margin: 0 auto;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 40px 20px;
         }
 
-        /* ЛЕВАЯ ЧАСТЬ: ФОРМА */
         .form-section {
             width: 100%;
             max-width: 420px;
-        }
-
-        .logo-container {
-            margin-bottom: 24px;
         }
 
         .brand-logo {
             width: 42px;
             height: 42px;
             fill: #ffffff;
+            margin-bottom: 20px;
             filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
         }
 
-        h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 6px;
-            letter-spacing: -0.5px;
-        }
+        h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+        .subtitle { color: #888; font-size: 14px; margin-bottom: 32px; }
 
-        .subtitle {
-            color: #888888;
-            font-size: 14px;
-            margin-bottom: 32px;
-        }
+        .input-group { margin-bottom: 16px; }
+        .input-label { display: block; font-size: 13px; color: #aaa; margin-bottom: 8px; }
 
-        .input-group {
-            margin-bottom: 16px;
-            position: relative;
-        }
-
-        .input-label {
-            display: block;
-            font-size: 13px;
-            color: #aaaaaa;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 16px;
-            width: 18px;
-            height: 18px;
-            fill: #666666;
-            transition: fill 0.2s;
-        }
+        .input-wrapper { position: relative; display: flex; align-items: center; }
+        .input-icon { position: absolute; left: 16px; width: 18px; height: 18px; fill: #666; }
 
         .input-field {
             width: 100%;
-            background: #111111;
-            border: 1px solid #222222;
+            background: #111;
+            border: 1px solid #222;
             border-radius: 20px;
             padding: 14px 16px 14px 46px;
-            color: #ffffff;
+            color: #fff;
             font-size: 14px;
             outline: none;
-            transition: border-color 0.2s, background 0.2s;
         }
-
-        .input-field:focus {
-            border-color: #444444;
-            background: #141414;
-        }
-
-        .input-field:focus + .input-icon {
-            fill: #ffffff;
-        }
+        .input-field:focus { border-color: #444; }
 
         .checkbox-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 20px 0 28px 0;
-            font-size: 13px;
-            color: #aaaaaa;
-            cursor: pointer;
+            display: flex; align-items: center; gap: 10px;
+            margin: 20px 0 28px 0; font-size: 13px; color: #aaa; cursor: pointer;
         }
-
-        .checkbox-container input {
-            accent-color: #ffffff;
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-        }
+        .checkbox-container input { accent-color: #fff; width: 16px; height: 16px; }
 
         .submit-btn {
-            width: 100%;
-            background: #ffffff;
-            color: #000000;
-            border: none;
-            border-radius: 20px;
-            padding: 14px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: transform 0.1s, background 0.2s;
+            width: 100%; background: #fff; color: #000; border: none;
+            border-radius: 20px; padding: 14px; font-size: 15px; font-weight: 600;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .submit-btn:hover { background: #e6e6e6; }
+
+        .visual-section { display: flex; align-items: center; justify-content: center; width: 400px; height: 400px; }
+        .door-icon-3d { width: 260px; height: 260px; }
+
+        /* ------------------- ЭКРАН 2: ЛИЧНЫЙ КАБИНЕТ ------------------- */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 40px; border-bottom: 1px solid #1a1a1a;
         }
 
-        .submit-btn:hover {
-            background: #e6e6e6;
-        }
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .balance-badge { background: #111; border: 1px solid #222; padding: 6px 14px; border-radius: 20px; font-size: 14px; }
+        .btn-logout { background: #fff; color: #000; border: none; padding: 8px 18px; border-radius: 20px; font-weight: 600; cursor: pointer; }
 
-        .submit-btn:active {
-            transform: scale(0.99);
-        }
+        .dashboard-layout { display: flex; padding: 30px 40px; gap: 30px; }
 
-        /* ПРАВАЯ ЧАСТЬ: 3D ИКОНКА ВХОДА */
-        .visual-section {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 450px;
-            height: 450px;
+        /* Боковое меню */
+        .sidebar { width: 260px; background: #0c0c0c; border: 1px solid #1a1a1a; border-radius: 16px; padding: 16px; }
+        .sidebar-user { display: flex; align-items: center; gap: 12px; padding: 10px; margin-bottom: 15px; }
+        .sidebar-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+        
+        .nav-item {
+            display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+            border-radius: 12px; color: #888; font-size: 14px; margin-bottom: 4px; cursor: pointer;
         }
+        .nav-item.active { background: #fff; color: #000; font-weight: 600; }
 
-        .door-icon-3d {
-            width: 280px;
-            height: 280px;
-            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8));
+        /* Основной контент ЛК */
+        .main-content { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+
+        .card { background: #0c0c0c; border: 1px solid #1a1a1a; border-radius: 16px; padding: 24px; }
+        .card-title { font-size: 13px; color: #666; font-weight: 500; margin-bottom: 16px; }
+
+        /* Профиль и Загрузка Аватарки */
+        .profile-row { display: flex; align-items: center; gap: 20px; }
+        
+        .avatar-container {
+            position: relative; width: 80px; height: 80px; border-radius: 16px; overflow: hidden; cursor: pointer;
         }
+        .avatar-container img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-overlay {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.2s; font-size: 12px; color: #fff;
+        }
+        .avatar-container:hover .avatar-overlay { opacity: 1; }
 
-        @media (max-width: 900px) {
-            .visual-section {
-                display: none;
-            }
-            .container {
-                justify-content: center;
-            }
+        .user-name { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+        .role-badge { background: #222; color: #aaa; font-size: 11px; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; }
+
+        .info-grid { display: flex; gap: 40px; margin-top: 15px; color: #888; font-size: 13px; }
+        .info-val { color: #fff; font-weight: 500; margin-top: 2px; }
+
+        .btn-action {
+            background: #fff; color: #000; border: none; padding: 12px; width: 100%;
+            border-radius: 12px; font-weight: 600; cursor: pointer; margin-top: 15px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- Левая колонка с формой -->
-        <div class="form-section">
-            <div class="logo-container">
-                <!-- Буква A (Ваш логотип без фона) -->
+    <!-- ==================== 1. ФОРМА ВХОДА ==================== -->
+    <div id="authScreen" class="screen">
+        <div class="auth-container">
+            <div class="form-section">
+                <!-- Логотип Буква A -->
                 <svg class="brand-logo" viewBox="0 0 100 100">
-                    <path d="M50 10 L15 85 L35 85 L44 65 L66 65 L50 28 L58 45 L78 85 L95 85 Z M48 55 L52 55 L50 50 Z" fill="currentColor"/>
+                    <path d="M50 10 L15 85 L35 85 L44 65 L66 65 L50 28 L58 45 L78 85 L95 85 Z M48 55 L52 55 L50 50 Z"/>
                 </svg>
+
+                <h1>Create Account</h1>
+                <p class="subtitle">Join the elite community today.</p>
+
+                <form id="loginForm">
+                    <div class="input-group">
+                        <label class="input-label">Username</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="usernameInput" class="input-field" placeholder="Enter your username" required>
+                            <svg class="input-icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="passwordInput" class="input-field" placeholder="Enter Password" required>
+                            <svg class="input-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2z"/></svg>
+                        </div>
+                    </div>
+
+                    <label class="checkbox-container">
+                        <input type="checkbox" checked required>
+                        I agree to the Terms of Service.
+                    </label>
+
+                    <button type="submit" class="submit-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+                        Sign In / Sign Up
+                    </button>
+                </form>
             </div>
 
-            <h1>Create Account</h1>
-            <p class="subtitle">Join the elite community today.</p>
-
-            <form id="authForm">
-                <div class="input-group">
-                    <label class="input-label">Username</label>
-                    <div class="input-wrapper">
-                        <input type="text" id="username" class="input-field" placeholder="Enter your username" required>
-                        <svg class="input-icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label class="input-label">Password</label>
-                    <div class="input-wrapper">
-                        <input type="password" id="password" class="input-field" placeholder="Enter Password" required>
-                        <svg class="input-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-                    </div>
-                </div>
-
-                <label class="checkbox-container">
-                    <input type="checkbox" required checked>
-                    I agree to the Terms of Service.
-                </label>
-
-                <button type="submit" class="submit-btn">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
-                    Sign In / Sign Up
-                </button>
-            </form>
-        </div>
-
-        <!-- Правая колонка с 3D артом дверного проема -->
-        <div class="visual-section">
-            <svg class="door-icon-3d" viewBox="0 0 200 200">
-                <defs>
-                    <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#ffffff" />
-                        <stop offset="50%" stop-color="#888888" />
-                        <stop offset="100%" stop-color="#222222" />
-                    </linearGradient>
-                </defs>
-                <!-- Закругленная рамка -->
-                <rect x="50" y="30" width="100" height="140" rx="35" fill="none" stroke="url(#metalGrad)" stroke-width="8"/>
-                <!-- Стрелка входа -->
-                <path d="M20 100 L110 100 M90 80 L110 100 L90 120" fill="none" stroke="url(#metalGrad)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <div class="visual-section">
+                <svg class="door-icon-3d" viewBox="0 0 200 200">
+                    <defs>
+                        <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#ffffff" />
+                            <stop offset="50%" stop-color="#777777" />
+                            <stop offset="100%" stop-color="#111111" />
+                        </linearGradient>
+                    </defs>
+                    <rect x="50" y="30" width="100" height="140" rx="35" fill="none" stroke="url(#metalGrad)" stroke-width="8"/>
+                    <path d="M20 100 L110 100 M90 80 L110 100 L90 120" fill="none" stroke="url(#metalGrad)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
         </div>
     </div>
 
+    <!-- ==================== 2. ЛИЧНЫЙ КАБИНЕТ ==================== -->
+    <div id="dashboardScreen" class="screen hidden">
+        <header>
+            <svg class="brand-logo" style="width:28px; height:28px; margin:0" viewBox="0 0 100 100">
+                <path d="M50 10 L15 85 L35 85 L44 65 L66 65 L50 28 L58 45 L78 85 L95 85 Z M48 55 L52 55 L50 50 Z"/>
+            </svg>
+            <div class="header-right">
+                <div class="balance-badge">0 ₽ +</div>
+                <span id="headerUsername" style="font-weight: 600;">invisik</span>
+                <button class="btn-logout" id="logoutBtn">Log Out</button>
+            </div>
+        </header>
+
+        <div class="dashboard-layout">
+            <!-- Боковое меню -->
+            <div class="sidebar">
+                <div class="sidebar-user">
+                    <img id="sidebarAvatar" src="https://via.placeholder.com/150/222/fff?text=A" class="sidebar-avatar">
+                    <span id="sidebarUsername" style="font-weight: 600; font-size: 14px;">invisik</span>
+                </div>
+                <div class="nav-item active">👤 Profile</div>
+                <div class="nav-item">⬇️ Download Loader</div>
+                <div class="nav-item">🔑 License Activation</div>
+                <div class="nav-item">👛 Wallet</div>
+                <div class="nav-item">⚙️ Security & Settings</div>
+            </div>
+
+            <!-- Основное содержимое -->
+            <div class="main-content">
+                <!-- Профиль игрока -->
+                <div class="card">
+                    <div class="card-title">User Profile</div>
+                    <div class="profile-row">
+                        <!-- Нажатие на аватарку вызывает выбор файла -->
+                        <div class="avatar-container" onclick="document.getElementById('avatarFileInput').click()">
+                            <img id="profileAvatar" src="https://via.placeholder.com/150/222/fff?text=A">
+                            <div class="avatar-overlay">Сменить</div>
+                        </div>
+                        <!-- Скрытый инпут файла -->
+                        <input type="file" id="avatarFileInput" accept="image/*" style="display: none;">
+
+                        <div>
+                            <div class="user-name">
+                                <span id="profileUsername">invisik</span>
+                                <span id="profileRole" class="role-badge">USER</span>
+                            </div>
+                            <div class="info-grid">
+                                <div>
+                                    <div>Member Since</div>
+                                    <div class="info-val">2026-08-14</div>
+                                </div>
+                                <div>
+                                    <div>HWID</div>
+                                    <div id="profileHwid" class="info-val">Не привязан</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Подписка -->
+                <div class="card">
+                    <div class="card-title">Client Subscription</div>
+                    <h3 style="margin-bottom: 6px;">No active subscription</h3>
+                    <p style="color: #666; font-size: 13px;">Pick a plan on the Products page to unlock the client.</p>
+                    <button class="btn-action">Browse plans</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 3. СКРИПТ ЛОГИКИ ==================== -->
     <script>
-        document.getElementById('authForm').addEventListener('submit', async (e) => {
+        const authScreen = document.getElementById('authScreen');
+        const dashboardScreen = document.getElementById('dashboardScreen');
+        const loginForm = document.getElementById('loginForm');
+        const avatarFileInput = document.getElementById('avatarFileInput');
+
+        // Проверка при загрузке страницы — был ли вход
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedUser = localStorage.getItem('versedlc_user');
+            if (savedUser) {
+                renderDashboard(JSON.parse(savedUser));
+            }
+        });
+
+        // Отправка формы авторизации
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+            const username = document.getElementById('usernameInput').value.trim();
+            const password = document.getElementById('passwordInput').value;
 
             try {
                 const res = await fetch('/api/auth/login', {
@@ -264,17 +315,67 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
                 });
+
                 const data = await res.json();
 
-                if (data.success) {
-                    alert('Успешный вход!');
-                    window.location.reload();
+                if (data.success && data.user) {
+                    // Сохраняем пользователя в браузер
+                    localStorage.setItem('versedlc_user', JSON.stringify(data.user));
+                    renderDashboard(data.user);
                 } else {
                     alert(data.message || 'Ошибка входа');
                 }
             } catch (err) {
                 alert('Ошибка соединения с сервером');
             }
+        });
+
+        // Функция отрисовки Личного Кабинета
+        function renderDashboard(user) {
+            authScreen.classList.add('hidden');
+            dashboardScreen.classList.remove('hidden');
+
+            document.getElementById('headerUsername').innerText = user.username;
+            document.getElementById('sidebarUsername').innerText = user.username;
+            document.getElementById('profileUsername').innerText = user.username;
+            document.getElementById('profileRole').innerText = (user.role || 'USER').toUpperCase();
+            document.getElementById('profileHwid').innerText = user.hwid || 'Не привязан';
+
+            // Если есть сохраненная аватарка
+            const savedAvatar = localStorage.getItem('avatar_' + user.username);
+            if (savedAvatar) {
+                document.getElementById('profileAvatar').src = savedAvatar;
+                document.getElementById('sidebarAvatar').src = savedAvatar;
+            }
+        }
+
+        // Загрузка собственной аватарки с компьютера
+        avatarFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const base64Image = event.target.result;
+                    
+                    // Ставим фото в интерфейс
+                    document.getElementById('profileAvatar').src = base64Image;
+                    document.getElementById('sidebarAvatar').src = base64Image;
+
+                    // Сохраняем фото в памяти браузера под ником юзера
+                    const savedUser = JSON.parse(localStorage.getItem('versedlc_user') || '{}');
+                    if (savedUser.username) {
+                        localStorage.setItem('avatar_' + savedUser.username, base64Image);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Выход из аккаунта (Log Out)
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('versedlc_user');
+            dashboardScreen.classList.add('hidden');
+            authScreen.classList.remove('hidden');
         });
     </script>
 </body>
