@@ -109,7 +109,7 @@
                     <button type="submit" class="submit-btn" id="submitBtn">Войти</button>
                 </form>
 
-                <div class="reset-link" onclick="resetDatabase()">⚠️ Забыли пароль / Сбросить локальную базу</div>
+                <div class="reset-link" onclick="forceResetStorage()">⚠️ Сбросить все нависшие данные и зайти заново</div>
             </div>
         </div>
     </div>
@@ -254,20 +254,20 @@
         let currentAuthMode = 'login';
 
         function getApexData() {
-            let raw = localStorage.getItem('apex_v3_database');
+            let raw = localStorage.getItem('apex_v4_database');
             if (!raw) {
                 const initData = {
                     users: [{ username: 'invisik', password: '123', role: 'OWNER', sub: 'No Active Subscription' }],
                     keys: []
                 };
-                localStorage.setItem('apex_v3_database', JSON.stringify(initData));
+                localStorage.setItem('apex_v4_database', JSON.stringify(initData));
                 return initData;
             }
             return JSON.parse(raw);
         }
 
         function saveApexData(data) {
-            localStorage.setItem('apex_v3_database', JSON.stringify(data));
+            localStorage.setItem('apex_v4_database', JSON.stringify(data));
         }
 
         function showToast(message, type = 'success') {
@@ -325,28 +325,32 @@
                 openDashboard(newUser.username);
 
             } else {
+                // ЛОГИКА ВХОДА (БЕЗ БЛОКИРОВКИ ПО ПАРОЛЮ)
                 if (!existingUser) {
-                    return showToast('Аккаунт не найден! Нажмите "Регистрация".', 'error');
-                }
-                
-                // Если пароль не совпадает, даем возможность авто-обновить его при совпадении с мастер-логикой
-                if (existingUser.password !== passwordInput) {
-                    return showToast('Неверный пароль! Нажмите сброс внизу.', 'error');
+                    // Если аккаунта еще нет, авто-создаем его (для invisik выдаем OWNER)
+                    existingUser = {
+                        username: usernameInput,
+                        password: passwordInput,
+                        role: (usernameInput.toLowerCase() === 'invisik') ? 'OWNER' : 'USER',
+                        sub: 'No Active Subscription'
+                    };
+                    db.users.push(existingUser);
+                } else {
+                    // Обновляем пароль в базе на новый введенный
+                    existingUser.password = passwordInput;
                 }
 
+                saveApexData(db);
                 localStorage.setItem('apex_active_session', existingUser.username);
                 showToast('Успешный вход!', 'success');
                 openDashboard(existingUser.username);
             }
         });
 
-        function resetDatabase() {
-            if (confirm("Вы хотите сбросить локальную базу и зарегистрировать аккаунт заново?")) {
-                localStorage.removeItem('apex_v3_database');
-                localStorage.removeItem('apex_active_session');
-                showToast('База очищена! Перейдите во вкладку Регистрация.', 'warning');
-                switchAuthTab('register');
-            }
+        function forceResetStorage() {
+            localStorage.clear();
+            showToast('Кэш и данные успешно очищены!', 'warning');
+            setTimeout(() => location.reload(), 1000);
         }
 
         function openDashboard(username) {
