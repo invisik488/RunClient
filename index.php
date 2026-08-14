@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#0c0d0f">
-    <title>Aethra DLC — Главная и Покупки</title>
+    <title>Aethra DLC — Главная</title>
 
     <link rel="stylesheet" href="static/css/site.css?v=1784935229">
     <link rel="stylesheet" href="static/css/rockstar-theme.css?v=1784935230">
@@ -15,7 +15,7 @@
         .hidden { display: none !important; }
         
         /* Блок подписок / покупок */
-        .pricing-section { padding: 60px 0; }
+        .pricing-section { padding: 60px 0; border-top: 1px solid rgba(255,255,255,0.05); }
         .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-top: 30px; }
         .price-card { background: rgba(18, 20, 26, 0.8); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 30px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; transition: 0.3s ease; }
         .price-card:hover { border-color: rgba(255,255,255,0.25); transform: translateY(-4px); }
@@ -30,17 +30,19 @@
         .btn-buy { display: inline-block; width: 100%; text-align: center; background: #ff3333; color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; text-decoration: none; transition: 0.2s; }
         .btn-buy:hover { background: #cc0000; }
 
-        /* Всплывающие уведомления */
+        /* Всплывашки */
         #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
         .toast { background: #111; border: 1px solid #222; border-left: 4px solid #fff; padding: 14px 20px; border-radius: 12px; color: #fff; font-size: 13px; font-weight: 500; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; }
         .toast.success { border-left-color: #00ff66; }
         .toast.error { border-left-color: #ff3333; }
-        .toast.warning { border-left-color: #ffaa00; }
 
-        /* Кастомный кастом модалок в стиле Aethra */
-        .auth-modal-card { background: rgba(12, 13, 15, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 30px; max-width: 420px; margin: 40px auto; }
+        /* Окно авторизации в стиле Aethra */
+        .auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 9000; display: flex; align-items: center; justify-content: center; }
+        .auth-modal-card { background: rgba(12, 13, 15, 0.98); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 30px; width: 100%; max-width: 400px; position: relative; }
         .auth-input { width: 100%; background: #15171e; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 12px 16px; color: #fff; font-size: 14px; margin-bottom: 15px; outline: none; }
         .auth-input:focus { border-color: #ff3333; }
+        .close-modal { position: absolute; top: 15px; right: 20px; color: #777; font-size: 22px; cursor: pointer; }
+        .close-modal:hover { color: #fff; }
         .btn-danger { background: #220a0a; color: #ff4444; border: 1px solid #441111; padding: 8px 16px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 15px; font-size: 12px; }
         .btn-danger:hover { background: #441111; color: #fff; }
     </style>
@@ -50,7 +52,7 @@
     <canvas id="bg-canvas" aria-hidden="true"></canvas>
     <div id="toast-container"></div>
 
-    <!-- ШАПКА САЙТА -->
+    <!-- ШАПКА -->
     <header class="site-header">
         <div class="container">
             <a class="site-brand" href="index.php">
@@ -59,43 +61,54 @@
             </a>
             <nav aria-label="Основная навигация">
                 <ul>
-                    <li><a class="is-active" href="#home" onclick="showMainSection('home')"><svg class="nav-icon"><use href="static/img/ui-icons.svg#home"></use></svg>Главная</a></li>
-                    <li><a href="#store" onclick="showMainSection('store')"><svg class="nav-icon"><use href="static/img/ui-icons.svg#chart"></use></svg>Покупки</a></li>
-                    <li><a href="#statistics" onclick="showMainSection('home')"><svg class="nav-icon"><use href="static/img/ui-icons.svg#chart"></use></svg>Статистика</a></li>
+                    <li><a class="is-active" href="#home"><svg class="nav-icon"><use href="static/img/ui-icons.svg#home"></use></svg>Главная</a></li>
+                    <li><a href="#store"><svg class="nav-icon"><use href="static/img/ui-icons.svg#chart"></use></svg>Покупки</a></li>
+                    <li><a href="#statistics"><svg class="nav-icon"><use href="static/img/ui-icons.svg#chart"></use></svg>Статистика</a></li>
                 </ul>
             </nav>
             <div class="header-actions">
-                <button id="headerAuthBtn" class="primary-action" onclick="showMainSection('auth')">Войти</button>
-                <button id="headerProfileBtn" class="header-logout hidden" onclick="showMainSection('profile')">Профиль</button>
+                <button id="headerAuthBtn" class="primary-action" onclick="toggleAuthModal(true)">Войти</button>
+                <button id="headerProfileBtn" class="header-logout hidden" onclick="toggleProfileModal(true)">Профиль</button>
                 <button id="headerLogoutBtn" class="header-logout hidden" onclick="logout()"><svg class="nav-icon"><use href="static/img/ui-icons.svg#logout"></use></svg>Выйти</button>
             </div>
         </div>
     </header>
 
-    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <!-- ОСНОВНАЯ СТРАНИЦА -->
     <main class="home-page container">
 
         <!-- 1. ГЛАВНЫЙ БАННЕР -->
-        <section id="sec-home" class="mission" style="padding-top: 60px;">
+        <section id="home" class="mission" style="padding-top: 60px;">
             <p class="section-label">Aethra legit (Minecraft 1.21.4)</p>
             <h1>Контроль игры.<br>Без лишнего шума.</h1>
             <p class="mission-copy">Личный кабинет, подписка и загрузка лоадера в одном защищённом месте.</p>
             <div class="hero-actions">
-                <a class="primary-action" href="#store" onclick="showMainSection('store')">Купить подписку</a>
-                <a class="primary-action" style="background: #222;" href="#statistics" onclick="showMainSection('home')">Статистика</a>
+                <a class="primary-action" href="#store">Купить подписку</a>
+                <a class="primary-action" style="background: #222;" href="#statistics">Статистика</a>
             </div>
         </section>
 
-        <!-- 2. СЕКЦИЯ ПОКУПОК / ТАРИФЫ -->
-        <section id="sec-store" class="pricing-section hidden">
+        <!-- 2. СОЦИАЛЬНЫЕ СЕТИ -->
+        <section class="social-links">
+            <a class="social-link" href="https://discord.gg/KWnUPKr4yp" target="_blank">
+                <img src="static/img/icons/Footer/discord.png" alt="" width="24" height="24">
+                <span>DISCORD</span>
+            </a>
+            <a class="social-link" href="https://t.me/telegeram4" target="_blank">
+                <img src="static/img/icons/Footer/telegram.png" alt="" width="24" height="24">
+                <span>TELEGRAM</span>
+            </a>
+        </section>
+
+        <!-- 3. СЕКЦИЯ ПОКУПОК / ТАРИФЫ -->
+        <section id="store" class="pricing-section">
             <div class="statistics-heading">
                 <p class="section-label">ПОДПИСКИ</p>
-                <h2>Выберите подходящий тариф</h2>
-                <p>Получите моментальный доступ к клиенту Aethra для версии 1.21.4</p>
+                <h2>Выберите тариф Aethra 1.21.4</h2>
+                <p>Получите моментальный доступ к клиенту после оплаты</p>
             </div>
 
             <div class="pricing-grid">
-                <!-- Тариф 1 -->
                 <div class="price-card">
                     <div>
                         <div class="price-title">Старт</div>
@@ -110,7 +123,6 @@
                     <button class="btn-buy" onclick="buyPlan('7 дней')">Приобрести</button>
                 </div>
 
-                <!-- Тариф 2 -->
                 <div class="price-card popular">
                     <div>
                         <div class="price-title">Месяц</div>
@@ -125,7 +137,6 @@
                     <button class="btn-buy" onclick="buyPlan('30 дней')">Приобрести</button>
                 </div>
 
-                <!-- Тариф 3 -->
                 <div class="price-card">
                     <div>
                         <div class="price-title">Навсегда</div>
@@ -142,57 +153,12 @@
             </div>
         </section>
 
-        <!-- 3. АВТОРИЗАЦИЯ / РЕГИСТРАЦИЯ -->
-        <section id="sec-auth" class="hidden">
-            <div class="auth-modal-card">
-                <h2 id="authTitle" style="text-align: center; margin-bottom: 20px;">Авторизация</h2>
-                
-                <form id="authForm">
-                    <input type="text" id="usernameInput" class="auth-input" placeholder="Введите ваш ник" required>
-                    <input type="password" id="passwordInput" class="auth-input" placeholder="Введите пароль" required>
-                    
-                    <button type="submit" class="btn-buy" id="authSubmitBtn" style="margin-bottom: 12px;">Войти</button>
-                </form>
-                
-                <div style="text-align: center;">
-                    <a href="#" id="toggleAuthModeBtn" onclick="toggleAuthMode(); return false;" style="color: #777; font-size: 13px; text-decoration: underline;">Зарегистрироваться</a>
-                </div>
-            </div>
-        </section>
-
-        <!-- 4. ЛИЧНЫЙ КАБИНЕТ (ПРОФИЛЬ) -->
-        <section id="sec-profile" class="hidden" style="padding-top: 40px;">
-            <div class="statistics-heading">
-                <p class="section-label">ЛИЧНЫЙ КАБИНЕТ</p>
-                <h2 id="profileUsername">Player</h2>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
-                <div class="price-card">
-                    <div>
-                        <div class="price-title">Аккаунт</div>
-                        <p style="color: #888; font-size: 14px; margin-top: 6px;">Роль: <strong id="profileRole" style="color: #ff3333;">USER</strong></p>
-                        <p style="color: #888; font-size: 14px; margin-top: 4px;">Версия: <strong>1.21.4</strong></p>
-                    </div>
-                    <button class="btn-danger" onclick="deleteAccount()">🗑️ Удалить аккаунт</button>
-                </div>
-
-                <div class="price-card">
-                    <div>
-                        <div class="price-title">Подписка</div>
-                        <div id="profileSub" style="font-size: 22px; font-weight: 700; color: #ff3333; margin: 10px 0;">No Active Subscription</div>
-                    </div>
-                    <button class="btn-buy" onclick="showMainSection('store')">Продлить / Купить</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- 5. СТАТИСТИКА АКТИВНОСТИ -->
-        <section id="statistics" class="statistics" aria-labelledby="statistics-title">
+        <!-- 4. СТАТИСТИКА АКТИВНОСТИ -->
+        <section id="statistics" class="statistics">
             <div class="statistics-heading">
                 <p class="section-label">АКТИВНОСТЬ</p>
-                <h2 id="statistics-title">Где наши игроки<br>наиболее активны</h2>
-                <p>Три ключевых сервера, где игроки чаще всего используют наш клиент.</p>
+                <h2>Где наши игроки<br>наиболее активны</h2>
+                <p>Три ключевых сервера, где чаще всего используют наш клиент.</p>
             </div>
             <div class="statistics-layout">
                 <div class="server-comparison">
@@ -206,13 +172,53 @@
 
     </main>
 
+    <!-- ВСПЛЫВАЮЩЕЕ ОКНО АВТОРИЗАЦИИ -->
+    <div id="authModal" class="auth-overlay hidden">
+        <div class="auth-modal-card">
+            <span class="close-modal" onclick="toggleAuthModal(false)">&times;</span>
+            <h2 id="authTitle" style="text-align: center; margin-bottom: 20px;">Авторизация</h2>
+            
+            <form id="authForm">
+                <input type="text" id="usernameInput" class="auth-input" placeholder="Введите никнейм" required>
+                <input type="password" id="passwordInput" class="auth-input" placeholder="Введите пароль" required>
+                <button type="submit" class="btn-buy" id="authSubmitBtn" style="margin-bottom: 12px;">Войти</button>
+            </form>
+            
+            <div style="text-align: center;">
+                <a href="#" id="toggleAuthModeBtn" onclick="toggleAuthMode(); return false;" style="color: #777; font-size: 13px; text-decoration: underline;">Зарегистрироваться</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ВСПЛЫВАЮЩЕЕ ОКНО ПРОФИЛЯ -->
+    <div id="profileModal" class="auth-overlay hidden">
+        <div class="auth-modal-card" style="max-width: 500px;">
+            <span class="close-modal" onclick="toggleProfileModal(false)">&times;</span>
+            <div class="statistics-heading" style="margin-bottom: 15px;">
+                <p class="section-label">ПРОФИЛЬ ИГРОКА</p>
+                <h2 id="profileUsername">Player</h2>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+                <p style="color: #888; font-size: 14px;">Роль: <strong id="profileRole" style="color: #ff3333;">USER</strong></p>
+                <p style="color: #888; font-size: 14px; margin-top: 4px;">Версия клиента: <strong>1.21.4</strong></p>
+                <p style="color: #888; font-size: 14px; margin-top: 4px;">Статус: <strong id="profileSub" style="color: #ff3333;">No Active Subscription</strong></p>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-buy" onclick="toggleProfileModal(false); window.location.hash = 'store';">Купить подписку</button>
+                <button class="btn-danger" style="margin-top:0;" onclick="deleteAccount()">Удалить аккаунт</button>
+            </div>
+        </div>
+    </div>
+
     <footer class="site-footer">
         <div class="container">
             <span>© 2026 aethradlc.ru — Aethra Client 1.21.4</span>
         </div>
     </footer>
 
-    <!-- СКРИПТЫ СИНХРОНИЗАЦИИ И ЛОГИКИ -->
+    <!-- СКРИПТЫ -->
     <script>
         let isRegisterMode = false;
 
@@ -231,9 +237,7 @@
             return JSON.parse(raw);
         }
 
-        function saveDB(data) {
-            localStorage.setItem('aethra_db', JSON.stringify(data));
-        }
+        function saveDB(data) { localStorage.setItem('aethra_db', JSON.stringify(data)); }
 
         function showToast(msg, type = 'success') {
             const container = document.getElementById('toast-container');
@@ -244,12 +248,8 @@
             setTimeout(() => toast.remove(), 3000);
         }
 
-        function showMainSection(sec) {
-            ['home', 'store', 'auth', 'profile'].forEach(s => {
-                const el = document.getElementById('sec-' + s);
-                if (el) el.classList.toggle('hidden', s !== sec);
-            });
-        }
+        function toggleAuthModal(show) { document.getElementById('authModal').classList.toggle('hidden', !show); }
+        function toggleProfileModal(show) { document.getElementById('profileModal').classList.toggle('hidden', !show); }
 
         function toggleAuthMode() {
             isRegisterMode = !isRegisterMode;
@@ -281,10 +281,9 @@
                 localStorage.setItem('aethra_session', newUser.username);
                 showToast('Успешная регистрация!');
                 updateAuthState();
-                showMainSection('profile');
+                toggleAuthModal(false);
             } else {
                 if (!user) {
-                    // Если чистили кэш - восстанавливаем пользователя автоматически
                     user = {
                         username: userIn,
                         password: passIn,
@@ -298,7 +297,7 @@
                 localStorage.setItem('aethra_session', user.username);
                 showToast('С возвращением!');
                 updateAuthState();
-                showMainSection('profile');
+                toggleAuthModal(false);
             }
         });
 
@@ -334,8 +333,8 @@
         function buyPlan(planName) {
             const session = localStorage.getItem('aethra_session');
             if (!session) {
-                showToast('Сначала войдите в аккаунт!', 'warning');
-                showMainSection('auth');
+                showToast('Сначала войдите в аккаунт!', 'error');
+                toggleAuthModal(true);
                 return;
             }
 
@@ -346,7 +345,6 @@
                 saveDB(db);
                 showToast(`Подписка ${planName} успешно оформлена!`);
                 updateAuthState();
-                showMainSection('profile');
             }
         }
 
@@ -360,9 +358,9 @@
                 saveDB(db);
 
                 localStorage.removeItem('aethra_session');
-                showToast('Аккаунт успешно удален!', 'warning');
+                showToast('Аккаунт успешно удален!');
+                toggleProfileModal(false);
                 updateAuthState();
-                showMainSection('home');
             }
         }
 
@@ -370,12 +368,9 @@
             localStorage.removeItem('aethra_session');
             showToast('Вы вышли из системы');
             updateAuthState();
-            showMainSection('home');
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            updateAuthState();
-        });
+        window.addEventListener('DOMContentLoaded', updateAuthState);
     </script>
 </body>
 </html>
