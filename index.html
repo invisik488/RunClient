@@ -12,7 +12,15 @@
         .screen { position: relative; z-index: 1; width: 100%; min-height: 100vh; }
         .hidden { display: none !important; }
 
-        /* ================= 1. АВТОРИЗАЦИЯ / РЕГИСТРАЦИЯ ================= */
+        /* ================= TOAST NOTIFICATIONS (КАСТОМНЫЕ УВЕДОМЛЕНИЯ) ================= */
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: #111; border: 1px solid #222; border-left: 4px solid #fff; padding: 14px 20px; border-radius: 12px; color: #fff; font-size: 13px; font-weight: 500; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s ease; }
+        .toast.success { border-left-color: #00ff66; }
+        .toast.error { border-left-color: #ff3333; }
+        .toast.warning { border-left-color: #ffaa00; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* ================= 1. АВТОРИЗАЦИЯ ================= */
         .auth-container { max-width: 1000px; margin: 0 auto; min-height: 100vh; display: flex; align-items: center; justify-content: space-between; padding: 40px 20px; }
         .form-section { width: 100%; max-width: 400px; }
         .brand-logo { width: 40px; height: 40px; fill: #ffffff; margin-bottom: 20px; }
@@ -23,9 +31,9 @@
         .subtitle { color: #666; font-size: 13px; margin-bottom: 24px; }
         .input-group { margin-bottom: 16px; }
         .input-label { display: block; font-size: 12px; color: #888; margin-bottom: 6px; }
-        .input-field { width: 100%; background: #111; border: 1px solid #222; border-radius: 16px; padding: 14px 18px; color: #fff; font-size: 14px; outline: none; }
-        .input-field:focus { border-color: #444; }
-        .submit-btn { width: 100%; background: #ffffff; color: #000000; border: none; border-radius: 16px; padding: 14px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .input-field, .select-field { width: 100%; background: #111; border: 1px solid #222; border-radius: 12px; padding: 12px 16px; color: #fff; font-size: 14px; outline: none; }
+        .input-field:focus, .select-field:focus { border-color: #ff3333; }
+        .submit-btn { width: 100%; background: #ffffff; color: #000000; border: none; border-radius: 14px; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; }
         .submit-btn:hover { background: #e0e0e0; }
 
         /* ================= 2. ЛИЧНЫЙ КАБИНЕТ ================= */
@@ -45,13 +53,14 @@
         .menu-item { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 12px; color: #666; font-size: 13px; cursor: pointer; margin-bottom: 4px; transition: 0.2s; }
         .menu-item:hover { color: #aaa; }
         .menu-item.active { background: #fff; color: #000; font-weight: 600; }
-        .menu-item.admin-tab { border: 1px dashed rgba(255, 0, 0, 0.4); color: #ff5555; }
+        .menu-item.admin-tab { border: 1px dashed rgba(255, 51, 51, 0.4); color: #ff5555; }
         .menu-item.admin-tab.active { background: #ff3333; color: #fff; border: none; }
 
         .main-content { flex: 1; }
         .tab-content { display: flex; flex-direction: column; gap: 20px; }
-        .card { background: #0a0a0a; border: 1px solid #181818; border-radius: 16px; padding: 20px; }
-        .card-title { font-size: 12px; color: #555; font-weight: 600; margin-bottom: 16px; text-transform: uppercase; }
+        .card { background: #0a0a0a; border: 1px solid #181818; border-radius: 16px; padding: 24px; position: relative; }
+        .card.admin-card { border-color: rgba(255, 51, 51, 0.3); }
+        .card-title { font-size: 12px; color: #ff3333; font-weight: 700; margin-bottom: 18px; text-transform: uppercase; letter-spacing: 0.5px; }
 
         .profile-box { display: flex; align-items: center; gap: 20px; }
         .avatar-upload-wrap { position: relative; width: 70px; height: 70px; border-radius: 12px; overflow: hidden; cursor: pointer; border: 1px solid #222; background: #111; }
@@ -60,22 +69,32 @@
         .avatar-upload-wrap:hover .avatar-overlay { opacity: 1; }
 
         .user-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-        .badge-role { background: #fff; color: #000; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 4px; }
+        .badge-role { background: #fff; color: #000; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; }
         .badge-role.OWNER { background: #ff3333; color: #fff; }
         .badge-role.ADMIN { background: #ffaa00; color: #000; }
+        .badge-role.MEDIA { background: #a855f7; color: #fff; }
+        .badge-role.USER { background: #333; color: #aaa; }
+
         .user-meta { display: flex; gap: 30px; margin-top: 15px; font-size: 12px; color: #555; }
         .user-meta span { color: #fff; display: block; margin-top: 2px; }
 
-        .setting-row { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 12px 16px; border-radius: 12px; margin-bottom: 10px; font-size: 13px; }
-        .btn-action { background: #fff; color: #000; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; }
-        .btn-change { background: #222; color: #fff; border: none; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #181818; }
-        th { color: #555; font-size: 11px; }
+        .btn-action { background: #fff; color: #000; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn-action:hover { background: #e0e0e0; }
+        .btn-action:disabled { background: #222; color: #555; cursor: not-allowed; }
+        .btn-change { background: #1f1f1f; color: #fff; border: 1px solid #333; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; }
+        .btn-change:hover { background: #333; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+        th, td { text-align: left; padding: 14px 12px; border-bottom: 1px solid #141414; }
+        th { color: #555; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+
+        .gen-box { display: flex; flex-direction: column; gap: 15px; max-width: 450px; margin-top: 10px; }
+        .key-display { background: #111; border: 1px dashed #333; padding: 12px; border-radius: 10px; font-family: monospace; font-size: 15px; color: #00ff66; word-break: break-all; text-align: center; }
     </style>
 </head>
 <body>
+
+    <div id="toast-container"></div>
 
     <!-- ================= 1. АВТОРИЗАЦИЯ / РЕГИСТРАЦИЯ ================= -->
     <div id="authScreen" class="screen">
@@ -119,7 +138,6 @@
             <div class="header-right">
                 <div class="balance-btn">0 ₽ +</div>
                 
-                <!-- НАЖАТИЕ НА НИК/АККАУНТ В УГЛУ ВОЗВРАЩАЕТ В ПРОФИЛЬ -->
                 <div class="user-click-wrap" onclick="switchSideTab('profile')">
                     <img id="headerAvatar" class="mini-avatar" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>">
                     <span id="navUsername" style="font-size: 14px; font-weight: 600;">invisik</span>
@@ -130,7 +148,6 @@
         </header>
 
         <div class="dashboard-container">
-            <!-- БОКОВОЕ МЕНЮ (РАБОЧИЕ ВКЛАДКИ) -->
             <div class="sidebar">
                 <div class="user-mini" onclick="switchSideTab('profile')" style="cursor: pointer;">
                     <img id="miniAvatar" class="mini-avatar" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>">
@@ -143,20 +160,19 @@
                 <div class="menu-item active" id="menu-profile" onclick="switchSideTab('profile')">👤 Profile</div>
                 <div class="menu-item" id="menu-loader" onclick="switchSideTab('loader')">⚡ Download Loader</div>
                 <div class="menu-item" id="menu-license" onclick="switchSideTab('license')">🔑 License Activation</div>
+                <div class="menu-item hidden" id="menu-generator" onclick="switchSideTab('generator')">⚡ Key Generator</div>
                 <div class="menu-item" id="menu-wallet" onclick="switchSideTab('wallet')">💳 Wallet</div>
                 <div class="menu-item" id="menu-security" onclick="switchSideTab('security')">⚙️ Security & Settings</div>
                 
-                <!-- АДМИН ПАНЕЛЬ (ПОКАЗЫВАЕТСЯ ТОЛЬКО ДЛЯ OWNER / ADMIN) -->
                 <div class="menu-item admin-tab hidden" id="menu-admin" onclick="switchSideTab('admin')">👑 Admin Panel</div>
             </div>
 
-            <!-- ОСНОВНЫЕ РАЗДЕЛЫ КОНТЕНТА -->
             <div class="main-content">
                 
-                <!-- 1. ВКЛАДКА: PROFILE -->
+                <!-- 1. PROFILE -->
                 <div id="tab-profile" class="tab-content">
                     <div class="card">
-                        <div class="card-title">User Profile</div>
+                        <div class="card-title" style="color:#555;">User Profile</div>
                         <div class="profile-box">
                             <div class="avatar-upload-wrap" onclick="document.getElementById('fileInput').click()">
                                 <img id="mainAvatar" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>">
@@ -178,62 +194,102 @@
                     </div>
 
                     <div class="card">
-                        <div class="card-title">Client Subscription</div>
-                        <h3 id="subStatus">Active (Lifetime Access)</h3>
+                        <div class="card-title" style="color:#555;">Client Subscription</div>
+                        <h3 id="subStatus" style="color:#00ff66;">No Active Subscription</h3>
                         <p style="color: #555; font-size: 12px; margin-top: 4px;">VerseDLC Client 1.21.11 Fabric</p>
                     </div>
                 </div>
 
-                <!-- 2. ВКЛАДКА: DOWNLOAD LOADER -->
+                <!-- 2. DOWNLOAD LOADER -->
                 <div id="tab-loader" class="tab-content hidden">
                     <div class="card">
-                        <div class="card-title">Download VerseDLC Client</div>
+                        <div class="card-title" style="color:#555;">Download VerseDLC Client</div>
                         <h3>VerseDLC Loader v2.1 (Fabric 1.21.11)</h3>
                         <p style="color: #666; font-size: 13px; margin: 10px 0 20px 0;">Скачайте лаунчер для автоматической инъекции клиента в Minecraft.</p>
-                        <button class="btn-action" onclick="alert('Скачивание VerseDLC_Loader.exe началось!')">Download .EXE Loader</button>
+                        <button class="btn-action" onclick="showToast('Скачивание VerseDLC_Loader.exe началось!', 'success')">Download .EXE Loader</button>
                     </div>
                 </div>
 
-                <!-- 3. ВКЛАДКА: LICENSE ACTIVATION -->
+                <!-- 3. LICENSE ACTIVATION -->
                 <div id="tab-license" class="tab-content hidden">
                     <div class="card">
-                        <div class="card-title">Activate Key</div>
+                        <div class="card-title" style="color:#555;">Activate Key</div>
                         <p style="color: #666; font-size: 13px; margin-bottom: 12px;">Введите промокод или ключ активации подписки:</p>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="text" class="input-field" placeholder="XXXX-XXXX-XXXX-XXXX" style="max-width: 300px;">
-                            <button class="btn-action" onclick="alert('Ключ успешно активирован!')">Activate</button>
+                        <div style="display: flex; gap: 10px; max-width: 500px;">
+                            <input type="text" id="licenseKeyInput" class="input-field" placeholder="XXXX-XXXX-XXXX-XXXX">
+                            <button class="btn-action" onclick="activateKey()">Activate</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- 4. ВКЛАДКА: WALLET -->
+                <!-- 4. KEY GENERATOR (ДЛЯ ВСЕХ КРОМЕ USER) -->
+                <div id="tab-generator" class="tab-content hidden">
+                    <div class="card">
+                        <div class="card-title" style="color:#a855f7;">Key Generator</div>
+                        <p style="color: #666; font-size: 13px; margin-bottom: 15px;">Создание ключей активации подписки для пользователей.</p>
+                        
+                        <div class="gen-box">
+                            <div>
+                                <label class="input-label">Длительность подписки</label>
+                                <select id="genDays" class="select-field">
+                                    <option value="3">3 дня</option>
+                                    <option value="7">7 дней</option>
+                                    <option value="30">30 дней</option>
+                                    <option value="3650">Lifetime (Бессрочно)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="input-label">Количество использований (1-5)</label>
+                                <input type="number" id="genUses" class="input-field" value="1" min="1" max="5">
+                            </div>
+
+                            <button id="genBtn" class="btn-action" style="background:#a855f7; color:#fff;" onclick="generateKey()">Generate Key</button>
+
+                            <div id="cooldownText" style="font-size: 12px; color: #ffaa00; display: none;"></div>
+                            <div id="generatedResult" class="key-display hidden"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. WALLET -->
                 <div id="tab-wallet" class="tab-content hidden">
                     <div class="card">
-                        <div class="card-title">Your Balance</div>
+                        <div class="card-title" style="color:#555;">Your Balance</div>
                         <h2>0 ₽</h2>
-                        <button class="btn-action" style="margin-top: 15px;" onclick="alert('Переход на платежный шлюз...')">Пополнить баланс</button>
+                        <button class="btn-action" style="margin-top: 15px;" onclick="showToast('Переход на платежный шлюз...', 'warning')">Пополнить баланс</button>
                     </div>
                 </div>
 
-                <!-- 5. ВКЛАДКА: SECURITY & SETTINGS -->
+                <!-- 6. SECURITY -->
                 <div id="tab-security" class="tab-content hidden">
                     <div class="card">
-                        <div class="card-title">Account Settings</div>
-                        <div class="setting-row">
+                        <div class="card-title" style="color:#555;">Account Settings</div>
+                        <div style="background: #111; padding: 12px 16px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
                             <div>Password <br><strong style="color:#aaa;">••••••••••••</strong></div>
-                            <button class="btn-change" onclick="alert('Сброс пароля отправлен на почту')">Change</button>
-                        </div>
-                        <div class="setting-row">
-                            <div>HWID Reset <br><strong id="hwidVal" style="color:#aaa;">Привязан</strong></div>
-                            <button class="btn-change" onclick="alert('Заявка на сброс HWID отправлена')">Reset HWID</button>
+                            <button class="btn-change" onclick="showToast('Инструкция отправлена на Email', 'success')">Change</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- 6. ВКЛАДКА: ADMIN PANEL (ТОЛЬКО ДЛЯ АДМИНОВ) -->
+                <!-- 7. ADMIN PANEL (ОФОРМЛЕННАЯ С ПОИСКОМ И ВЫДОЧЕЙ РОЛЕЙ) -->
                 <div id="tab-admin" class="tab-content hidden">
-                    <div class="card" style="border-color: #ff3333;">
-                        <div class="card-title" style="color: #ff3333;">Управление Пользователями (Admin Controls)</div>
+                    <div class="card admin-card">
+                        <div class="card-title">Управление пользователями (Admin Controls)</div>
+                        
+                        <!-- Форма выдачи ролей -->
+                        <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                            <input type="text" id="adminUserSearch" class="input-field" placeholder="Введите никнейм пользователя..." style="flex: 2; min-width: 200px;">
+                            <select id="adminRoleSelect" class="select-field" style="flex: 1; min-width: 130px;">
+                                <option value="USER">USER</option>
+                                <option value="MEDIA">MEDIA</option>
+                                <option value="ADMIN">ADMIN</option>
+                                <option value="OWNER">OWNER</option>
+                            </select>
+                            <button class="btn-action" style="background: #ff3333; color: #fff;" onclick="assignRoleFromAdmin()">Выдать роль</button>
+                        </div>
+
+                        <!-- Таблица пользователей -->
                         <table>
                             <thead>
                                 <tr>
@@ -243,19 +299,8 @@
                                     <th>Действие</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>invisik</strong></td>
-                                    <td><span class="badge-role OWNER">OWNER</span></td>
-                                    <td>Привязан</td>
-                                    <td><button class="btn-change" onclick="alert('Нельзя изменить владельца')">Edit</button></td>
-                                </tr>
-                                <tr>
-                                    <td>test_user</td>
-                                    <td><span class="badge-role">USER</span></td>
-                                    <td>null</td>
-                                    <td><button class="btn-change" onclick="alert('Роль изменена!')">Выдать ADMIN</button></td>
-                                </tr>
+                            <tbody id="userTableBody">
+                                <!-- Динамически заполняется -->
                             </tbody>
                         </table>
                     </div>
@@ -265,8 +310,42 @@
         </div>
     </div>
 
-    <!-- ================= 3. ЛОГИКА (JS) ================= -->
+    <!-- ================= 3. СКРИПТЫ И ЛОГИКА ================= -->
     <script>
+        // Инициализация базы данных в LocalStorage
+        if (!localStorage.getItem('v_users')) {
+            const initialUsers = [
+                { username: 'invisik', role: 'OWNER', hwid: 'Привязан', sub: 'Lifetime Access' },
+                { username: 'test_user', role: 'USER', hwid: 'null', sub: 'No Active Subscription' }
+            ];
+            localStorage.setItem('v_users', JSON.stringify(initialUsers));
+        }
+
+        if (!localStorage.getItem('v_keys')) {
+            localStorage.setItem('v_keys', JSON.stringify([]));
+        }
+
+        // Кастомные всплывающие уведомления (Toast)
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            let icon = '✅';
+            if (type === 'error') icon = '❌';
+            if (type === 'warning') icon = '⚠️';
+
+            toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.transition = '0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
         let currentAuthMode = 'login';
 
         function switchAuthTab(mode) {
@@ -278,9 +357,8 @@
             document.getElementById('submitBtn').innerText = mode === 'login' ? 'Sign In' : 'Sign Up';
         }
 
-        // ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК В ЛИЧНОМ КАБИНЕТЕ
         function switchSideTab(tabName) {
-            const tabs = ['profile', 'loader', 'license', 'wallet', 'security', 'admin'];
+            const tabs = ['profile', 'loader', 'license', 'generator', 'wallet', 'security', 'admin'];
             
             tabs.forEach(t => {
                 const menuEl = document.getElementById('menu-' + t);
@@ -291,23 +369,23 @@
             });
         }
 
-        // Проверка при входе
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedUser = localStorage.getItem('versedlc_user');
-            if (savedUser) {
-                openDashboard(JSON.parse(savedUser));
-            }
-        });
-
+        // Авторизация / Регистрация
         document.getElementById('authForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const username = document.getElementById('usernameInput').value.trim();
+            let users = JSON.parse(localStorage.getItem('v_users'));
 
-            // Если ник invisik — автоматически выдаем OWNER
-            const role = (username.toLowerCase() === 'invisik') ? 'OWNER' : 'USER';
-            const user = { username: username, role: role, hwid: 'Привязан' };
+            let user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
 
-            localStorage.setItem('versedlc_user', JSON.stringify(user));
+            if (!user) {
+                const role = (username.toLowerCase() === 'invisik') ? 'OWNER' : 'USER';
+                user = { username: username, role: role, hwid: 'null', sub: 'No Active Subscription' };
+                users.push(user);
+                localStorage.setItem('v_users', JSON.stringify(users));
+            }
+
+            localStorage.setItem('versedlc_current_user', JSON.stringify(user));
+            showToast(`Добро пожаловать, ${user.username}!`, 'success');
             openDashboard(user);
         });
 
@@ -318,6 +396,7 @@
             document.getElementById('navUsername').innerText = user.username;
             document.getElementById('sideUsername').innerText = user.username;
             document.getElementById('displayUsername').innerText = user.username;
+            document.getElementById('subStatus').innerText = user.sub || 'No Active Subscription';
 
             const userRole = (user.role || 'USER').toUpperCase();
             document.getElementById('sideRole').innerText = userRole;
@@ -326,47 +405,191 @@
             badge.innerText = userRole;
             badge.className = 'badge-role ' + userRole;
 
-            // ПОКАЗЫВАЕМ АДМИН-ПАНЕЛЬ ЕСЛИ РОЛЬ OWNER ИЛИ ADMIN
+            // Генератор ключей доступен всем, КРОМЕ USER
+            if (userRole !== 'USER') {
+                document.getElementById('menu-generator').classList.remove('hidden');
+            } else {
+                document.getElementById('menu-generator').classList.add('hidden');
+            }
+
+            // Админка только для OWNER и ADMIN
             if (userRole === 'OWNER' || userRole === 'ADMIN') {
                 document.getElementById('menu-admin').classList.remove('hidden');
             } else {
                 document.getElementById('menu-admin').classList.add('hidden');
             }
 
-            // Загрузка сохраненной аватарки
-            const savedAvatar = localStorage.getItem('avatar_' + user.username);
-            if (savedAvatar) {
-                document.getElementById('mainAvatar').src = savedAvatar;
-                document.getElementById('miniAvatar').src = savedAvatar;
-                document.getElementById('headerAvatar').src = savedAvatar;
-            }
-
-            // По умолчанию открываем вкладку профиля
+            renderAdminTable();
+            checkCooldown();
             switchSideTab('profile');
         }
 
-        // Загрузка аватарки
-        document.getElementById('fileInput').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    const imgBase64 = evt.target.result;
-                    document.getElementById('mainAvatar').src = imgBase64;
-                    document.getElementById('miniAvatar').src = imgBase64;
-                    document.getElementById('headerAvatar').src = imgBase64;
+        // Выдача роли через Админ-Панель
+        function assignRoleFromAdmin() {
+            const targetUsername = document.getElementById('adminUserSearch').value.trim();
+            const selectedRole = document.getElementById('adminRoleSelect').value;
 
-                    const user = JSON.parse(localStorage.getItem('versedlc_user') || '{}');
-                    if (user.username) {
-                        localStorage.setItem('avatar_' + user.username, imgBase64);
-                    }
-                };
-                reader.readAsDataURL(file);
+            if (!targetUsername) {
+                showToast('Введите никнейм пользователя!', 'error');
+                return;
             }
+
+            let users = JSON.parse(localStorage.getItem('v_users'));
+            let userIndex = users.findIndex(u => u.username.toLowerCase() === targetUsername.toLowerCase());
+
+            if (userIndex !== -1) {
+                users[userIndex].role = selectedRole;
+                localStorage.setItem('v_users', JSON.stringify(users));
+
+                // Если меняем роль самому себе
+                let currentUser = JSON.parse(localStorage.getItem('versedlc_current_user'));
+                if (currentUser.username.toLowerCase() === targetUsername.toLowerCase()) {
+                    currentUser.role = selectedRole;
+                    localStorage.setItem('versedlc_current_user', JSON.stringify(currentUser));
+                    openDashboard(currentUser);
+                }
+
+                showToast(`Роль пользователю ${users[userIndex].username} успешно изменена на ${selectedRole}!`, 'success');
+                renderAdminTable();
+                document.getElementById('adminUserSearch').value = '';
+            } else {
+                showToast(`Пользователь "${targetUsername}" не найден!`, 'error');
+            }
+        }
+
+        // Отображение таблицы пользователей
+        function renderAdminTable() {
+            const tbody = document.getElementById('userTableBody');
+            tbody.innerHTML = '';
+
+            const users = JSON.parse(localStorage.getItem('v_users')) || [];
+
+            users.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${u.username}</strong></td>
+                    <td><span class="badge-role ${u.role}">${u.role}</span></td>
+                    <td>${u.hwid}</td>
+                    <td><button class="btn-change" onclick="quickEditUser('${u.username}')">Edit</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function quickEditUser(username) {
+            document.getElementById('adminUserSearch').value = username;
+            showToast(`Имя ${username} подставлено в поле редактирования.`, 'warning');
+        }
+
+        // ГЕНЕРАЦИЯ КЛЮЧЕЙ С КУЛДАУНОМ
+        function generateKey() {
+            const currentUser = JSON.parse(localStorage.getItem('versedlc_current_user'));
+            const role = currentUser.role;
+
+            // Проверка кулдауна
+            const lastGenTime = localStorage.getItem('last_gen_' + currentUser.username);
+            const cdTime = getCooldownByRole(role); // Время задержки в миллисекундах
+
+            if (lastGenTime && (Date.now() - lastGenTime < cdTime)) {
+                showToast('Задержка еще не прошла!', 'error');
+                return;
+            }
+
+            const days = parseInt(document.getElementById('genDays').value);
+            const uses = parseInt(document.getElementById('genUses').value) || 1;
+
+            const newKey = 'VERSE-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+
+            let keys = JSON.parse(localStorage.getItem('v_keys')) || [];
+            keys.push({ key: newKey, days: days, uses: uses });
+            localStorage.setItem('v_keys', JSON.stringify(keys));
+
+            // Сохраняем время последней генерации
+            localStorage.setItem('last_gen_' + currentUser.username, Date.now());
+
+            const resBox = document.getElementById('generatedResult');
+            resBox.innerText = `Сгенерированный ключ: ${newKey} (Дней: ${days}, Использований: ${uses})`;
+            resBox.classList.remove('hidden');
+
+            showToast('Ключ успешно сгенерирован!', 'success');
+            checkCooldown();
+        }
+
+        function getCooldownByRole(role) {
+            if (role === 'OWNER' || role === 'ADMIN') return 0; // Без задержки
+            if (role === 'MEDIA') return 7 * 24 * 60 * 60 * 1000; // 7 дней
+            return 24 * 60 * 60 * 1000;
+        }
+
+        function checkCooldown() {
+            const currentUser = JSON.parse(localStorage.getItem('versedlc_current_user'));
+            if (!currentUser) return;
+
+            const cdTime = getCooldownByRole(currentUser.role);
+            if (cdTime === 0) return;
+
+            const lastGenTime = localStorage.getItem('last_gen_' + currentUser.username);
+            const genBtn = document.getElementById('genBtn');
+            const cooldownText = document.getElementById('cooldownText');
+
+            if (lastGenTime && (Date.now() - lastGenTime < cdTime)) {
+                genBtn.disabled = true;
+                const remaining = Math.ceil((cdTime - (Date.now() - lastGenTime)) / 1000);
+                cooldownText.style.display = 'block';
+                cooldownText.innerText = `Задержка перед следующей генерацией: ${Math.floor(remaining / 60)} мин. ${remaining % 60} сек.`;
+            } else {
+                genBtn.disabled = false;
+                cooldownText.style.display = 'none';
+            }
+        }
+
+        // АКТИВАЦИЯ КЛЮЧА
+        function activateKey() {
+            const keyInput = document.getElementById('licenseKeyInput').value.trim();
+            if (!keyInput) {
+                showToast('Введите ключ активации!', 'error');
+                return;
+            }
+
+            let keys = JSON.parse(localStorage.getItem('v_keys')) || [];
+            const keyIndex = keys.findIndex(k => k.key === keyInput);
+
+            if (keyIndex !== -1) {
+                const foundKey = keys[keyIndex];
+                
+                // Обновляем подписку
+                let currentUser = JSON.parse(localStorage.getItem('versedlc_current_user'));
+                currentUser.sub = `Active (${foundKey.days} Days)`;
+                localStorage.setItem('versedlc_current_user', JSON.stringify(currentUser));
+
+                // Уменьшаем использования ключа
+                foundKey.uses -= 1;
+                if (foundKey.uses <= 0) {
+                    keys.splice(keyIndex, 1);
+                } else {
+                    keys[keyIndex] = foundKey;
+                }
+                localStorage.setItem('v_keys', JSON.stringify(keys));
+
+                showToast(`Ключ успешно активирован! Подписка выдана на ${foundKey.days} дн.`, 'success');
+                document.getElementById('licenseKeyInput').value = '';
+                openDashboard(currentUser);
+            } else {
+                showToast('Ошибка! Такого ключа не существует или он исчерпан.', 'error');
+            }
+        }
+
+        // Загрузка
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedUser = localStorage.getItem('versedlc_current_user');
+            if (savedUser) {
+                openDashboard(JSON.parse(savedUser));
+            }
+            setInterval(checkCooldown, 1000);
         });
 
         document.getElementById('logoutBtn').addEventListener('click', () => {
-            localStorage.removeItem('versedlc_user');
+            localStorage.removeItem('versedlc_current_user');
             document.getElementById('dashboardScreen').classList.add('hidden');
             document.getElementById('authScreen').classList.remove('hidden');
         });
