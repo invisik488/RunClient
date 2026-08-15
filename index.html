@@ -1,376 +1,453 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0c0d0f">
-    <title>Aethra DLC — Главная</title>
-
-    <link rel="stylesheet" href="static/css/site.css?v=1784935229">
-    <link rel="stylesheet" href="static/css/rockstar-theme.css?v=1784935230">
-    <script defer src="static/js/silk-background.js?v=1784935233"></script>
-    <script defer src="static/js/site.js?v=1784935233"></script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VerseDLC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: #050505; color: #ffffff; min-height: 100vh; position: relative; overflow-x: hidden; }
+
+        .screen { position: relative; z-index: 1; width: 100%; min-height: 100vh; }
         .hidden { display: none !important; }
-        
-        /* Блок подписок / покупок */
-        .pricing-section { padding: 60px 0; border-top: 1px solid rgba(255,255,255,0.05); }
-        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-top: 30px; }
-        .price-card { background: rgba(18, 20, 26, 0.8); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 30px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; transition: 0.3s ease; }
-        .price-card:hover { border-color: rgba(255,255,255,0.25); transform: translateY(-4px); }
-        .price-card.popular { border-color: #ff3333; }
-        .price-card.popular::before { content: 'ПОПУЛЯРНОЕ'; position: absolute; top: 15px; right: -30px; background: #ff3333; color: #fff; font-size: 9px; font-weight: 800; padding: 4px 30px; transform: rotate(45deg); }
-        .price-title { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 8px; }
-        .price-amount { font-size: 32px; font-weight: 800; color: #fff; margin-bottom: 20px; }
-        .price-amount span { font-size: 14px; color: #777; font-weight: 400; }
-        .price-features { list-style: none; padding: 0; margin-bottom: 24px; color: #aaa; font-size: 14px; }
-        .price-features li { margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-        .price-features li::before { content: '✓'; color: #00ff66; font-weight: bold; }
-        .btn-buy { display: inline-block; width: 100%; text-align: center; background: #ff3333; color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; text-decoration: none; transition: 0.2s; }
-        .btn-buy:hover { background: #cc0000; }
 
-        /* Всплывашки */
-        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: #111; border: 1px solid #222; border-left: 4px solid #fff; padding: 14px 20px; border-radius: 12px; color: #fff; font-size: 13px; font-weight: 500; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; }
-        .toast.success { border-left-color: #00ff66; }
-        .toast.error { border-left-color: #ff3333; }
+        /* ------------------- АВТОРИЗАЦИЯ / РЕГИСТРАЦИЯ ------------------- */
+        .auth-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-        /* Окно авторизации в стиле Aethra */
-        .auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 9000; display: flex; align-items: center; justify-content: center; }
-        .auth-modal-card { background: rgba(12, 13, 15, 0.98); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 30px; width: 100%; max-width: 400px; position: relative; }
-        .auth-input { width: 100%; background: #15171e; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 12px 16px; color: #fff; font-size: 14px; margin-bottom: 15px; outline: none; }
-        .auth-input:focus { border-color: #ff3333; }
-        .close-modal { position: absolute; top: 15px; right: 20px; color: #777; font-size: 22px; cursor: pointer; }
-        .close-modal:hover { color: #fff; }
-        .btn-danger { background: #220a0a; color: #ff4444; border: 1px solid #441111; padding: 8px 16px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 15px; font-size: 12px; }
-        .btn-danger:hover { background: #441111; color: #fff; }
+        .auth-card {
+            background: #0a0a0c;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+        }
+
+        .auth-title {
+            font-size: 26px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        .auth-subtitle {
+            font-size: 13px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .tabs {
+            display: flex;
+            background: #121215;
+            padding: 4px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #666;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .tab-btn.active {
+            background: #1c1c21;
+            color: #fff;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            background: #121215;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 12px 14px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: #ff3333;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: #ff3333;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background: #e62e2e;
+        }
+
+        /* ------------------- ЛИЧНЫЙ КАБИНЕТ ------------------- */
+        .dash-container {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background: #0a0a0c;
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .brand-logo {
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-logo span {
+            color: #ff3333;
+        }
+
+        .user-card-side {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #121215;
+            border-radius: 10px;
+            margin-bottom: 24px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 51, 51, 0.15);
+            border: 1px solid #ff3333;
+            color: #ff3333;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .user-details .uname {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .user-details .urole {
+            font-size: 10px;
+            color: #ff3333;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .nav-item {
+            padding: 10px 14px;
+            border-radius: 8px;
+            color: #777;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255, 51, 51, 0.1);
+            color: #ff3333;
+        }
+
+        .btn-logout {
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #777;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .btn-logout:hover {
+            border-color: #ff3333;
+            color: #ff3333;
+        }
+
+        .content {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .card {
+            background: #0a0a0c;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 24px;
+        }
+
+        .card-header {
+            font-size: 11px;
+            color: #555;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .sub-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #00ff66;
+            margin-bottom: 4px;
+        }
+
+        .sub-desc {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .grid-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .info-item {
+            background: #121215;
+            padding: 12px 16px;
+            border-radius: 8px;
+        }
+
+        .info-item label {
+            font-size: 10px;
+            color: #666;
+            display: block;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+        }
+
+        .info-item val {
+            font-size: 13px;
+            font-weight: 600;
+        }
     </style>
 </head>
-<body data-page="home">
+<body>
 
-    <canvas id="bg-canvas" aria-hidden="true"></canvas>
-    <div id="toast-container"></div>
+    <!-- ЭКРАН ВХОДА И РЕГИСТРАЦИИ -->
+    <div id="authScreen" class="screen auth-wrapper">
+        <div class="auth-card">
+            <div class="auth-title">Verse<span>DLC</span></div>
+            <div class="auth-subtitle">Панель управления клиентом</div>
 
-    <!-- ШАПКА -->
-    <header class="site-header">
-        <div class="container">
-            <a class="site-brand" href="index.html">
-                <img class="brand-mark" src="static/img/aethra-mark.svg" alt="Aethra">
-                <span class="title">Aethra</span>
-            </a>
-            <nav aria-label="Основная навигация">
-                <ul>
-                    <li><a class="is-active" href="#home"><svg class="nav-icon"><use href="static/img/ui-icons.svg#home"></use></svg>Главная</a></li>
-                    <li><a href="#store"><svg class="nav-icon"><use href="static/img/ui-icons.svg#chart"></use></svg>Покупки</a></li>
-                    <li><a href="#statistics"><svg class="nav-icon"><use href="static/img/ui-icons.svg#chart"></use></svg>Статистика</a></li>
-                </ul>
-            </nav>
-            <div class="header-actions">
-                <button id="headerAuthBtn" class="primary-action" onclick="toggleAuthModal(true)">Войти</button>
-                <button id="headerProfileBtn" class="header-logout hidden" onclick="toggleProfileModal(true)">Профиль</button>
-                <button id="headerLogoutBtn" class="header-logout hidden" onclick="logout()"><svg class="nav-icon"><use href="static/img/ui-icons.svg#logout"></use></svg>Выйти</button>
-            </div>
-        </div>
-    </header>
-
-    <!-- ОСНОВНАЯ СТРАНИЦА -->
-    <main class="home-page container">
-
-        <!-- 1. ГЛАВНЫЙ БАННЕР -->
-        <section id="home" class="mission" style="padding-top: 60px;">
-            <p class="section-label">Aethra legit (Minecraft 1.21.4)</p>
-            <h1>Контроль игры.<br>Без лишнего шума.</h1>
-            <p class="mission-copy">Личный кабинет, подписка и загрузка лоадера в одном защищённом месте.</p>
-            <div class="hero-actions">
-                <a class="primary-action" href="#store">Купить подписку</a>
-                <a class="primary-action" style="background: #222;" href="#statistics">Статистика</a>
-            </div>
-        </section>
-
-        <!-- 2. СОЦИАЛЬНЫЕ СЕТИ -->
-        <section class="social-links">
-            <a class="social-link" href="https://discord.gg/KWnUPKr4yp" target="_blank">
-                <img src="static/img/icons/Footer/discord.png" alt="" width="24" height="24">
-                <span>DISCORD</span>
-            </a>
-            <a class="social-link" href="https://t.me/telegeram4" target="_blank">
-                <img src="static/img/icons/Footer/telegram.png" alt="" width="24" height="24">
-                <span>TELEGRAM</span>
-            </a>
-        </section>
-
-        <!-- 3. СЕКЦИЯ ПОКУПОК / ТАРИФЫ -->
-        <section id="store" class="pricing-section">
-            <div class="statistics-heading">
-                <p class="section-label">ПОДПИСКИ</p>
-                <h2>Выберите тариф Aethra 1.21.4</h2>
-                <p>Получите моментальный доступ к клиенту после оплаты</p>
+            <div class="tabs">
+                <button id="tabLogin" class="tab-btn active" onclick="switchAuth(false)">Вход</button>
+                <button id="tabRegister" class="tab-btn" onclick="switchAuth(true)">Регистрация</button>
             </div>
 
-            <div class="pricing-grid">
-                <div class="price-card">
-                    <div>
-                        <div class="price-title">Старт</div>
-                        <div class="price-amount">199 ₽ <span>/ 7 дней</span></div>
-                        <ul class="price-features">
-                            <li>Полный доступ к Aethra Client</li>
-                            <li>Версия Minecraft 1.21.4</li>
-                            <li>Обход анархических серверов</li>
-                            <li>Техподдержка 24/7</li>
-                        </ul>
-                    </div>
-                    <button class="btn-buy" onclick="buyPlan('7 дней')">Приобрести</button>
-                </div>
-
-                <div class="price-card popular">
-                    <div>
-                        <div class="price-title">Месяц</div>
-                        <div class="price-amount">499 ₽ <span>/ 30 дней</span></div>
-                        <ul class="price-features">
-                            <li>Всё из тарифа Старт</li>
-                            <li>Приоритетные обновления</li>
-                            <li>Доступ к закрытому Discord</li>
-                            <li>Кастомные конфиги</li>
-                        </ul>
-                    </div>
-                    <button class="btn-buy" onclick="buyPlan('30 дней')">Приобрести</button>
-                </div>
-
-                <div class="price-card">
-                    <div>
-                        <div class="price-title">Навсегда</div>
-                        <div class="price-amount">1499 ₽ <span>/ Lifetime</span></div>
-                        <ul class="price-features">
-                            <li>Навсегда без продлений</li>
-                            <li>Все будущие обновления</li>
-                            <li>Роль VIP в дискорде</li>
-                            <li>Личный приоритетный саппорт</li>
-                        </ul>
-                    </div>
-                    <button class="btn-buy" onclick="buyPlan('Lifetime')">Приобрести</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- 4. СТАТИСТИКА АКТИВНОСТИ -->
-        <section id="statistics" class="statistics">
-            <div class="statistics-heading">
-                <p class="section-label">АКТИВНОСТЬ</p>
-                <h2>Где наши игроки<br>наиболее активны</h2>
-                <p>Три ключевых сервера, где чаще всего используют наш клиент.</p>
-            </div>
-            <div class="statistics-layout">
-                <div class="server-comparison">
-                    <svg class="activity-graph" viewBox="0 0 600 250"><path class="activity-axis" d="M50 215H550"></path><path class="activity-line" d="M70 190 C145 150 215 80 300 115 S445 185 530 145"></path><circle cx="70" cy="190" r="6"></circle><circle cx="300" cy="115" r="6"></circle><circle cx="530" cy="145" r="6"></circle></svg>
-                    <div class="server-graph-label server-graph-label--holyworld"><img src="static/img/holyWorld.webp" alt=""><strong>HolyWorld</strong><span>1 240 ч.</span></div>
-                    <div class="server-graph-label server-graph-label--funtime"><img src="static/img/funTime.webp" alt=""><strong>FunTime</strong><span>3 890 ч.</span></div>
-                    <div class="server-graph-label server-graph-label--spookytime"><img src="static/img/spookyTime.webp" alt=""><strong>SpookyTime</strong><span>950 ч.</span></div>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- ВСПЛЫВАЮЩЕЕ ОКНО АВТОРИЗАЦИИ -->
-    <div id="authModal" class="auth-overlay hidden">
-        <div class="auth-modal-card">
-            <span class="close-modal" onclick="toggleAuthModal(false)">&times;</span>
-            <h2 id="authTitle" style="text-align: center; margin-bottom: 20px;">Авторизация</h2>
-            
             <form id="authForm">
-                <input type="text" id="usernameInput" class="auth-input" placeholder="Введите никнейм" required>
-                <input type="password" id="passwordInput" class="auth-input" placeholder="Введите пароль" required>
-                <button type="submit" class="btn-buy" id="authSubmitBtn" style="margin-bottom: 12px;">Войти</button>
+                <div class="form-group">
+                    <label>Логин</label>
+                    <input type="text" id="usernameInput" class="form-input" placeholder="Введите логин" required>
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="passwordInput" class="form-input" placeholder="••••••••" required>
+                </div>
+                <button type="submit" id="submitBtn" class="btn-submit">Войти</button>
             </form>
-            
-            <div style="text-align: center;">
-                <a href="#" id="toggleAuthModeBtn" onclick="toggleAuthMode(); return false;" style="color: #777; font-size: 13px; text-decoration: underline;">Зарегистрироваться</a>
+        </div>
+    </div>
+
+    <!-- ЭКРАН ЛИЧНОГО КАБИНЕТА -->
+    <div id="dashScreen" class="screen dash-container hidden">
+        <div class="sidebar">
+            <div>
+                <div class="brand-logo">Verse<span>DLC</span></div>
+
+                <div class="user-card-side">
+                    <div class="avatar" id="sideAvatar">I</div>
+                    <div class="user-details">
+                        <div class="uname" id="sideUname">invisik</div>
+                        <div class="urole" id="sideUrole">OWNER</div>
+                    </div>
+                </div>
+
+                <ul class="nav-menu">
+                    <li class="nav-item active">👤 Профиль</li>
+                    <li class="nav-item">⚡ Скачать Лоадер</li>
+                    <li class="nav-item">🔑 Подписка</li>
+                    <li class="nav-item" id="adminNav" style="color: #ff3333;">👑 Админ Панель</li>
+                </ul>
+            </div>
+
+            <button class="btn-logout" onclick="logout()">Выйти</button>
+        </div>
+
+        <div class="content">
+            <div class="card">
+                <div class="card-header">Профиль пользователя</div>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <div class="avatar" style="width: 54px; height: 54px; font-size: 20px;" id="mainAvatar">I</div>
+                    <div>
+                        <h2 style="font-size: 20px; font-weight: 700;" id="mainUname">invisik</h2>
+                        <div class="grid-info">
+                            <div class="info-item">
+                                <label>Привязка HWID</label>
+                                <val style="color: #00ff66;">Зафиксирован</val>
+                            </div>
+                            <div class="info-item">
+                                <label>Версия клиента</label>
+                                <val>1.21.11 Fabric</val>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Текущая подписка</div>
+                <div class="sub-title" id="subStatus">Активна (Навсегда)</div>
+                <div class="sub-desc">Доступ ко всем функциям VerseDLC открыт.</div>
             </div>
         </div>
     </div>
 
-    <!-- ВСПЛЫВАЮЩЕЕ ОКНО ПРОФИЛЯ -->
-    <div id="profileModal" class="auth-overlay hidden">
-        <div class="auth-modal-card" style="max-width: 500px;">
-            <span class="close-modal" onclick="toggleProfileModal(false)">&times;</span>
-            <div class="statistics-heading" style="margin-bottom: 15px;">
-                <p class="section-label">ПРОФИЛЬ ИГРОКА</p>
-                <h2 id="profileUsername">Player</h2>
-            </div>
-
-            <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; margin-bottom: 15px;">
-                <p style="color: #888; font-size: 14px;">Роль: <strong id="profileRole" style="color: #ff3333;">USER</strong></p>
-                <p style="color: #888; font-size: 14px; margin-top: 4px;">Версия клиента: <strong>1.21.4</strong></p>
-                <p style="color: #888; font-size: 14px; margin-top: 4px;">Статус: <strong id="profileSub" style="color: #ff3333;">No Active Subscription</strong></p>
-            </div>
-
-            <div style="display: flex; gap: 10px;">
-                <button class="btn-buy" onclick="toggleProfileModal(false); window.location.hash = 'store';">Купить подписку</button>
-                <button class="btn-danger" style="margin-top:0;" onclick="deleteAccount()">Удалить аккаунт</button>
-            </div>
-        </div>
-    </div>
-
-    <footer class="site-footer">
-        <div class="container">
-            <span>© 2026 aethradlc.ru — Aethra Client 1.21.4</span>
-        </div>
-    </footer>
-
-    <!-- СКРИПТЫ -->
     <script>
-        let isRegisterMode = false;
+        let isRegister = false;
 
-        const DEFAULT_DATABASE = {
-            users: [
-                { username: 'invisik', password: '123', role: 'OWNER', sub: 'Active (Lifetime)' }
+        const DB = {
+            users: JSON.parse(localStorage.getItem('versedlc_db')) || [
+                { username: 'invisik', password: '123', role: 'OWNER', sub: 'Активна (Навсегда)' }
             ]
         };
 
-        function getDB() {
-            let raw = localStorage.getItem('aethra_db');
-            if (!raw) {
-                localStorage.setItem('aethra_db', JSON.stringify(DEFAULT_DATABASE));
-                return DEFAULT_DATABASE;
-            }
-            return JSON.parse(raw);
+        function saveDB() {
+            localStorage.setItem('versedlc_db', JSON.stringify(DB.users));
         }
 
-        function saveDB(data) { localStorage.setItem('aethra_db', JSON.stringify(data)); }
-
-        function showToast(msg, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerText = msg;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
-
-        function toggleAuthModal(show) { document.getElementById('authModal').classList.toggle('hidden', !show); }
-        function toggleProfileModal(show) { document.getElementById('profileModal').classList.toggle('hidden', !show); }
-
-        function toggleAuthMode() {
-            isRegisterMode = !isRegisterMode;
-            document.getElementById('authTitle').innerText = isRegisterMode ? 'Регистрация' : 'Авторизация';
-            document.getElementById('authSubmitBtn').innerText = isRegisterMode ? 'Зарегистрироваться' : 'Войти';
-            document.getElementById('toggleAuthModeBtn').innerText = isRegisterMode ? 'Уже есть аккаунт? Войти' : 'Зарегистрироваться';
+        function switchAuth(reg) {
+            isRegister = reg;
+            document.getElementById('tabLogin').classList.toggle('active', !reg);
+            document.getElementById('tabRegister').classList.toggle('active', reg);
+            document.getElementById('submitBtn').innerText = reg ? 'Зарегистрироваться' : 'Войти';
         }
 
         document.getElementById('authForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            const userIn = document.getElementById('usernameInput').value.trim();
-            const passIn = document.getElementById('passwordInput').value.trim();
+            const u = document.getElementById('usernameInput').value.trim();
+            const p = document.getElementById('passwordInput').value.trim();
 
-            let db = getDB();
-            let user = db.users.find(u => u.username.toLowerCase() === userIn.toLowerCase());
+            let user = DB.users.find(x => x.username.toLowerCase() === u.toLowerCase());
 
-            if (isRegisterMode) {
-                if (user) return showToast('Никнейм уже занят!', 'error');
-                
-                const newUser = {
-                    username: userIn,
-                    password: passIn,
-                    role: (userIn.toLowerCase() === 'invisik') ? 'OWNER' : 'USER',
-                    sub: (userIn.toLowerCase() === 'invisik') ? 'Active (Lifetime)' : 'No Active Subscription'
+            if (isRegister) {
+                if (user) return alert('Пользователь с таким именем уже существует!');
+                user = {
+                    username: u,
+                    password: p,
+                    role: (u.toLowerCase() === 'invisik') ? 'OWNER' : 'USER',
+                    sub: 'Активна (Навсегда)'
                 };
-                db.users.push(newUser);
-                saveDB(db);
-
-                localStorage.setItem('aethra_session', newUser.username);
-                showToast('Успешная регистрация!');
-                updateAuthState();
-                toggleAuthModal(false);
-            } else {
-                if (!user) {
-                    user = {
-                        username: userIn,
-                        password: passIn,
-                        role: (userIn.toLowerCase() === 'invisik') ? 'OWNER' : 'USER',
-                        sub: (userIn.toLowerCase() === 'invisik') ? 'Active (Lifetime)' : 'No Active Subscription'
-                    };
-                    db.users.push(user);
-                    saveDB(db);
-                }
-
-                localStorage.setItem('aethra_session', user.username);
-                showToast('С возвращением!');
-                updateAuthState();
-                toggleAuthModal(false);
+                DB.users.push(user);
+                saveDB();
             }
+
+            localStorage.setItem('versedlc_session', user ? user.username : u);
+            render();
         });
 
-        function updateAuthState() {
-            const session = localStorage.getItem('aethra_session');
-            const btnAuth = document.getElementById('headerAuthBtn');
-            const btnProf = document.getElementById('headerProfileBtn');
-            const btnLogout = document.getElementById('headerLogoutBtn');
+        function logout() {
+            localStorage.removeItem('versedlc_session');
+            render();
+        }
+
+        function render() {
+            const session = localStorage.getItem('versedlc_session');
+            const authScreen = document.getElementById('authScreen');
+            const dashScreen = document.getElementById('dashScreen');
 
             if (session) {
-                let db = getDB();
-                let u = db.users.find(x => x.username.toLowerCase() === session.toLowerCase());
+                authScreen.classList.add('hidden');
+                dashScreen.classList.remove('hidden');
 
-                btnAuth.classList.add('hidden');
-                btnProf.classList.remove('hidden');
-                btnLogout.classList.remove('hidden');
+                let user = DB.users.find(x => x.username.toLowerCase() === session.toLowerCase()) || {
+                    username: session,
+                    role: (session.toLowerCase() === 'invisik') ? 'OWNER' : 'USER',
+                    sub: 'Активна (Навсегда)'
+                };
 
-                if (u) {
-                    document.getElementById('profileUsername').innerText = u.username;
-                    document.getElementById('profileRole').innerText = u.role;
-                    
-                    const subEl = document.getElementById('profileSub');
-                    subEl.innerText = u.sub || 'No Active Subscription';
-                    subEl.style.color = (u.sub && u.sub.includes('Active')) ? '#00ff66' : '#ff3333';
+                const initial = user.username.charAt(0).toUpperCase();
+                document.getElementById('sideAvatar').innerText = initial;
+                document.getElementById('mainAvatar').innerText = initial;
+                document.getElementById('sideUname').innerText = user.username;
+                document.getElementById('mainUname').innerText = user.username;
+                document.getElementById('sideUrole').innerText = user.role;
+                document.getElementById('subStatus').innerText = user.sub;
+
+                if (user.role !== 'OWNER') {
+                    document.getElementById('adminNav').style.display = 'none';
                 }
             } else {
-                btnAuth.classList.remove('hidden');
-                btnProf.classList.add('hidden');
-                btnLogout.classList.add('hidden');
+                authScreen.classList.remove('hidden');
+                dashScreen.classList.add('hidden');
             }
         }
 
-        function buyPlan(planName) {
-            const session = localStorage.getItem('aethra_session');
-            if (!session) {
-                showToast('Сначала войдите в аккаунт!', 'error');
-                toggleAuthModal(true);
-                return;
-            }
-
-            let db = getDB();
-            let u = db.users.find(x => x.username.toLowerCase() === session.toLowerCase());
-            if (u) {
-                u.sub = `Active (${planName})`;
-                saveDB(db);
-                showToast(`Подписка ${planName} успешно оформлена!`);
-                updateAuthState();
-            }
-        }
-
-        function deleteAccount() {
-            const session = localStorage.getItem('aethra_session');
-            if (!session) return;
-
-            if (confirm(`Вы действительно хотите удалить аккаунт ${session}?`)) {
-                let db = getDB();
-                db.users = db.users.filter(u => u.username.toLowerCase() !== session.toLowerCase());
-                saveDB(db);
-
-                localStorage.removeItem('aethra_session');
-                showToast('Аккаунт успешно удален!');
-                toggleProfileModal(false);
-                updateAuthState();
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem('aethra_session');
-            showToast('Вы вышли из системы');
-            updateAuthState();
-        }
-
-        window.addEventListener('DOMContentLoaded', updateAuthState);
+        window.addEventListener('DOMContentLoaded', render);
     </script>
 </body>
 </html>
