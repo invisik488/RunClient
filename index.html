@@ -3,315 +3,582 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApexClient Panel</title>
+    <title>ApexClient — Главная</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: #050505; color: #ffffff; min-height: 100vh; position: relative; overflow-x: hidden; }
+        body { background-color: #050508; color: #ffffff; min-height: 100vh; position: relative; overflow-x: hidden; }
 
-        .screen { position: relative; z-index: 1; width: 100%; min-height: 100vh; }
         .hidden { display: none !important; }
 
+        /* TOAST NOTIFICATIONS */
         #toast-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column-reverse;
-            gap: 10px;
+            position: fixed; bottom: 20px; right: 20px; z-index: 9999;
+            display: flex; flex-direction: column-reverse; gap: 10px;
         }
-
         .toast {
-            background: #0f0f12;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-left: 4px solid #ff3333;
-            padding: 14px 20px;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 13px;
-            font-weight: 600;
-            animation: slideInRight 0.3s ease;
+            background: #0f0f14; border: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #ff3333; padding: 14px 20px; border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: flex; align-items: center;
+            gap: 12px; font-size: 13px; font-weight: 600; animation: slideInRight 0.3s ease;
         }
-
         .toast.success { border-left-color: #00ff66; }
-
         @keyframes slideInRight {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
 
-        .auth-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
+        /* FLOATING NAVIGATION BAR (LIKE SCREENSHOT) */
+        .navbar-container {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 1000; width: 90%; max-width: 900px;
+        }
+        .navbar {
+            background: rgba(18, 22, 20, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px; padding: 8px 16px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .nav-brand {
+            display: flex; align-items: center; gap: 10px; font-weight: 800;
+            font-size: 18px; color: #fff; cursor: pointer; text-decoration: none;
+        }
+        .brand-icon {
+            width: 32px; height: 32px; background: #6366f1; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 16px; color: #fff; box-shadow: 0 0 12px rgba(99, 102, 241, 0.5);
+        }
+        .nav-links { display: flex; align-items: center; gap: 20px; list-style: none; }
+        .nav-link {
+            color: #a0a0ab; font-size: 14px; font-weight: 500; cursor: pointer;
+            transition: 0.2s; display: flex; align-items: center; gap: 6px; text-decoration: none;
+        }
+        .nav-link:hover, .nav-link.active { color: #ffffff; }
+
+        .btn-cabinet {
+            background: #7c3aed; color: #fff; border: none; padding: 8px 20px;
+            border-radius: 30px; font-size: 14px; font-weight: 600; cursor: pointer;
+            transition: 0.3s; display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+        }
+        .btn-cabinet:hover { background: #6d28d9; transform: translateY(-1px); }
+
+        /* PAGE LAYOUT & CONTAINERS */
+        .page-section { padding-top: 120px; padding-bottom: 60px; max-width: 1100px; margin: 0 auto; width: 90%; }
+
+        /* HOME PAGE STYLES */
+        .hero { text-align: center; margin-bottom: 50px; }
+        .hero h1 { font-size: 48px; font-weight: 800; margin-bottom: 12px; background: linear-gradient(135deg, #fff 0%, #888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { color: #888; font-size: 16px; max-width: 600px; margin: 0 auto 24px; }
+
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 50px; }
+        .feature-card {
+            background: #0d0d12; border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px; padding: 24px; transition: 0.3s;
+        }
+        .feature-card:hover { transform: translateY(-5px); border-color: rgba(255, 51, 51, 0.3); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .feature-icon { font-size: 28px; margin-bottom: 12px; display: inline-block; }
+        .feature-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #fff; }
+        .feature-desc { font-size: 13px; color: #777; line-height: 1.5; }
+
+        .chart-section {
+            background: #0d0d12; border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px; padding: 30px; margin-bottom: 40px;
+        }
+        .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .chart-title { font-size: 20px; font-weight: 700; }
+        .chart-stats { font-size: 14px; color: #00ff66; font-weight: 600; }
+
+        /* TARIFFS PAGE */
+        .tariffs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 30px; }
+        .tariff-card {
+            background: #0d0d12; border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px; padding: 28px 20px; text-align: center; position: relative;
+            transition: 0.3s ease; display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .tariff-card:hover { transform: translateY(-8px); border-color: #ff3333; box-shadow: 0 15px 35px rgba(255, 51, 51, 0.15); }
+        .tariff-card.popular { border-color: #7c3aed; background: linear-gradient(180deg, rgba(124, 58, 237, 0.05) 0%, #0d0d12 100%); }
+        .tariff-badge {
+            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            background: #7c3aed; color: #fff; font-size: 10px; font-weight: 800;
+            padding: 4px 12px; border-radius: 20px; text-transform: uppercase;
+        }
+        .tariff-name { font-size: 18px; font-weight: 700; color: #aaa; margin-bottom: 12px; }
+        .tariff-price { font-size: 36px; font-weight: 800; color: #fff; margin-bottom: 20px; }
+        .tariff-price span { font-size: 16px; color: #666; font-weight: 500; }
+
+        .btn-buy {
+            width: 100%; background: #ff3333; color: #fff; border: none; padding: 12px;
+            border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s;
+        }
+        .btn-buy:hover { background: #e62e2e; }
+
+        /* HELP / FAQ PAGE */
+        .faq-section-title {
+            text-align: center; font-size: 28px; font-weight: 800; margin-bottom: 10px;
+            background: linear-gradient(135deg, #fff, #888); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .faq-divider { width: 80px; height: 3px; background: #ff3333; margin: 0 auto 40px; border-radius: 2px; }
+
+        .faq-card {
+            background: #0d0d12; border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px; margin-bottom: 16px; overflow: hidden; transition: 0.3s;
+        }
+        .faq-header {
+            padding: 20px 24px; font-size: 16px; font-weight: 700; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.02);
+        }
+        .faq-header:hover { background: rgba(255, 255, 255, 0.04); }
+        .faq-body { padding: 0 24px 20px 24px; font-size: 14px; color: #aaa; line-height: 1.6; }
+        .faq-body ol { padding-left: 20px; margin-top: 10px; }
+        .faq-body li { margin-bottom: 8px; }
+        .warning-box {
+            background: rgba(255, 51, 51, 0.1); border: 1px solid rgba(255, 51, 51, 0.3);
+            border-radius: 8px; padding: 12px; color: #ff6666; font-size: 12px; margin: 10px 0; font-weight: 600;
         }
 
+        /* CABINET / DASHBOARD STYLES */
+        .auth-wrapper { display: flex; align-items: center; justify-content: center; min-height: 80vh; }
         .auth-card {
-            background: #0a0a0c;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 40px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            background: #0a0a0c; border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px; padding: 40px; width: 100%; max-width: 400px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
         }
-
         .auth-title { font-size: 26px; font-weight: 700; text-align: center; margin-bottom: 6px; }
         .auth-title span { color: #ff3333; }
         .auth-subtitle { font-size: 13px; color: #666; text-align: center; margin-bottom: 24px; }
-
         .tabs { display: flex; background: #121215; padding: 4px; border-radius: 10px; margin-bottom: 20px; }
-        .tab-btn {
-            flex: 1; background: none; border: none; color: #666; padding: 10px;
-            font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s;
-        }
+        .tab-btn { flex: 1; background: none; border: none; color: #666; padding: 10px; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s; }
         .tab-btn.active { background: #1c1c21; color: #fff; }
-
         .form-group { margin-bottom: 16px; }
-        .form-group label {
-            display: block; font-size: 11px; color: #888; margin-bottom: 6px;
-            text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
-        }
-
-        .form-input, .form-select {
-            width: 100%; background: #121215; border: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 12px 14px; border-radius: 8px; color: #fff; font-size: 14px; outline: none; transition: 0.2s;
-        }
+        .form-group label { display: block; font-size: 11px; color: #888; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+        .form-input, .form-select { width: 100%; background: #121215; border: 1px solid rgba(255, 255, 255, 0.06); padding: 12px 14px; border-radius: 8px; color: #fff; font-size: 14px; outline: none; transition: 0.2s; }
         .form-input:focus, .form-select:focus { border-color: #ff3333; }
-
-        .btn-submit {
-            width: 100%; background: #ff3333; color: #fff; border: none; padding: 12px;
-            border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 10px;
-        }
+        .btn-submit { width: 100%; background: #ff3333; color: #fff; border: none; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 10px; }
         .btn-submit:hover { background: #e62e2e; }
 
-        .dash-container { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
-        .sidebar {
-            background: #0a0a0c; border-right: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 30px 20px; display: flex; flex-direction: column; justify-content: space-between;
-        }
-
-        .brand-logo { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 30px; display: flex; align-items: center; gap: 6px; }
-        .brand-logo span { color: #ff3333; }
-
-        .user-card-side { display: flex; align-items: center; gap: 12px; padding: 12px; background: #121215; border-radius: 10px; margin-bottom: 24px; }
-        .avatar {
-            width: 40px; height: 40px; background: rgba(255, 51, 51, 0.15); border: 1px solid #ff3333;
-            color: #ff3333; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700;
-        }
-
-        .user-details .uname { font-size: 14px; font-weight: 700; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .dash-container { display: grid; grid-template-columns: 240px 1fr; gap: 20px; background: #0a0a0c; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 20px; padding: 20px; min-height: 500px; }
+        .sidebar { border-right: 1px solid rgba(255, 255, 255, 0.06); padding-right: 20px; display: flex; flex-direction: column; justify-content: space-between; }
+        .user-card-side { display: flex; align-items: center; gap: 12px; padding: 12px; background: #121215; border-radius: 10px; margin-bottom: 20px; }
+        .avatar { width: 40px; height: 40px; background: rgba(255, 51, 51, 0.15); border: 1px solid #ff3333; color: #ff3333; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+        .user-details .uname { font-size: 14px; font-weight: 700; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .user-details .urole { font-size: 10px; color: #ff3333; font-weight: 800; letter-spacing: 0.5px; }
-
         .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; }
-        .nav-item {
-            padding: 12px 14px; border-radius: 8px; color: #777; font-size: 13px;
-            font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px;
-        }
+        .nav-item { padding: 10px 12px; border-radius: 8px; color: #777; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
         .nav-item:hover, .nav-item.active { background: rgba(255, 51, 51, 0.1); color: #ff3333; }
-
-        .btn-logout {
-            background: none; border: 1px solid rgba(255, 255, 255, 0.08); color: #777;
-            padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: 0.2s;
-        }
+        .btn-logout { background: none; border: 1px solid rgba(255, 255, 255, 0.08); color: #777; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: 0.2s; width: 100%; }
         .btn-logout:hover { border-color: #ff3333; color: #ff3333; }
-
-        .content { padding: 40px; display: flex; flex-direction: column; gap: 24px; }
-        .card { background: #0a0a0c; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 14px; padding: 24px; }
-        .card-header { font-size: 11px; color: #555; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
-
+        .content { padding: 10px; display: flex; flex-direction: column; gap: 20px; }
+        .card { background: #121215; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 14px; padding: 20px; }
+        .card-header { font-size: 11px; color: #555; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
         .sub-title { font-size: 20px; font-weight: 700; color: #00ff66; margin-bottom: 4px; }
         .sub-desc { font-size: 13px; color: #666; }
-
-        .grid-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 16px; }
-        .info-item { background: #121215; padding: 12px 16px; border-radius: 8px; }
+        .grid-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: 16px; }
+        .info-item { background: #0a0a0c; padding: 12px; border-radius: 8px; }
         .info-item label { font-size: 10px; color: #666; display: block; margin-bottom: 2px; text-transform: uppercase; }
         .info-item val { font-size: 13px; font-weight: 600; }
-
-        .action-btn {
-            background: #ff3333; color: #fff; border: none; padding: 12px 20px;
-            border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s;
-            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-        }
+        .action-btn { background: #ff3333; color: #fff; border: none; padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
         .action-btn:hover { background: #e62e2e; }
         .action-btn.secondary { background: #1f1f25; color: #fff; }
         .action-btn.secondary:hover { background: #2a2a32; }
-
         .user-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
-        .user-table th, .user-table td { padding: 12px 14px; text-align: left; font-size: 13px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-        .user-table th { color: #555; font-size: 11px; text-transform: uppercase; }
-
-        .admin-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 16px; }
+        .user-table th, .user-table td { padding: 10px; text-align: left; font-size: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .user-table th { color: #555; font-size: 10px; text-transform: uppercase; }
+        .admin-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 12px; }
     </style>
 </head>
 <body>
 
     <div id="toast-container"></div>
 
-    <!-- АВТОРИЗАЦИЯ -->
-    <div id="authScreen" class="screen auth-wrapper">
-        <div class="auth-card">
-            <div class="auth-title">Apex<span>Client</span></div>
-            <div class="auth-subtitle">Панель управления клиентом (1.21.4 Fabric)</div>
-
-            <div class="tabs">
-                <button type="button" id="tabLogin" class="tab-btn active" onclick="switchAuth(false)">Вход</button>
-                <button type="button" id="tabRegister" class="tab-btn" onclick="switchAuth(true)">Регистрация</button>
+    <!-- ПЛАВАЮЩАЯ НАВИГАЦИЯ (NAVBAR) -->
+    <div class="navbar-container">
+        <nav class="navbar">
+            <div class="nav-brand" onclick="navigateTo('home')">
+                <div class="brand-icon">A</div>
+                <span>Apex</span>
             </div>
+            <ul class="nav-links">
+                <li><a class="nav-link active" id="nav-home" onclick="navigateTo('home')">Home</a></li>
+                <li><a class="nav-link" id="nav-tariffs" onclick="navigateTo('tariffs')">💳 Тарифы</a></li>
+                <li><a class="nav-link" id="nav-help" onclick="navigateTo('help')">🎧 Help</a></li>
+            </ul>
+            <button class="btn-cabinet" onclick="navigateTo('cabinet')">
+                👤 Кабинет
+            </button>
+        </nav>
+    </div>
 
-            <form id="authForm">
-                <div class="form-group">
-                    <label>Никнейм / Логин</label>
-                    <input type="text" id="usernameInput" class="form-input" placeholder="Введите ваш ник" required autocomplete="off">
+    <!-- ГЛАВНАЯ СТРАНИЦА (HOME) -->
+    <div id="page-home" class="page-section">
+        <div class="hero">
+            <h1>ApexClient 1.21.4 Fabric</h1>
+            <p>Премиальный клиент для доминирования на серверах. Недосягаемая скорость, продвинутый визуал и максимальная незаметность.</p>
+        </div>
+
+        <!-- КАРТОЧКИ ПРЕИМУЩЕСТВ -->
+        <div class="features-grid">
+            <div class="feature-card">
+                <span class="feature-icon">⚡</span>
+                <div class="feature-title">Топовая оптимизация</div>
+                <div class="feature-desc">Минимальный просад FPS, мгновенный отклик и плавный фреймрейт даже во время замесов 50v50.</div>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🎨</span>
+                <div class="feature-title">Красивый визуал</div>
+                <div class="feature-desc">Кастомный калифорнийский HUD, гибкая настройка Render-модулей, анимаций и интерфейса.</div>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">⚔️</span>
+                <div class="feature-title">Топовый функционал</div>
+                <div class="feature-desc">Продвинутый AutoSwap, умный TriggerBot, ClickGUI и автоматические пресеты под популярные анархии.</div>
+            </div>
+        </div>
+
+        <!-- ГРАФИК ПОКУПОК -->
+        <div class="chart-section">
+            <div class="chart-header">
+                <div>
+                    <div class="chart-title">Динамика активных пользователей</div>
+                    <div style="font-size: 12px; color: #666; margin-top: 2px;">Статистика продаж и прироста сообщества</div>
                 </div>
-                <div class="form-group">
-                    <label>Пароль</label>
-                    <input type="password" id="passwordInput" class="form-input" placeholder="••••••••" required>
-                </div>
-                <button type="submit" id="submitBtn" class="btn-submit">Войти</button>
-            </form>
+                <div class="chart-stats" id="salesCount">Продажи за месяц: 1,482</div>
+            </div>
+            <canvas id="salesChart" height="120" style="width: 100%;"></canvas>
         </div>
     </div>
 
-    <!-- ЛИЧНЫЙ КАБИНЕТ -->
-    <div id="dashScreen" class="screen dash-container hidden">
-        <div class="sidebar">
-            <div>
-                <div class="brand-logo">Apex<span>Client</span></div>
-
-                <div class="user-card-side">
-                    <div class="avatar" id="sideAvatar">U</div>
-                    <div class="user-details">
-                        <div class="uname" id="sideUname">User</div>
-                        <div class="urole" id="sideUrole">USER</div>
-                    </div>
-                </div>
-
-                <ul class="nav-menu">
-                    <li class="nav-item active" onclick="switchTab('profile', event)">👤 Профиль</li>
-                    <li class="nav-item" onclick="switchTab('download', event)">⚡ Скачать Лоадер</li>
-                    <li class="nav-item" onclick="switchTab('sub', event)">🔑 Подписка</li>
-                    <li class="nav-item" id="adminNav" onclick="switchTab('admin', event)" style="color: #ff3333;">👑 Админ Панель</li>
-                </ul>
-            </div>
-
-            <button class="btn-logout" onclick="logout()">Выйти</button>
+    <!-- СТРАНИЦА ТАРИФОВ (ТАРИФЫ) -->
+    <div id="page-tariffs" class="page-section hidden">
+        <div class="hero">
+            <h1>Выберите ваш тариф</h1>
+            <p>Получите мгновенный доступ к ApexClient сразу после оплаты.</p>
         </div>
 
-        <div class="content">
-            <!-- ПРОФИЛЬ -->
-            <div id="tab-profile" class="tab-content">
-                <div class="card">
-                    <div class="card-header">Профиль пользователя</div>
-                    <div style="display: flex; align-items: center; gap: 16px;">
-                        <div class="avatar" style="width: 54px; height: 54px; font-size: 20px;" id="mainAvatar">U</div>
-                        <div>
-                            <h2 style="font-size: 20px; font-weight: 700; word-break: break-all;" id="mainUname">User</h2>
-                            <div class="grid-info">
-                                <div class="info-item">
-                                    <label>Привязка HWID</label>
-                                    <val style="color: #00ff66;" id="hwidStatus">Зафиксирован</val>
-                                </div>
-                                <div class="info-item">
-                                    <label>Версия клиента</label>
-                                    <val>1.21.4 Fabric</val>
+        <div class="tariffs-grid">
+            <div class="tariff-card">
+                <div>
+                    <div class="tariff-name">7 Дней</div>
+                    <div class="tariff-price">69 <span>₽</span></div>
+                </div>
+                <button class="btn-buy" onclick="buyTariff('7 Дней')">Приобрести</button>
+            </div>
+
+            <div class="tariff-card popular">
+                <div class="tariff-badge">ХИТ ПРОДАЖ</div>
+                <div>
+                    <div class="tariff-name">1 Месяц</div>
+                    <div class="tariff-price">149 <span>₽</span></div>
+                </div>
+                <button class="btn-buy" onclick="buyTariff('1 Месяц')">Приобрести</button>
+            </div>
+
+            <div class="tariff-card">
+                <div>
+                    <div class="tariff-name">3 Месяца</div>
+                    <div class="tariff-price">239 <span>₽</span></div>
+                </div>
+                <button class="btn-buy" onclick="buyTariff('3 Месяца')">Приобрести</button>
+            </div>
+
+            <div class="tariff-card">
+                <div>
+                    <div class="tariff-name">Навсегда</div>
+                    <div class="tariff-price">449 <span>₽</span></div>
+                </div>
+                <button class="btn-buy" onclick="buyTariff('Навсегда')">Приобрести</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА ПОМОЩИ (HELP / FAQ) -->
+    <div id="page-help" class="page-section hidden">
+        <div class="faq-section-title">Часто задаваемые вопросы</div>
+        <div class="faq-divider"></div>
+
+        <div style="max-width: 800px; margin: 0 auto;">
+            <!-- Карточка 1: Установка -->
+            <div class="faq-card">
+                <div class="faq-header" onclick="toggleFaq('faq1')">
+                    <span>❓ Как установить клиент?</span>
+                    <span id="faq1-icon">▼</span>
+                </div>
+                <div id="faq1" class="faq-body">
+                    <ol>
+                        <li>Установите наш лаунчер (exe файл) и вытащите на рабочий стол.</li>
+                        <li>Запустите Майнкрафт версии <b>1.21.4 Fabric</b> (можно со своими модами внутри).</li>
+                        <li>С открытым майнкрафтом откройте лаунчер и нажмите <b>"Inject"</b>, после чего у вас вылезет командная строка (cmd). Там будет написано, чтобы вы нажали любую клавишу — нажмите и ждите какое-то время, после чего в игре появится надпись <i>"Чит успешно загружен"</i>.</li>
+                        <li>Готово! Вы установили чит! Играйте спокойно и разносите сервера!</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Карточка 2: Обход проверок -->
+            <div class="faq-card">
+                <div class="faq-header" onclick="toggleFaq('faq2')">
+                    <span>🛡️ Как обойти проверку на читы и не получить бан?</span>
+                    <span id="faq2-icon">▼</span>
+                </div>
+                <div id="faq2" class="faq-body">
+                    <ol>
+                        <li>Откройте все тот же лаунчер и нажмите <b>"AntiInject"</b>, после чего подождите еще какое-то время.</li>
+                        <li>Переименуйте лаунчер чита в любое другое приложение.</li>
+                    </ol>
+                    <div class="warning-box">
+                        ⚠️ ВАЖНО! ПЕРЕИМЕНОВЫВАТЬ НАДО НА ТО ПРИЛОЖЕНИЕ, КОТОРОЕ ЕСТЬ У ВАС НА КОМПЬЮТЕРЕ И ЛОГИЧНО НА РАБОЧЕМ СТОЛЕ (отлично подойдет браузер, если есть Telegram, Discord и другие), и в конце в скобках поставив (1), чтобы модератор не попросил открыть это приложение.
+                    </div>
+                    <ol start="3">
+                        <li>Поздравляю! Вы успешно прошли проверку, если нигде не проебались!</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА ЛИЧНОГО КАБИНЕТА (CABINET) -->
+    <div id="page-cabinet" class="page-section hidden">
+        <!-- АВТОРИЗАЦИЯ -->
+        <div id="authScreen" class="auth-wrapper">
+            <div class="auth-card">
+                <div class="auth-title">Apex<span>Client</span></div>
+                <div class="auth-subtitle">Панель управления (1.21.4 Fabric)</div>
+
+                <div class="tabs">
+                    <button type="button" id="tabLogin" class="tab-btn active" onclick="switchAuth(false)">Вход</button>
+                    <button type="button" id="tabRegister" class="tab-btn" onclick="switchAuth(true)">Регистрация</button>
+                </div>
+
+                <form id="authForm">
+                    <div class="form-group">
+                        <label>Никнейм / Логин</label>
+                        <input type="text" id="usernameInput" class="form-input" placeholder="Введите ваш ник" required autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label>Пароль</label>
+                        <input type="password" id="passwordInput" class="form-input" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" id="submitBtn" class="btn-submit">Войти</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ЛИЧНЫЙ КАБИНЕТ -->
+        <div id="dashScreen" class="dash-container hidden">
+            <div class="sidebar">
+                <div>
+                    <div class="user-card-side">
+                        <div class="avatar" id="sideAvatar">U</div>
+                        <div class="user-details">
+                            <div class="uname" id="sideUname">User</div>
+                            <div class="urole" id="sideUrole">USER</div>
+                        </div>
+                    </div>
+
+                    <ul class="nav-menu">
+                        <li class="nav-item active" onclick="switchDashTab('profile', event)">👤 Профиль</li>
+                        <li class="nav-item" onclick="switchDashTab('download', event)">⚡ Скачать Лоадер</li>
+                        <li class="nav-item" onclick="switchDashTab('sub', event)">🔑 Подписка</li>
+                        <li class="nav-item" id="adminNav" onclick="switchDashTab('admin', event)" style="color: #ff3333;">👑 Админ Панель</li>
+                    </ul>
+                </div>
+
+                <button class="btn-logout" onclick="logout()">Выйти</button>
+            </div>
+
+            <div class="content">
+                <!-- ПРОФИЛЬ -->
+                <div id="tab-profile" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">Профиль пользователя</div>
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <div class="avatar" style="width: 50px; height: 50px; font-size: 20px;" id="mainAvatar">U</div>
+                            <div>
+                                <h2 style="font-size: 18px; font-weight: 700; word-break: break-all;" id="mainUname">User</h2>
+                                <div class="grid-info">
+                                    <div class="info-item">
+                                        <label>Привязка HWID</label>
+                                        <val style="color: #00ff66;" id="hwidStatus">Зафиксирован</val>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Версия клиента</label>
+                                        <val>1.21.4 Fabric</val>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="card" style="margin-top: 24px;">
-                    <div class="card-header">Текущая подписка</div>
-                    <div class="sub-title" id="subStatus">Загрузка...</div>
-                    <div class="sub-desc">Статус синхронизируется с сервером.</div>
-                </div>
-            </div>
-
-            <!-- СКАЧАТЬ ЛОАДЕР -->
-            <div id="tab-download" class="tab-content hidden">
-                <div class="card">
-                    <div class="card-header">Загрузка Лаунчера / Лоадера</div>
-                    <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">ApexClient Loader</h2>
-                    <p class="sub-desc" style="margin-bottom: 16px;">Загрузите актуальную версию инжектора для запуска клиента.</p>
-                    <button class="action-btn" onclick="downloadLoader()">📥 Скачать Loader.exe</button>
-                </div>
-            </div>
-
-            <!-- ПОДПИСКА -->
-            <div id="tab-sub" class="tab-content hidden">
-                <div class="card">
-                    <div class="card-header">Активация Ключа</div>
-                    <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">Ввести лицензионный ключ</h2>
-                    <div style="display: flex; gap: 10px; max-width: 400px;">
-                        <input type="text" id="keyInput" class="form-input" placeholder="APEX-XXXX-XXXX">
-                        <button class="action-btn" onclick="activateKey()">Активировать</button>
+                    <div class="card" style="margin-top: 16px;">
+                        <div class="card-header">Текущая подписка</div>
+                        <div class="sub-title" id="subStatus">Загрузка...</div>
+                        <div class="sub-desc">Статус синхронизируется с сервером.</div>
                     </div>
                 </div>
-            </div>
 
-            <!-- АДМИН ПАНЕЛЬ -->
-            <div id="tab-admin" class="tab-content hidden">
-                <div class="card">
-                    <div class="card-header">Генератор лицензионных ключей</div>
-                    
-                    <div class="admin-form-grid">
-                        <div class="form-group">
-                            <label>Длительность подписки</label>
-                            <select id="genDuration" class="form-select">
-                                <option value="3 дня">3 Дня</option>
-                                <option value="7 дней">7 Дней</option>
-                                <option value="30 дней">30 Дней</option>
-                                <option value="90 дней">90 Дней</option>
-                                <option value="Навсегда" selected>Навсегда (Lifetime)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Кол-во активаций</label>
-                            <input type="number" id="genUses" class="form-input" value="1" min="1" max="100">
+                <!-- СКАЧАТЬ ЛОАДЕР -->
+                <div id="tab-download" class="tab-content hidden">
+                    <div class="card">
+                        <div class="card-header">Загрузка Лаунчера / Лоадера</div>
+                        <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">ApexClient Loader</h2>
+                        <p class="sub-desc" style="margin-bottom: 16px;">Загрузите актуальную версию инжектора для запуска клиента.</p>
+                        <button class="action-btn" onclick="downloadLoader()">📥 Скачать Loader.exe</button>
+                    </div>
+                </div>
+
+                <!-- ПОДПИСКА -->
+                <div id="tab-sub" class="tab-content hidden">
+                    <div class="card">
+                        <div class="card-header">Активация Ключа</div>
+                        <h2 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">Ввести лицензионный ключ</h2>
+                        <div style="display: flex; gap: 10px; max-width: 400px;">
+                            <input type="text" id="keyInput" class="form-input" placeholder="APEX-XXXX-XXXX">
+                            <button class="action-btn" onclick="activateKey()">Активировать</button>
                         </div>
                     </div>
-
-                    <div style="display: flex; gap: 10px; align-items: center;">
-                        <button class="action-btn" onclick="generateKey()">🔑 Сгенерировать ключ</button>
-                        <input type="text" id="generatedKeyResult" class="form-input" placeholder="Ключ появится здесь..." readonly style="font-family: monospace; letter-spacing: 1px;">
-                        <button class="action-btn secondary" onclick="copyGeneratedKey()">📋 Копировать</button>
-                    </div>
                 </div>
 
-                <div class="card" style="margin-top: 24px;">
-                    <div class="card-header">Управление игроками (Онлайн)</div>
-                    
-                    <div class="form-group" style="max-width: 350px;">
-                        <label>Поиск игрока (по нику)</label>
-                        <input type="text" id="userSearch" class="form-input" placeholder="Введите ник игрока..." oninput="renderUserTable()">
+                <!-- АДМИН ПАНЕЛЬ -->
+                <div id="tab-admin" class="tab-content hidden">
+                    <div class="card">
+                        <div class="card-header">Генератор лицензионных ключей</div>
+                        <div class="admin-form-grid">
+                            <div class="form-group">
+                                <label>Длительность</label>
+                                <select id="genDuration" class="form-select">
+                                    <option value="3 дня">3 Дня</option>
+                                    <option value="7 дней">7 Дней</option>
+                                    <option value="30 дней">30 Дней</option>
+                                    <option value="90 дней">90 Дней</option>
+                                    <option value="Навсегда" selected>Навсегда (Lifetime)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Кол-во активаций</label>
+                                <input type="number" id="genUses" class="form-input" value="1" min="1" max="100">
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <button class="action-btn" onclick="generateKey()">🔑 Создать ключ</button>
+                            <input type="text" id="generatedKeyResult" class="form-input" placeholder="Ключ..." readonly style="font-family: monospace;">
+                            <button class="action-btn secondary" onclick="copyGeneratedKey()">📋 Копировать</button>
+                        </div>
                     </div>
 
-                    <table class="user-table">
-                        <thead>
-                            <tr>
-                                <th>Игрок (Ник)</th>
-                                <th>Роль</th>
-                                <th>Управление подпиской</th>
-                                <th>HWID</th>
-                                <th>Сброс Железа</th>
-                            </tr>
-                        </thead>
-                        <tbody id="userTableBody">
-                        </tbody>
-                    </table>
+                    <div class="card" style="margin-top: 16px;">
+                        <div class="card-header">Управление игроками</div>
+                        <div class="form-group" style="max-width: 300px;">
+                            <input type="text" id="userSearch" class="form-input" placeholder="Поиск ника..." oninput="renderUserTable()">
+                        </div>
+                        <table class="user-table">
+                            <thead>
+                                <tr>
+                                    <th>Игрок</th>
+                                    <th>Роль</th>
+                                    <th>Подписка</th>
+                                    <th>HWID</th>
+                                    <th>Действие</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // НАВИГАЦИЯ МЕЖДУ СТРАНИЦАМИ
+        function navigateTo(page) {
+            document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+
+            const target = document.getElementById(`page-${page}`);
+            if (target) target.classList.remove('hidden');
+
+            const navLink = document.getElementById(`nav-${page}`);
+            if (navLink) navLink.classList.add('active');
+
+            if (page === 'home') renderChart();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleFaq(id) {
+            const el = document.getElementById(id);
+            const icon = document.getElementById(`${id}-icon`);
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                icon.innerText = '▲';
+            } else {
+                el.classList.add('hidden');
+                icon.innerText = '▼';
+            }
+        }
+
+        function buyTariff(name) {
+            showToast('На данный момент покупка недоступна, но скоро будет!', 'danger');
+        }
+
+        // ДИНАМИЧЕСКИЙ ГРАФИК ПРОДАЖ
+        let salesData = [320, 410, 580, 720, 890, 1150, 1482];
+        
+        function renderChart() {
+            const canvas = document.getElementById('salesChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            // Адаптивный размер
+            canvas.width = canvas.parentElement.clientWidth - 60;
+            canvas.height = 140;
+
+            const width = canvas.width;
+            const height = canvas.height;
+            const maxVal = Math.max(...salesData) * 1.2;
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Градиент фона под линией
+            const gradient = ctx.createLinearGradient(0, 0, 0, height);
+            gradient.addColorStop(0, 'rgba(255, 51, 51, 0.35)');
+            gradient.addColorStop(1, 'rgba(255, 51, 51, 0.0)');
+
+            ctx.beginPath();
+            const stepX = width / (salesData.length - 1);
+
+            salesData.forEach((val, i) => {
+                const x = i * stepX;
+                const y = height - (val / maxVal) * height;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+
+            ctx.strokeStyle = '#ff3333';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Заливка
+            ctx.lineTo(width, height);
+            ctx.lineTo(0, height);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // Точки
+            salesData.forEach((val, i) => {
+                const x = i * stepX;
+                const y = height - (val / maxVal) * height;
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+                ctx.strokeStyle = '#ff3333';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+        }
+
+        // ФУНКЦИОНАЛ БАЗЫ ДАННЫХ И КАБИНЕТА
         let isRegister = false;
         let DB = { users: [], keys: [] };
 
@@ -337,9 +604,8 @@
                     }
                 }
             } catch (e) {
-                console.warn("API недоступно, работаем через local DB.");
+                console.warn("API недоступно, локальный режим.");
             }
-            
             localStorage.setItem('apex_db', JSON.stringify(DB));
         }
 
@@ -351,9 +617,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ data: DB })
                 });
-            } catch (e) {
-                console.warn("Ошибка обновления сервера.");
-            }
+            } catch (e) {}
         }
 
         function showToast(message, type = 'danger') {
@@ -362,11 +626,10 @@
             toast.className = `toast ${type === 'success' ? 'success' : ''}`;
             toast.innerText = message;
             container.appendChild(toast);
-
             setTimeout(() => { toast.remove(); }, 3000);
         }
 
-        function switchTab(tabName, event) {
+        function switchDashTab(tabName, event) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
@@ -380,102 +643,79 @@
         function downloadLoader() {
             const session = localStorage.getItem('apex_session');
             const user = DB.users.find(u => u.username.trim().toLowerCase() === (session || '').trim().toLowerCase());
-
             if (!user || user.sub === 'Закончилась' || user.sub === 'Нет') {
                 showToast('Ошибка: у вас нет активной подписки!', 'danger');
                 return;
             }
-
             showToast('Загрузка Loader.exe началась...', 'success');
         }
 
         async function generateKey() {
-            try {
-                await fetchDB();
-                const duration = document.getElementById('genDuration').value;
-                const uses = parseInt(document.getElementById('genUses').value) || 1;
-                
-                const randomCode = 'APEX-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
-                
-                DB.keys.push({ code: randomCode, duration: duration, usesLeft: uses });
-                await saveDB();
-
-                document.getElementById('generatedKeyResult').value = randomCode;
-                showToast(`Ключ создан на ${duration} (${uses} акт.)`, 'success');
-            } catch (err) {
-                showToast('Ошибка при создании ключа!', 'danger');
-            }
+            await fetchDB();
+            const duration = document.getElementById('genDuration').value;
+            const uses = parseInt(document.getElementById('genUses').value) || 1;
+            const randomCode = 'APEX-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+            
+            DB.keys.push({ code: randomCode, duration: duration, usesLeft: uses });
+            await saveDB();
+            document.getElementById('generatedKeyResult').value = randomCode;
+            showToast(`Ключ создан на ${duration}`, 'success');
         }
 
         function copyGeneratedKey() {
-            const keyInput = document.getElementById('generatedKeyResult');
-            if (!keyInput.value) return showToast('Сначала сгенерируйте ключ!');
-            
-            navigator.clipboard.writeText(keyInput.value);
-            showToast('Ключ скопирован в буфер обмена!', 'success');
+            const input = document.getElementById('generatedKeyResult');
+            if (!input.value) return showToast('Сначала сгенерируйте ключ!');
+            navigator.clipboard.writeText(input.value);
+            showToast('Ключ скопирован!', 'success');
         }
 
         async function activateKey() {
-            try {
-                await fetchDB();
-                const keyVal = document.getElementById('keyInput').value.trim();
-                if (!keyVal) return showToast('Введите ключ!');
+            await fetchDB();
+            const keyVal = document.getElementById('keyInput').value.trim();
+            if (!keyVal) return showToast('Введите ключ!');
 
-                const keyIndex = DB.keys.findIndex(k => k.code.trim().toUpperCase() === keyVal.toUpperCase());
-                if (keyIndex === -1) return showToast('Неверный или несуществующий ключ!');
+            const keyIndex = DB.keys.findIndex(k => k.code.trim().toUpperCase() === keyVal.toUpperCase());
+            if (keyIndex === -1) return showToast('Неверный ключ!');
 
-                const keyObj = DB.keys[keyIndex];
-                const session = localStorage.getItem('apex_session');
+            const keyObj = DB.keys[keyIndex];
+            const session = localStorage.getItem('apex_session');
+            let user = DB.users.find(u => u.username.trim().toLowerCase() === session.trim().toLowerCase());
+
+            if (user) {
+                user.sub = keyObj.duration;
+                keyObj.usesLeft -= 1;
+                if (keyObj.usesLeft <= 0) DB.keys.splice(keyIndex, 1);
                 
-                if (!session) return showToast('Ошибка сессии! Перезайдите в аккаунт.');
+                // При покупке увеличиваем динамику на графике!
+                salesData[salesData.length - 1] += 1;
+                document.getElementById('salesCount').innerText = `Продажи за месяц: ${salesData[salesData.length - 1]}`;
 
-                let user = DB.users.find(u => u.username.trim().toLowerCase() === session.trim().toLowerCase());
-
-                if (user) {
-                    user.sub = keyObj.duration;
-                    keyObj.usesLeft -= 1;
-                    if (keyObj.usesLeft <= 0) {
-                        DB.keys.splice(keyIndex, 1);
-                    }
-                    await saveDB();
-                    document.getElementById('keyInput').value = '';
-                    await render();
-                    showToast(`Подписка "${keyObj.duration}" успешно активирована!`, 'success');
-                } else {
-                    showToast('Пользователь сессии не найден в базе!', 'danger');
-                }
-            } catch (err) {
-                console.error(err);
-                showToast('Произошла ошибка при активации ключа!', 'danger');
+                await saveDB();
+                document.getElementById('keyInput').value = '';
+                await renderCabinet();
+                showToast(`Подписка "${keyObj.duration}" активирована!`, 'success');
             }
         }
 
         async function renderUserTable() {
             await fetchDB();
             const tbody = document.getElementById('userTableBody');
-            const searchQuery = document.getElementById('userSearch').value.trim().toLowerCase().normalize('NFC');
+            const searchQuery = document.getElementById('userSearch').value.trim().toLowerCase();
             tbody.innerHTML = '';
 
-            const filteredUsers = DB.users.filter(u => {
-                const usernameNormalized = u.username.trim().toLowerCase().normalize('NFC');
-                return searchQuery === '' || usernameNormalized.includes(searchQuery);
-            });
-
-            if (filteredUsers.length === 0) {
+            const filtered = DB.users.filter(u => u.username.toLowerCase().includes(searchQuery));
+            if (filtered.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="5" style="color: #666; text-align: center;">Пользователи не найдены</td></tr>';
                 return;
             }
 
-            filteredUsers.forEach((u) => {
+            filtered.forEach(u => {
                 const tr = document.createElement('tr');
-                const isHwidReset = u.hwid === 'Сброшен';
-                const currentSub = u.sub || 'Закончилась';
-                const safeUsername = encodeURIComponent(u.username);
-
+                const safeName = encodeURIComponent(u.username);
                 tr.innerHTML = `
-                    <td><b style="word-break: break-all;">${u.username}</b></td>
+                    <td><b>${u.username}</b></td>
                     <td>
-                        <select class="form-select" style="padding: 6px 10px; font-size: 12px; width: auto;" onchange="changeUserRole(decodeURIComponent('${safeUsername}'), this.value)">
+                        <select class="form-select" style="padding: 4px; font-size: 11px;" onchange="changeUserRole(decodeURIComponent('${safeName}'), this.value)">
                             <option value="USER" ${u.role === 'USER' ? 'selected' : ''}>USER</option>
                             <option value="BETA" ${u.role === 'BETA' ? 'selected' : ''}>BETA</option>
                             <option value="ADMIN" ${u.role === 'ADMIN' ? 'selected' : ''}>ADMIN</option>
@@ -483,57 +723,35 @@
                         </select>
                     </td>
                     <td>
-                        <select class="form-select" style="padding: 6px 10px; font-size: 12px; width: auto;" onchange="changeUserSub(decodeURIComponent('${safeUsername}'), this.value)">
-                            <option value="3 дня" ${currentSub === '3 дня' ? 'selected' : ''}>3 Дня</option>
-                            <option value="7 дней" ${currentSub === '7 дней' ? 'selected' : ''}>7 Дней</option>
-                            <option value="30 дней" ${currentSub === '30 дней' ? 'selected' : ''}>30 Дней</option>
-                            <option value="90 дней" ${currentSub === '90 дней' ? 'selected' : ''}>90 Дней</option>
-                            <option value="Навсегда" ${currentSub === 'Навсегда' ? 'selected' : ''}>Навсегда</option>
-                            <option value="Закончилась" ${currentSub === 'Закончилась' ? 'selected' : ''}>❌ Снять подписку</option>
+                        <select class="form-select" style="padding: 4px; font-size: 11px;" onchange="changeUserSub(decodeURIComponent('${safeName}'), this.value)">
+                            <option value="3 дня" ${u.sub === '3 дня' ? 'selected' : ''}>3 Дня</option>
+                            <option value="7 дней" ${u.sub === '7 дней' ? 'selected' : ''}>7 Дней</option>
+                            <option value="30 дней" ${u.sub === '30 дней' ? 'selected' : ''}>30 Дней</option>
+                            <option value="90 дней" ${u.sub === '90 дней' ? 'selected' : ''}>90 Дней</option>
+                            <option value="Навсегда" ${u.sub === 'Навсегда' ? 'selected' : ''}>Навсегда</option>
+                            <option value="Закончилась" ${u.sub === 'Закончилась' ? 'selected' : ''}>❌ Снять</option>
                         </select>
                     </td>
-                    <td><span style="color: ${isHwidReset ? '#ff3333' : '#00ff66'}; font-weight: 600;">${u.hwid || 'Зафиксирован'}</span></td>
-                    <td>
-                        <button class="action-btn secondary" style="padding: 6px 12px; font-size: 12px;" onclick="resetUserHWID(decodeURIComponent('${safeUsername}'))">🔄 Сбросить HWID</button>
-                    </td>
+                    <td><span style="color: ${u.hwid === 'Сброшен' ? '#ff3333' : '#00ff66'}">${u.hwid || 'Зафиксирован'}</span></td>
+                    <td><button class="action-btn secondary" style="padding: 4px 8px; font-size: 11px;" onclick="resetHWID(decodeURIComponent('${safeName}'))">🔄 Сброс</button></td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        async function changeUserRole(username, newRole) {
-            let user = DB.users.find(u => u.username.trim().toLowerCase() === username.trim().toLowerCase());
-            if (user) {
-                user.role = newRole;
-                await saveDB();
-                showToast(`Роль игрока ${username} изменена на ${newRole}`, 'success');
-                render();
-            }
+        async function changeUserRole(uname, role) {
+            let u = DB.users.find(x => x.username.trim().toLowerCase() === uname.trim().toLowerCase());
+            if (u) { u.role = role; await saveDB(); showToast('Роль обновлена', 'success'); }
         }
 
-        async function changeUserSub(username, newSub) {
-            let user = DB.users.find(u => u.username.trim().toLowerCase() === username.trim().toLowerCase());
-            if (user) {
-                user.sub = newSub;
-                await saveDB();
-                if (newSub === 'Закончилась') {
-                    showToast(`Подписка игрока аннулирована!`, 'danger');
-                } else {
-                    showToast(`Выдана подписка: ${newSub}`, 'success');
-                }
-                render();
-            }
+        async function changeUserSub(uname, sub) {
+            let u = DB.users.find(x => x.username.trim().toLowerCase() === uname.trim().toLowerCase());
+            if (u) { u.sub = sub; await saveDB(); showToast('Подписка обновлена', 'success'); renderCabinet(); }
         }
 
-        async function resetUserHWID(username) {
-            let user = DB.users.find(u => u.username.trim().toLowerCase() === username.trim().toLowerCase());
-            if (user) {
-                user.hwid = 'Сброшен';
-                await saveDB();
-                showToast(`HWID сброшен!`, 'success');
-                renderUserTable();
-                render();
-            }
+        async function resetHWID(uname) {
+            let u = DB.users.find(x => x.username.trim().toLowerCase() === uname.trim().toLowerCase());
+            if (u) { u.hwid = 'Сброшен'; await saveDB(); showToast('HWID сброшен', 'success'); renderUserTable(); }
         }
 
         function switchAuth(reg) {
@@ -550,52 +768,36 @@
             const u = document.getElementById('usernameInput').value.trim();
             const p = document.getElementById('passwordInput').value.trim();
 
-            if (!u || !p) {
-                showToast('Заполните все поля!', 'danger');
-                return;
-            }
-
             let user = DB.users.find(x => x.username.trim().toLowerCase() === u.toLowerCase());
 
             if (isRegister) {
-                if (user) {
-                    showToast('Пользователь с таким ником уже существует!', 'danger');
-                    return;
-                }
+                if (user) return showToast('Ник занят!', 'danger');
                 user = {
-                    username: u,
-                    password: p,
+                    username: u, password: p,
                     role: (u.toLowerCase() === 'invisik') ? 'OWNER' : 'USER',
                     sub: (u.toLowerCase() === 'invisik') ? 'Навсегда' : 'Закончилась',
-                    hwid: 'Не привязан'
+                    hwid: 'Зафиксирован'
                 };
                 DB.users.push(user);
                 await saveDB();
                 localStorage.setItem('apex_session', user.username);
-                await render();
-                showToast('Успешная регистрация и вход!', 'success');
+                await renderCabinet();
+                showToast('Успешная регистрация!', 'success');
             } else {
-                if (!user) {
-                    showToast('Игрок не найден! Нажмите кнопку "Регистрация" выше.', 'danger');
-                    return;
-                }
-                if (user.password !== p) {
-                    showToast('Неверный пароль!', 'danger');
-                    return;
-                }
+                if (!user || user.password !== p) return showToast('Неверные данные!', 'danger');
                 localStorage.setItem('apex_session', user.username);
-                await render();
-                showToast(`Добро пожаловать, ${user.username}!`, 'success');
+                await renderCabinet();
+                showToast(`С возвращением, ${user.username}!`, 'success');
             }
         });
 
         function logout() {
             localStorage.removeItem('apex_session');
-            render();
+            renderCabinet();
             showToast('Вы вышли из аккаунта');
         }
 
-        async function render() {
+        async function renderCabinet() {
             await fetchDB();
             const session = localStorage.getItem('apex_session');
             const authScreen = document.getElementById('authScreen');
@@ -606,10 +808,7 @@
                 dashScreen.classList.remove('hidden');
 
                 let user = DB.users.find(x => x.username.trim().toLowerCase() === session.trim().toLowerCase()) || {
-                    username: session,
-                    role: (session.toLowerCase() === 'invisik') ? 'OWNER' : 'USER',
-                    sub: 'Закончилась',
-                    hwid: 'Зафиксирован'
+                    username: session, role: 'USER', sub: 'Закончилась', hwid: 'Зафиксирован'
                 };
 
                 const initial = user.username.charAt(0).toUpperCase();
@@ -618,26 +817,25 @@
                 document.getElementById('sideUname').innerText = user.username;
                 document.getElementById('mainUname').innerText = user.username;
                 document.getElementById('sideUrole').innerText = user.role;
-                
+
                 const isSubActive = user.sub && user.sub !== 'Закончилась' && user.sub !== 'Нет';
                 const subElem = document.getElementById('subStatus');
                 subElem.innerText = isSubActive ? `Активна (${user.sub})` : 'Истёкла / Неактивна';
                 subElem.style.color = isSubActive ? '#00ff66' : '#ff3333';
 
-                document.getElementById('hwidStatus').innerText = user.hwid || 'Зафиксирован';
-
-                if (user.role !== 'OWNER' && user.role !== 'ADMIN') {
-                    document.getElementById('adminNav').style.display = 'none';
-                } else {
-                    document.getElementById('adminNav').style.display = 'flex';
-                }
+                document.getElementById('adminNav').style.display = (user.role === 'OWNER' || user.role === 'ADMIN') ? 'flex' : 'none';
             } else {
                 authScreen.classList.remove('hidden');
                 dashScreen.classList.add('hidden');
             }
         }
 
-        window.addEventListener('DOMContentLoaded', render);
+        window.addEventListener('DOMContentLoaded', () => {
+            renderCabinet();
+            renderChart();
+        });
+
+        window.addEventListener('resize', renderChart);
     </script>
 </body>
 </html>
