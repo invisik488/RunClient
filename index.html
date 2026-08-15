@@ -168,7 +168,7 @@
             <form id="authForm">
                 <div class="form-group">
                     <label>Никнейм / Логин</label>
-                    <input type="text" id="usernameInput" class="form-input" placeholder="Введите ваш ник" required>
+                    <input type="text" id="usernameInput" class="form-input" placeholder="Введите ваш ник" required autocomplete="off">
                 </div>
                 <div class="form-group">
                     <label>Пароль</label>
@@ -316,15 +316,35 @@
         let DB = { users: [], keys: [] };
 
         async function fetchDB() {
+            // Вначале читаем из локального хранилища
+            const localData = localStorage.getItem('apex_db');
+            if (localData) {
+                try { DB = JSON.parse(localData); } catch(e){}
+            }
+            if (!DB.users) DB.users = [];
+            if (!DB.keys) DB.keys = [];
+
+            // Пробуем подтянуть свежие данные из облака
             try {
                 const res = await fetch('https://api.myjson.online/v1/records/4eb9d84e-399a-4c91-a5bf-ef0e1cfbc39b');
                 if (res.ok) {
                     const data = await res.json();
-                    DB = data.data || { users: [], keys: [] };
+                    if (data && data.data && data.data.users) {
+                        // Объединяем локальные и облачные юзеры без дублей
+                        const remoteUsers = data.data.users || [];
+                        remoteUsers.forEach(ru => {
+                            if (!DB.users.some(lu => lu.username.toLowerCase() === ru.username.toLowerCase())) {
+                                DB.users.push(ru);
+                            }
+                        });
+                        if (data.data.keys) DB.keys = data.data.keys;
+                    }
                 }
             } catch (e) {
-                DB = JSON.parse(localStorage.getItem('apex_db')) || { users: [], keys: [] };
+                console.warn("Облако недоступно, работаем локально.");
             }
+            
+            localStorage.setItem('apex_db', JSON.stringify(DB));
         }
 
         async function saveDB() {
@@ -336,7 +356,7 @@
                     body: JSON.stringify({ data: DB })
                 });
             } catch (e) {
-                console.error("Ошибка сохранения:", e);
+                console.warn("Ошибка записи в облако, сохранено локально.");
             }
         }
 
@@ -534,6 +554,11 @@
             const u = document.getElementById('usernameInput').value.trim();
             const p = document.getElementById('passwordInput').value.trim();
 
+            if (!u || !p) {
+                showToast('Заполните все поля!', 'danger');
+                return;
+            }
+
             let user = DB.users.find(x => x.username.trim().toLowerCase() === u.toLowerCase());
 
             if (isRegister) {
@@ -552,10 +577,10 @@
                 await saveDB();
                 localStorage.setItem('apex_session', user.username);
                 await render();
-                showToast('Успешная регистрация и вход!', 'success');
+                showToast('Регистрация успешна!', 'success');
             } else {
                 if (!user) {
-                    showToast('Игрок не найден! Перейдите во вкладку Регистрация', 'danger');
+                    showToast('Игрок не найден! Нажмите на вкладку Регистрация выше', 'danger');
                     return;
                 }
                 if (user.password !== p) {
