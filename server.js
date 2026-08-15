@@ -1,18 +1,16 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname));
 
-// База пользователей (добавлен ник Quesst)
+// Твоя база пользователей (добавили Quesst)
 let users = [
     { username: "Quesst" }
 ];
 
-// --- Поиск пользователя (Игнорирует регистр и пробелы) ---
+// 1. Поиск (работает БЕЗ учета регистра и убирает пробелы)
 app.post('/api/search', (req, res) => {
     const rawInput = req.body.username || req.body.nickname || "";
     const cleanSearch = String(rawInput).trim().toLowerCase();
@@ -33,11 +31,15 @@ app.post('/api/search', (req, res) => {
     }
 });
 
-// Отдача index.html на главный роут
+// 2. Отдача главной страницы
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.listen(PORT, () => {
-    console.log(`Сервер запущен на порту ${PORT}`);
-});
+// 3. ЭКСПОРТ ДЛЯ VERCEL (Запускаем listen только если запускаем локально)
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
+
+module.exports = app;
