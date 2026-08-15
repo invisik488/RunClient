@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VerseDLC</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: #050505; color: #ffffff; min-height: 100vh; position: relative; overflow-x: hidden; }
@@ -12,7 +12,45 @@
         .screen { position: relative; z-index: 1; width: 100%; min-height: 100vh; }
         .hidden { display: none !important; }
 
-        /* ------------------- АВТОРИЗАЦИЯ / РЕГИСТРАЦИЯ ------------------- */
+        /* ВСПЛЫВАЮЩИЕ УВЕДОМЛЕНИЯ (TOASTS) */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: #0f0f12;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #ff3333;
+            padding: 14px 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+        }
+
+        .toast.success { border-left-color: #00ff66; }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        /* АВТОРИЗАЦИЯ */
         .auth-wrapper {
             display: flex;
             align-items: center;
@@ -38,6 +76,8 @@
             margin-bottom: 6px;
             letter-spacing: -0.5px;
         }
+
+        .auth-title span { color: #ff3333; }
 
         .auth-subtitle {
             font-size: 13px;
@@ -72,9 +112,7 @@
             color: #fff;
         }
 
-        .form-group {
-            margin-bottom: 16px;
-        }
+        .form-group { margin-bottom: 16px; }
 
         .form-group label {
             display: block;
@@ -98,9 +136,7 @@
             transition: 0.2s;
         }
 
-        .form-input:focus {
-            border-color: #ff3333;
-        }
+        .form-input:focus { border-color: #ff3333; }
 
         .btn-submit {
             width: 100%;
@@ -116,11 +152,9 @@
             margin-top: 10px;
         }
 
-        .btn-submit:hover {
-            background: #e62e2e;
-        }
+        .btn-submit:hover { background: #e62e2e; }
 
-        /* ------------------- ЛИЧНЫЙ КАБИНЕТ ------------------- */
+        /* ЛИЧНЫЙ КАБИНЕТ */
         .dash-container {
             display: grid;
             grid-template-columns: 260px 1fr;
@@ -143,12 +177,10 @@
             margin-bottom: 30px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
         }
 
-        .brand-logo span {
-            color: #ff3333;
-        }
+        .brand-logo span { color: #ff3333; }
 
         .user-card-side {
             display: flex;
@@ -173,17 +205,8 @@
             font-weight: 700;
         }
 
-        .user-details .uname {
-            font-size: 14px;
-            font-weight: 700;
-        }
-
-        .user-details .urole {
-            font-size: 10px;
-            color: #ff3333;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-        }
+        .user-details .uname { font-size: 14px; font-weight: 700; }
+        .user-details .urole { font-size: 10px; color: #ff3333; font-weight: 800; letter-spacing: 0.5px; }
 
         .nav-menu {
             list-style: none;
@@ -193,13 +216,16 @@
         }
 
         .nav-item {
-            padding: 10px 14px;
+            padding: 12px 14px;
             border-radius: 8px;
             color: #777;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .nav-item:hover, .nav-item.active {
@@ -219,10 +245,7 @@
             transition: 0.2s;
         }
 
-        .btn-logout:hover {
-            border-color: #ff3333;
-            color: #ff3333;
-        }
+        .btn-logout:hover { border-color: #ff3333; color: #ff3333; }
 
         .content {
             padding: 40px;
@@ -247,17 +270,8 @@
             margin-bottom: 16px;
         }
 
-        .sub-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #00ff66;
-            margin-bottom: 4px;
-        }
-
-        .sub-desc {
-            font-size: 13px;
-            color: #666;
-        }
+        .sub-title { font-size: 20px; font-weight: 700; color: #00ff66; margin-bottom: 4px; }
+        .sub-desc { font-size: 13px; color: #666; }
 
         .grid-info {
             display: grid;
@@ -280,18 +294,33 @@
             text-transform: uppercase;
         }
 
-        .info-item val {
+        .info-item val { font-size: 13px; font-weight: 600; }
+
+        .action-btn {
+            background: #ff3333;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 12px;
         }
+
+        .action-btn:hover { background: #e62e2e; }
     </style>
 </head>
 <body>
 
+    <!-- Контейнер для всплывающих оповещений -->
+    <div id="toast-container"></div>
+
     <!-- ЭКРАН ВХОДА И РЕГИСТРАЦИИ -->
     <div id="authScreen" class="screen auth-wrapper">
         <div class="auth-card">
-            <div class="auth-title">Verse<span>DLC</span></div>
+            <div class="auth-title">Verse <span>DLC</span></div>
             <div class="auth-subtitle">Панель управления клиентом</div>
 
             <div class="tabs">
@@ -317,7 +346,7 @@
     <div id="dashScreen" class="screen dash-container hidden">
         <div class="sidebar">
             <div>
-                <div class="brand-logo">Verse<span>DLC</span></div>
+                <div class="brand-logo">Verse <span>DLC</span></div>
 
                 <div class="user-card-side">
                     <div class="avatar" id="sideAvatar">I</div>
@@ -328,10 +357,10 @@
                 </div>
 
                 <ul class="nav-menu">
-                    <li class="nav-item active">👤 Профиль</li>
-                    <li class="nav-item">⚡ Скачать Лоадер</li>
-                    <li class="nav-item">🔑 Подписка</li>
-                    <li class="nav-item" id="adminNav" style="color: #ff3333;">👑 Админ Панель</li>
+                    <li class="nav-item active" onclick="switchTab('profile')">👤 Профиль</li>
+                    <li class="nav-item" onclick="switchTab('download')">⚡ Скачать Лоадер</li>
+                    <li class="nav-item" onclick="switchTab('sub')">🔑 Подписка</li>
+                    <li class="nav-item" id="adminNav" onclick="switchTab('admin')" style="color: #ff3333;">👑 Админ Панель</li>
                 </ul>
             </div>
 
@@ -339,30 +368,65 @@
         </div>
 
         <div class="content">
-            <div class="card">
-                <div class="card-header">Профиль пользователя</div>
-                <div style="display: flex; align-items: center; gap: 16px;">
-                    <div class="avatar" style="width: 54px; height: 54px; font-size: 20px;" id="mainAvatar">I</div>
-                    <div>
-                        <h2 style="font-size: 20px; font-weight: 700;" id="mainUname">invisik</h2>
-                        <div class="grid-info">
-                            <div class="info-item">
-                                <label>Привязка HWID</label>
-                                <val style="color: #00ff66;">Зафиксирован</val>
-                            </div>
-                            <div class="info-item">
-                                <label>Версия клиента</label>
-                                <val>1.21.11 Fabric</val>
+            <!-- ВКЛАДКА: ПРОФИЛЬ -->
+            <div id="tab-profile" class="tab-content">
+                <div class="card">
+                    <div class="card-header">Профиль пользователя</div>
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div class="avatar" style="width: 54px; height: 54px; font-size: 20px;" id="mainAvatar">I</div>
+                        <div>
+                            <h2 style="font-size: 20px; font-weight: 700;" id="mainUname">invisik</h2>
+                            <div class="grid-info">
+                                <div class="info-item">
+                                    <label>Привязка HWID</label>
+                                    <val style="color: #00ff66;">Зафиксирован</val>
+                                </div>
+                                <div class="info-item">
+                                    <label>Версия клиента</label>
+                                    <val>1.21.11 Fabric</val>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="card" style="margin-top: 24px;">
+                    <div class="card-header">Текущая подписка</div>
+                    <div class="sub-title" id="subStatus">Активна (Навсегда)</div>
+                    <div class="sub-desc">Доступ ко всем функциям VerseDLC открыт.</div>
+                </div>
             </div>
 
-            <div class="card">
-                <div class="card-header">Текущая подписка</div>
-                <div class="sub-title" id="subStatus">Активна (Навсегда)</div>
-                <div class="sub-desc">Доступ ко всем функциям VerseDLC открыт.</div>
+            <!-- ВКЛАДКА: СКАЧАТЬ ЛОАДЕР -->
+            <div id="tab-download" class="tab-content hidden">
+                <div class="card">
+                    <div class="card-header">Загрузка Лаунчера / Лоадера</div>
+                    <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">VerseDLC Client Loader 1.21.11</h2>
+                    <p class="sub-desc">Загрузите актуальную версию инжектора для запуска чита.</p>
+                    <button class="action-btn" onclick="downloadLoader()">📥 Скачать .exe (v1.2.4)</button>
+                </div>
+            </div>
+
+            <!-- ВКЛАДКА: ПОДПИСКА -->
+            <div id="tab-sub" class="tab-content hidden">
+                <div class="card">
+                    <div class="card-header">Активация Ключа</div>
+                    <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">Ввести промокод / ключ подписки</h2>
+                    <input type="text" id="keyInput" class="form-input" placeholder="XXXX-XXXX-XXXX-XXXX" style="max-width: 300px;">
+                    <br>
+                    <button class="action-btn" onclick="activateKey()">Активировать ключ</button>
+                </div>
+            </div>
+
+            <!-- ВКЛАДКА: АДМИН ПАНЕЛЬ -->
+            <div id="tab-admin" class="tab-content hidden">
+                <div class="card">
+                    <div class="card-header">Панель управления (OWNER)</div>
+                    <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Управление пользователями и HWID</h2>
+                    <p class="sub-desc" style="margin-bottom: 16px;">Генерация ключей и сброс железа пользователей.</p>
+                    <button class="action-btn" onclick="showToast('Сброс HWID выполнен!', 'success')">🔄 Сбросить свой HWID</button>
+                    <button class="action-btn" style="background: #222; margin-left: 10px;" onclick="showToast('Ключ сгенерирован: VERSE-9981-22A', 'success')">🔑 Создать ключ</button>
+                </div>
             </div>
         </div>
     </div>
@@ -380,6 +444,41 @@
             localStorage.setItem('versedlc_db', JSON.stringify(DB.users));
         }
 
+        /* Функция всплывающих уведомлений */
+        function showToast(message, type = 'danger') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type === 'success' ? 'success' : ''}`;
+            toast.innerText = message;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        /* Переключение вкладок меню */
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            const target = document.getElementById(`tab-${tabName}`);
+            if (target) target.classList.remove('hidden');
+
+            event.currentTarget.classList.add('active');
+        }
+
+        function downloadLoader() {
+            showToast('Загрузка лоадера началась...', 'success');
+        }
+
+        function activateKey() {
+            const key = document.getElementById('keyInput').value.trim();
+            if (!key) return showToast('Введите ключ подписки!');
+            showToast('Ключ успешно активирован!', 'success');
+            document.getElementById('keyInput').value = '';
+        }
+
         function switchAuth(reg) {
             isRegister = reg;
             document.getElementById('tabLogin').classList.toggle('active', !reg);
@@ -395,7 +494,7 @@
             let user = DB.users.find(x => x.username.toLowerCase() === u.toLowerCase());
 
             if (isRegister) {
-                if (user) return alert('Пользователь с таким именем уже существует!');
+                if (user) return showToast('Пользователь уже существует!');
                 user = {
                     username: u,
                     password: p,
@@ -404,15 +503,20 @@
                 };
                 DB.users.push(user);
                 saveDB();
+                showToast('Успешная регистрация!', 'success');
+            } else {
+                if (!user) return showToast('Пользователь не найден!');
             }
 
             localStorage.setItem('versedlc_session', user ? user.username : u);
             render();
+            showToast(`Добро пожаловать, ${u}!`, 'success');
         });
 
         function logout() {
             localStorage.removeItem('versedlc_session');
             render();
+            showToast('Вы вышли из аккаунта');
         }
 
         function render() {
