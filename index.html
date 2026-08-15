@@ -161,8 +161,8 @@
             <div class="auth-subtitle">Панель управления клиентом (1.21.11 Fabric)</div>
 
             <div class="tabs">
-                <button id="tabLogin" class="tab-btn active" onclick="switchAuth(false)">Вход</button>
-                <button id="tabRegister" class="tab-btn" onclick="switchAuth(true)">Регистрация</button>
+                <button type="button" id="tabLogin" class="tab-btn active" onclick="switchAuth(false)">Вход</button>
+                <button type="button" id="tabRegister" class="tab-btn" onclick="switchAuth(true)">Регистрация</button>
             </div>
 
             <form id="authForm">
@@ -537,7 +537,10 @@
             let user = DB.users.find(x => x.username.trim().toLowerCase() === u.toLowerCase());
 
             if (isRegister) {
-                if (user) return showToast('Пользователь с таким ником уже существует!');
+                if (user) {
+                    showToast('Пользователь с таким ником уже существует!', 'danger');
+                    return;
+                }
                 user = {
                     username: u,
                     password: p,
@@ -547,18 +550,22 @@
                 };
                 DB.users.push(user);
                 await saveDB();
-                showToast('Успешная регистрация!', 'success');
+                localStorage.setItem('apex_session', user.username);
+                await render();
+                showToast('Успешная регистрация и вход!', 'success');
             } else {
                 if (!user) {
-                    return showToast('Игрок не найден! Перейдите во вкладку Регистрация');
-                } else if (user.password !== p) {
-                    return showToast('Неверный пароль!');
+                    showToast('Игрок не найден! Перейдите во вкладку Регистрация', 'danger');
+                    return;
                 }
+                if (user.password !== p) {
+                    showToast('Неверный пароль!', 'danger');
+                    return;
+                }
+                localStorage.setItem('apex_session', user.username);
+                await render();
+                showToast(`Добро пожаловать, ${user.username}!`, 'success');
             }
-
-            localStorage.setItem('apex_session', user.username);
-            render();
-            showToast(`Добро пожаловать, ${user.username}!`, 'success');
         });
 
         function logout() {
