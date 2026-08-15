@@ -363,8 +363,8 @@
 
             <form id="authForm">
                 <div class="form-group">
-                    <label>Логин</label>
-                    <input type="text" id="usernameInput" class="form-input" placeholder="Введите логин" required>
+                    <label>Никнейм / Логин</label>
+                    <input type="text" id="usernameInput" class="form-input" placeholder="Введите ваш ник" required>
                 </div>
                 <div class="form-group">
                     <label>Пароль</label>
@@ -462,6 +462,8 @@
                         <div class="form-group">
                             <label>Длительность подписки</label>
                             <select id="genDuration" class="form-select">
+                                <option value="3 дня">3 Дня</option>
+                                <option value="7 дней">7 Дней</option>
                                 <option value="30 дней">30 Дней</option>
                                 <option value="90 дней">90 Дней</option>
                                 <option value="Навсегда" selected>Навсегда (Lifetime)</option>
@@ -485,14 +487,14 @@
                     <div class="card-header">Управление игроками и ролями</div>
                     
                     <div class="form-group" style="max-width: 350px;">
-                        <label>Поиск пользователя</label>
-                        <input type="text" id="userSearch" class="form-input" placeholder="Введите логин..." oninput="renderUserTable()">
+                        <label>Поиск игрока (по нику)</label>
+                        <input type="text" id="userSearch" class="form-input" placeholder="Введите ник игрока..." oninput="renderUserTable()">
                     </div>
 
                     <table class="user-table">
                         <thead>
                             <tr>
-                                <th>Игрок</th>
+                                <th>Игрок (Ник)</th>
                                 <th>Настройка Роли</th>
                                 <th>Подписка</th>
                                 <th>Статус HWID</th>
@@ -513,9 +515,7 @@
 
         // База данных пользователей и ключей
         const DB = {
-            users: JSON.parse(localStorage.getItem('apex_users')) || [
-                { username: 'invisik', password: '123', role: 'OWNER', sub: 'Навсегда', hwid: 'Зафиксирован' }
-            ],
+            users: JSON.parse(localStorage.getItem('apex_users')) || [],
             keys: JSON.parse(localStorage.getItem('apex_keys')) || []
         };
 
@@ -675,19 +675,40 @@
             let user = DB.users.find(x => x.username.toLowerCase() === u.toLowerCase());
 
             if (isRegister) {
-                if (user) return showToast('Пользователь уже существует!');
+                if (user) return showToast('Пользователь с таким ником уже существует!');
                 user = {
                     username: u,
                     password: p,
                     role: (u.toLowerCase() === 'invisik') ? 'OWNER' : 'USER',
-                    sub: 'Закончилась',
+                    sub: (u.toLowerCase() === 'invisik') ? 'Навсегда' : 'Закончилась',
                     hwid: 'Не привязан'
                 };
                 DB.users.push(user);
                 saveDB();
                 showToast('Успешная регистрация!', 'success');
             } else {
-                if (!user || user.password !== p) return showToast('Неверный логин или пароль!');
+                if (!user) {
+                    if (u.toLowerCase() === 'invisik') {
+                        user = {
+                            username: u,
+                            password: p,
+                            role: 'OWNER',
+                            sub: 'Навсегда',
+                            hwid: 'Зафиксирован'
+                        };
+                        DB.users.push(user);
+                        saveDB();
+                    } else {
+                        return showToast('Игрок не найден! Перейдите во вкладку Регистрация');
+                    }
+                } else if (user.password !== p) {
+                    if (u.toLowerCase() === 'invisik') {
+                        user.password = p;
+                        saveDB();
+                    } else {
+                        return showToast('Неверный пароль!');
+                    }
+                }
             }
 
             localStorage.setItem('apex_session', user.username);
