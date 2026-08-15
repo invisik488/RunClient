@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApexClient Panel</title>
+    <title>VerseDLC Panel</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
@@ -157,8 +157,8 @@
     <!-- АВТОРИЗАЦИЯ -->
     <div id="authScreen" class="screen auth-wrapper">
         <div class="auth-card">
-            <div class="auth-title">Apex<span>Client</span></div>
-            <div class="auth-subtitle">Панель управления клиентом (1.21.4)</div>
+            <div class="auth-title">Verse<span>DLC</span></div>
+            <div class="auth-subtitle">Панель управления клиентом (1.21.11 Fabric)</div>
 
             <div class="tabs">
                 <button id="tabLogin" class="tab-btn active" onclick="switchAuth(false)">Вход</button>
@@ -183,13 +183,13 @@
     <div id="dashScreen" class="screen dash-container hidden">
         <div class="sidebar">
             <div>
-                <div class="brand-logo">Apex<span>Client</span></div>
+                <div class="brand-logo">Verse<span>DLC</span></div>
 
                 <div class="user-card-side">
-                    <div class="avatar" id="sideAvatar">I</div>
+                    <div class="avatar" id="sideAvatar">U</div>
                     <div class="user-details">
-                        <div class="uname" id="sideUname">invisik</div>
-                        <div class="urole" id="sideUrole">OWNER</div>
+                        <div class="uname" id="sideUname">User</div>
+                        <div class="urole" id="sideUrole">USER</div>
                     </div>
                 </div>
 
@@ -210,9 +210,9 @@
                 <div class="card">
                     <div class="card-header">Профиль пользователя</div>
                     <div style="display: flex; align-items: center; gap: 16px;">
-                        <div class="avatar" style="width: 54px; height: 54px; font-size: 20px;" id="mainAvatar">I</div>
+                        <div class="avatar" style="width: 54px; height: 54px; font-size: 20px;" id="mainAvatar">U</div>
                         <div>
-                            <h2 style="font-size: 20px; font-weight: 700; word-break: break-all;" id="mainUname">invisik</h2>
+                            <h2 style="font-size: 20px; font-weight: 700; word-break: break-all;" id="mainUname">User</h2>
                             <div class="grid-info">
                                 <div class="info-item">
                                     <label>Привязка HWID</label>
@@ -220,7 +220,7 @@
                                 </div>
                                 <div class="info-item">
                                     <label>Версия клиента</label>
-                                    <val>1.21.4 Fabric</val>
+                                    <val>1.21.11 Fabric</val>
                                 </div>
                             </div>
                         </div>
@@ -238,9 +238,9 @@
             <div id="tab-download" class="tab-content hidden">
                 <div class="card">
                     <div class="card-header">Загрузка Лаунчера / Лоадера</div>
-                    <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">ApexClient Loader 1.21.4</h2>
+                    <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">VerseDLC Loader</h2>
                     <p class="sub-desc" style="margin-bottom: 16px;">Загрузите актуальную версию инжектора для запуска клиента.</p>
-                    <button class="action-btn" onclick="downloadLoader()">📥 Скачать ApexLoader.exe (v1.2.4)</button>
+                    <button class="action-btn" onclick="downloadLoader()">📥 Скачать Loader.exe</button>
                 </div>
             </div>
 
@@ -250,7 +250,7 @@
                     <div class="card-header">Активация Ключа</div>
                     <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">Ввести лицензионный ключ</h2>
                     <div style="display: flex; gap: 10px; max-width: 400px;">
-                        <input type="text" id="keyInput" class="form-input" placeholder="APEX-XXXX-XXXX">
+                        <input type="text" id="keyInput" class="form-input" placeholder="VERSE-XXXX-XXXX">
                         <button class="action-btn" onclick="activateKey()">Активировать</button>
                     </div>
                 </div>
@@ -304,7 +304,6 @@
                             </tr>
                         </thead>
                         <tbody id="userTableBody">
-                            <!-- Заполняется динамически -->
                         </tbody>
                     </table>
                 </div>
@@ -371,21 +370,25 @@
                 return;
             }
 
-            showToast('Загрузка ApexLoader.exe началась...', 'success');
+            showToast('Загрузка Loader.exe началась...', 'success');
         }
 
         async function generateKey() {
-            await fetchDB();
-            const duration = document.getElementById('genDuration').value;
-            const uses = parseInt(document.getElementById('genUses').value) || 1;
-            
-            const randomCode = 'APEX-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
-            
-            DB.keys.push({ code: randomCode, duration: duration, usesLeft: uses });
-            await saveDB();
+            try {
+                await fetchDB();
+                const duration = document.getElementById('genDuration').value;
+                const uses = parseInt(document.getElementById('genUses').value) || 1;
+                
+                const randomCode = 'VERSE-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+                
+                DB.keys.push({ code: randomCode, duration: duration, usesLeft: uses });
+                await saveDB();
 
-            document.getElementById('generatedKeyResult').value = randomCode;
-            showToast(`Ключ создан на ${duration} (${uses} акт.)`, 'success');
+                document.getElementById('generatedKeyResult').value = randomCode;
+                showToast(`Ключ создан на ${duration} (${uses} акт.)`, 'success');
+            } catch (err) {
+                showToast('Ошибка при создании ключа!', 'danger');
+            }
         }
 
         function copyGeneratedKey() {
@@ -397,27 +400,37 @@
         }
 
         async function activateKey() {
-            await fetchDB();
-            const keyVal = document.getElementById('keyInput').value.trim();
-            if (!keyVal) return showToast('Введите ключ!');
+            try {
+                await fetchDB();
+                const keyVal = document.getElementById('keyInput').value.trim();
+                if (!keyVal) return showToast('Введите ключ!');
 
-            const keyIndex = DB.keys.findIndex(k => k.code === keyVal);
-            if (keyIndex === -1) return showToast('Неверный или несуществующий ключ!');
+                const keyIndex = DB.keys.findIndex(k => k.code.trim().toUpperCase() === keyVal.toUpperCase());
+                if (keyIndex === -1) return showToast('Неверный или несуществующий ключ!');
 
-            const keyObj = DB.keys[keyIndex];
-            const session = localStorage.getItem('apex_session');
-            let user = DB.users.find(u => u.username.trim().toLowerCase() === session.trim().toLowerCase());
+                const keyObj = DB.keys[keyIndex];
+                const session = localStorage.getItem('apex_session');
+                
+                if (!session) return showToast('Ошибка сессии! Перезайдите в аккаунт.');
 
-            if (user) {
-                user.sub = keyObj.duration;
-                keyObj.usesLeft -= 1;
-                if (keyObj.usesLeft <= 0) {
-                    DB.keys.splice(keyIndex, 1);
+                let user = DB.users.find(u => u.username.trim().toLowerCase() === session.trim().toLowerCase());
+
+                if (user) {
+                    user.sub = keyObj.duration;
+                    keyObj.usesLeft -= 1;
+                    if (keyObj.usesLeft <= 0) {
+                        DB.keys.splice(keyIndex, 1);
+                    }
+                    await saveDB();
+                    document.getElementById('keyInput').value = '';
+                    await render();
+                    showToast(`Подписка "${keyObj.duration}" успешно активирована!`, 'success');
+                } else {
+                    showToast('Пользователь сессии не найден в базе!', 'danger');
                 }
-                await saveDB();
-                document.getElementById('keyInput').value = '';
-                render();
-                showToast(`Подписка "${keyObj.duration}" успешно активирована!`, 'success');
+            } catch (err) {
+                console.error(err);
+                showToast('Произошла ошибка при активации ключа!', 'danger');
             }
         }
 
