@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VerseDLC Panel</title>
+    <title>ApexClient Panel</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
@@ -157,8 +157,8 @@
     <!-- АВТОРИЗАЦИЯ -->
     <div id="authScreen" class="screen auth-wrapper">
         <div class="auth-card">
-            <div class="auth-title">Verse<span>DLC</span></div>
-            <div class="auth-subtitle">Панель управления клиентом (1.21.11 Fabric)</div>
+            <div class="auth-title">Apex<span>Client</span></div>
+            <div class="auth-subtitle">Панель управления клиентом (1.21.4 Fabric)</div>
 
             <div class="tabs">
                 <button type="button" id="tabLogin" class="tab-btn active" onclick="switchAuth(false)">Вход</button>
@@ -183,7 +183,7 @@
     <div id="dashScreen" class="screen dash-container hidden">
         <div class="sidebar">
             <div>
-                <div class="brand-logo">Verse<span>DLC</span></div>
+                <div class="brand-logo">Apex<span>Client</span></div>
 
                 <div class="user-card-side">
                     <div class="avatar" id="sideAvatar">U</div>
@@ -220,7 +220,7 @@
                                 </div>
                                 <div class="info-item">
                                     <label>Версия клиента</label>
-                                    <val>1.21.11 Fabric</val>
+                                    <val>1.21.4 Fabric</val>
                                 </div>
                             </div>
                         </div>
@@ -238,7 +238,7 @@
             <div id="tab-download" class="tab-content hidden">
                 <div class="card">
                     <div class="card-header">Загрузка Лаунчера / Лоадера</div>
-                    <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">VerseDLC Loader</h2>
+                    <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">ApexClient Loader</h2>
                     <p class="sub-desc" style="margin-bottom: 16px;">Загрузите актуальную версию инжектора для запуска клиента.</p>
                     <button class="action-btn" onclick="downloadLoader()">📥 Скачать Loader.exe</button>
                 </div>
@@ -250,7 +250,7 @@
                     <div class="card-header">Активация Ключа</div>
                     <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">Ввести лицензионный ключ</h2>
                     <div style="display: flex; gap: 10px; max-width: 400px;">
-                        <input type="text" id="keyInput" class="form-input" placeholder="VERSE-XXXX-XXXX">
+                        <input type="text" id="keyInput" class="form-input" placeholder="APEX-XXXX-XXXX">
                         <button class="action-btn" onclick="activateKey()">Активировать</button>
                     </div>
                 </div>
@@ -314,9 +314,6 @@
     <script>
         let isRegister = false;
         let DB = { users: [], keys: [] };
-        
-        // Резервный сервер БД для высокой надежности
-        const PRIMARY_API = 'https://api.jsonbin.io/v3/b/65d1a886dc74654018a7c2e8';
 
         async function fetchDB() {
             const localData = localStorage.getItem('apex_db');
@@ -340,7 +337,7 @@
                     }
                 }
             } catch (e) {
-                console.warn("Основной API не доступен, работаем через локальное хранилище.");
+                console.warn("API недоступно, работаем через local DB.");
             }
             
             localStorage.setItem('apex_db', JSON.stringify(DB));
@@ -355,7 +352,7 @@
                     body: JSON.stringify({ data: DB })
                 });
             } catch (e) {
-                console.warn("Ошибка сохранения онлайн, сохранено локально.");
+                console.warn("Ошибка обновления сервера.");
             }
         }
 
@@ -398,7 +395,7 @@
                 const duration = document.getElementById('genDuration').value;
                 const uses = parseInt(document.getElementById('genUses').value) || 1;
                 
-                const randomCode = 'VERSE-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+                const randomCode = 'APEX-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
                 
                 DB.keys.push({ code: randomCode, duration: duration, usesLeft: uses });
                 await saveDB();
