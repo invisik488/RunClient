@@ -6,21 +6,21 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Стеклянная аватарка по умолчанию
+// Аватарка по умолчанию в стиле "жидкое стекло"
 const DEFAULT_GLASS_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%236366f1'/><stop offset='100%' stop-color='%23a855f7'/></linearGradient></defs><circle cx='50' cy='50' r='45' fill='url(%23g)' stroke='rgba(255,255,255,0.4)' stroke-width='2'/></svg>";
 
-// Список пользователей (добавили новый ник подруги прямо сюда)
+// База данных в памяти (добавлен ник Quesst)
 let users = [
-    { username: "Quesst", key: "VERSE-9999-XXXX", avatar: DEFAULT_GLASS_AVATAR }
+    { username: "Quesst", avatar: DEFAULT_GLASS_AVATAR, key: "VERSE-9988-AABB" }
 ];
 
-// --- 1. ПОИСК НИКА (Железобетонный) ---
+// --- 1. ЖЕЛЕЗОБЕТОННЫЙ ПОИСК НИКА ---
 app.post('/api/search', (req, res) => {
     const rawInput = req.body.username || req.body.nickname || req.body.query || "";
     const cleanSearch = String(rawInput).trim().toLowerCase();
 
     if (!cleanSearch) {
-        return res.status(400).json({ success: false, message: "Пустой запрос" });
+        return res.status(400).json({ success: false, message: "Введите ник" });
     }
 
     const foundUser = users.find(user => {
@@ -29,92 +29,165 @@ app.post('/api/search', (req, res) => {
     });
 
     if (foundUser) {
-        return res.json({ success: true, user: foundUser });
+        return res.json({ 
+            success: true, 
+            user: { 
+                username: foundUser.username, 
+                avatar: foundUser.avatar || DEFAULT_GLASS_AVATAR,
+                key: foundUser.key || "Ключ не сгенерирован"
+            } 
+        });
     } else {
         return res.status(404).json({ success: false, message: "Пользователь не найден" });
     }
 });
 
-// --- 2. ГЕНЕРАЦИЯ КЛЮЧА И ДОБАВЛЕНИЕ ПОЛЬЗОВАТЕЛЯ ---
+// --- 2. ГЕНЕРАЦИЯ КЛЮЧА ---
 app.post('/api/generate-key', (req, res) => {
-    const username = req.body.username ? req.body.username.trim() : "";
-    if (!username) {
-        return res.status(400).json({ success: false, message: "Укажите ник" });
+    const rawInput = req.body.username || "";
+    const cleanNick = String(rawInput).trim();
+
+    if (!cleanNick) {
+        return res.status(400).json({ success: false, message: "Укажите никнейм" });
     }
 
-    const generatedKey = "VERSE-" + crypto.randomBytes(4).toString('hex').toUpperCase();
-    
-    // Обновляем или добавляем пользователя
-    const existingIndex = users.findIndex(u => u.username.toLowerCase() === username.toLowerCase());
-    const userData = { username, key: generatedKey, avatar: DEFAULT_GLASS_AVATAR };
+    const newKey = "VERSE-" + crypto.randomBytes(4).toString('hex').toUpperCase();
 
-    if (existingIndex !== -1) {
-        users[existingIndex] = userData;
+    const userIndex = users.findIndex(u => u.username.toLowerCase() === cleanNick.toLowerCase());
+    if (userIndex !== -1) {
+        users[userIndex].key = newKey;
     } else {
-        users.push(userData);
+        users.push({ username: cleanNick, key: newKey, avatar: DEFAULT_GLASS_AVATAR });
     }
 
-    return res.json({ success: true, key: generatedKey, username });
+    return res.json({ success: true, key: newKey, username: cleanNick });
 });
 
-// --- 3. ВЕБ-ИНТЕРФЕЙС С КНОПКОЙ КОПИРОВАНИЯ ---
-app.get('/', (req, res) => {
+// --- 3. ИНТЕРФЕЙС САЙТА ---
+app.get('*', (req, res) => {
     res.send(`
         <!DOCTYPE html>
         <html lang="ru">
         <head>
             <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>VerseDLC Panel</title>
             <style>
-                body { background: #0f172a; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-                .card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 16px; width: 320px; text-align: center; }
-                input { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #334155; background: #1e293b; color: white; box-sizing: border-box; }
-                button { width: 100%; padding: 10px; border: none; border-radius: 8px; background: #6366f1; color: white; font-weight: bold; cursor: pointer; margin-top: 5px; }
+                * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+                body { background-color: #0b0f19; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+                
+                .card {
+                    background: #161b26;
+                    border: 1px solid #232a3b;
+                    border-radius: 16px;
+                    padding: 32px;
+                    width: 380px;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+                    text-align: center;
+                }
+
+                h2 { font-size: 20px; font-weight: 600; margin-bottom: 24px; color: #f3f4f6; }
+
+                input {
+                    width: 100%;
+                    padding: 12px 16px;
+                    background: #0d111a;
+                    border: 1px solid #232a3b;
+                    border-radius: 10px;
+                    color: #ffffff;
+                    font-size: 14px;
+                    outline: none;
+                    margin-bottom: 16px;
+                }
+                input:focus { border-color: #6366f1; }
+
+                button {
+                    width: 100%;
+                    padding: 12px;
+                    background: #6366f1;
+                    border: none;
+                    border-radius: 10px;
+                    color: white;
+                    font-size: 14px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: 0.2s;
+                }
                 button:hover { background: #4f46e5; }
-                .key-box { margin-top: 15px; display: none; background: #1e293b; padding: 10px; border-radius: 8px; word-break: break-all; }
-                .copy-btn { background: #10b981; margin-top: 8px; }
+
+                .result-box {
+                    display: none;
+                    margin-top: 20px;
+                    padding: 16px;
+                    background: #0d111a;
+                    border: 1px dashed #374151;
+                    border-radius: 10px;
+                }
+
+                .key-text {
+                    font-family: monospace;
+                    font-size: 16px;
+                    color: #38bdf8;
+                    font-weight: bold;
+                    margin-bottom: 12px;
+                    word-break: break-all;
+                }
+
+                .copy-btn {
+                    background: #10b981;
+                }
                 .copy-btn:hover { background: #059669; }
             </style>
         </head>
         <body>
+
             <div class="card">
-                <h3>Генерация Ключа</h3>
+                <h2>Генерация Ключа</h2>
                 <input type="text" id="usernameInput" placeholder="Введите ник (например, Quesst)">
                 <button onclick="generateKey()">Создать ключ</button>
 
-                <div id="resultBox" class="key-box">
-                    <div id="keyDisplay" style="font-weight: bold; color: #38bdf8;"></div>
+                <div id="resultBox" class="result-box">
+                    <div id="keyDisplay" class="key-text"></div>
                     <button class="copy-btn" onclick="copyKey()">Скопировать ключ</button>
                 </div>
             </div>
 
             <script>
                 async function generateKey() {
-                    const username = document.getElementById('usernameInput').value;
-                    if(!username) return alert('Введи ник!');
+                    const username = document.getElementById('usernameInput').value.trim();
+                    if (!username) return alert('Введите ник!');
 
-                    const res = await fetch('/api/generate-key', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username })
-                    });
-                    const data = await res.json();
+                    try {
+                        const res = await fetch('/api/generate-key', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ username })
+                        });
+                        const data = await res.json();
 
-                    if(data.success) {
-                        document.getElementById('keyDisplay').innerText = data.key;
-                        document.getElementById('resultBox').style.display = 'block';
-                    } else {
-                        alert(data.message);
+                        if (data.success) {
+                            document.getElementById('keyDisplay').innerText = data.key;
+                            document.getElementById('resultBox').style.display = 'block';
+                        } else {
+                            alert(data.message);
+                        }
+                    } catch(e) {
+                        alert('Ошибка запроса на сервер');
                     }
                 }
 
                 function copyKey() {
                     const keyText = document.getElementById('keyDisplay').innerText;
+                    if(!keyText) return;
+                    
                     navigator.clipboard.writeText(keyText).then(() => {
                         alert('Ключ скопирован в буфер обмена!');
+                    }).catch(() => {
+                        alert('Не удалось скопировать автоматически');
                     });
                 }
             </script>
+
         </body>
         </html>
     `);
