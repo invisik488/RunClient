@@ -1,196 +1,101 @@
-const express = require('express');
-const crypto = require('crypto');
-const app = express();
-const PORT = process.env.PORT || 3000;
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VerseDLC</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background-color: #0b0f19; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        
+        .card {
+            background: #161b26;
+            border: 1px solid #232a3b;
+            border-radius: 16px;
+            padding: 32px;
+            width: 380px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            text-align: center;
+        }
 
-app.use(express.json());
+        h2 { font-size: 20px; font-weight: 600; margin-bottom: 24px; color: #f3f4f6; }
 
-// Аватарка по умолчанию в стиле "жидкое стекло"
-const DEFAULT_GLASS_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%236366f1'/><stop offset='100%' stop-color='%23a855f7'/></linearGradient></defs><circle cx='50' cy='50' r='45' fill='url(%23g)' stroke='rgba(255,255,255,0.4)' stroke-width='2'/></svg>";
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0d111a;
+            border: 1px solid #232a3b;
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 16px;
+        }
+        input:focus { border-color: #6366f1; }
 
-// База пользователей (добавлена Quesst)
-let users = [
-    { username: "Quesst", avatar: DEFAULT_GLASS_AVATAR, key: "VERSE-88FF-99AA" }
-];
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #6366f1;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover { background: #4f46e5; }
 
-// --- API ПОИСКА (Железобетонный фикс регистра и пробелов) ---
-app.post('/api/search', (req, res) => {
-    const rawInput = req.body.username || req.body.nickname || req.body.query || "";
-    const cleanSearch = String(rawInput).trim().toLowerCase();
+        .result-box {
+            display: none;
+            margin-top: 20px;
+            padding: 16px;
+            background: #0d111a;
+            border: 1px dashed #374151;
+            border-radius: 10px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
 
-    if (!cleanSearch) {
-        return res.status(400).json({ success: false, message: "Введите ник" });
-    }
+    <div class="card">
+        <h2>Поиск пользователя</h2>
+        <input type="text" id="usernameInput" placeholder="Введите ник (например, Quesst)">
+        <button onclick="searchUser()">Найти</button>
 
-    const foundUser = users.find(user => {
-        const dbNick = String(user.username || "").trim().toLowerCase();
-        return dbNick === cleanSearch;
-    });
+        <div id="resultBox" class="result-box"></div>
+    </div>
 
-    if (foundUser) {
-        return res.json({ 
-            success: true, 
-            user: { 
-                username: foundUser.username, 
-                avatar: foundUser.avatar || DEFAULT_GLASS_AVATAR,
-                key: foundUser.key || "Нет ключа"
-            } 
-        });
-    } else {
-        return res.status(404).json({ success: false, message: "Пользователь не найден" });
-    }
-});
+    <script>
+        async function searchUser() {
+            const username = document.getElementById('usernameInput').value;
+            const resultBox = document.getElementById('resultBox');
 
-// --- API ГЕНЕРАЦИИ КЛЮЧА ---
-app.post('/api/generate-key', (req, res) => {
-    const rawInput = req.body.username || "";
-    const cleanNick = String(rawInput).trim();
+            if (!username) return alert('Введите ник!');
 
-    if (!cleanNick) {
-        return res.status(400).json({ success: false, message: "Введите ник" });
-    }
+            try {
+                const res = await fetch('/api/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username })
+                });
 
-    const newKey = "VERSE-" + crypto.randomBytes(4).toString('hex').toUpperCase();
-    
-    // Обновляем или создаем аккаунт
-    const userIndex = users.findIndex(u => u.username.toLowerCase() === cleanNick.toLowerCase());
-    if (userIndex !== -1) {
-        users[userIndex].key = newKey;
-    } else {
-        users.push({ username: cleanNick, key: newKey, avatar: DEFAULT_GLASS_AVATAR });
-    }
+                const data = await res.json();
 
-    return res.json({ success: true, key: newKey, username: cleanNick });
-});
-
-// --- СТРАНИЦА САЙТА (Твой дизайн + кнопка копирования) ---
-app.get('/', (req, res) => {
-    res.send(`
-        <!DOCTYPE html>
-        <html lang="ru">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>VerseDLC Panel</title>
-            <style>
-                * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-                body { background-color: #0b0f19; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-                
-                .card {
-                    background: #161b26;
-                    border: 1px solid #232a3b;
-                    border-radius: 16px;
-                    padding: 32px;
-                    width: 380px;
-                    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-                    text-align: center;
+                if (data.success) {
+                    resultBox.style.display = 'block';
+                    resultBox.innerText = 'Пользователь найден: ' + data.user.username;
+                } else {
+                    resultBox.style.display = 'block';
+                    resultBox.innerText = data.message || 'Не найден';
                 }
+            } catch (err) {
+                alert('Ошибка подключения к серверу');
+            }
+        }
+    </script>
 
-                h2 { font-size: 20px; font-weight: 600; margin-bottom: 24px; color: #f3f4f6; }
-
-                input {
-                    width: 100%;
-                    padding: 12px 16px;
-                    background: #0d111a;
-                    border: 1px solid #232a3b;
-                    border-radius: 10px;
-                    color: #ffffff;
-                    font-size: 14px;
-                    outline: none;
-                    margin-bottom: 16px;
-                }
-                input:focus { border-color: #6366f1; }
-
-                button {
-                    width: 100%;
-                    padding: 12px;
-                    background: #6366f1;
-                    border: none;
-                    border-radius: 10px;
-                    color: white;
-                    font-size: 14px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: 0.2s;
-                }
-                button:hover { background: #4f46e5; }
-
-                .result-box {
-                    display: none;
-                    margin-top: 20px;
-                    padding: 16px;
-                    background: #0d111a;
-                    border: 1px dashed #374151;
-                    border-radius: 10px;
-                }
-
-                .key-text {
-                    font-family: monospace;
-                    font-size: 16px;
-                    color: #38bdf8;
-                    font-weight: bold;
-                    margin-bottom: 12px;
-                    word-break: break-all;
-                }
-
-                .copy-btn {
-                    background: #10b981;
-                }
-                .copy-btn:hover { background: #059669; }
-            </style>
-        </head>
-        <body>
-
-            <div class="card">
-                <h2>Генерация Ключа</h2>
-                <input type="text" id="usernameInput" placeholder="Введите ник (например, Quesst)">
-                <button onclick="generateKey()">Создать ключ</button>
-
-                <div id="resultBox" class="result-box">
-                    <div id="keyDisplay" class="key-text"></div>
-                    <button class="copy-btn" onclick="copyKey()">Скопировать ключ</button>
-                </div>
-            </div>
-
-            <script>
-                async function generateKey() {
-                    const username = document.getElementById('usernameInput').value.trim();
-                    if (!username) return alert('Введите ник!');
-
-                    try {
-                        const res = await fetch('/api/generate-key', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ username })
-                        });
-                        const data = await res.json();
-
-                        if (data.success) {
-                            document.getElementById('keyDisplay').innerText = data.key;
-                            document.getElementById('resultBox').style.display = 'block';
-                        } else {
-                            alert(data.message);
-                        }
-                    } catch(e) {
-                        alert('Ошибка запроса на сервер');
-                    }
-                }
-
-                function copyKey() {
-                    const keyText = document.getElementById('keyDisplay').innerText;
-                    if(!keyText) return;
-                    
-                    navigator.clipboard.writeText(keyText).then(() => {
-                        alert('Ключ успешно скопирован!');
-                    }).catch(() => {
-                        alert('Не удалось скопировать, скопируйте вручную');
-                    });
-                }
-            </script>
-
-        </body>
-        </html>
-    `);
-});
-
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+</body>
+</html>
