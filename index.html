@@ -12,7 +12,6 @@
         .screen { position: relative; z-index: 1; width: 100%; min-height: 100vh; }
         .hidden { display: none !important; }
 
-        /* ВСПЛЫВАЮЩИЕ УВЕДОМЛЕНИЯ В ПРАВОМ НИЖНЕМ УГЛУ */
         #toast-container {
             position: fixed;
             bottom: 20px;
@@ -35,7 +34,7 @@
             gap: 12px;
             font-size: 13px;
             font-weight: 600;
-            animation: slideInRight 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+            animation: slideInRight 0.3s ease;
         }
 
         .toast.success { border-left-color: #00ff66; }
@@ -45,12 +44,6 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-
-        /* АВТОРИЗАЦИЯ */
         .auth-wrapper {
             display: flex;
             align-items: center;
@@ -69,288 +62,99 @@
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
         }
 
-        .auth-title {
-            font-size: 26px;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 6px;
-            letter-spacing: -0.5px;
-        }
-
+        .auth-title { font-size: 26px; font-weight: 700; text-align: center; margin-bottom: 6px; }
         .auth-title span { color: #ff3333; }
+        .auth-subtitle { font-size: 13px; color: #666; text-align: center; margin-bottom: 24px; }
 
-        .auth-subtitle {
-            font-size: 13px;
-            color: #666;
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .tabs {
-            display: flex;
-            background: #121215;
-            padding: 4px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
+        .tabs { display: flex; background: #121215; padding: 4px; border-radius: 10px; margin-bottom: 20px; }
         .tab-btn {
-            flex: 1;
-            background: none;
-            border: none;
-            color: #666;
-            padding: 10px;
-            font-size: 13px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.2s;
+            flex: 1; background: none; border: none; color: #666; padding: 10px;
+            font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s;
         }
-
-        .tab-btn.active {
-            background: #1c1c21;
-            color: #fff;
-        }
+        .tab-btn.active { background: #1c1c21; color: #fff; }
 
         .form-group { margin-bottom: 16px; }
-
         .form-group label {
-            display: block;
-            font-size: 11px;
-            color: #888;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
+            display: block; font-size: 11px; color: #888; margin-bottom: 6px;
+            text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
         }
 
         .form-input, .form-select {
-            width: 100%;
-            background: #121215;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 12px 14px;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 14px;
-            outline: none;
-            transition: 0.2s;
+            width: 100%; background: #121215; border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 12px 14px; border-radius: 8px; color: #fff; font-size: 14px; outline: none; transition: 0.2s;
         }
-
         .form-input:focus, .form-select:focus { border-color: #ff3333; }
 
         .btn-submit {
-            width: 100%;
-            background: #ff3333;
-            color: #fff;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-            margin-top: 10px;
+            width: 100%; background: #ff3333; color: #fff; border: none; padding: 12px;
+            border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 10px;
         }
-
         .btn-submit:hover { background: #e62e2e; }
 
-        /* ЛИЧНЫЙ КАБИНЕТ */
-        .dash-container {
-            display: grid;
-            grid-template-columns: 260px 1fr;
-            min-height: 100vh;
-        }
-
+        .dash-container { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
         .sidebar {
-            background: #0a0a0c;
-            border-right: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 30px 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            background: #0a0a0c; border-right: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 30px 20px; display: flex; flex-direction: column; justify-content: space-between;
         }
 
-        .brand-logo {
-            font-size: 20px;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
+        .brand-logo { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 30px; display: flex; align-items: center; gap: 6px; }
         .brand-logo span { color: #ff3333; }
 
-        .user-card-side {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background: #121215;
-            border-radius: 10px;
-            margin-bottom: 24px;
-        }
-
+        .user-card-side { display: flex; align-items: center; gap: 12px; padding: 12px; background: #121215; border-radius: 10px; margin-bottom: 24px; }
         .avatar {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 51, 51, 0.15);
-            border: 1px solid #ff3333;
-            color: #ff3333;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
+            width: 40px; height: 40px; background: rgba(255, 51, 51, 0.15); border: 1px solid #ff3333;
+            color: #ff3333; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700;
         }
 
         .user-details .uname { font-size: 14px; font-weight: 700; }
         .user-details .urole { font-size: 10px; color: #ff3333; font-weight: 800; letter-spacing: 0.5px; }
 
-        .nav-menu {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
+        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; }
         .nav-item {
-            padding: 12px 14px;
-            border-radius: 8px;
-            color: #777;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            padding: 12px 14px; border-radius: 8px; color: #777; font-size: 13px;
+            font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px;
         }
-
-        .nav-item:hover, .nav-item.active {
-            background: rgba(255, 51, 51, 0.1);
-            color: #ff3333;
-        }
+        .nav-item:hover, .nav-item.active { background: rgba(255, 51, 51, 0.1); color: #ff3333; }
 
         .btn-logout {
-            background: none;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: #777;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 13px;
-            transition: 0.2s;
+            background: none; border: 1px solid rgba(255, 255, 255, 0.08); color: #777;
+            padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: 0.2s;
         }
-
         .btn-logout:hover { border-color: #ff3333; color: #ff3333; }
 
-        .content {
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .card {
-            background: #0a0a0c;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 14px;
-            padding: 24px;
-        }
-
-        .card-header {
-            font-size: 11px;
-            color: #555;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 16px;
-        }
+        .content { padding: 40px; display: flex; flex-direction: column; gap: 24px; }
+        .card { background: #0a0a0c; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 14px; padding: 24px; }
+        .card-header { font-size: 11px; color: #555; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
 
         .sub-title { font-size: 20px; font-weight: 700; color: #00ff66; margin-bottom: 4px; }
         .sub-desc { font-size: 13px; color: #666; }
 
-        .grid-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 12px;
-            margin-top: 16px;
-        }
-
-        .info-item {
-            background: #121215;
-            padding: 12px 16px;
-            border-radius: 8px;
-        }
-
-        .info-item label {
-            font-size: 10px;
-            color: #666;
-            display: block;
-            margin-bottom: 2px;
-            text-transform: uppercase;
-        }
-
+        .grid-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 16px; }
+        .info-item { background: #121215; padding: 12px 16px; border-radius: 8px; }
+        .info-item label { font-size: 10px; color: #666; display: block; margin-bottom: 2px; text-transform: uppercase; }
         .info-item val { font-size: 13px; font-weight: 600; }
 
         .action-btn {
-            background: #ff3333;
-            color: #fff;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+            background: #ff3333; color: #fff; border: none; padding: 12px 20px;
+            border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s;
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
         }
-
         .action-btn:hover { background: #e62e2e; }
         .action-btn.secondary { background: #1f1f25; color: #fff; }
         .action-btn.secondary:hover { background: #2a2a32; }
 
-        /* Таблица пользователей в админке */
-        .user-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 16px;
-        }
+        .user-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        .user-table th, .user-table td { padding: 12px 14px; text-align: left; font-size: 13px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .user-table th { color: #555; font-size: 11px; text-transform: uppercase; }
 
-        .user-table th, .user-table td {
-            padding: 12px 14px;
-            text-align: left;
-            font-size: 13px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            vertical-align: middle;
-        }
-
-        .user-table th {
-            color: #555;
-            font-size: 11px;
-            text-transform: uppercase;
-        }
-
-        .admin-form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 16px;
-        }
+        .admin-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 16px; }
     </style>
 </head>
 <body>
 
-    <!-- Контейнер для всплывающих оповещений (внизу справа) -->
     <div id="toast-container"></div>
 
-    <!-- ЭКРАН ВХОДА И РЕГИСТРАЦИИ -->
+    <!-- АВТОРИЗАЦИЯ -->
     <div id="authScreen" class="screen auth-wrapper">
         <div class="auth-card">
             <div class="auth-title">Apex<span>Client</span></div>
@@ -375,7 +179,7 @@
         </div>
     </div>
 
-    <!-- ЭКРАН ЛИЧНОГО КАБИНЕТА -->
+    <!-- ЛИЧНЫЙ КАБИНЕТ -->
     <div id="dashScreen" class="screen dash-container hidden">
         <div class="sidebar">
             <div>
@@ -401,7 +205,7 @@
         </div>
 
         <div class="content">
-            <!-- ВКЛАДКА: ПРОФИЛЬ -->
+            <!-- ПРОФИЛЬ -->
             <div id="tab-profile" class="tab-content">
                 <div class="card">
                     <div class="card-header">Профиль пользователя</div>
@@ -425,12 +229,12 @@
 
                 <div class="card" style="margin-top: 24px;">
                     <div class="card-header">Текущая подписка</div>
-                    <div class="sub-title" id="subStatus">Активна (Навсегда)</div>
-                    <div class="sub-desc">Доступ ко всем функциям ApexClient открыт.</div>
+                    <div class="sub-title" id="subStatus">Загрузка...</div>
+                    <div class="sub-desc">Статус синхронизируется с сервером.</div>
                 </div>
             </div>
 
-            <!-- ВКЛАДКА: СКАЧАТЬ ЛОАДЕР -->
+            <!-- СКАЧАТЬ ЛОАДЕР -->
             <div id="tab-download" class="tab-content hidden">
                 <div class="card">
                     <div class="card-header">Загрузка Лаунчера / Лоадера</div>
@@ -440,7 +244,7 @@
                 </div>
             </div>
 
-            <!-- ВКЛАДКА: ПОДПИСКА -->
+            <!-- ПОДПИСКА -->
             <div id="tab-sub" class="tab-content hidden">
                 <div class="card">
                     <div class="card-header">Активация Ключа</div>
@@ -452,9 +256,8 @@
                 </div>
             </div>
 
-            <!-- ВКЛАДКА: АДМИН ПАНЕЛЬ -->
+            <!-- АДМИН ПАНЕЛЬ -->
             <div id="tab-admin" class="tab-content hidden">
-                <!-- ГЕНЕРАЦИЯ КЛЮЧЕЙ -->
                 <div class="card">
                     <div class="card-header">Генератор лицензионных ключей</div>
                     
@@ -482,9 +285,8 @@
                     </div>
                 </div>
 
-                <!-- ПОИСК И УПРАВЛЕНИЕ ИГРОКАМИ -->
                 <div class="card" style="margin-top: 24px;">
-                    <div class="card-header">Управление игроками и ролями</div>
+                    <div class="card-header">Управление игроками (Онлайн)</div>
                     
                     <div class="form-group" style="max-width: 350px;">
                         <label>Поиск игрока (по нику)</label>
@@ -495,9 +297,9 @@
                         <thead>
                             <tr>
                                 <th>Игрок (Ник)</th>
-                                <th>Настройка Роли</th>
-                                <th>Подписка</th>
-                                <th>Статус HWID</th>
+                                <th>Роль</th>
+                                <th>Управление подпиской</th>
+                                <th>HWID</th>
                                 <th>Сброс Железа</th>
                             </tr>
                         </thead>
@@ -511,20 +313,39 @@
     </div>
 
     <script>
+        // ОБЛАЧНАЯ БАЗА ДАННЫХ (Публичное API для теста)
+        const SERVER_URL = 'https://api.jsonbin.io/v3/b/65f1a234dc74654018b2c111'; // Бесплатный тестовый сервер
+
         let isRegister = false;
+        let DB = { users: [], keys: [] };
 
-        // База данных пользователей и ключей
-        const DB = {
-            users: JSON.parse(localStorage.getItem('apex_users')) || [],
-            keys: JSON.parse(localStorage.getItem('apex_keys')) || []
-        };
-
-        function saveDB() {
-            localStorage.setItem('apex_users', JSON.stringify(DB.users));
-            localStorage.setItem('apex_keys', JSON.stringify(DB.keys));
+        // Синхронизация с облачным сервером
+        async function fetchDB() {
+            try {
+                const res = await fetch('https://api.myjson.online/v1/records/4eb9d84e-399a-4c91-a5bf-ef0e1cfbc39b');
+                if (res.ok) {
+                    const data = await res.json();
+                    DB = data.data || { users: [], keys: [] };
+                }
+            } catch (e) {
+                // Фоллбэк на локальный режим
+                DB = JSON.parse(localStorage.getItem('apex_db')) || { users: [], keys: [] };
+            }
         }
 
-        /* Функция всплывающих уведомлений снизу справа */
+        async function saveDB() {
+            localStorage.setItem('apex_db', JSON.stringify(DB));
+            try {
+                await fetch('https://api.myjson.online/v1/records/4eb9d84e-399a-4c91-a5bf-ef0e1cfbc39b', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ data: DB })
+                });
+            } catch (e) {
+                console.error("Ошибка сохранения в облако:", e);
+            }
+        }
+
         function showToast(message, type = 'danger') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -532,12 +353,9 @@
             toast.innerText = message;
             container.appendChild(toast);
 
-            setTimeout(() => {
-                toast.remove();
-            }, 3000);
+            setTimeout(() => { toast.remove(); }, 3000);
         }
 
-        /* Переключение вкладок */
         function switchTab(tabName, event) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -550,24 +368,26 @@
         }
 
         function downloadLoader() {
+            const session = localStorage.getItem('apex_session');
+            const user = DB.users.find(u => u.username.toLowerCase() === (session || '').toLowerCase());
+
+            if (!user || user.sub === 'Закончилась' || user.sub === 'Нет') {
+                showToast('Ошибка: у вас нет активной подписки!', 'danger');
+                return;
+            }
+
             showToast('Загрузка ApexLoader.exe началась...', 'success');
         }
 
-        /* Генерация ключа */
-        function generateKey() {
+        async function generateKey() {
+            await fetchDB();
             const duration = document.getElementById('genDuration').value;
             const uses = parseInt(document.getElementById('genUses').value) || 1;
             
             const randomCode = 'APEX-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
             
-            const newKey = {
-                code: randomCode,
-                duration: duration,
-                usesLeft: uses
-            };
-
-            DB.keys.push(newKey);
-            saveDB();
+            DB.keys.push({ code: randomCode, duration: duration, usesLeft: uses });
+            await saveDB();
 
             document.getElementById('generatedKeyResult').value = randomCode;
             showToast(`Ключ создан на ${duration} (${uses} акт.)`, 'success');
@@ -581,8 +401,8 @@
             showToast('Ключ скопирован в буфер обмена!', 'success');
         }
 
-        /* Активация ключа */
-        function activateKey() {
+        async function activateKey() {
+            await fetchDB();
             const keyVal = document.getElementById('keyInput').value.trim();
             if (!keyVal) return showToast('Введите ключ!');
 
@@ -599,15 +419,15 @@
                 if (keyObj.usesLeft <= 0) {
                     DB.keys.splice(keyIndex, 1);
                 }
-                saveDB();
+                await saveDB();
                 document.getElementById('keyInput').value = '';
                 render();
                 showToast(`Подписка "${keyObj.duration}" успешно активирована!`, 'success');
             }
         }
 
-        /* Управление пользователями в Админке */
-        function renderUserTable() {
+        async function renderUserTable() {
+            await fetchDB();
             const tbody = document.getElementById('userTableBody');
             const searchQuery = document.getElementById('userSearch').value.toLowerCase();
             tbody.innerHTML = '';
@@ -617,6 +437,7 @@
             filteredUsers.forEach((u) => {
                 const tr = document.createElement('tr');
                 const isHwidReset = u.hwid === 'Сброшен';
+                const currentSub = u.sub || 'Закончилась';
 
                 tr.innerHTML = `
                     <td><b>${u.username}</b></td>
@@ -628,7 +449,16 @@
                             <option value="OWNER" ${u.role === 'OWNER' ? 'selected' : ''}>OWNER</option>
                         </select>
                     </td>
-                    <td>${u.sub || 'Нет'}</td>
+                    <td>
+                        <select class="form-select" style="padding: 6px 10px; font-size: 12px; width: auto;" onchange="changeUserSub('${u.username}', this.value)">
+                            <option value="3 дня" ${currentSub === '3 дня' ? 'selected' : ''}>3 Дня</option>
+                            <option value="7 дней" ${currentSub === '7 дней' ? 'selected' : ''}>7 Дней</option>
+                            <option value="30 дней" ${currentSub === '30 дней' ? 'selected' : ''}>30 Дней</option>
+                            <option value="90 дней" ${currentSub === '90 дней' ? 'selected' : ''}>90 Дней</option>
+                            <option value="Навсегда" ${currentSub === 'Навсегда' ? 'selected' : ''}>Навсегда</option>
+                            <option value="Закончилась" ${currentSub === 'Закончилась' ? 'selected' : ''}>❌ Снять подписку</option>
+                        </select>
+                    </td>
                     <td><span style="color: ${isHwidReset ? '#ff3333' : '#00ff66'}; font-weight: 600;">${u.hwid || 'Зафиксирован'}</span></td>
                     <td>
                         <button class="action-btn secondary" style="padding: 6px 12px; font-size: 12px;" onclick="resetUserHWID('${u.username}')">🔄 Сбросить HWID</button>
@@ -638,28 +468,41 @@
             });
         }
 
-        function changeUserRole(username, newRole) {
+        async function changeUserRole(username, newRole) {
             let user = DB.users.find(u => u.username === username);
             if (user) {
                 user.role = newRole;
-                saveDB();
+                await saveDB();
                 showToast(`Роль игрока ${username} изменена на ${newRole}`, 'success');
                 render();
             }
         }
 
-        function resetUserHWID(username) {
+        async function changeUserSub(username, newSub) {
+            let user = DB.users.find(u => u.username === username);
+            if (user) {
+                user.sub = newSub;
+                await saveDB();
+                if (newSub === 'Закончилась') {
+                    showToast(`Подписка игрока ${username} аннулирована!`, 'danger');
+                } else {
+                    showToast(`Игроку ${username} выдана подписка: ${newSub}`, 'success');
+                }
+                render();
+            }
+        }
+
+        async function resetUserHWID(username) {
             let user = DB.users.find(u => u.username === username);
             if (user) {
                 user.hwid = 'Сброшен';
-                saveDB();
+                await saveDB();
                 showToast(`HWID для игрока ${username} успешно сброшен!`, 'success');
                 renderUserTable();
                 render();
             }
         }
 
-        /* Авторизация */
         function switchAuth(reg) {
             isRegister = reg;
             document.getElementById('tabLogin').classList.toggle('active', !reg);
@@ -667,8 +510,10 @@
             document.getElementById('submitBtn').innerText = reg ? 'Зарегистрироваться' : 'Войти';
         }
 
-        document.getElementById('authForm').addEventListener('submit', (e) => {
+        document.getElementById('authForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            await fetchDB();
+
             const u = document.getElementById('usernameInput').value.trim();
             const p = document.getElementById('passwordInput').value.trim();
 
@@ -684,30 +529,13 @@
                     hwid: 'Не привязан'
                 };
                 DB.users.push(user);
-                saveDB();
+                await saveDB();
                 showToast('Успешная регистрация!', 'success');
             } else {
                 if (!user) {
-                    if (u.toLowerCase() === 'invisik') {
-                        user = {
-                            username: u,
-                            password: p,
-                            role: 'OWNER',
-                            sub: 'Навсегда',
-                            hwid: 'Зафиксирован'
-                        };
-                        DB.users.push(user);
-                        saveDB();
-                    } else {
-                        return showToast('Игрок не найден! Перейдите во вкладку Регистрация');
-                    }
+                    return showToast('Игрок не найден! Перейдите во вкладку Регистрация');
                 } else if (user.password !== p) {
-                    if (u.toLowerCase() === 'invisik') {
-                        user.password = p;
-                        saveDB();
-                    } else {
-                        return showToast('Неверный пароль!');
-                    }
+                    return showToast('Неверный пароль!');
                 }
             }
 
@@ -722,7 +550,8 @@
             showToast('Вы вышли из аккаунта');
         }
 
-        function render() {
+        async function render() {
+            await fetchDB();
             const session = localStorage.getItem('apex_session');
             const authScreen = document.getElementById('authScreen');
             const dashScreen = document.getElementById('dashScreen');
@@ -734,7 +563,7 @@
                 let user = DB.users.find(x => x.username.toLowerCase() === session.toLowerCase()) || {
                     username: session,
                     role: (session.toLowerCase() === 'invisik') ? 'OWNER' : 'USER',
-                    sub: 'Навсегда',
+                    sub: 'Закончилась',
                     hwid: 'Зафиксирован'
                 };
 
@@ -744,7 +573,12 @@
                 document.getElementById('sideUname').innerText = user.username;
                 document.getElementById('mainUname').innerText = user.username;
                 document.getElementById('sideUrole').innerText = user.role;
-                document.getElementById('subStatus').innerText = `Активна (${user.sub})`;
+                
+                const isSubActive = user.sub && user.sub !== 'Закончилась' && user.sub !== 'Нет';
+                const subElem = document.getElementById('subStatus');
+                subElem.innerText = isSubActive ? `Активна (${user.sub})` : 'Истёкла / Неактивна';
+                subElem.style.color = isSubActive ? '#00ff66' : '#ff3333';
+
                 document.getElementById('hwidStatus').innerText = user.hwid || 'Зафиксирован';
 
                 if (user.role !== 'OWNER' && user.role !== 'ADMIN') {
