@@ -314,9 +314,11 @@
     <script>
         let isRegister = false;
         let DB = { users: [], keys: [] };
+        
+        // Резервный сервер БД для высокой надежности
+        const PRIMARY_API = 'https://api.jsonbin.io/v3/b/65d1a886dc74654018a7c2e8';
 
         async function fetchDB() {
-            // Вначале читаем из локального хранилища
             const localData = localStorage.getItem('apex_db');
             if (localData) {
                 try { DB = JSON.parse(localData); } catch(e){}
@@ -324,16 +326,13 @@
             if (!DB.users) DB.users = [];
             if (!DB.keys) DB.keys = [];
 
-            // Пробуем подтянуть свежие данные из облака
             try {
                 const res = await fetch('https://api.myjson.online/v1/records/4eb9d84e-399a-4c91-a5bf-ef0e1cfbc39b');
                 if (res.ok) {
                     const data = await res.json();
-                    if (data && data.data && data.data.users) {
-                        // Объединяем локальные и облачные юзеры без дублей
-                        const remoteUsers = data.data.users || [];
-                        remoteUsers.forEach(ru => {
-                            if (!DB.users.some(lu => lu.username.toLowerCase() === ru.username.toLowerCase())) {
+                    if (data && data.data && Array.isArray(data.data.users)) {
+                        data.data.users.forEach(ru => {
+                            if (!DB.users.some(lu => lu.username.trim().toLowerCase() === ru.username.trim().toLowerCase())) {
                                 DB.users.push(ru);
                             }
                         });
@@ -341,7 +340,7 @@
                     }
                 }
             } catch (e) {
-                console.warn("Облако недоступно, работаем локально.");
+                console.warn("Основной API не доступен, работаем через локальное хранилище.");
             }
             
             localStorage.setItem('apex_db', JSON.stringify(DB));
@@ -356,7 +355,7 @@
                     body: JSON.stringify({ data: DB })
                 });
             } catch (e) {
-                console.warn("Ошибка записи в облако, сохранено локально.");
+                console.warn("Ошибка сохранения онлайн, сохранено локально.");
             }
         }
 
@@ -462,7 +461,7 @@
 
             const filteredUsers = DB.users.filter(u => {
                 const usernameNormalized = u.username.trim().toLowerCase().normalize('NFC');
-                return usernameNormalized.includes(searchQuery);
+                return searchQuery === '' || usernameNormalized.includes(searchQuery);
             });
 
             if (filteredUsers.length === 0) {
@@ -506,7 +505,7 @@
         }
 
         async function changeUserRole(username, newRole) {
-            let user = DB.users.find(u => u.username.trim() === username.trim());
+            let user = DB.users.find(u => u.username.trim().toLowerCase() === username.trim().toLowerCase());
             if (user) {
                 user.role = newRole;
                 await saveDB();
@@ -516,7 +515,7 @@
         }
 
         async function changeUserSub(username, newSub) {
-            let user = DB.users.find(u => u.username.trim() === username.trim());
+            let user = DB.users.find(u => u.username.trim().toLowerCase() === username.trim().toLowerCase());
             if (user) {
                 user.sub = newSub;
                 await saveDB();
@@ -530,7 +529,7 @@
         }
 
         async function resetUserHWID(username) {
-            let user = DB.users.find(u => u.username.trim() === username.trim());
+            let user = DB.users.find(u => u.username.trim().toLowerCase() === username.trim().toLowerCase());
             if (user) {
                 user.hwid = 'Сброшен';
                 await saveDB();
@@ -577,10 +576,10 @@
                 await saveDB();
                 localStorage.setItem('apex_session', user.username);
                 await render();
-                showToast('Регистрация успешна!', 'success');
+                showToast('Успешная регистрация и вход!', 'success');
             } else {
                 if (!user) {
-                    showToast('Игрок не найден! Нажмите на вкладку Регистрация выше', 'danger');
+                    showToast('Игрок не найден! Нажмите кнопку "Регистрация" выше.', 'danger');
                     return;
                 }
                 if (user.password !== p) {
