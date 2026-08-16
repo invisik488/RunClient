@@ -333,10 +333,9 @@
     </div>
 
     <script>
-        // Бэкенды (Автоматический перехват "Failed to fetch")
         const BACKENDS = [
-            'https://verse-dlc.onrender.com', // ОСНОВНОЙ БЭКЕНД
-            'https://apexclient-backend.onrender.com' // РЕЗЕРВНЫЙ
+            'https://verse-dlc.onrender.com',
+            'https://apexclient-backend.onrender.com'
         ];
 
         let currentUser = null;
@@ -346,23 +345,26 @@
             document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Безопасный fetch с защитой от "Failed to fetch"
         async function safeFetch(endpoint, options = {}) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 секунды таймаут
+
             for (let baseUrl of BACKENDS) {
                 try {
                     const res = await fetch(`${baseUrl}${endpoint}`, {
                         ...options,
+                        signal: controller.signal,
                         headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }
                     });
+                    clearTimeout(timeoutId);
                     if (res.ok) return await res.json();
                 } catch (e) {
-                    console.warn(`Хостинг ${baseUrl} недоступен. Пробуем следующий...`);
+                    console.warn(`Хостинг ${baseUrl} недоступен. Пробуем офлайн режим...`);
                 }
             }
             throw new Error('OFFLINE_MODE');
         }
 
-        // Модалка
         function openAuthModal() { document.getElementById('authModal').style.display = 'flex'; }
         function closeAuthModal() { document.getElementById('authModal').style.display = 'none'; }
 
@@ -386,7 +388,6 @@
             el.style.display = 'block';
         }
 
-        // Регистрация / Вход
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const user = document.getElementById('regUser').value;
@@ -396,9 +397,8 @@
                 await safeFetch('/api/register', { method: 'POST', body: JSON.stringify({ user, pass }) });
                 showStatus('authStatus', 'Успешная регистрация! Теперь войдите.', true);
             } catch (err) {
-                // Авто-фоллбэк для локальной авторизации если сервер не ответил
                 localStorage.setItem(`user_${user}`, JSON.stringify({ pass, role: user.toLowerCase() === 'admin' ? 'admin' : 'user' }));
-                showStatus('authStatus', 'Зарегистрировано в локальном режиме (Сервер оффлайн)', true);
+                showStatus('authStatus', 'Зарегистрировано в локальном режиме', true);
             }
         });
 
@@ -411,7 +411,6 @@
                 const res = await safeFetch('/api/login', { method: 'POST', body: JSON.stringify({ user, pass }) });
                 loginSuccess(res.user || user, res.role || 'user');
             } catch (err) {
-                // Фоллбэк
                 const saved = JSON.parse(localStorage.getItem(`user_${user}`));
                 if (saved && saved.pass === pass) {
                     loginSuccess(user, saved.role);
@@ -430,7 +429,6 @@
             document.getElementById('cabUser').innerText = user;
             document.getElementById('cabRole').innerText = role.toUpperCase();
 
-            // Отображение вкладки Админа (не доступно роли media)
             if (role === 'admin') {
                 document.getElementById('adminTabBtn').style.display = 'inline-block';
             } else {
@@ -446,7 +444,6 @@
             document.getElementById('userCabinet').style.display = 'none';
         }
 
-        // Отправка вопроса с цензурой
         const BAD_WORDS = ['читы', 'читыбесплатно', 'скам', 'дурак', 'взлом'];
 
         document.getElementById('askForm').addEventListener('submit', async (e) => {
@@ -454,7 +451,6 @@
             const nick = document.getElementById('askNick').value;
             const text = document.getElementById('askText').value;
 
-            // Цензура
             const containsBad = BAD_WORDS.some(w => text.toLowerCase().includes(w));
             if (containsBad) {
                 showStatus('askStatus', 'Ваш вопрос содержит нецензурные или запрещенные слова!', false);
@@ -475,7 +471,6 @@
             document.getElementById('askForm').reset();
         });
 
-        // Личный кабинет — вкладки
         function switchCabTab(tab) {
             document.querySelectorAll('#userCabinet .tab-btn').forEach(b => b.classList.remove('active'));
             if (tab === 'myQuestions') {
@@ -512,7 +507,6 @@
             }
         }
 
-        // Предзаказ
         document.getElementById('preorderForm').addEventListener('submit', (e) => {
             e.preventDefault();
             alert('Предзаказ успешно сформирован! Перенаправление на оплату ApexClient 1.21.4...');
