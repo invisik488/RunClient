@@ -2,15 +2,19 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
+// Render автоматически передаёт PORT через переменные окружения
+const PORT = process.env.PORT || 3000;
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname));
 
-// Твоя база пользователей (добавили Quesst)
+// База пользователей
 let users = [
     { username: "Quesst" }
 ];
 
-// 1. Поиск (работает БЕЗ учета регистра и убирает пробелы)
+// --- Поиск пользователя (Железобетонный: без учета регистра и пробелов) ---
 app.post('/api/search', (req, res) => {
     const rawInput = req.body.username || req.body.nickname || "";
     const cleanSearch = String(rawInput).trim().toLowerCase();
@@ -31,15 +35,12 @@ app.post('/api/search', (req, res) => {
     }
 });
 
-// 2. Отдача главной страницы
-app.get('*', (req, res) => {
+// --- Отдача главной страницы (Исправлено для новых версий Express / Node v24) ---
+app.get('(.*)', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// 3. ЭКСПОРТ ДЛЯ VERCEL (Запускаем listen только если запускаем локально)
-if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
-    const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-}
-
-module.exports = app;
+// --- Запуск сервера ---
+app.listen(PORT, () => {
+    console.log(`Сервер запущен на порту ${PORT}`);
+});
