@@ -3,141 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VerseDLC Panel</title>
+    <title>ApexClient — Главная</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-        body { background-color: #0b0f19; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        
-        .card {
-            background: #161b26;
-            border: 1px solid #232a3b;
-            border-radius: 16px;
-            padding: 32px;
-            width: 380px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-            text-align: center;
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0a0d14; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* Navigation */
+        nav {
+            background: #111622;
+            border-bottom: 1px solid #1e2638;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+        .logo { font-size: 22px; font-weight: 800; color: #7c3aed; letter-spacing: 1px; }
+        .logo span { color: #fff; }
+        .nav-links { display: flex; gap: 24px; list-style: none; }
+        .nav-links a { color: #9ca3af; text-decoration: none; font-weight: 500; transition: 0.2s; }
+        .nav-links a:hover { color: #fff; }
 
-        h2 { font-size: 20px; font-weight: 600; margin-bottom: 24px; color: #f3f4f6; }
+        /* Main Container */
+        .container { display: flex; flex: 1; padding: 32px; gap: 32px; max-width: 1200px; margin: 0 auto; width: 100%; }
 
+        /* Sidebar / Cabinet Panel */
+        .panel {
+            background: #111622;
+            border: 1px solid #1e2638;
+            border-radius: 12px;
+            padding: 24px;
+            flex: 1;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        .panel h3 { font-size: 18px; margin-bottom: 16px; color: #f3f4f6; border-bottom: 1px solid #1e2638; padding-bottom: 10px; }
+
+        /* Forms & Controls */
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 13px; color: #9ca3af; margin-bottom: 6px; }
         input {
             width: 100%;
-            padding: 12px 16px;
-            background: #0d111a;
-            border: 1px solid #232a3b;
-            border-radius: 10px;
-            color: #ffffff;
+            padding: 12px;
+            background: #080b11;
+            border: 1px solid #1e2638;
+            border-radius: 8px;
+            color: #fff;
             font-size: 14px;
             outline: none;
-            margin-bottom: 16px;
         }
-        input:focus { border-color: #6366f1; }
+        input:focus { border-color: #7c3aed; }
 
         button {
             width: 100%;
             padding: 12px;
-            background: #6366f1;
+            background: #7c3aed;
             border: none;
-            border-radius: 10px;
-            color: white;
-            font-size: 14px;
+            border-radius: 8px;
+            color: #fff;
             font-weight: 600;
             cursor: pointer;
             transition: 0.2s;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
-        button:hover { background: #4f46e5; }
+        button:hover { background: #6d28d9; }
+        .btn-secondary { background: #1f2937; }
+        .btn-secondary:hover { background: #374151; }
 
-        .result-box {
-            display: none;
+        /* Response Display */
+        .status-box {
             margin-top: 16px;
-            padding: 16px;
-            background: #0d111a;
-            border: 1px dashed #374151;
-            border-radius: 10px;
-        }
-
-        .key-text {
-            font-family: monospace;
-            font-size: 16px;
-            color: #38bdf8;
-            font-weight: bold;
-            margin-bottom: 12px;
+            padding: 12px;
+            background: #080b11;
+            border: 1px solid #1e2638;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
             word-break: break-all;
         }
-
-        .copy-btn { background: #10b981; margin-bottom: 0; }
-        .copy-btn:hover { background: #059669; }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h2>Генерация Ключа</h2>
-        <input type="text" id="usernameInput" placeholder="Введите ник (например, Quesst)">
-        <button onclick="generateKey()">Создать ключ</button>
-        <button onclick="searchUser()" style="background: #374151;">Найти в базе</button>
+    <nav>
+        <div class="logo">APEX<span>CLIENT</span></div>
+        <ul class="nav-links">
+            <li><a href="#">Главная</a></li>
+            <li><a href="#">Личный кабинет</a></li>
+            <li><a href="#">База пользователей</a></li>
+        </ul>
+    </nav>
 
-        <div id="resultBox" class="result-box">
-            <div id="keyDisplay" class="key-text"></div>
-            <button id="copyBtn" class="copy-btn" onclick="copyKey()" style="display: none;">Скопировать ключ</button>
+    <div class="container">
+        <!-- Левая панель: Личный кабинет -->
+        <div class="panel">
+            <h3>Личный Кабинет</h3>
+            <div class="form-group">
+                <label>Пользователь</label>
+                <input type="text" id="currentUser" value="Quesst" readonly>
+            </div>
+            <div class="form-group">
+                <label>Статус подписки</label>
+                <input type="text" value="Активна (FULL ACCESS)" readonly style="color: #10b981;">
+            </div>
+            <button onclick="alert('Ключ скопирован в буфер!')">Скопировать ключ подписки</button>
+        </div>
+
+        <!-- Правая панель: Управление и поиск по базе -->
+        <div class="panel">
+            <h3>Поиск пользователя в базе</h3>
+            <div class="form-group">
+                <label>Никнейм</label>
+                <input type="text" id="searchInput" placeholder="Введите ник (например, Quesst)">
+            </div>
+            <button onclick="searchUser()">Найти в базе</button>
+            <button class="btn-secondary" onclick="generateKey()">Сгенерировать ключ</button>
+
+            <div id="statusBox" class="status-box"></div>
         </div>
     </div>
 
     <script>
-        // Локальная база прямо на стороне браузера
-        const dbUsers = [
-            { username: "Quesst", key: "VERSE-9988-AABB" }
-        ];
+        async function searchUser() {
+            const nickname = document.getElementById('searchInput').value.trim();
+            const statusBox = document.getElementById('statusBox');
+
+            if (!nickname) {
+                alert('Введите ник!');
+                return;
+            }
+
+            statusBox.style.display = 'block';
+            statusBox.innerText = 'Поиск...';
+
+            try {
+                const response = await fetch('/api/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: nickname })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    statusBox.style.color = '#10b981';
+                    statusBox.innerText = `[SUCCESS] Пользователь ${data.user.username} найден в базе ApexClient.`;
+                } else {
+                    statusBox.style.color = '#ef4444';
+                    statusBox.innerText = `[ERROR] ${data.message}`;
+                }
+            } catch (err) {
+                statusBox.style.color = '#ef4444';
+                statusBox.innerText = '[ERROR] Ошибка подключения к серверу.';
+            }
+        }
 
         function generateKey() {
-            const rawNick = document.getElementById('usernameInput').value;
-            const cleanNick = rawNick.trim();
-
-            if (!cleanNick) return alert('Введите ник!');
-
-            // Генерация ключа
-            const randomHex = Math.random().toString(36).substring(2, 10).toUpperCase();
-            const newKey = "VERSE-" + randomHex;
-
-            // Обновляем или добавляем пользователя
-            const existingIndex = dbUsers.findIndex(u => u.username.toLowerCase() === cleanNick.toLowerCase());
-            if (existingIndex !== -1) {
-                dbUsers[existingIndex].key = newKey;
-            } else {
-                dbUsers.push({ username: cleanNick, key: newKey });
-            }
-
-            document.getElementById('keyDisplay').innerText = "Ключ: " + newKey;
-            document.getElementById('copyBtn').style.display = 'block';
-            document.getElementById('resultBox').style.display = 'block';
-        }
-
-        function searchUser() {
-            const rawNick = document.getElementById('usernameInput').value;
-            const cleanSearch = rawNick.trim().toLowerCase();
-
-            if (!cleanSearch) return alert('Введите ник для поиска!');
-
-            const found = dbUsers.find(u => u.username.toLowerCase() === cleanSearch);
-
-            if (found) {
-                document.getElementById('keyDisplay').innerText = "Найден: " + found.username + "\nКлюч: " + (found.key || "Нет");
-                document.getElementById('copyBtn').style.display = 'none';
-            } else {
-                document.getElementById('keyDisplay').innerText = "Пользователь не найден";
-                document.getElementById('copyBtn').style.display = 'none';
-            }
-            document.getElementById('resultBox').style.display = 'block';
-        }
-
-        function copyKey() {
-            const fullText = document.getElementById('keyDisplay').innerText;
-            const keyOnly = fullText.replace("Ключ: ", "");
-            
-            navigator.clipboard.writeText(keyOnly).then(() => {
-                alert('Ключ скопирован в буфер обмена!');
-            });
+            const statusBox = document.getElementById('statusBox');
+            const key = "APEX-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+            statusBox.style.display = 'block';
+            statusBox.style.color = '#38bdf8';
+            statusBox.innerText = `Сгенерирован ключ: ${key}`;
         }
     </script>
 
