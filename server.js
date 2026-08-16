@@ -2,7 +2,6 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-// Render автоматически передаёт PORT через переменные окружения
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
@@ -14,7 +13,7 @@ let users = [
     { username: "Quesst" }
 ];
 
-// --- Поиск пользователя (Железобетонный: без учета регистра и пробелов) ---
+// Поиск без учета регистра и пробелов
 app.post('/api/search', (req, res) => {
     const rawInput = req.body.username || req.body.nickname || "";
     const cleanSearch = String(rawInput).trim().toLowerCase();
@@ -35,12 +34,11 @@ app.post('/api/search', (req, res) => {
     }
 });
 
-// --- Отдача главной страницы (Исправлено для новых версий Express / Node v24) ---
-app.get('(.*)', (req, res) => {
+// Роутинг под Express 5 (без звездочек и скобок)
+app.use((req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// --- Запуск сервера ---
 app.listen(PORT, () => {
     console.log(`Сервер запущен на порту ${PORT}`);
 });
