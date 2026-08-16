@@ -6,36 +6,37 @@
     <title>ApexClient — Главная</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #0a0d14; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
+        body { background-color: #0b0708; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
 
-        /* Navigation */
+        /* Navigation Header */
         nav {
-            background: #111622;
-            border-bottom: 1px solid #1e2638;
+            background: #140c0e;
+            border-bottom: 1px solid #2a1215;
             padding: 16px 32px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 4px 20px rgba(220, 38, 38, 0.15);
         }
-        .logo { font-size: 22px; font-weight: 800; color: #7c3aed; letter-spacing: 1px; }
-        .logo span { color: #fff; }
+        .logo { font-size: 22px; font-weight: 800; color: #dc2626; letter-spacing: 1.5px; text-shadow: 0 0 10px rgba(220, 38, 38, 0.5); }
+        .logo span { color: #ffffff; }
         .nav-links { display: flex; gap: 24px; list-style: none; }
         .nav-links a { color: #9ca3af; text-decoration: none; font-weight: 500; transition: 0.2s; }
-        .nav-links a:hover { color: #fff; }
+        .nav-links a:hover { color: #dc2626; }
 
-        /* Main Container */
+        /* Container Layout */
         .container { display: flex; flex: 1; padding: 32px; gap: 32px; max-width: 1200px; margin: 0 auto; width: 100%; }
 
-        /* Sidebar / Cabinet Panel */
+        /* Panels */
         .panel {
-            background: #111622;
-            border: 1px solid #1e2638;
+            background: #140c0e;
+            border: 1px solid #2a1215;
             border-radius: 12px;
             padding: 24px;
             flex: 1;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
-        .panel h3 { font-size: 18px; margin-bottom: 16px; color: #f3f4f6; border-bottom: 1px solid #1e2638; padding-bottom: 10px; }
+        .panel h3 { font-size: 18px; margin-bottom: 16px; color: #f3f4f6; border-bottom: 1px solid #2a1215; padding-bottom: 10px; }
 
         /* Forms & Controls */
         .form-group { margin-bottom: 16px; }
@@ -43,19 +44,19 @@
         input {
             width: 100%;
             padding: 12px;
-            background: #080b11;
-            border: 1px solid #1e2638;
+            background: #080405;
+            border: 1px solid #2a1215;
             border-radius: 8px;
             color: #fff;
             font-size: 14px;
             outline: none;
         }
-        input:focus { border-color: #7c3aed; }
+        input:focus { border-color: #dc2626; box-shadow: 0 0 8px rgba(220, 38, 38, 0.3); }
 
         button {
             width: 100%;
             padding: 12px;
-            background: #7c3aed;
+            background: #dc2626;
             border: none;
             border-radius: 8px;
             color: #fff;
@@ -63,17 +64,18 @@
             cursor: pointer;
             transition: 0.2s;
             margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
         }
-        button:hover { background: #6d28d9; }
-        .btn-secondary { background: #1f2937; }
-        .btn-secondary:hover { background: #374151; }
+        button:hover { background: #b91c1c; }
+        .btn-secondary { background: #1f1315; border: 1px solid #2a1215; }
+        .btn-secondary:hover { background: #2a1a1d; }
 
-        /* Response Display */
+        /* Status Output */
         .status-box {
             margin-top: 16px;
             padding: 12px;
-            background: #080b11;
-            border: 1px solid #1e2638;
+            background: #080405;
+            border: 1px solid #2a1215;
             border-radius: 8px;
             font-size: 14px;
             display: none;
@@ -93,7 +95,7 @@
     </nav>
 
     <div class="container">
-        <!-- Левая панель: Личный кабинет -->
+        <!-- Личный кабинет -->
         <div class="panel">
             <h3>Личный Кабинет</h3>
             <div class="form-group">
@@ -102,12 +104,12 @@
             </div>
             <div class="form-group">
                 <label>Статус подписки</label>
-                <input type="text" value="Активна (FULL ACCESS)" readonly style="color: #10b981;">
+                <input type="text" value="Активна (FULL ACCESS)" readonly style="color: #22c55e;">
             </div>
             <button onclick="alert('Ключ скопирован в буфер!')">Скопировать ключ подписки</button>
         </div>
 
-        <!-- Правая панель: Управление и поиск по базе -->
+        <!-- Поиск пользователей -->
         <div class="panel">
             <h3>Поиск пользователя в базе</h3>
             <div class="form-group">
@@ -144,7 +146,7 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    statusBox.style.color = '#10b981';
+                    statusBox.style.color = '#22c55e';
                     statusBox.innerText = `[SUCCESS] Пользователь ${data.user.username} найден в базе ApexClient.`;
                 } else {
                     statusBox.style.color = '#ef4444';
@@ -160,7 +162,7 @@
             const statusBox = document.getElementById('statusBox');
             const key = "APEX-" + Math.random().toString(36).substring(2, 10).toUpperCase();
             statusBox.style.display = 'block';
-            statusBox.style.color = '#38bdf8';
+            statusBox.style.color = '#f87171';
             statusBox.innerText = `Сгенерирован ключ: ${key}`;
         }
     </script>
