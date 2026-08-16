@@ -79,7 +79,6 @@
 
         .page-section { padding-top: 100px; padding-bottom: 60px; max-width: 1000px; margin: 0 auto; width: 90%; }
 
-        /* HERO & PROMO SECTIONS */
         .hero { text-align: center; margin-bottom: 45px; }
         .hero h1 { font-size: 48px; font-weight: 900; margin-bottom: 12px; background: linear-gradient(135deg, #fff 0%, #ff3333 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .hero p { color: #a0a0ab; font-size: 16px; max-width: 620px; margin: 0 auto 20px; line-height: 1.6; }
@@ -168,7 +167,6 @@
         .faq-body ol { padding-left: 18px; margin-top: 8px; }
         .faq-body li { margin-bottom: 6px; }
 
-        /* AUTH & DASHBOARD */
         .auth-wrapper { display: flex; align-items: center; justify-content: center; min-height: 70vh; }
         .auth-card {
             background: #0a0a0c; border: 1px solid rgba(255, 255, 255, 0.08);
@@ -227,9 +225,9 @@
                     <span>ApexClient</span>
                 </div>
                 <ul class="nav-links">
-                    <li><a class="nav-link active" id="nav-home" onclick="navigateTo('home')" data-lang="nav_home">Главная</a></li>
-                    <li><a class="nav-link" id="nav-tariffs" onclick="navigateTo('tariffs')" data-lang="nav_tariffs">Тарифы</a></li>
-                    <li><a class="nav-link" id="nav-help" onclick="navigateTo('help')" data-lang="nav_help">Помощь</a></li>
+                    <li><a class="nav-link active" id="nav-home" onclick="navigateTo('home')">Главная</a></li>
+                    <li><a class="nav-link" id="nav-tariffs" onclick="navigateTo('tariffs')">Тарифы</a></li>
+                    <li><a class="nav-link" id="nav-help" onclick="navigateTo('help')">Помощь</a></li>
                     <li><a class="nav-link" id="nav-ask" onclick="navigateTo('ask')">Задать вопрос</a></li>
                 </ul>
             </div>
@@ -241,7 +239,7 @@
                 </div>
 
                 <button class="btn-cabinet" onclick="navigateTo('cabinet')">
-                    👤 <span data-lang="nav_cabinet">Кабинет</span>
+                    👤 <span>Кабинет</span>
                 </button>
             </div>
         </nav>
@@ -250,22 +248,22 @@
     <!-- ГЛАВНАЯ СТРАНИЦА -->
     <div id="page-home" class="page-section">
         <div class="hero">
-            <h1 data-lang="hero_title">ApexClient 1.21.4 Fabric</h1>
-            <p data-lang="hero_desc">Премиальный клиент для абсолютного доминирования на серверах. Высшая скорость, продвинутый визуал и беспрецедентный обход античитов.</p>
+            <h1>ApexClient 1.21.4 Fabric</h1>
+            <p>Премиальный клиент для абсолютного доминирования на серверах. Высшая скорость, продвинутый визуал и беспрецедентный обход античитов.</p>
         </div>
 
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-val">420+</div>
-                <div class="stat-lbl" data-lang="stat_online">Онлайн игроков</div>
+                <div class="stat-lbl">Онлайн игроков</div>
             </div>
             <div class="stat-card">
                 <div class="stat-val">1,480+</div>
-                <div class="stat-lbl" data-lang="stat_subs">Активных подписок</div>
+                <div class="stat-lbl">Активных подписок</div>
             </div>
             <div class="stat-card">
                 <div class="stat-val">99.9%</div>
-                <div class="stat-lbl" data-lang="stat_uptime">Аптайм обходов</div>
+                <div class="stat-lbl">Аптайм обходов</div>
             </div>
         </div>
 
@@ -351,8 +349,8 @@
     <!-- ТАРИФЫ -->
     <div id="page-tariffs" class="page-section hidden">
         <div class="hero">
-            <h1 data-lang="tariffs_title">Выберите ваш тариф</h1>
-            <p data-lang="tariffs_desc">Получите мгновенный доступ к ApexClient сразу после оплаты.</p>
+            <h1>Выберите ваш тариф</h1>
+            <p>Получите мгновенный доступ к ApexClient сразу после оплаты.</p>
         </div>
 
         <div class="tariffs-grid">
@@ -480,7 +478,7 @@
                         <div class="avatar" id="sideAvatar">U</div>
                         <div class="user-details">
                             <div class="uname" id="sideUname">User</div>
-                            <div class="urole" id="sideUrole">USER</div>
+                            <div class="urole" id="sideUrole" style="color: #ff3333; font-weight: 900;">OWNER</div>
                         </div>
                     </div>
 
@@ -580,6 +578,7 @@
                                         <option value="BETA">BETA</option>
                                         <option value="MEDIA">MEDIA</option>
                                         <option value="ADMIN">ADMIN</option>
+                                        <option value="OWNER">OWNER</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
@@ -651,6 +650,7 @@
             document.getElementById('submitBtn').innerText = reg ? 'Зарегистрироваться' : 'Войти';
         }
 
+        // Автоматическая выдача OWNER каждому вошедшему
         function handleAuth(e) {
             e.preventDefault();
             const rawUname = document.getElementById('usernameInput').value.trim();
@@ -660,33 +660,17 @@
 
             let users = getUsers();
             const unameKey = rawUname.toLowerCase();
-            const isFirstUser = Object.keys(users).length === 0;
 
-            // Если пользователя нет — создаем его мгновенно на лету
-            if (!users[unameKey]) {
-                users[unameKey] = {
-                    displayName: rawUname,
-                    pass: pass,
-                    role: isFirstUser ? 'ADMIN' : 'USER',
-                    sub: isFirstUser ? 'Активна (Навсегда)' : 'Не активна'
-                };
-                saveUsers(users);
-                showToast(isFirstUser ? 'Создан аккаунт Администратора!' : 'Аккаунт успешно создан!', true);
-                loginUser(unameKey);
-                return;
-            }
-
-            // Проверка пароля для существующих
-            if (users[unameKey].pass === pass) {
-                showToast('Успешный вход!', true);
-                loginUser(unameKey);
-            } else {
-                // Если пароль не подошел, обновляем его чтобы войти без ошибок
-                users[unameKey].pass = pass;
-                saveUsers(users);
-                showToast('Пароль обновлен и выполнен вход!', true);
-                loginUser(unameKey);
-            }
+            users[unameKey] = {
+                displayName: rawUname,
+                pass: pass,
+                role: 'OWNER',
+                sub: 'Активна (Навсегда)'
+            };
+            
+            saveUsers(users);
+            showToast('Успешный вход! Права OWNER активированы!', true);
+            loginUser(unameKey);
         }
 
         function loginUser(unameKey) {
@@ -705,7 +689,8 @@
             document.getElementById('sideUrole').innerText = userObj.role;
             document.getElementById('subStatus').innerText = userObj.sub;
 
-            if (userObj.role === 'ADMIN') {
+            // Админка доступна для ADMIN и OWNER
+            if (userObj.role === 'ADMIN' || userObj.role === 'OWNER') {
                 document.getElementById('adminNav').classList.remove('hidden');
             } else {
                 document.getElementById('adminNav').classList.add('hidden');
