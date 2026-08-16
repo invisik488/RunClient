@@ -8,12 +8,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 
-// База пользователей
+// База данных
 let users = [
     { username: "Quesst" }
 ];
 
-// Поиск без учета регистра и пробелов
+// Поиск пользователя
 app.post('/api/search', (req, res) => {
     const rawInput = req.body.username || req.body.nickname || "";
     const cleanSearch = String(rawInput).trim().toLowerCase();
@@ -34,7 +34,7 @@ app.post('/api/search', (req, res) => {
     }
 });
 
-// Роутинг под Express 5 (без звездочек и скобок)
+// Отдача твоей главной страницы index.html (совместимо с Node 24 / Express 5)
 app.use((req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
