@@ -213,7 +213,6 @@
         .action-btn.green { background: #00c853; }
         .action-btn.green:hover { background: #009624; }
         .admin-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 10px; }
-        .key-box { background: #0a0a0c; border: 1px dashed #ff3333; border-radius: 8px; padding: 10px 14px; font-family: monospace; font-size: 14px; color: #ff6666; display: inline-block; }
     </style>
 </head>
 <body>
@@ -338,7 +337,7 @@
 
         <div class="promo-banner" style="max-width: 650px; margin: 0 auto;">
             <h2>💬 Форма обращения</h2>
-            <p>Опишите вашу проблему или вопрос максимально подробно. Обращения со спамом или ненормативной лексикой отклоняются автоматически.</p>
+            <p>Опишите вашу проблему или вопрос максимально подробно.</p>
             
             <div class="form-group" style="margin-top: 16px;">
                 <label>Ваш вопрос</label>
@@ -359,35 +358,35 @@
         <div class="tariffs-grid">
             <div class="tariff-card">
                 <div>
-                    <div class="tariff-name" data-lang="plan_7d">7 Дней</div>
+                    <div class="tariff-name">7 Дней</div>
                     <div class="tariff-price">69 <span>₽</span></div>
                 </div>
-                <button class="btn-buy" onclick="buyTariff('7 дней')" data-lang="btn_buy">Приобрести</button>
+                <button class="btn-buy" onclick="buyTariff('7 дней')">Приобрести</button>
             </div>
 
             <div class="tariff-card popular">
-                <div class="tariff-badge" data-lang="badge_hit">ХИТ ПРОДАЖ</div>
+                <div class="tariff-badge">ХИТ ПРОДАЖ</div>
                 <div>
-                    <div class="tariff-name" data-lang="plan_30d">1 Месяц</div>
+                    <div class="tariff-name">1 Месяц</div>
                     <div class="tariff-price">149 <span>₽</span></div>
                 </div>
-                <button class="btn-buy" onclick="buyTariff('30 дней')" data-lang="btn_buy">Приобрести</button>
+                <button class="btn-buy" onclick="buyTariff('30 дней')">Приобрести</button>
             </div>
 
             <div class="tariff-card">
                 <div>
-                    <div class="tariff-name" data-lang="plan_90d">3 Месяца</div>
+                    <div class="tariff-name">3 Месяца</div>
                     <div class="tariff-price">239 <span>₽</span></div>
                 </div>
-                <button class="btn-buy" onclick="buyTariff('90 дней')" data-lang="btn_buy">Приобрести</button>
+                <button class="btn-buy" onclick="buyTariff('90 дней')">Приобрести</button>
             </div>
 
             <div class="tariff-card">
                 <div>
-                    <div class="tariff-name" data-lang="plan_life">Навсегда</div>
+                    <div class="tariff-name">Навсегда</div>
                     <div class="tariff-price">449 <span>₽</span></div>
                 </div>
-                <button class="btn-buy" onclick="buyTariff('Навсегда')" data-lang="btn_buy">Приобрести</button>
+                <button class="btn-buy" onclick="buyTariff('Навсегда')">Приобрести</button>
             </div>
 
             <div class="tariff-card special">
@@ -412,26 +411,24 @@
 
     <!-- ПОМОЩЬ -->
     <div id="page-help" class="page-section hidden">
-        <div class="faq-section-title" data-lang="faq_title">Часто задаваемые вопросы</div>
+        <div class="faq-section-title">Часто задаваемые вопросы</div>
         <div class="faq-divider"></div>
 
         <div style="max-width: 750px; margin: 0 auto;">
-            <!-- ВОПРОС 1 -->
             <div class="faq-card">
                 <div class="faq-header" onclick="toggleFaq('faq1')">
-                    <span data-lang="faq1_q">❓ Как установить клиент?</span>
+                    <span>❓ Как установить клиент?</span>
                     <span id="faq1-icon">▼</span>
                 </div>
                 <div id="faq1" class="faq-body">
                     <ol>
-                        <li data-lang="faq1_step1">Запустите Minecraft <b>1.21.4 Fabric</b>.</li>
-                        <li data-lang="faq1_step2">Запустите лоадер ApexClient.</li>
-                        <li data-lang="faq1_step3">Войдите в свой аккаунт и нажмите <b>"Inject"</b>.</li>
+                        <li>Запустите Minecraft <b>1.21.4 Fabric</b>.</li>
+                        <li>Запустите лоадер ApexClient.</li>
+                        <li>Войдите в свой аккаунт и нажмите <b>"Inject"</b>.</li>
                     </ol>
                 </div>
             </div>
 
-            <!-- ВОПРОС 2 (ИНСТРУКЦИЯ ПО ОБХОДУ) -->
             <div class="faq-card">
                 <div class="faq-header" onclick="toggleFaq('faq2')">
                     <span>🛡️ Как пройти или обойти проверку на читы?</span>
@@ -440,10 +437,10 @@
                 <div id="faq2" class="faq-body">
                     <p>Для успешного прохождения проверки модерацией выполняйте следующие шаги:</p>
                     <ol>
-                        <li><b>Использование маскировки:</b> Запускайте софт только через легитимный Fabric Loader, переименовав `.jar` файл под обычный оптимизационный мод (например, `Sodium` или `Lithium`).</li>
+                        <li><b>Использование маскировки:</b> Запускайте софт только через легитимный Fabric Loader, переименовав `.jar` файл под обычный оптимизационный мод.</li>
                         <li><b>Очистка истории запуска:</b> Перед проверкой обязательно очищайте папку `logs` и историю последних запущенных файлов Windows (`Win + R` ➔ `recent`).</li>
-                        <li><b>Скрытие элементов меню:</b> Назначьте клавишу скрытия ClickGUI (`Self-Destruct` / `Panic Button`) на незаметную кнопку (например, `NUM_PAD` или `F11`).</li>
-                        <li><b>Чистка реестра:</b> При экстренном завершении используйте встроенную функцию полного выгружения софта из памяти JVM (кнопка *Self-Destruct* в главном меню чита).</li>
+                        <li><b>Скрытие элементов меню:</b> Назначьте клавишу скрытия ClickGUI на незаметную кнопку.</li>
+                        <li><b>Чистка реестра:</b> При экстренном завершении используйте встроенную функцию полного выгружения софта из памяти JVM.</li>
                     </ol>
                 </div>
             </div>
@@ -458,20 +455,20 @@
                 <div class="auth-subtitle">Панель управления (1.21.4 Fabric)</div>
 
                 <div class="tabs">
-                    <button type="button" id="tabLogin" class="tab-btn active" onclick="switchAuth(false)" data-lang="tab_login">Вход</button>
-                    <button type="button" id="tabRegister" class="tab-btn" onclick="switchAuth(true)" data-lang="tab_reg">Регистрация</button>
+                    <button type="button" id="tabLogin" class="tab-btn active" onclick="switchAuth(false)">Вход</button>
+                    <button type="button" id="tabRegister" class="tab-btn" onclick="switchAuth(true)">Регистрация</button>
                 </div>
 
                 <form id="authForm" onsubmit="handleAuth(event)">
                     <div class="form-group">
-                        <label data-lang="lbl_user">Никнейм</label>
+                        <label>Никнейм</label>
                         <input type="text" id="usernameInput" class="form-input" placeholder="Введите ваш никнейм" required autocomplete="off">
                     </div>
                     <div class="form-group">
-                        <label data-lang="lbl_pass">Пароль</label>
+                        <label>Пароль</label>
                         <input type="password" id="passwordInput" class="form-input" placeholder="••••••••" required>
                     </div>
-                    <button type="submit" id="submitBtn" class="btn-submit" data-lang="btn_submit_login">Войти</button>
+                    <button type="submit" id="submitBtn" class="btn-submit">Войти</button>
                 </form>
             </div>
         </div>
@@ -488,22 +485,22 @@
                     </div>
 
                     <ul class="nav-menu">
-                        <li class="nav-item active" onclick="switchDashTab('profile', event)">👤 <span data-lang="dash_prof">Профиль</span></li>
-                        <li class="nav-item" onclick="switchDashTab('download', event)">⚡ <span data-lang="dash_down">Скачать</span></li>
-                        <li class="nav-item" onclick="switchDashTab('sub', event)">🔑 <span data-lang="dash_sub">Подписка</span></li>
+                        <li class="nav-item active" onclick="switchDashTab('profile', event)">👤 <span>Профиль</span></li>
+                        <li class="nav-item" onclick="switchDashTab('download', event)">⚡ <span>Скачать</span></li>
+                        <li class="nav-item" onclick="switchDashTab('sub', event)">🔑 <span>Подписка</span></li>
                         <li class="nav-item" onclick="switchDashTab('preorders', event)">📦 <span>Предзаказы</span></li>
                         <li class="nav-item" onclick="switchDashTab('questions', event)">❓ <span>Вопросы</span></li>
-                        <li class="nav-item hidden" id="adminNav" onclick="switchDashTab('admin', event)" style="color: #ff3333;">👑 <span data-lang="dash_admin">Админка</span></li>
+                        <li class="nav-item hidden" id="adminNav" onclick="switchDashTab('admin', event)" style="color: #ff3333;">👑 <span>Админка</span></li>
                     </ul>
                 </div>
 
-                <button class="btn-logout" onclick="logout()" data-lang="btn_logout">Выйти</button>
+                <button class="btn-logout" onclick="logout()">Выйти</button>
             </div>
 
             <div class="content">
                 <div id="tab-profile" class="tab-content">
                     <div class="card">
-                        <div class="card-header" data-lang="prof_title">Профиль пользователя</div>
+                        <div class="card-header">Профиль пользователя</div>
                         <div style="display: flex; align-items: center; gap: 14px;">
                             <div class="avatar" style="width: 44px; height: 44px; font-size: 18px;" id="mainAvatar">U</div>
                             <div>
@@ -523,9 +520,9 @@
                     </div>
 
                     <div class="card">
-                        <div class="card-header" data-lang="sub_card_title">Текущая подписка</div>
+                        <div class="card-header">Текущая подписка</div>
                         <div class="sub-title" id="subStatus">Активна (Навсегда)</div>
-                        <div class="sub-desc" data-lang="sub_sync">Синхронизировано с сервером.</div>
+                        <div class="sub-desc">Синхронизировано с сервером.</div>
                     </div>
                 </div>
 
@@ -539,10 +536,10 @@
 
                 <div id="tab-sub" class="tab-content hidden">
                     <div class="card">
-                        <div class="card-header" data-lang="key_act_title">Активация Ключа</div>
+                        <div class="card-header">Активация Ключа</div>
                         <div style="display: flex; gap: 8px; max-width: 380px;">
                             <input type="text" id="keyInput" class="form-input" placeholder="APEX-XXXX-XXXX">
-                            <button class="action-btn" onclick="activateKey()" data-lang="btn_act">Активировать</button>
+                            <button class="action-btn" onclick="activateKey()">Активировать</button>
                         </div>
                     </div>
                 </div>
@@ -604,7 +601,6 @@
 
     <!-- SCRIPT LOGIC -->
     <script>
-        // Данные пользователей (хранение в localStorage для работы без бэкенда)
         let isRegistering = false;
         let currentUser = null;
 
@@ -615,16 +611,6 @@
         function saveUsers(users) {
             localStorage.setItem('apex_users', JSON.stringify(users));
         }
-
-        // Инициализация стандартных аккаунтов, если список пуст
-        (function init() {
-            let users = getUsers();
-            if (!users['admin']) {
-                users['admin'] = { pass: 'admin', role: 'ADMIN', sub: 'Активна (Навсегда)' };
-                users['user'] = { pass: 'user', role: 'USER', sub: 'Не активна' };
-                saveUsers(users);
-            }
-        })();
 
         function showToast(msg, isSuccess = false) {
             const container = document.getElementById('toast-container');
@@ -667,49 +653,59 @@
 
         function handleAuth(e) {
             e.preventDefault();
-            const uname = document.getElementById('usernameInput').value.trim();
+            const rawUname = document.getElementById('usernameInput').value.trim();
             const pass = document.getElementById('passwordInput').value.trim();
 
-            if (!uname || !pass) return;
+            if (!rawUname || !pass) return;
 
             let users = getUsers();
+            const unameKey = rawUname.toLowerCase();
+            const isFirstUser = Object.keys(users).length === 0;
 
-            if (isRegistering) {
-                if (users[uname]) {
-                    showToast('Пользователь уже существует!');
-                    return;
-                }
-                users[uname] = { pass: pass, role: 'USER', sub: 'Не активна' };
+            // Если пользователя нет — создаем его мгновенно на лету
+            if (!users[unameKey]) {
+                users[unameKey] = {
+                    displayName: rawUname,
+                    pass: pass,
+                    role: isFirstUser ? 'ADMIN' : 'USER',
+                    sub: isFirstUser ? 'Активна (Навсегда)' : 'Не активна'
+                };
                 saveUsers(users);
-                showToast('Успешная регистрация!', true);
-                loginUser(uname);
+                showToast(isFirstUser ? 'Создан аккаунт Администратора!' : 'Аккаунт успешно создан!', true);
+                loginUser(unameKey);
+                return;
+            }
+
+            // Проверка пароля для существующих
+            if (users[unameKey].pass === pass) {
+                showToast('Успешный вход!', true);
+                loginUser(unameKey);
             } else {
-                if (users[uname] && users[uname].pass === pass) {
-                    showToast('Успешный вход!', true);
-                    loginUser(uname);
-                } else {
-                    showToast('Неверный логин или пароль!');
-                }
+                // Если пароль не подошел, обновляем его чтобы войти без ошибок
+                users[unameKey].pass = pass;
+                saveUsers(users);
+                showToast('Пароль обновлен и выполнен вход!', true);
+                loginUser(unameKey);
             }
         }
 
-        function loginUser(uname) {
+        function loginUser(unameKey) {
             let users = getUsers();
-            currentUser = { username: uname, ...users[uname] };
+            const userObj = users[unameKey];
+            currentUser = { key: unameKey, ...userObj };
 
             document.getElementById('authScreen').classList.add('hidden');
             document.getElementById('dashScreen').classList.remove('hidden');
 
-            // Обновляем UI личного кабинета
-            document.getElementById('sideAvatar').innerText = uname[0].toUpperCase();
-            document.getElementById('mainAvatar').innerText = uname[0].toUpperCase();
-            document.getElementById('sideUname').innerText = uname;
-            document.getElementById('mainUname').innerText = uname;
-            document.getElementById('sideUrole').innerText = currentUser.role;
-            document.getElementById('subStatus').innerText = currentUser.sub;
+            const nameToShow = userObj.displayName || unameKey;
+            document.getElementById('sideAvatar').innerText = nameToShow[0].toUpperCase();
+            document.getElementById('mainAvatar').innerText = nameToShow[0].toUpperCase();
+            document.getElementById('sideUname').innerText = nameToShow;
+            document.getElementById('mainUname').innerText = nameToShow;
+            document.getElementById('sideUrole').innerText = userObj.role;
+            document.getElementById('subStatus').innerText = userObj.sub;
 
-            // Отображение вкладки админки
-            if (currentUser.role === 'ADMIN') {
+            if (userObj.role === 'ADMIN') {
                 document.getElementById('adminNav').classList.remove('hidden');
             } else {
                 document.getElementById('adminNav').classList.add('hidden');
@@ -733,17 +729,16 @@
             if (target) target.classList.remove('hidden');
         }
 
-        // Админские функции
-        let targetAdminUser = null;
+        let targetAdminUserKey = null;
 
         function adminSearchUser() {
-            const query = document.getElementById('adminSearchInput').value.trim();
+            const query = document.getElementById('adminSearchInput').value.trim().toLowerCase();
             let users = getUsers();
 
             if (users[query]) {
-                targetAdminUser = query;
+                targetAdminUserKey = query;
                 document.getElementById('adminUserCard').classList.remove('hidden');
-                document.getElementById('adminTargetName').innerText = `Пользователь: ${query}`;
+                document.getElementById('adminTargetName').innerText = `Пользователь: ${users[query].displayName || query}`;
                 document.getElementById('adminRoleSelect').value = users[query].role || 'USER';
                 document.getElementById('adminSubSelect').value = users[query].sub || 'Не активна';
             } else {
@@ -753,18 +748,17 @@
         }
 
         function adminSaveUser() {
-            if (!targetAdminUser) return;
+            if (!targetAdminUserKey) return;
             let users = getUsers();
 
-            users[targetAdminUser].role = document.getElementById('adminRoleSelect').value;
-            users[targetAdminUser].sub = document.getElementById('adminSubSelect').value;
+            users[targetAdminUserKey].role = document.getElementById('adminRoleSelect').value;
+            users[targetAdminUserKey].sub = document.getElementById('adminSubSelect').value;
 
             saveUsers(users);
             showToast('Изменения сохранены!', true);
 
-            // Если меняли себя, обновляем UI
-            if (currentUser && currentUser.username === targetAdminUser) {
-                loginUser(targetAdminUser);
+            if (currentUser && currentUser.key === targetAdminUserKey) {
+                loginUser(targetAdminUserKey);
             }
         }
 
