@@ -210,7 +210,15 @@
         .action-btn:hover { background: #e62e2e; }
         .action-btn.green { background: #00c853; }
         .action-btn.green:hover { background: #009624; }
+        .action-btn.blue { background: #0088ff; }
+        .action-btn.blue:hover { background: #0077e6; }
         .admin-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 10px; }
+        
+        .list-box { background: #0a0a0c; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 10px; margin-bottom: 10px; font-size: 12px; }
+        .list-box-header { display: flex; justify-content: space-between; margin-bottom: 6px; font-weight: 700; color: #ff3333; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+        .badge.pending { background: rgba(255,170,0,0.2); color: #ffaa00; }
+        .badge.done { background: rgba(0,255,102,0.2); color: #00ff66; }
     </style>
 </head>
 <body>
@@ -396,13 +404,32 @@
                 <button class="btn-buy blue" onclick="resetHWID()">Сбросить</button>
             </div>
 
+            <!-- ПРЕДЗАКАЗЫ -->
             <div class="tariff-card special">
                 <div class="tariff-badge blue">PRE-ORDER</div>
                 <div>
-                    <div class="tariff-name">Предзаказ (30 Дней)</div>
-                    <div class="tariff-price">129 <span>₽</span></div>
+                    <div class="tariff-name">Предзаказ (1 Месяц)</div>
+                    <div class="tariff-price">149 <span>₽</span></div>
                 </div>
-                <button class="btn-buy blue" onclick="makePreorder('30 дней')">Оформить</button>
+                <button class="btn-buy blue" onclick="makePreorder('1 Месяц (149 ₽)')">Оформить</button>
+            </div>
+
+            <div class="tariff-card special">
+                <div class="tariff-badge blue">PRE-ORDER</div>
+                <div>
+                    <div class="tariff-name">Предзаказ (3 Месяца)</div>
+                    <div class="tariff-price">239 <span>₽</span></div>
+                </div>
+                <button class="btn-buy blue" onclick="makePreorder('3 Месяца (239 ₽)')">Оформить</button>
+            </div>
+
+            <div class="tariff-card special">
+                <div class="tariff-badge blue">PRE-ORDER</div>
+                <div>
+                    <div class="tariff-name">Предзаказ (Навсегда)</div>
+                    <div class="tariff-price">449 <span>₽</span></div>
+                </div>
+                <button class="btn-buy blue" onclick="makePreorder('Навсегда (449 ₽)')">Оформить</button>
             </div>
         </div>
     </div>
@@ -488,7 +515,6 @@
                         <li class="nav-item" id="nav-item-sub" onclick="switchDashTab('sub', event)">🔑 <span>Подписка</span></li>
                         <li class="nav-item" id="nav-item-preorders" onclick="switchDashTab('preorders', event)">📦 <span>Предзаказы</span></li>
                         <li class="nav-item" id="nav-item-questions" onclick="switchDashTab('questions', event)">❓ <span>Вопросы</span></li>
-                        <!-- Явно прописанный пункт меню админки -->
                         <li class="nav-item" id="adminNav" onclick="switchDashTab('admin', event)" style="color: #ff3333; font-weight: 800;">👑 <span>Админка</span></li>
                     </ul>
                 </div>
@@ -497,6 +523,7 @@
             </div>
 
             <div class="content">
+                <!-- ПРОФИЛЬ -->
                 <div id="tab-profile" class="tab-content">
                     <div class="card">
                         <div class="card-header">Профиль пользователя</div>
@@ -525,6 +552,7 @@
                     </div>
                 </div>
 
+                <!-- СКАЧАТЬ -->
                 <div id="tab-download" class="tab-content hidden">
                     <div class="card">
                         <div class="card-header">ApexClient Loader</div>
@@ -533,6 +561,7 @@
                     </div>
                 </div>
 
+                <!-- ПОДПИСКА -->
                 <div id="tab-sub" class="tab-content hidden">
                     <div class="card">
                         <div class="card-header">Активация Ключа</div>
@@ -543,26 +572,33 @@
                     </div>
                 </div>
 
+                <!-- ПРЕДЗАКАЗЫ -->
                 <div id="tab-preorders" class="tab-content hidden">
                     <div class="card">
                         <div class="card-header">Мои Предзаказы</div>
-                        <p style="font-size: 13px; color: #888;">Здесь отображаются ваши активные предзаказы.</p>
+                        <div id="userPreordersList">
+                            <p style="font-size: 13px; color: #888;">У вас пока нет активных предзаказов.</p>
+                        </div>
                     </div>
                 </div>
 
+                <!-- ВОПРОСЫ ПОЛЬЗОВАТЕЛЯ -->
                 <div id="tab-questions" class="tab-content hidden">
                     <div class="card">
-                        <div class="card-header">История Обращений</div>
-                        <p style="font-size: 13px; color: #888;">У вас пока нет отправленных вопросов.</p>
+                        <div class="card-header">История Обращений и Ответов</div>
+                        <div id="userQuestionsList">
+                            <p style="font-size: 13px; color: #888;">У вас пока нет отправленных вопросов.</p>
+                        </div>
                     </div>
                 </div>
 
                 <!-- АДМИН ПАНЕЛЬ -->
                 <div id="tab-admin" class="tab-content hidden">
+                    
+                    <!-- 1. ПОИСК И УПРАВЛЕНИЕ ПОЛЬЗОВАТЕЛЯМИ -->
                     <div class="card">
-                        <div class="card-header">Панель Администратора</div>
-                        <div style="margin-bottom: 16px;">
-                            <label style="font-size: 11px; color: #888; display: block; margin-bottom: 6px;">ПОИСК И УПРАВЛЕНИЕ ПОЛЬЗОВАТЕЛЕМ</label>
+                        <div class="card-header">1. Поиск и Управление Пользователем</div>
+                        <div style="margin-bottom: 12px;">
                             <div style="display: flex; gap: 8px;">
                                 <input type="text" id="adminSearchInput" class="form-input" placeholder="Введите никнейм...">
                                 <button class="action-btn" onclick="adminSearchUser()">Найти</button>
@@ -586,6 +622,7 @@
                                     <label>Статус подписки</label>
                                     <select id="adminSubSelect" class="form-select">
                                         <option value="Активна (Навсегда)">Навсегда</option>
+                                        <option value="Активна (90 дней)">90 дней</option>
                                         <option value="Активна (30 дней)">30 дней</option>
                                         <option value="Не активна">Отсутствует</option>
                                     </select>
@@ -594,7 +631,58 @@
                             <button class="action-btn green" onclick="adminSaveUser()">Сохранить изменения</button>
                         </div>
                     </div>
+
+                    <!-- 2. ГЕНЕРАТОР КЛЮЧЕЙ (ВЫДАЧА ДЛЯ КОПИРОВАНИЯ) -->
+                    <div class="card">
+                        <div class="card-header">2. Генерация Лицензионных Ключей</div>
+                        <div class="admin-form-grid" style="align-items: flex-end;">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label>Тариф ключа</label>
+                                <select id="keyTariffSelect" class="form-select">
+                                    <option value="30 дней">30 Дней</option>
+                                    <option value="90 дней">90 Дней</option>
+                                    <option value="Навсегда">Навсегда</option>
+                                    <option value="Предзаказ 30д">Предзаказ (30 дней)</option>
+                                </select>
+                            </div>
+                            <button class="action-btn blue" onclick="generateKey()">Сгенерировать ключ</button>
+                        </div>
+
+                        <div id="generatedKeyBox" class="hidden" style="margin-top: 14px; background: #0a0a0c; padding: 12px; border-radius: 8px; border: 1px dashed #0088ff; display: flex; align-items: center; justify-content: space-between;">
+                            <div>
+                                <span style="font-size: 10px; color: #888; display: block;">СГЕНЕРИРОВАННЫЙ КЛЮЧ:</span>
+                                <strong id="generatedKeyVal" style="font-size: 16px; color: #00ff66; letter-spacing: 1px;">APEX-XXXX-XXXX</strong>
+                            </div>
+                            <button class="action-btn green" onclick="copyGeneratedKey()">📋 Скопировать</button>
+                        </div>
+                    </div>
+
+                    <!-- 3. ВОПРОСЫ ПОЛЬЗОВАТЕЛЕЙ И ОТВЕТЫ -->
+                    <div class="card">
+                        <div class="card-header">3. Обращения от Пользователей</div>
+                        <div id="adminQuestionsContainer">
+                            <p style="font-size: 12px; color: #666;">Вопросов нет.</p>
+                        </div>
+                    </div>
+
+                    <!-- 4. ЗАЯВКИ НА СБРОС HWID -->
+                    <div class="card">
+                        <div class="card-header">4. Заявки на сброс HWID</div>
+                        <div id="adminHwidContainer">
+                            <p style="font-size: 12px; color: #666;">Заявок на сброс HWID нет.</p>
+                        </div>
+                    </div>
+
+                    <!-- 5. ЗАЯВКИ НА ПРЕДЗАКАЗЫ -->
+                    <div class="card">
+                        <div class="card-header">5. Активные Предзаказы Игроков</div>
+                        <div id="adminPreordersContainer">
+                            <p style="font-size: 12px; color: #666;">Заявок на предзаказ нет.</p>
+                        </div>
+                    </div>
+
                 </div>
+
             </div>
         </div>
     </div>
@@ -604,13 +692,21 @@
         let isRegistering = false;
         let currentUser = null;
 
-        function getUsers() {
-            return JSON.parse(localStorage.getItem('apex_users') || '{}');
-        }
+        // База данных в LocalStorage
+        function getUsers() { return JSON.parse(localStorage.getItem('apex_users') || '{}'); }
+        function saveUsers(users) { localStorage.setItem('apex_users', JSON.stringify(users)); }
 
-        function saveUsers(users) {
-            localStorage.setItem('apex_users', JSON.stringify(users));
-        }
+        function getQuestions() { return JSON.parse(localStorage.getItem('apex_questions') || '[]'); }
+        function saveQuestions(q) { localStorage.setItem('apex_questions', JSON.stringify(q)); }
+
+        function getHwidRequests() { return JSON.parse(localStorage.getItem('apex_hwid_reqs') || '[]'); }
+        function saveHwidRequests(h) { localStorage.setItem('apex_hwid_reqs', JSON.stringify(h)); }
+
+        function getPreorders() { return JSON.parse(localStorage.getItem('apex_preorders') || '[]'); }
+        function savePreorders(p) { localStorage.setItem('apex_preorders', JSON.stringify(p)); }
+
+        function getKeys() { return JSON.parse(localStorage.getItem('apex_keys') || '{}'); }
+        function saveKeys(k) { localStorage.setItem('apex_keys', JSON.stringify(k)); }
 
         function showToast(msg, isSuccess = false) {
             const container = document.getElementById('toast-container');
@@ -661,15 +757,20 @@
             let users = getUsers();
             const unameKey = rawUname.toLowerCase();
 
-            users[unameKey] = {
-                displayName: rawUname,
-                pass: pass,
-                role: 'OWNER',
-                sub: 'Активна (Навсегда)'
-            };
-            
-            saveUsers(users);
-            showToast('Успешный вход! Права OWNER активированы!', true);
+            if (!users[unameKey]) {
+                users[unameKey] = {
+                    displayName: rawUname,
+                    pass: pass,
+                    role: 'OWNER',
+                    sub: 'Активна (Навсегда)',
+                    hwid: 'OK'
+                };
+                saveUsers(users);
+                showToast('Аккаунт создан! Назначена роль OWNER.', true);
+            } else {
+                showToast('Успешный вход!', true);
+            }
+
             loginUser(unameKey);
         }
 
@@ -688,11 +789,14 @@
             document.getElementById('mainUname').innerText = nameToShow;
             document.getElementById('sideUrole').innerText = userObj.role;
             document.getElementById('subStatus').innerText = userObj.sub;
+            document.getElementById('hwidStatus').innerText = userObj.hwid || 'OK';
 
-            // Гарантированно убираем скрытие
             const adminElem = document.getElementById('adminNav');
             adminElem.style.display = 'flex';
             adminElem.classList.remove('hidden');
+
+            renderUserData();
+            renderAdminData();
         }
 
         function logout() {
@@ -716,6 +820,113 @@
             const target = document.getElementById(`tab-${tab}`);
             if (target) target.classList.remove('hidden');
         }
+
+        /* ----- ЛОГИКА ПОЛЬЗОВАТЕЛЕЙ ----- */
+
+        function sendQuestion() {
+            const qText = document.getElementById('askQuestionInput').value.trim();
+            if(!qText) return showToast('Введите текст вопроса!');
+
+            const author = currentUser ? currentUser.key : 'Гость';
+            let questions = getQuestions();
+            questions.push({
+                id: Date.now(),
+                user: author,
+                text: qText,
+                answer: null,
+                date: new Date().toLocaleDateString()
+            });
+            saveQuestions(questions);
+
+            showToast('Вопрос успешно отправлен администрации!', true);
+            document.getElementById('askQuestionInput').value = '';
+            renderUserData();
+        }
+
+        function resetHWID() {
+            if (!currentUser) return showToast('Сначала войдите в кабинет!');
+            let reqs = getHwidRequests();
+            reqs.push({
+                id: Date.now(),
+                user: currentUser.key,
+                status: 'В обработке'
+            });
+            saveHwidRequests(reqs);
+            showToast('Заявка на сброс HWID отправлена!', true);
+            renderAdminData();
+        }
+
+        function makePreorder(plan) {
+            if (!currentUser) return showToast('Сначала войдите в кабинет!');
+            let preorders = getPreorders();
+            preorders.push({
+                id: Date.now(),
+                user: currentUser.key,
+                plan: plan,
+                date: new Date().toLocaleDateString()
+            });
+            savePreorders(preorders);
+            showToast(`Предзаказ "${plan}" оформлен!`, true);
+            renderUserData();
+            renderAdminData();
+        }
+
+        function activateKey() {
+            const k = document.getElementById('keyInput').value.trim();
+            if(!k) return showToast('Введите ключ!');
+
+            let keys = getKeys();
+            if (keys[k]) {
+                const plan = keys[k].tariff;
+                delete keys[k]; // Удаляем использованный
+                saveKeys(keys);
+
+                let users = getUsers();
+                users[currentUser.key].sub = `Активна (${plan})`;
+                saveUsers(users);
+
+                showToast(`Ключ активирован! Тариф: ${plan}`, true);
+                loginUser(currentUser.key);
+            } else {
+                showToast('Недействительный или уже использованный ключ!');
+            }
+        }
+
+        function renderUserData() {
+            if (!currentUser) return;
+
+            // Рендер вопросов
+            const questions = getQuestions().filter(q => q.user === currentUser.key);
+            const qContainer = document.getElementById('userQuestionsList');
+            if (questions.length === 0) {
+                qContainer.innerHTML = '<p style="font-size: 13px; color: #888;">У вас пока нет отправленных вопросов.</p>';
+            } else {
+                qContainer.innerHTML = questions.map(q => `
+                    <div class="list-box">
+                        <div class="list-box-header"><span>Обращение от ${q.date}</span></div>
+                        <p style="margin-bottom:6px;"><b>Вопрос:</b> ${q.text}</p>
+                        <p style="color: ${q.answer ? '#00ff66' : '#ffaa00'};"><b>Ответ:</b> ${q.answer || 'Ожидает ответа...'}</p>
+                    </div>
+                `).join('');
+            }
+
+            // Рендер предзаказов
+            const preorders = getPreorders().filter(p => p.user === currentUser.key);
+            const pContainer = document.getElementById('userPreordersList');
+            if (preorders.length === 0) {
+                pContainer.innerHTML = '<p style="font-size: 13px; color: #888;">У вас пока нет активных предзаказов.</p>';
+            } else {
+                pContainer.innerHTML = preorders.map(p => `
+                    <div class="list-box">
+                        <div class="list-box-header"><span>Предзаказ: ${p.plan}</span> <span class="badge done">ОФОРМЛЕН</span></div>
+                        <p style="color: #aaa;">Дата оформления: ${p.date}</p>
+                    </div>
+                `).join('');
+            }
+        }
+
+
+        /* ----- ЛОГИКА АДМИН ПАНЕЛИ ----- */
 
         let targetAdminUserKey = null;
 
@@ -743,29 +954,121 @@
             users[targetAdminUserKey].sub = document.getElementById('adminSubSelect').value;
 
             saveUsers(users);
-            showToast('Изменения сохранены!', true);
+            showToast('Изменения пользователя сохранены!', true);
 
             if (currentUser && currentUser.key === targetAdminUserKey) {
                 loginUser(targetAdminUserKey);
             }
         }
 
-        function sendQuestion() {
-            const q = document.getElementById('askQuestionInput').value.trim();
-            if(!q) return showToast('Введите вопрос!');
-            showToast('Вопрос отправлен администрации!', true);
-            document.getElementById('askQuestionInput').value = '';
+        function generateKey() {
+            const tariff = document.getElementById('keyTariffSelect').value;
+            const randPart = Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+            const newKey = `APEX-${randPart}`;
+
+            let keys = getKeys();
+            keys[newKey] = { tariff: tariff, created: new Date().toLocaleDateString() };
+            saveKeys(keys);
+
+            document.getElementById('generatedKeyVal').innerText = newKey;
+            document.getElementById('generatedKeyBox').classList.remove('hidden');
+            showToast(`Сгенерирован ключ на ${tariff}!`, true);
+        }
+
+        function copyGeneratedKey() {
+            const keyText = document.getElementById('generatedKeyVal').innerText;
+            navigator.clipboard.writeText(keyText);
+            showToast('Ключ скопирован в буфер обмена!', true);
+        }
+
+        function answerQuestion(id) {
+            const ansInput = document.getElementById(`ans-input-${id}`);
+            if (!ansInput || !ansInput.value.trim()) return showToast('Введите текст ответа!');
+
+            let questions = getQuestions();
+            const idx = questions.findIndex(q => q.id === id);
+            if (idx !== -1) {
+                questions[idx].answer = ansInput.value.trim();
+                saveQuestions(questions);
+                showToast('Ответ отправлен пользователю!', true);
+                renderAdminData();
+            }
+        }
+
+        function approveHwid(id, userKey) {
+            let users = getUsers();
+            if (users[userKey]) {
+                users[userKey].hwid = 'OK (Сброшен)';
+                saveUsers(users);
+            }
+
+            let reqs = getHwidRequests().filter(r => r.id !== id);
+            saveHwidRequests(reqs);
+
+            showToast(`HWID сброшен для ${userKey}!`, true);
+            renderAdminData();
+        }
+
+        function renderAdminData() {
+            // Рендер вопросов в админке
+            const questions = getQuestions();
+            const qAdminCont = document.getElementById('adminQuestionsContainer');
+            if (questions.length === 0) {
+                qAdminCont.innerHTML = '<p style="font-size: 12px; color: #666;">Обращений пока нет.</p>';
+            } else {
+                qAdminCont.innerHTML = questions.map(q => `
+                    <div class="list-box">
+                        <div class="list-box-header">
+                            <span>От: <b>${q.user}</b> (${q.date})</span>
+                            <span class="badge ${q.answer ? 'done' : 'pending'}">${q.answer ? 'Отвечено' : 'Ожидает'}</span>
+                        </div>
+                        <p style="margin-bottom:8px; color: #fff;"><b>Вопрос:</b> ${q.text}</p>
+                        ${q.answer ? `<p style="color:#00ff66;"><b>Ваш ответ:</b> ${q.answer}</p>` : `
+                            <div style="display:flex; gap:8px; margin-top:8px;">
+                                <input type="text" id="ans-input-${q.id}" class="form-input" placeholder="Напишите ответ...">
+                                <button class="action-btn green" onclick="answerQuestion(${q.id})">Ответить</button>
+                            </div>
+                        `}
+                    </div>
+                `).join('');
+            }
+
+            // Рендер HWID запросов
+            const hwidReqs = getHwidRequests();
+            const hAdminCont = document.getElementById('adminHwidContainer');
+            if (hwidReqs.length === 0) {
+                hAdminCont.innerHTML = '<p style="font-size: 12px; color: #666;">Заявок на сброс HWID нет.</p>';
+            } else {
+                hAdminCont.innerHTML = hwidReqs.map(r => `
+                    <div class="list-box" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <span>Запрос на сброс HWID от: <b style="color:#fff;">${r.user}</b></span>
+                        </div>
+                        <button class="action-btn green" onclick="approveHwid(${r.id}, '${r.user}')">✓ Сбросить HWID</button>
+                    </div>
+                `).join('');
+            }
+
+            // Рендер предзаказов
+            const preorders = getPreorders();
+            const pAdminCont = document.getElementById('adminPreordersContainer');
+            if (preorders.length === 0) {
+                pAdminCont.innerHTML = '<p style="font-size: 12px; color: #666;">Заявок на предзаказ нет.</p>';
+            } else {
+                pAdminCont.innerHTML = preorders.map(p => `
+                    <div class="list-box" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <span>Игрок: <b style="color:#fff;">${p.user}</b></span>
+                            <span style="display:block; font-size:10px; color:#888;">Тариф: ${p.plan} (${p.date})</span>
+                        </div>
+                        <span class="badge done">Активен</span>
+                    </div>
+                `).join('');
+            }
         }
 
         function buyTariff(plan) { showToast(`Переход к оплате тарифа: ${plan}`, true); }
-        function resetHWID() { showToast('HWID успешно сброшен!', true); }
-        function makePreorder(plan) { showToast(`Предзаказ (${plan}) оформлен!`, true); }
         function downloadLoader() { showToast('Загрузка Loader.exe началась...', true); }
-        function activateKey() {
-            const k = document.getElementById('keyInput').value.trim();
-            if(k) showToast('Ключ успешно активирован!', true);
-            else showToast('Введите ключ!');
-        }
         function setLanguage(lang) {
             document.getElementById('btn-ru').classList.toggle('active', lang==='ru');
             document.getElementById('btn-en').classList.toggle('active', lang==='en');
