@@ -212,9 +212,6 @@
         .action-btn:hover { background: #e62e2e; }
         .action-btn.green { background: #00c853; }
         .action-btn.green:hover { background: #009624; }
-        .user-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-        .user-table th, .user-table td { padding: 8px; text-align: left; font-size: 11px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-        .user-table th { color: #555; font-size: 9px; text-transform: uppercase; }
         .admin-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 10px; }
         .key-box { background: #0a0a0c; border: 1px dashed #ff3333; border-radius: 8px; padding: 10px 14px; font-family: monospace; font-size: 14px; color: #ff6666; display: inline-block; }
     </style>
@@ -468,7 +465,7 @@
                 <form id="authForm" onsubmit="handleAuth(event)">
                     <div class="form-group">
                         <label data-lang="lbl_user">Никнейм</label>
-                        <input type="text" id="usernameInput" class="form-input" placeholder="Введите ник" required autocomplete="off">
+                        <input type="text" id="usernameInput" class="form-input" placeholder="Введите ник (owner/admin)" required autocomplete="off">
                     </div>
                     <div class="form-group">
                         <label data-lang="lbl_pass">Пароль</label>
@@ -568,7 +565,7 @@
                         </div>
                     </div>
 
-                    <!-- ЕСЛИ АДМИН -->
+                    <!-- ЕСЛИ АДМИН ИЛИ ОВНЕР -->
                     <div class="card hidden" id="adminQuestionsBlock">
                         <div class="card-header">Вопросы от игроков (Панель Администрации)</div>
                         <div id="adminQuestionsList">
@@ -580,13 +577,14 @@
                 <!-- ВКЛАДКА: АДМИНКА -->
                 <div id="tab-admin" class="tab-content hidden">
                     <div class="card">
-                        <div class="card-header">Управление пользователями</div>
+                        <div class="card-header">Управление пользователями & Правами</div>
                         <div class="admin-form-grid">
                             <input type="text" id="adminUserTarget" class="form-input" placeholder="Никнейм">
                             <select id="adminRoleSelect" class="form-select">
                                 <option value="USER">USER</option>
                                 <option value="MEDIA">MEDIA</option>
                                 <option value="ADMIN">ADMIN</option>
+                                <option value="OWNER">OWNER</option>
                             </select>
                         </div>
                         <button class="action-btn green" onclick="saveUserRole()">Сохранить роль</button>
@@ -707,7 +705,16 @@
             const username = document.getElementById('usernameInput').value.trim();
             if (!username) return showToast('Введите никнейм');
 
-            const role = username.toLowerCase() === 'admin' ? 'ADMIN' : 'USER';
+            const lowerUname = username.toLowerCase();
+            let role = 'USER';
+
+            // Выдаем роль OWNER или ADMIN при входе под этими никами
+            if (lowerUname === 'owner' || lowerUname === 'овнер' || lowerUname === 'creator') {
+                role = 'OWNER';
+            } else if (lowerUname === 'admin' || lowerUname === 'админ') {
+                role = 'ADMIN';
+            }
+
             currentUser = { username, role };
 
             document.getElementById('authScreen').classList.add('hidden');
@@ -719,7 +726,8 @@
             document.getElementById('mainUname').textContent = username;
             document.getElementById('mainAvatar').textContent = username[0].toUpperCase();
 
-            if (role === 'ADMIN') {
+            // Если ADMIN или OWNER — открываем админку
+            if (role === 'ADMIN' || role === 'OWNER') {
                 document.getElementById('adminNav').classList.remove('hidden');
                 document.getElementById('adminQuestionsBlock').classList.remove('hidden');
             } else {
@@ -727,7 +735,7 @@
                 document.getElementById('adminQuestionsBlock').classList.add('hidden');
             }
 
-            showToast(`Добро пожаловать, ${username}!`, 'success');
+            showToast(`Добро пожаловать, ${username}! (${role})`, 'success');
         }
 
         function logout() {
@@ -747,15 +755,29 @@
         }
 
         function buyTariff(tariffName) {
-            showToast(`Для покупки тарифа "${tariffName}" авторизуйтесь в кабинете.`);
-            navigateTo('cabinet');
+            if (!currentUser) {
+                showToast(`Для покупки тарифа "${tariffName}" авторизуйтесь в кабинете!`);
+                navigateTo('cabinet');
+            } else {
+                showToast(`Переход к оплате тарифа "${tariffName}"...`, 'success');
+            }
         }
 
         function resetHWID() {
+            if (!currentUser) {
+                showToast('Для сброса HWID авторизуйтесь!');
+                navigateTo('cabinet');
+                return;
+            }
             showToast('Запрос на сброс HWID отправлен. Стоимость: 49 ₽', 'success');
         }
 
         function makePreorder(tariffName) {
+            if (!currentUser) {
+                showToast('Для оформления предзаказа авторизуйтесь!');
+                navigateTo('cabinet');
+                return;
+            }
             showToast(`Предзаказ "${tariffName}" успешно оформлен!`, 'success');
         }
 
@@ -785,8 +807,9 @@
 
         function saveUserRole() {
             const target = document.getElementById('adminUserTarget').value.trim();
+            const role = document.getElementById('adminRoleSelect').value;
             if (!target) return showToast('Укажите ник пользователя');
-            showToast(`Роль для ${target} обновлена!`, 'success');
+            showToast(`Роль для ${target} обновлена на ${role}!`, 'success');
         }
     </script>
 </body>
