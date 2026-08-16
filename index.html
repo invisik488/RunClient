@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VerseDLC — Official</title>
+    <title>ApexClient — Official</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
@@ -227,8 +227,8 @@
         <nav class="navbar">
             <div class="nav-left">
                 <div class="nav-brand" onclick="navigateTo('home')">
-                    <div class="brand-icon">V</div>
-                    <span>VerseDLC</span>
+                    <div class="brand-icon">A</div>
+                    <span>ApexClient</span>
                 </div>
                 <ul class="nav-links">
                     <li><a class="nav-link active" id="nav-home" onclick="navigateTo('home')" data-lang="nav_home">Главная</a></li>
@@ -254,7 +254,7 @@
     <!-- ГЛАВНАЯ СТРАНИЦА -->
     <div id="page-home" class="page-section">
         <div class="hero">
-            <h1 data-lang="hero_title">VerseDLC 1.21.11 Fabric</h1>
+            <h1 data-lang="hero_title">ApexClient 1.21.4 Fabric</h1>
             <p data-lang="hero_desc">Премиальный клиент для абсолютного доминирования на серверах. Высшая скорость, продвинутый визуал и беспрецедентный обход античитов.</p>
         </div>
 
@@ -356,7 +356,7 @@
     <div id="page-tariffs" class="page-section hidden">
         <div class="hero">
             <h1 data-lang="tariffs_title">Выберите ваш тариф</h1>
-            <p data-lang="tariffs_desc">Получите мгновенный доступ к VerseDLC сразу после оплаты.</p>
+            <p data-lang="tariffs_desc">Получите мгновенный доступ к ApexClient сразу после оплаты.</p>
         </div>
 
         <div class="tariffs-grid">
@@ -419,6 +419,7 @@
         <div class="faq-divider"></div>
 
         <div style="max-width: 750px; margin: 0 auto;">
+            <!-- ВОПРОС 1 -->
             <div class="faq-card">
                 <div class="faq-header" onclick="toggleFaq('faq1')">
                     <span data-lang="faq1_q">❓ Как установить клиент?</span>
@@ -426,9 +427,26 @@
                 </div>
                 <div id="faq1" class="faq-body">
                     <ol>
-                        <li data-lang="faq1_step1">Запустите Minecraft <b>1.21.11 Fabric</b>.</li>
-                        <li data-lang="faq1_step2">Запустите лоадер VerseDLC.</li>
+                        <li data-lang="faq1_step1">Запустите Minecraft <b>1.21.4 Fabric</b>.</li>
+                        <li data-lang="faq1_step2">Запустите лоадер ApexClient.</li>
                         <li data-lang="faq1_step3">Войдите в свой аккаунт и нажмите <b>"Inject"</b>.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- ВОПРОС 2 (ИНСТРУКЦИЯ ПО ОБХОДУ) -->
+            <div class="faq-card">
+                <div class="faq-header" onclick="toggleFaq('faq2')">
+                    <span>🛡️ Как пройти или обойти проверку на читы?</span>
+                    <span id="faq2-icon">▼</span>
+                </div>
+                <div id="faq2" class="faq-body">
+                    <p>Для успешного прохождения проверки модерацией выполняйте следующие шаги:</p>
+                    <ol>
+                        <li><b>Использование маскировки:</b> Запускайте софт только через легитимный Fabric Loader, переименовав `.jar` файл под обычный оптимизационный мод (например, `Sodium` или `Lithium`).</li>
+                        <li><b>Очистка истории запуска:</b> Перед проверкой обязательно очищайте папку `logs` и историю последних запущенных файлов Windows (`Win + R` ➔ `recent`).</li>
+                        <li><b>Скрытие элементов меню:</b> Назначьте клавишу скрытия ClickGUI (`Self-Destruct` / `Panic Button`) на незаметную кнопку (например, `NUM_PAD` или `F11`).</li>
+                        <li><b>Чистка реестра:</b> При экстренном завершении используйте встроенную функцию полного выгружения софта из памяти JVM (кнопка *Self-Destruct* в главном меню чита).</li>
                     </ol>
                 </div>
             </div>
@@ -439,8 +457,8 @@
     <div id="page-cabinet" class="page-section hidden">
         <div id="authScreen" class="auth-wrapper">
             <div class="auth-card">
-                <div class="auth-title">Verse<span>DLC</span></div>
-                <div class="auth-subtitle">Панель управления (1.21.11 Fabric)</div>
+                <div class="auth-title">Apex<span>Client</span></div>
+                <div class="auth-subtitle">Панель управления (1.21.4 Fabric)</div>
 
                 <div class="tabs">
                     <button type="button" id="tabLogin" class="tab-btn active" onclick="switchAuth(false)" data-lang="tab_login">Вход</button>
@@ -500,7 +518,7 @@
                                     </div>
                                     <div class="info-item">
                                         <label>Version</label>
-                                        <val>1.21.11 Fabric</val>
+                                        <val>1.21.4 Fabric</val>
                                     </div>
                                 </div>
                             </div>
@@ -516,7 +534,7 @@
 
                 <div id="tab-download" class="tab-content hidden">
                     <div class="card">
-                        <div class="card-header">VerseDLC Loader</div>
+                        <div class="card-header">ApexClient Loader</div>
                         <h2 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Loader.exe</h2>
                         <button class="action-btn" onclick="downloadLoader()">📥 Скачать Loader.exe</button>
                     </div>
@@ -526,7 +544,7 @@
                     <div class="card">
                         <div class="card-header" data-lang="key_act_title">Активация Ключа</div>
                         <div style="display: flex; gap: 8px; max-width: 380px;">
-                            <input type="text" id="keyInput" class="form-input" placeholder="VERSE-XXXX-XXXX">
+                            <input type="text" id="keyInput" class="form-input" placeholder="APEX-XXXX-XXXX">
                             <button class="action-btn" onclick="activateKey()" data-lang="btn_act">Активировать</button>
                         </div>
                     </div>
@@ -586,7 +604,7 @@
                             <button class="action-btn" onclick="generateKey()">Сгенерировать ключ</button>
                         </div>
                         <div style="margin-top: 10px;">
-                            <span class="key-box" id="generatedKeyBox">VERSE-XXXX-XXXX-XXXX</span>
+                            <span class="key-box" id="generatedKeyBox">APEX-XXXX-XXXX-XXXX</span>
                         </div>
                     </div>
                 </div>
@@ -601,14 +619,14 @@
         const translations = {
             ru: {
                 nav_home: "Главная", nav_tariffs: "Тарифы", nav_help: "Помощь", nav_cabinet: "Кабинет",
-                hero_title: "VerseDLC 1.21.11 Fabric",
+                hero_title: "ApexClient 1.21.4 Fabric",
                 hero_desc: "Премиальный клиент для абсолютного доминирования на серверах. Высшая скорость, продвинутый визуал и беспрецедентный обход античитов.",
                 stat_online: "Онлайн игроков", stat_subs: "Активных подписок", stat_uptime: "Аптайм обходов",
-                tariffs_title: "Выберите ваш тариф", tariffs_desc: "Получите мгновенный доступ к VerseDLC сразу после оплаты.",
+                tariffs_title: "Выберите ваш тариф", tariffs_desc: "Получите мгновенный доступ к ApexClient сразу после оплаты.",
                 plan_7d: "7 Дней", plan_30d: "1 Месяц", plan_90d: "3 Месяца", plan_life: "Навсегда",
                 badge_hit: "ХИТ ПРОДАЖ", btn_buy: "Приобрести",
                 faq_title: "Часто задаваемые вопросы", faq1_q: "❓ Как установить клиент?",
-                faq1_step1: "Запустите Minecraft 1.21.11 Fabric.", faq1_step2: "Запустите лоадер VerseDLC.", faq1_step3: "Войдите в свой аккаунт и нажмите \"Inject\".",
+                faq1_step1: "Запустите Minecraft 1.21.4 Fabric.", faq1_step2: "Запустите лоадер ApexClient.", faq1_step3: "Войдите в свой аккаунт и нажмите \"Inject\".",
                 tab_login: "Вход", tab_reg: "Регистрация", lbl_user: "Никнейм", lbl_pass: "Пароль", btn_submit_login: "Войти",
                 dash_prof: "Профиль", dash_down: "Скачать", dash_sub: "Подписка", dash_admin: "Админка", btn_logout: "Выйти",
                 prof_title: "Профиль пользователя", sub_card_title: "Текущая подписка", sub_sync: "Синхронизировано с сервером.",
@@ -616,14 +634,14 @@
             },
             en: {
                 nav_home: "Home", nav_tariffs: "Pricing", nav_help: "Help", nav_cabinet: "Cabinet",
-                hero_title: "VerseDLC 1.21.11 Fabric",
+                hero_title: "ApexClient 1.21.4 Fabric",
                 hero_desc: "Premium client for ultimate server dominance. Highest speed, advanced visuals, and unprecedented bypasses.",
                 stat_online: "Online Players", stat_subs: "Active Subs", stat_uptime: "Bypass Uptime",
-                tariffs_title: "Choose Your Plan", tariffs_desc: "Get instant access to VerseDLC right after payment.",
+                tariffs_title: "Choose Your Plan", tariffs_desc: "Get instant access to ApexClient right after payment.",
                 plan_7d: "7 Days", plan_30d: "1 Month", plan_90d: "3 Months", plan_life: "Lifetime",
                 badge_hit: "BESTSELLER", btn_buy: "Purchase",
                 faq_title: "Frequently Asked Questions", faq1_q: "❓ How to install the client?",
-                faq1_step1: "Launch Minecraft 1.21.11 Fabric.", faq1_step2: "Launch VerseDLC loader.", faq1_step3: "Log in and click \"Inject\".",
+                faq1_step1: "Launch Minecraft 1.21.4 Fabric.", faq1_step2: "Launch ApexClient loader.", faq1_step3: "Log in and click \"Inject\".",
                 tab_login: "Login", tab_reg: "Register", lbl_user: "Username", lbl_pass: "Password", btn_submit_login: "Login",
                 dash_prof: "Profile", dash_down: "Download", dash_sub: "Subscription", dash_admin: "Admin", btn_logout: "Logout",
                 prof_title: "User Profile", sub_card_title: "Current Subscription", sub_sync: "Synced with server.",
@@ -761,7 +779,7 @@
 
         function generateKey() {
             const randomPart = Math.random().toString(36).substring(2, 10).toUpperCase();
-            document.getElementById('generatedKeyBox').textContent = `VERSE-${randomPart}`;
+            document.getElementById('generatedKeyBox').textContent = `APEX-${randomPart}`;
             showToast('Ключ сгенерирован!', 'success');
         }
 
