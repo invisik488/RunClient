@@ -483,12 +483,13 @@
                     </div>
 
                     <ul class="nav-menu">
-                        <li class="nav-item active" onclick="switchDashTab('profile', event)">👤 <span>Профиль</span></li>
-                        <li class="nav-item" onclick="switchDashTab('download', event)">⚡ <span>Скачать</span></li>
-                        <li class="nav-item" onclick="switchDashTab('sub', event)">🔑 <span>Подписка</span></li>
-                        <li class="nav-item" onclick="switchDashTab('preorders', event)">📦 <span>Предзаказы</span></li>
-                        <li class="nav-item" onclick="switchDashTab('questions', event)">❓ <span>Вопросы</span></li>
-                        <li class="nav-item hidden" id="adminNav" onclick="switchDashTab('admin', event)" style="color: #ff3333;">👑 <span>Админка</span></li>
+                        <li class="nav-item active" id="nav-item-profile" onclick="switchDashTab('profile', event)">👤 <span>Профиль</span></li>
+                        <li class="nav-item" id="nav-item-download" onclick="switchDashTab('download', event)">⚡ <span>Скачать</span></li>
+                        <li class="nav-item" id="nav-item-sub" onclick="switchDashTab('sub', event)">🔑 <span>Подписка</span></li>
+                        <li class="nav-item" id="nav-item-preorders" onclick="switchDashTab('preorders', event)">📦 <span>Предзаказы</span></li>
+                        <li class="nav-item" id="nav-item-questions" onclick="switchDashTab('questions', event)">❓ <span>Вопросы</span></li>
+                        <!-- Явно прописанный пункт меню админки -->
+                        <li class="nav-item" id="adminNav" onclick="switchDashTab('admin', event)" style="color: #ff3333; font-weight: 800;">👑 <span>Админка</span></li>
                     </ul>
                 </div>
 
@@ -650,7 +651,6 @@
             document.getElementById('submitBtn').innerText = reg ? 'Зарегистрироваться' : 'Войти';
         }
 
-        // Автоматическая выдача OWNER каждому вошедшему
         function handleAuth(e) {
             e.preventDefault();
             const rawUname = document.getElementById('usernameInput').value.trim();
@@ -689,12 +689,10 @@
             document.getElementById('sideUrole').innerText = userObj.role;
             document.getElementById('subStatus').innerText = userObj.sub;
 
-            // Админка доступна для ADMIN и OWNER
-            if (userObj.role === 'ADMIN' || userObj.role === 'OWNER') {
-                document.getElementById('adminNav').classList.remove('hidden');
-            } else {
-                document.getElementById('adminNav').classList.add('hidden');
-            }
+            // Гарантированно убираем скрытие
+            const adminElem = document.getElementById('adminNav');
+            adminElem.style.display = 'flex';
+            adminElem.classList.remove('hidden');
         }
 
         function logout() {
@@ -707,7 +705,12 @@
 
         function switchDashTab(tab, event) {
             document.querySelectorAll('.nav-menu .nav-item').forEach(el => el.classList.remove('active'));
-            if(event && event.currentTarget) event.currentTarget.classList.add('active');
+            if(event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            } else {
+                const targetNavItem = document.getElementById(`nav-item-${tab}`) || document.getElementById('adminNav');
+                if(targetNavItem) targetNavItem.classList.add('active');
+            }
 
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             const target = document.getElementById(`tab-${tab}`);
