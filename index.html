@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VerseDLC — Official</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: #050508; color: #ffffff; min-height: 100vh; position: relative; overflow-x: hidden; }
@@ -29,10 +29,10 @@
 
         .navbar-container {
             position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
-            z-index: 1000; width: 92%; max-width: 780px;
+            z-index: 1000; width: 95%; max-width: 900px;
         }
         .navbar {
-            background: rgba(15, 18, 16, 0.8);
+            background: rgba(15, 18, 16, 0.85);
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -50,7 +50,7 @@
             display: flex; align-items: center; justify-content: center;
             font-weight: 900; font-size: 13px; color: #fff; box-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
         }
-        .nav-links { display: flex; align-items: center; gap: 14px; list-style: none; }
+        .nav-links { display: flex; align-items: center; gap: 12px; list-style: none; }
         .nav-link {
             color: #a0a0ab; font-size: 13px; font-weight: 500; cursor: pointer;
             transition: 0.2s; text-decoration: none;
@@ -79,24 +79,47 @@
 
         .page-section { padding-top: 100px; padding-bottom: 60px; max-width: 1000px; margin: 0 auto; width: 90%; }
 
-        .hero { text-align: center; margin-bottom: 35px; }
-        .hero h1 { font-size: 42px; font-weight: 800; margin-bottom: 10px; background: linear-gradient(135deg, #fff 0%, #888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero p { color: #888; font-size: 15px; max-width: 550px; margin: 0 auto 20px; line-height: 1.5; }
+        /* HERO & PROMO SECTIONS */
+        .hero { text-align: center; margin-bottom: 45px; }
+        .hero h1 { font-size: 48px; font-weight: 900; margin-bottom: 12px; background: linear-gradient(135deg, #fff 0%, #ff3333 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { color: #a0a0ab; font-size: 16px; max-width: 620px; margin: 0 auto 20px; line-height: 1.6; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 30px; }
-        .stat-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 14px; text-align: center; }
-        .stat-val { font-size: 20px; font-weight: 800; color: #00ff66; margin-bottom: 2px; }
-        .stat-lbl { font-size: 11px; color: #666; font-weight: 600; text-transform: uppercase; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 40px; }
+        .stat-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 14px; padding: 18px; text-align: center; }
+        .stat-val { font-size: 24px; font-weight: 800; color: #ff3333; margin-bottom: 2px; }
+        .stat-lbl { font-size: 11px; color: #666; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 30px; }
-        .feature-card {
-            background: #0d0d12; border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 14px; padding: 20px; transition: 0.3s;
+        .promo-banner {
+            background: linear-gradient(135deg, #0d0d14 0%, #150a12 100%);
+            border: 1px solid rgba(255, 51, 51, 0.2);
+            border-radius: 20px; padding: 30px; margin-bottom: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            transition: 0.3s ease; position: relative; overflow: hidden;
         }
-        .feature-card:hover { transform: translateY(-4px); border-color: rgba(255, 51, 51, 0.3); }
-        .feature-icon { font-size: 24px; margin-bottom: 10px; display: inline-block; }
-        .feature-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: #fff; }
-        .feature-desc { font-size: 12px; color: #777; line-height: 1.5; }
+        .promo-banner:hover { border-color: #ff3333; transform: translateY(-3px); }
+        .promo-banner h2 { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .promo-banner p { color: #aaaaaa; font-size: 14px; line-height: 1.6; margin-bottom: 16px; }
+
+        .tags-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .tag-item {
+            background: rgba(255, 51, 51, 0.1); border: 1px solid rgba(255, 51, 51, 0.3);
+            color: #ff6666; font-size: 12px; font-weight: 700; padding: 6px 14px;
+            border-radius: 20px; display: flex; align-items: center; gap: 6px;
+        }
+        .tag-item.green { background: rgba(0, 255, 102, 0.1); border-color: rgba(0, 255, 102, 0.3); color: #00ff66; }
+
+        .servers-section { text-align: center; margin-top: 50px; margin-bottom: 20px; }
+        .servers-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; color: #fff; }
+        .servers-subtitle { font-size: 13px; color: #777; margin-bottom: 24px; }
+        .servers-grid { display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; }
+        .server-card {
+            background: #0d0d12; border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px; padding: 16px 24px; display: flex; align-items: center; gap: 14px;
+            transition: 0.3s ease; box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+        }
+        .server-card:hover { transform: translateY(-5px); border-color: #ff3333; box-shadow: 0 8px 30px rgba(255, 51, 51, 0.2); }
+        .server-avatar { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; border: 1px solid rgba(255,255,255,0.1); }
+        .server-name { font-size: 15px; font-weight: 700; color: #fff; }
 
         .tariffs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; }
         .tariff-card {
@@ -106,11 +129,13 @@
         }
         .tariff-card:hover { transform: translateY(-6px); border-color: #ff3333; }
         .tariff-card.popular { border-color: #ff3333; background: linear-gradient(180deg, rgba(255, 51, 51, 0.05) 0%, #0d0d12 100%); }
+        .tariff-card.special { border-color: #0088ff; background: linear-gradient(180deg, rgba(0, 136, 255, 0.05) 0%, #0d0d12 100%); }
         .tariff-badge {
             position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
             background: #ff3333; color: #fff; font-size: 9px; font-weight: 800;
             padding: 3px 10px; border-radius: 20px; text-transform: uppercase;
         }
+        .tariff-badge.blue { background: #0088ff; }
         .tariff-name { font-size: 16px; font-weight: 700; color: #aaa; margin-bottom: 10px; }
         .tariff-price { font-size: 32px; font-weight: 800; color: #fff; margin-bottom: 16px; }
         .tariff-price span { font-size: 14px; color: #666; font-weight: 500; }
@@ -120,6 +145,8 @@
             border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s;
         }
         .btn-buy:hover { background: #e62e2e; }
+        .btn-buy.blue { background: #0088ff; }
+        .btn-buy.blue:hover { background: #0077e6; }
 
         .faq-section-title {
             text-align: center; font-size: 26px; font-weight: 800; margin-bottom: 8px;
@@ -141,6 +168,7 @@
         .faq-body ol { padding-left: 18px; margin-top: 8px; }
         .faq-body li { margin-bottom: 6px; }
 
+        /* AUTH & DASHBOARD */
         .auth-wrapper { display: flex; align-items: center; justify-content: center; min-height: 70vh; }
         .auth-card {
             background: #0a0a0c; border: 1px solid rgba(255, 255, 255, 0.08);
@@ -154,8 +182,9 @@
         .tab-btn.active { background: #1c1c21; color: #fff; }
         .form-group { margin-bottom: 14px; }
         .form-group label { display: block; font-size: 10px; color: #888; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
-        .form-input, .form-select { width: 100%; background: #121215; border: 1px solid rgba(255, 255, 255, 0.06); padding: 10px 12px; border-radius: 8px; color: #fff; font-size: 13px; outline: none; transition: 0.2s; }
-        .form-input:focus, .form-select:focus { border-color: #ff3333; }
+        .form-input, .form-select, .form-textarea { width: 100%; background: #121215; border: 1px solid rgba(255, 255, 255, 0.06); padding: 10px 12px; border-radius: 8px; color: #fff; font-size: 13px; outline: none; transition: 0.2s; }
+        .form-textarea { resize: vertical; min-height: 90px; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: #ff3333; }
         .btn-submit { width: 100%; background: #ff3333; color: #fff; border: none; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 6px; }
         .btn-submit:hover { background: #e62e2e; }
 
@@ -171,7 +200,7 @@
         .btn-logout { background: none; border: 1px solid rgba(255, 255, 255, 0.08); color: #777; padding: 8px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; transition: 0.2s; width: 100%; }
         .btn-logout:hover { border-color: #ff3333; color: #ff3333; }
         .content { padding: 8px; display: flex; flex-direction: column; gap: 16px; }
-        .card { background: #121215; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 16px; }
+        .card { background: #121215; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
         .card-header { font-size: 10px; color: #555; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
         .sub-title { font-size: 18px; font-weight: 700; color: #00ff66; margin-bottom: 2px; }
         .sub-desc { font-size: 12px; color: #666; }
@@ -181,10 +210,13 @@
         .info-item val { font-size: 12px; font-weight: 600; }
         .action-btn { background: #ff3333; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
         .action-btn:hover { background: #e62e2e; }
+        .action-btn.green { background: #00c853; }
+        .action-btn.green:hover { background: #009624; }
         .user-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
         .user-table th, .user-table td { padding: 8px; text-align: left; font-size: 11px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
         .user-table th { color: #555; font-size: 9px; text-transform: uppercase; }
         .admin-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 10px; }
+        .key-box { background: #0a0a0c; border: 1px dashed #ff3333; border-radius: 8px; padding: 10px 14px; font-family: monospace; font-size: 14px; color: #ff6666; display: inline-block; }
     </style>
 </head>
 <body>
@@ -202,6 +234,7 @@
                     <li><a class="nav-link active" id="nav-home" onclick="navigateTo('home')" data-lang="nav_home">Главная</a></li>
                     <li><a class="nav-link" id="nav-tariffs" onclick="navigateTo('tariffs')" data-lang="nav_tariffs">Тарифы</a></li>
                     <li><a class="nav-link" id="nav-help" onclick="navigateTo('help')" data-lang="nav_help">Помощь</a></li>
+                    <li><a class="nav-link" id="nav-ask" onclick="navigateTo('ask')">Задать вопрос</a></li>
                 </ul>
             </div>
             
@@ -218,11 +251,11 @@
         </nav>
     </div>
 
-    <!-- ГЛАВНАЯ -->
+    <!-- ГЛАВНАЯ СТРАНИЦА -->
     <div id="page-home" class="page-section">
         <div class="hero">
             <h1 data-lang="hero_title">VerseDLC 1.21.11 Fabric</h1>
-            <p data-lang="hero_desc">Премиальный клиент для доминирования на серверах. Недосягаемая скорость, продвинутый визуал и максимальная незаметность.</p>
+            <p data-lang="hero_desc">Премиальный клиент для абсолютного доминирования на серверах. Высшая скорость, продвинутый визуал и беспрецедентный обход античитов.</p>
         </div>
 
         <div class="stats-grid">
@@ -240,22 +273,82 @@
             </div>
         </div>
 
-        <div class="features-grid">
-            <div class="feature-card">
-                <span class="feature-icon">⚡</span>
-                <div class="feature-title" data-lang="feat1_title">Топовая оптимизация</div>
-                <div class="feature-desc" data-lang="feat1_desc">Минимальный просад FPS, мгновенный отклик и плавный фреймрейт даже во время замесов.</div>
+        <div class="promo-banner">
+            <h2>🚀 Невероятная оптимизация</h2>
+            <p>Забудьте про лаги, фризы и просадки кадров во время жестких замесов. В нашем клиенте реализована глубокая оптимизация движка Fabric: мгновенный отклик, сверхстабильный FPS и плавный фреймрейт даже на слабых ПК.</p>
+            <div class="tags-grid">
+                <div class="tag-item green">✓ Максимальный FPS</div>
+                <div class="tag-item green">✓ Быстрый рендер</div>
+                <div class="tag-item green">✓ Без просадок</div>
             </div>
-            <div class="feature-card">
-                <span class="feature-icon">🎨</span>
-                <div class="feature-title" data-lang="feat2_title">Красивый визуал</div>
-                <div class="feature-desc" data-lang="feat2_desc">Кастомный HUD, гибкая настройка Render-модулей, анимаций и ClickGUI.</div>
+        </div>
+
+        <div class="promo-banner">
+            <h2>🎨 Красивый визуал, который точно дополнит вашу игру!</h2>
+            <p>Превратите игру в эстетическое удовольствие с гибко настраиваемыми модулями внешней кастомизации:</p>
+            <div class="tags-grid">
+                <div class="tag-item">SkyShader</div>
+                <div class="tag-item">Custom Hand</div>
+                <div class="tag-item">3D Wings</div>
+                <div class="tag-item">Swemming Animation</div>
+                <div class="tag-item">Кастомный ClickGUI & HUD</div>
+                <div class="tag-item">И много другого!</div>
             </div>
-            <div class="feature-card">
-                <span class="feature-icon">⚔️</span>
-                <div class="feature-title" data-lang="feat3_title">Топовый функционал</div>
-                <div class="feature-desc" data-lang="feat3_desc">Продвинутый AutoSwap, умный TriggerBot и автоматические пресеты.</div>
+        </div>
+
+        <div class="promo-banner">
+            <h2>⚔️ Мощный PvP и PvE функционал</h2>
+            <p>В клиенте присутствуют передовые алгоритмы для превосходства над любым соперником. Будьте всегда на шаг впереди в любой битве:</p>
+            <div class="tags-grid">
+                <div class="tag-item">KillAura</div>
+                <div class="tag-item">TriggerBot</div>
+                <div class="tag-item">AirStuck</div>
+                <div class="tag-item">AutoSwap</div>
+                <div class="tag-item">TargetStrafe</div>
+                <div class="tag-item">И многое другое!</div>
             </div>
+        </div>
+
+        <div class="servers-section">
+            <div class="servers-title">Наш чит имеет обходы под такие сервера</div>
+            <div class="servers-subtitle">Полная незаметность и адаптация под лучшие проекты</div>
+
+            <div class="servers-grid">
+                <div class="server-card">
+                    <img src="funTime.webp" alt="FunTime" class="server-avatar">
+                    <div class="server-name">FunTime</div>
+                </div>
+
+                <div class="server-card">
+                    <img src="spookyTime.webp" alt="SpookyTime" class="server-avatar">
+                    <div class="server-name">SpookyTime</div>
+                </div>
+
+                <div class="server-card">
+                    <img src="image_bae6a1.png" alt="ReallyWorld" class="server-avatar">
+                    <div class="server-name">ReallyWorld</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА: ЗАДАТЬ ВОПРОС -->
+    <div id="page-ask" class="page-section hidden">
+        <div class="hero">
+            <h1>Задать вопрос администрации</h1>
+            <p>Есть сложности с клиентом или предложение по разработке? Напишите нам напрямую!</p>
+        </div>
+
+        <div class="promo-banner" style="max-width: 650px; margin: 0 auto;">
+            <h2>💬 Форма обращения</h2>
+            <p>Опишите вашу проблему или вопрос максимально подробно. Обращения со спамом или ненормативной лексикой отклоняются автоматически.</p>
+            
+            <div class="form-group" style="margin-top: 16px;">
+                <label>Ваш вопрос</label>
+                <textarea id="askQuestionInput" class="form-textarea" placeholder="Задайте ваш вопрос администрации..."></textarea>
+            </div>
+            
+            <button class="action-btn green" style="width: 100%; padding: 12px;" onclick="sendQuestion()">Отправить вопрос</button>
         </div>
     </div>
 
@@ -272,7 +365,7 @@
                     <div class="tariff-name" data-lang="plan_7d">7 Дней</div>
                     <div class="tariff-price">69 <span>₽</span></div>
                 </div>
-                <button class="btn-buy" onclick="buyTariff()" data-lang="btn_buy">Приобрести</button>
+                <button class="btn-buy" onclick="buyTariff('7 дней')" data-lang="btn_buy">Приобрести</button>
             </div>
 
             <div class="tariff-card popular">
@@ -281,7 +374,7 @@
                     <div class="tariff-name" data-lang="plan_30d">1 Месяц</div>
                     <div class="tariff-price">149 <span>₽</span></div>
                 </div>
-                <button class="btn-buy" onclick="buyTariff()" data-lang="btn_buy">Приобрести</button>
+                <button class="btn-buy" onclick="buyTariff('30 дней')" data-lang="btn_buy">Приобрести</button>
             </div>
 
             <div class="tariff-card">
@@ -289,7 +382,7 @@
                     <div class="tariff-name" data-lang="plan_90d">3 Месяца</div>
                     <div class="tariff-price">239 <span>₽</span></div>
                 </div>
-                <button class="btn-buy" onclick="buyTariff()" data-lang="btn_buy">Приобрести</button>
+                <button class="btn-buy" onclick="buyTariff('90 дней')" data-lang="btn_buy">Приобрести</button>
             </div>
 
             <div class="tariff-card">
@@ -297,7 +390,25 @@
                     <div class="tariff-name" data-lang="plan_life">Навсегда</div>
                     <div class="tariff-price">449 <span>₽</span></div>
                 </div>
-                <button class="btn-buy" onclick="buyTariff()" data-lang="btn_buy">Приобрести</button>
+                <button class="btn-buy" onclick="buyTariff('Навсегда')" data-lang="btn_buy">Приобрести</button>
+            </div>
+
+            <div class="tariff-card special">
+                <div class="tariff-badge blue">УСЛУГА</div>
+                <div>
+                    <div class="tariff-name">Сброс HWID</div>
+                    <div class="tariff-price">49 <span>₽</span></div>
+                </div>
+                <button class="btn-buy blue" onclick="resetHWID()">Сбросить</button>
+            </div>
+
+            <div class="tariff-card special">
+                <div class="tariff-badge blue">PRE-ORDER</div>
+                <div>
+                    <div class="tariff-name">Предзаказ (30 Дней)</div>
+                    <div class="tariff-price">129 <span>₽</span></div>
+                </div>
+                <button class="btn-buy blue" onclick="makePreorder('30 дней')">Оформить</button>
             </div>
         </div>
     </div>
@@ -365,6 +476,8 @@
                         <li class="nav-item active" onclick="switchDashTab('profile', event)">👤 <span data-lang="dash_prof">Профиль</span></li>
                         <li class="nav-item" onclick="switchDashTab('download', event)">⚡ <span data-lang="dash_down">Скачать</span></li>
                         <li class="nav-item" onclick="switchDashTab('sub', event)">🔑 <span data-lang="dash_sub">Подписка</span></li>
+                        <li class="nav-item" onclick="switchDashTab('preorders', event)">📦 <span>Предзаказы</span></li>
+                        <li class="nav-item" onclick="switchDashTab('questions', event)">❓ <span>Вопросы</span></li>
                         <li class="nav-item hidden" id="adminNav" onclick="switchDashTab('admin', event)" style="color: #ff3333;">👑 <span data-lang="dash_admin">Админка</span></li>
                     </ul>
                 </div>
@@ -419,6 +532,34 @@
                     </div>
                 </div>
 
+                <div id="tab-preorders" class="tab-content hidden">
+                    <div class="card">
+                        <div class="card-header">Мой Предзаказ</div>
+                        <div id="userPreorderStatus">
+                            <p style="font-size: 13px; color: #888;">Загрузка предзаказов...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ВКЛАДКА: ВОПРОСЫ В ЛК -->
+                <div id="tab-questions" class="tab-content hidden">
+                    <div class="card">
+                        <div class="card-header">Мои вопросы</div>
+                        <div id="userQuestionsList">
+                            <p style="font-size: 13px; color: #888;">Вы еще не задавали вопросов.</p>
+                        </div>
+                    </div>
+
+                    <!-- ЕСЛИ АДМИН (МЕДИА НЕ ВИДИТ ЭТО) -->
+                    <div class="card hidden" id="adminQuestionsBlock">
+                        <div class="card-header">Вопросы от игроков (Панель Администратора)</div>
+                        <div id="adminQuestionsList">
+                            <p style="font-size: 13px; color: #888;">Нет поступавших вопросов.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- АДМИНКА -->
                 <div id="tab-admin" class="tab-content hidden">
                     <div class="card">
                         <div class="card-header">Генератор ключей</div>
@@ -428,8 +569,8 @@
                                 <select id="genDuration" class="form-select">
                                     <option value="3 дня">3 Дня</option>
                                     <option value="7 дней">7 Дней</option>
-                                    <option value="30 дней">30 Дней</option>
-                                    <option value="Навсегда" selected>Навсегда</option>
+                                    <option value="30 дней" selected>30 Дней</option>
+                                    <option value="Навсегда">Навсегда</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -441,6 +582,23 @@
                             <button class="action-btn" onclick="generateKey()">🔑 Создать</button>
                             <input type="text" id="generatedKeyResult" class="form-input" placeholder="Ключ..." readonly>
                         </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">Заявки на предзаказы (Овнер-Панель)</div>
+                        <table class="user-table">
+                            <thead>
+                                <tr>
+                                    <th>Пользователь</th>
+                                    <th>Длительность</th>
+                                    <th>Статус</th>
+                                    <th>Действие</th>
+                                </tr>
+                            </thead>
+                            <tbody id="preordersTableBody">
+                                <tr><td colspan="4" style="color: #666;">Нет активных заявок</td></tr>
+                            </tbody>
+                        </table>
                     </div>
 
                     <div class="card">
@@ -464,22 +622,24 @@
     </div>
 
     <script>
-        // АДРЕС БЭКЕНДА ВШИТ НАПРЯМУЮ
         const API_BASE = 'https://verse-dlc.onrender.com';
 
         let isRegisterState = false;
         let currentUser = null;
         let currentLang = 'ru';
 
+        let preordersList = [];
+        let questionsList = []; // Хранилище вопросов
+
+        // Базовый список стоп-слов для фильтрации оскорблений
+        const badWords = ['хуесос', 'хуй', 'пидор', 'гандон', 'сука', 'даун', 'долбоеб', 'мразь', 'еблан'];
+
         const i18n = {
             ru: {
                 nav_home: "Главная", nav_tariffs: "Тарифы", nav_help: "Помощь", nav_cabinet: "Кабинет",
                 hero_title: "VerseDLC 1.21.11 Fabric",
-                hero_desc: "Премиальный клиент для доминирования на серверах. Недосягаемая скорость, продвинутый визуал и максимальная незаметность.",
+                hero_desc: "Премиальный клиент для абсолютного доминирования на серверах. Высшая скорость, продвинутый визуал и беспрецедентный обход античитов.",
                 stat_online: "Онлайн игроков", stat_subs: "Активных подписок", stat_uptime: "Аптайм обходов",
-                feat1_title: "Топовая оптимизация", feat1_desc: "Минимальный просад FPS, мгновенный отклик и плавный фреймрейт даже во время замесов.",
-                feat2_title: "Красивый визуал", feat2_desc: "Кастомный HUD, гибкая настройка Render-модулей, анимаций и ClickGUI.",
-                feat3_title: "Топовый функционал", feat3_desc: "Продвинутый AutoSwap, умный TriggerBot и автоматические пресеты.",
                 tariffs_title: "Выберите ваш тариф", tariffs_desc: "Получите мгновенный доступ к VerseDLC сразу после оплаты.",
                 plan_7d: "7 Дней", plan_30d: "1 Месяц", plan_90d: "3 Месяца", plan_life: "Навсегда",
                 badge_hit: "ХИТ ПРОДАЖ", btn_buy: "Приобрести",
@@ -499,9 +659,6 @@
                 hero_title: "VerseDLC 1.21.11 Fabric",
                 hero_desc: "Premium client to dominate every server. Unmatched speed, advanced visuals, and maximum stealth.",
                 stat_online: "Online Players", stat_subs: "Active Subscriptions", stat_uptime: "Bypass Uptime",
-                feat1_title: "Top Optimization", feat1_desc: "Minimal FPS drops, instant response, and smooth frame rate.",
-                feat2_title: "Stunning Visuals", feat2_desc: "Custom HUD, flexible Render modules, animations, and sleek ClickGUI.",
-                feat3_title: "Advanced Features", feat3_desc: "Smart AutoSwap, TriggerBot, and auto presets.",
                 tariffs_title: "Choose Your Plan", tariffs_desc: "Get instant access to VerseDLC right after purchase.",
                 plan_7d: "7 Days", plan_30d: "1 Month", plan_90d: "3 Months", plan_life: "Lifetime",
                 badge_hit: "BESTSELLER", btn_buy: "Purchase",
@@ -619,9 +776,14 @@
 
             if (currentUser.role === 'admin') {
                 document.getElementById('adminNav').classList.remove('hidden');
+                document.getElementById('adminQuestionsBlock').classList.remove('hidden');
             } else {
                 document.getElementById('adminNav').classList.add('hidden');
+                document.getElementById('adminQuestionsBlock').classList.add('hidden');
             }
+
+            renderUserPreorder();
+            renderQuestionsUI();
         }
 
         function logout() {
@@ -639,12 +801,229 @@
             document.getElementById(`tab-${tabName}`).classList.remove('hidden');
             if (evt) evt.currentTarget.classList.add('active');
 
-            if (tabName === 'admin') renderUserTable();
+            if (tabName === 'admin') {
+                renderUserTable();
+                renderAdminPreorders();
+            }
+            if (tabName === 'preorders') {
+                renderUserPreorder();
+            }
+            if (tabName === 'questions') {
+                renderQuestionsUI();
+            }
+        }
+
+        /* --- ЗАДАТЬ ВОПРОС С ЦЕНЗУРОЙ --- */
+        function sendQuestion() {
+            if (!currentUser) {
+                navigateTo('cabinet');
+                return showToast('Сначала войдите в личный кабинет!');
+            }
+
+            const input = document.getElementById('askQuestionInput');
+            const text = input.value.trim().toLowerCase();
+
+            if (!text) {
+                return showToast('Введите текст вопроса!');
+            }
+
+            // ПРОВЕРКА ЦЕНЗУРЫ
+            const containsBadWords = badWords.some(word => text.includes(word));
+            if (containsBadWords) {
+                return showToast('Ваше сообщение содержит недопустимую лексику!');
+            }
+
+            const newQ = {
+                id: Date.now(),
+                user: currentUser.username,
+                question: input.value.trim(),
+                answer: null,
+                date: new Date().toLocaleDateString()
+            };
+
+            questionsList.push(newQ);
+            input.value = '';
+
+            showToast('ваш вопрос был отправлен на рассмотрение администрацией! ожидайте ответ', true);
+            navigateTo('cabinet');
+            switchDashTab('questions');
+        }
+
+        function renderQuestionsUI() {
+            if (!currentUser) return;
+
+            // Вопросы текущего юзера
+            const myQs = questionsList.filter(q => q.user === currentUser.username);
+            const userBox = document.getElementById('userQuestionsList');
+
+            if (myQs.length === 0) {
+                userBox.innerHTML = `<p style="font-size: 13px; color: #666;">Вы еще не задавали вопросов.</p>`;
+            } else {
+                let html = '';
+                myQs.forEach(q => {
+                    html += `
+                        <div style="background: #0a0a0c; padding: 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                            <div style="font-size: 13px; font-weight: 700; color: #fff;">❓ Вопрос: ${q.question}</div>
+                            ${q.answer 
+                                ? `<div style="font-size: 12px; color: #00ff66; margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.1);"><b>Ответ администрации:</b> ${q.answer}</div>`
+                                : `<div style="font-size: 11px; color: #ffaa00; margin-top: 4px;">⏳ Ожидает ответа администрации...</div>`}
+                        </div>
+                    `;
+                });
+                userBox.innerHTML = html;
+            }
+
+            // Панель администрации (только admin, МЕДИА НЕ ВХОДИТ)
+            if (currentUser.role === 'admin') {
+                const adminBox = document.getElementById('adminQuestionsList');
+                if (questionsList.length === 0) {
+                    adminBox.innerHTML = `<p style="font-size: 13px; color: #666;">Нет поступавших вопросов.</p>`;
+                } else {
+                    let aHtml = '';
+                    questionsList.forEach(q => {
+                        aHtml += `
+                            <div style="background: #0a0a0c; padding: 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.08);">
+                                <div style="font-size: 11px; color: #ff3333; font-weight: 800;">От пользователя: ${q.user}</div>
+                                <div style="font-size: 13px; margin: 4px 0; color: #fff;">"${q.question}"</div>
+                                ${q.answer 
+                                    ? `<div style="font-size: 11px; color: #00ff66;">✓ Ответ отправлен: ${q.answer}</div>`
+                                    : `<div style="display: flex; gap: 6px; margin-top: 8px;">
+                                        <input type="text" id="ansInput_${q.id}" class="form-input" placeholder="Введите ответ..." style="padding: 6px 10px; font-size: 12px;">
+                                        <button class="action-btn green" onclick="answerQuestion(${q.id})">Ответить</button>
+                                       </div>`}
+                            </div>
+                        `;
+                    });
+                    adminBox.innerHTML = aHtml;
+                }
+            }
+        }
+
+        function answerQuestion(qId) {
+            const input = document.getElementById(`ansInput_${qId}`);
+            const text = input ? input.value.trim() : '';
+
+            if (!text) return showToast('Введите ответ!');
+
+            const q = questionsList.find(item => item.id === qId);
+            if (q) {
+                q.answer = text;
+                showToast(`Ответ отправлен игроку ${q.user}!`, true);
+                renderQuestionsUI();
+            }
+        }
+
+        /* --- СБРОС HWID & ПРЕДЗАКАЗЫ --- */
+        function resetHWID() {
+            if (!currentUser) {
+                navigateTo('cabinet');
+                return showToast('Сначала войдите в аккаунт');
+            }
+            currentUser.hwid = null;
+            updateDashboardUI();
+            showToast('Заявка на сброс HWID принята! Ваш HWID успешно очищен.', true);
+        }
+
+        function makePreorder(duration) {
+            if (!currentUser) {
+                navigateTo('cabinet');
+                return showToast('Сначала войдите в личный кабинет!');
+            }
+
+            const newPreorder = {
+                id: Date.now(),
+                user: currentUser.username,
+                duration: duration,
+                status: 'pending',
+                key: null
+            };
+
+            preordersList.push(newPreorder);
+            showToast(`Заявка на предзаказ (${duration}) отправлена овнеру!`, true);
+            navigateTo('cabinet');
+            switchDashTab('preorders');
+        }
+
+        function renderUserPreorder() {
+            const container = document.getElementById('userPreorderStatus');
+            if (!currentUser) return;
+
+            const myPreorders = preordersList.filter(p => p.user === currentUser.username);
+            if (myPreorders.length === 0) {
+                container.innerHTML = `<p style="font-size: 13px; color: #666;">У вас нет активных предзаказов.</p>`;
+                return;
+            }
+
+            let html = '';
+            myPreorders.forEach(p => {
+                if (p.status === 'pending') {
+                    html += `
+                        <div style="background: #0a0a0c; padding: 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                            <div style="font-size: 14px; font-weight: 700;">Предзаказ на ${p.duration}</div>
+                            <div style="font-size: 11px; color: #ffaa00; margin-top: 4px;">⏳ Статус: Ожидает выдачи овнером</div>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div style="background: #0a0a0c; padding: 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #00ff66;">
+                            <div style="font-size: 14px; font-weight: 700;">Предзаказ на ${p.duration}</div>
+                            <div style="font-size: 11px; color: #00ff66; margin-top: 4px; margin-bottom: 8px;">✓ Ключ выдан! Скопируйте и активируйте во вкладке Подписка:</div>
+                            <div class="key-box">${p.key}</div>
+                        </div>
+                    `;
+                }
+            });
+            container.innerHTML = html;
+        }
+
+        function renderAdminPreorders() {
+            const tbody = document.getElementById('preordersTableBody');
+            tbody.innerHTML = '';
+
+            if (preordersList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="color: #666;">Нет активных заявок</td></tr>`;
+                return;
+            }
+
+            preordersList.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><b>${p.user}</b></td>
+                    <td>${p.duration}</td>
+                    <td><span style="color: ${p.status === 'pending' ? '#ffaa00' : '#00ff66'}">${p.status === 'pending' ? 'Ожидает' : 'Выдан'}</span></td>
+                    <td>
+                        ${p.status === 'pending' 
+                            ? `<button class="action-btn green" onclick="approvePreorder(${p.id})">Выдать ключ</button>` 
+                            : `<span style="font-size: 10px; color: #555;">${p.key}</span>`}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function approvePreorder(id) {
+            const item = preordersList.find(p => p.id === id);
+            if (item) {
+                const generatedKey = `VERSE-PRE-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+                item.status = 'approved';
+                item.key = generatedKey;
+                showToast(`Ключ на ${item.duration} отправлен пользователю ${item.user}!`, true);
+                renderAdminPreorders();
+            }
         }
 
         async function activateKey() {
             const key = document.getElementById('keyInput').value.trim();
             if (!key) return showToast('Введите ключ');
+
+            const preorderItem = preordersList.find(p => p.key === key);
+            if (preorderItem) {
+                currentUser.subscription = preorderItem.duration;
+                updateDashboardUI();
+                showToast(`Ключ предзаказа успешно активирован (${preorderItem.duration})!`, true);
+                document.getElementById('keyInput').value = '';
+                return;
+            }
 
             try {
                 const res = await fetch(`${API_BASE}/api/activate`, {
@@ -711,9 +1090,9 @@
             showToast('Загрузка Loader.exe началась...', true);
         }
 
-        function buyTariff() {
+        function buyTariff(planName) {
             navigateTo('cabinet');
-            showToast('Войдите или зарегистрируйтесь для покупки');
+            showToast(`Вы выбрали ${planName}. Войдите для завершения оплаты.`);
         }
     </script>
 </body>
