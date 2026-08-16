@@ -3,1145 +3,414 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApexClient — Official Platform</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>VerseDLC Portal</title>
     <style>
         :root {
-            --bg-main: #06070a;
-            --bg-card: rgba(18, 20, 29, 0.65);
-            --bg-card-hover: rgba(26, 30, 44, 0.85);
-            --border-color: rgba(255, 255, 255, 0.08);
-            --accent-red: #ff3344;
-            --accent-red-glow: rgba(255, 51, 68, 0.35);
-            --accent-blue: #0088ff;
-            --accent-blue-glow: rgba(0, 136, 255, 0.35);
-            --accent-green: #00e676;
+            --bg-color: #0f0f13;
+            --card-bg: #1a1a24;
+            --accent: #6c5ce7;
+            --accent-hover: #5b4bc4;
             --text-main: #ffffff;
-            --text-sub: #949aab;
+            --text-sub: #a0a0b0;
+            --border: #2a2a3a;
+            --star-gold: #ffd700;
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
 
         body {
-            background-color: var(--bg-main);
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
             color: var(--text-main);
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
         }
 
-        /* Ambient Background Glows */
-        .bg-glow-1 {
-            position: fixed; top: -150px; left: 50%; transform: translateX(-50%);
-            width: 700px; height: 400px; background: radial-gradient(circle, rgba(255, 51, 68, 0.15) 0%, rgba(0,0,0,0) 70%);
-            z-index: -1; pointer-events: none; filter: blur(60px);
-        }
-        .bg-glow-2 {
-            position: fixed; bottom: -100px; right: -100px;
-            width: 500px; height: 500px; background: radial-gradient(circle, rgba(0, 136, 255, 0.08) 0%, rgba(0,0,0,0) 70%);
-            z-index: -1; pointer-events: none; filter: blur(80px);
-        }
-
-        .hidden { display: none !important; }
-
-        /* Toast Notifications */
-        #toast-container {
-            position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-            display: flex; flex-direction: column-reverse; gap: 12px;
-        }
-        .toast {
-            background: rgba(15, 17, 23, 0.95);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color);
-            border-left: 4px solid var(--accent-red);
-            padding: 14px 20px; border-radius: 12px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.8); display: flex; align-items: center;
-            gap: 12px; font-size: 13px; font-weight: 600; animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .toast.success { border-left-color: var(--accent-green); }
-        @keyframes slideInRight {
-            from { transform: translateX(120%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        /* Навигация */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: rgba(26, 26, 36, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        /* Header / Navbar */
-        .navbar-container {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            z-index: 1000; width: 92%; max-width: 1000px;
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            color: var(--accent);
         }
-        .navbar {
-            background: rgba(12, 14, 20, 0.75);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color);
-            border-radius: 24px; padding: 8px 18px;
-            display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-        .nav-left { display: flex; align-items: center; gap: 28px; }
-        .nav-brand {
-            display: flex; align-items: center; gap: 10px; font-weight: 900;
-            font-size: 17px; color: #fff; cursor: pointer; text-decoration: none; letter-spacing: -0.5px;
-        }
-        .brand-icon {
-            width: 32px; height: 32px;
-            background: linear-gradient(135deg, #ff3344 0%, #cc0022 100%);
-            border-radius: 10px; display: flex; align-items: center; justify-content: center;
-            font-weight: 900; font-size: 15px; color: #fff;
-            box-shadow: 0 0 15px var(--accent-red-glow);
-        }
-        .nav-links { display: flex; align-items: center; gap: 8px; list-style: none; }
-        .nav-link {
-            color: var(--text-sub); font-size: 13px; font-weight: 600; cursor: pointer;
-            padding: 8px 14px; border-radius: 12px; transition: all 0.2s ease; text-decoration: none;
-        }
-        .nav-link:hover, .nav-link.active { color: #ffffff; background: rgba(255, 255, 255, 0.05); }
 
-        .nav-right { display: flex; align-items: center; gap: 12px; }
-
-        .lang-switcher {
-            display: flex; background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--border-color); border-radius: 12px; padding: 3px;
+        .nav-links button {
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
         }
-        .lang-btn {
-            background: none; border: none; color: var(--text-sub); font-size: 11px; font-weight: 700;
-            padding: 4px 10px; border-radius: 8px; cursor: pointer; transition: 0.2s;
-        }
-        .lang-btn.active { background: var(--accent-red); color: #fff; }
 
-        .btn-cabinet {
-            background: linear-gradient(135deg, #ff3344 0%, #d61b2c 100%);
-            color: #fff; border: none; padding: 8px 18px; border-radius: 14px;
-            font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.25s ease;
-            display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 4px 20px var(--accent-red-glow);
+        .nav-links button.active, .nav-links button:hover {
+            color: var(--text-main);
+            border-bottom: 2px solid var(--accent);
         }
-        .btn-cabinet:hover { transform: translateY(-2px); box-shadow: 0 6px 25px var(--accent-red-glow); }
 
-        /* Page Layout */
-        .page-section { padding-top: 120px; padding-bottom: 80px; max-width: 1050px; margin: 0 auto; width: 90%; }
-
-        /* Hero */
-        .hero { text-align: center; margin-bottom: 50px; }
-        .hero-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(255, 51, 68, 0.1); border: 1px solid rgba(255, 51, 68, 0.25);
-            color: #ff6675; font-size: 12px; font-weight: 700; padding: 6px 14px;
-            border-radius: 20px; margin-bottom: 16px;
+        /* Контейнер страниц */
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
         }
-        .hero h1 {
-            font-size: 52px; font-weight: 900; margin-bottom: 16px; letter-spacing: -1.5px;
-            background: linear-gradient(180deg, #ffffff 0%, #a5adbe 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        .hero p { color: var(--text-sub); font-size: 16px; max-width: 640px; margin: 0 auto; line-height: 1.6; }
 
-        /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 40px; }
-        .stat-card {
-            background: var(--bg-card); backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color); border-radius: 20px; padding: 20px; text-align: center;
+        .tab-content {
+            display: none;
         }
-        .stat-val { font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 2px; }
-        .stat-lbl { font-size: 11px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
 
-        /* Promo Banners */
-        .promo-banner {
-            background: var(--bg-card); backdrop-filter: blur(16px);
-            border: 1px solid var(--border-color); border-radius: 24px; padding: 32px; margin-bottom: 24px;
-            transition: all 0.3s ease; position: relative; overflow: hidden;
+        .tab-content.active {
+            display: block;
         }
-        .promo-banner:hover { border-color: rgba(255, 51, 68, 0.3); transform: translateY(-3px); }
-        .promo-banner h2 { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
-        .promo-banner p { color: var(--text-sub); font-size: 14px; line-height: 1.7; margin-bottom: 18px; }
 
-        .tags-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-        .tag-item {
-            background: rgba(255, 51, 68, 0.08); border: 1px solid rgba(255, 51, 68, 0.2);
-            color: #ff6675; font-size: 12px; font-weight: 700; padding: 7px 16px; border-radius: 12px;
+        /* Карточки и блоки */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
         }
-        .tag-item.green { background: rgba(0, 230, 118, 0.08); border-color: rgba(0, 230, 118, 0.2); color: var(--accent-green); }
 
-        /* Servers Section */
-        .servers-section { text-align: center; margin-top: 60px; }
-        .servers-title { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: #fff; }
-        .servers-subtitle { font-size: 14px; color: var(--text-sub); margin-bottom: 28px; }
-        .servers-grid { display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; }
+        /* Анимированные блоки серверов */
+        .servers-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
         .server-card {
-            background: var(--bg-card); backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color); border-radius: 20px; padding: 18px 28px;
-            display: flex; align-items: center; gap: 16px; transition: all 0.3s ease;
+            background: linear-gradient(145deg, #1e1e2d, #14141e);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
-        .server-card:hover { transform: translateY(-4px); border-color: var(--accent-red); box-shadow: 0 10px 30px var(--accent-red-glow); }
-        .server-avatar { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border-color); }
-        .server-name { font-size: 16px; font-weight: 800; color: #fff; }
 
-        /* Tariffs Grid */
-        .tariffs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 30px; }
-        .tariff-card {
-            background: var(--bg-card); backdrop-filter: blur(16px);
-            border: 1px solid var(--border-color); border-radius: 24px; padding: 28px 22px;
-            text-align: center; position: relative; transition: all 0.3s ease;
-            display: flex; flex-direction: column; justify-content: space-between;
+        .server-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.2);
         }
-        .tariff-card:hover { transform: translateY(-6px); border-color: var(--accent-red); }
-        .tariff-card.popular { border-color: var(--accent-red); background: linear-gradient(180deg, rgba(255, 51, 68, 0.08) 0%, var(--bg-card) 100%); }
-        .tariff-card.special { border-color: var(--accent-blue); background: linear-gradient(180deg, rgba(0, 136, 255, 0.08) 0%, var(--bg-card) 100%); }
-        .tariff-badge {
-            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-            background: var(--accent-red); color: #fff; font-size: 10px; font-weight: 800;
-            padding: 4px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;
-            box-shadow: 0 4px 15px var(--accent-red-glow);
+
+        .server-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(108, 92, 231, 0.1) 0%, transparent 70%);
+            animation: rotate 6s linear infinite;
         }
-        .tariff-badge.blue { background: var(--accent-blue); box-shadow: 0 4px 15px var(--accent-blue-glow); }
-        .tariff-name { font-size: 16px; font-weight: 700; color: var(--text-sub); margin-bottom: 12px; }
-        .tariff-price { font-size: 36px; font-weight: 900; color: #fff; margin-bottom: 20px; }
-        .tariff-price span { font-size: 16px; color: var(--text-sub); font-weight: 600; }
 
-        .btn-buy {
-            width: 100%; background: var(--accent-red); color: #fff; border: none; padding: 12px;
-            border-radius: 14px; font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.2s;
-            box-shadow: 0 4px 15px var(--accent-red-glow);
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-        .btn-buy:hover { background: #e62e3d; transform: scale(1.02); }
-        .btn-buy.blue { background: var(--accent-blue); box-shadow: 0 4px 15px var(--accent-blue-glow); }
-        .btn-buy.blue:hover { background: #0077e6; }
 
-        /* FAQ */
-        .faq-section-title { text-align: center; font-size: 28px; font-weight: 900; margin-bottom: 10px; color: #fff; }
-        .faq-divider { width: 50px; height: 4px; background: var(--accent-red); margin: 0 auto 36px; border-radius: 2px; }
-        .faq-card {
-            background: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: 18px; margin-bottom: 14px; overflow: hidden; transition: 0.3s;
+        .server-title {
+            font-size: 28px;
+            font-weight: bold;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 10px;
         }
-        .faq-header {
-            padding: 18px 24px; font-size: 15px; font-weight: 700; cursor: pointer;
-            display: flex; justify-content: space-between; align-items: center;
+
+        .server-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            position: relative;
+            z-index: 1;
         }
-        .faq-header:hover { background: rgba(255, 255, 255, 0.02); }
-        .faq-body { padding: 0 24px 20px 24px; font-size: 14px; color: var(--text-sub); line-height: 1.6; display: none; }
-        .faq-body.open { display: block; }
-        .faq-body ol { padding-left: 20px; margin-top: 10px; }
-        .faq-body li { margin-bottom: 8px; }
 
-        /* Auth Screen */
-        .auth-wrapper { display: flex; align-items: center; justify-content: center; min-height: 65vh; }
-        .auth-card {
-            background: var(--bg-card); backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color); border-radius: 28px; padding: 36px;
-            width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+        /* Система отзывов */
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+            cursor: pointer;
+            font-size: 24px;
         }
-        .auth-title { font-size: 26px; font-weight: 900; text-align: center; margin-bottom: 4px; }
-        .auth-title span { color: var(--accent-red); }
-        .auth-subtitle { font-size: 12px; color: var(--text-sub); text-align: center; margin-bottom: 24px; font-weight: 600; }
-        .tabs { display: flex; background: rgba(0,0,0,0.3); padding: 4px; border-radius: 12px; margin-bottom: 20px; }
-        .tab-btn { flex: 1; background: none; border: none; color: var(--text-sub); padding: 10px; font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer; transition: 0.2s; }
-        .tab-btn.active { background: rgba(255,255,255,0.08); color: #fff; }
-        
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; font-size: 11px; color: var(--text-sub); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 700; }
-        .form-input, .form-select, .form-textarea {
-            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color);
-            padding: 12px 14px; border-radius: 12px; color: #fff; font-size: 13px; outline: none; transition: 0.2s;
+
+        .star {
+            color: #444;
+            transition: color 0.2s;
         }
-        .form-textarea { resize: vertical; min-height: 100px; }
-        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent-red); }
-        .btn-submit { width: 100%; background: var(--accent-red); color: #fff; border: none; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.2s; margin-top: 8px; box-shadow: 0 4px 15px var(--accent-red-glow); }
 
-        /* Cabinet Dashboard */
-        .dash-container {
-            display: grid; grid-template-columns: 240px 1fr; gap: 20px;
-            background: var(--bg-card); backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color); border-radius: 28px; padding: 20px; min-height: 520px;
+        .star.active {
+            color: var(--star-gold);
         }
-        .sidebar { border-right: 1px solid var(--border-color); padding-right: 18px; display: flex; flex-direction: column; justify-content: space-between; }
-        .user-card-side { display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(0,0,0,0.25); border-radius: 14px; margin-bottom: 20px; border: 1px solid var(--border-color); }
-        .avatar { width: 40px; height: 40px; background: rgba(255, 51, 68, 0.15); border: 1px solid var(--accent-red); color: var(--accent-red); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; }
-        .user-details .uname { font-size: 14px; font-weight: 800; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .user-details .urole { font-size: 10px; color: var(--accent-red); font-weight: 800; letter-spacing: 0.5px; }
-        
-        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; }
-        .nav-item { padding: 10px 12px; border-radius: 10px; color: var(--text-sub); font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
-        .nav-item:hover, .nav-item.active { background: rgba(255, 51, 68, 0.1); color: var(--accent-red); }
-        
-        .btn-logout { background: none; border: 1px solid var(--border-color); color: var(--text-sub); padding: 10px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 12px; transition: 0.2s; width: 100%; }
-        .btn-logout:hover { border-color: var(--accent-red); color: var(--accent-red); }
 
-        .content { padding: 10px; display: flex; flex-direction: column; gap: 16px; }
-        .card { background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); border-radius: 18px; padding: 20px; margin-bottom: 12px; }
-        .card-header { font-size: 11px; color: var(--text-sub); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
-        .sub-title { font-size: 20px; font-weight: 800; color: var(--accent-green); margin-bottom: 4px; }
-        .sub-desc { font-size: 13px; color: var(--text-sub); }
+        textarea, input {
+            width: 100%;
+            padding: 12px;
+            background: #12121a;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: #fff;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+        }
 
-        .grid-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 14px; }
-        .info-item { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); }
-        .info-item label { font-size: 10px; color: var(--text-sub); display: block; margin-bottom: 2px; text-transform: uppercase; font-weight: 700; }
-        .info-item val { font-size: 13px; font-weight: 700; }
+        button.btn-primary {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
 
-        .action-btn { background: var(--accent-red); color: #fff; border: none; padding: 10px 16px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
-        .action-btn:hover { background: #e62e3d; }
-        .action-btn.green { background: var(--accent-green); color: #000; }
-        .action-btn.green:hover { background: #00c853; }
-        .action-btn.blue { background: var(--accent-blue); }
-        .action-btn.blue:hover { background: #0077e6; }
+        button.btn-primary:hover {
+            background: var(--accent-hover);
+        }
 
-        .admin-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 12px; }
-        
-        .list-box { background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-bottom: 10px; font-size: 13px; }
-        .list-box-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 800; color: var(--accent-red); }
-        .badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
-        .badge.pending { background: rgba(255,170,0,0.15); color: #ffaa00; }
-        .badge.done { background: rgba(0,230,118,0.15); color: var(--accent-green); }
+        button.btn-primary:disabled {
+            background: #444;
+            cursor: not-allowed;
+        }
+
+        .review-item {
+            border-bottom: 1px solid var(--border);
+            padding: 15px 0;
+        }
+
+        .review-item:last-child {
+            border-bottom: none;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .review-user {
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .review-stars {
+            color: var(--star-gold);
+        }
+
+        .review-text {
+            margin-top: 8px;
+            color: var(--text-sub);
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .alert-info {
+            background: rgba(108, 92, 231, 0.1);
+            border: 1px solid var(--accent);
+            color: #fff;
+        }
     </style>
 </head>
 <body>
 
-    <div class="bg-glow-1"></div>
-    <div class="bg-glow-2"></div>
-
-    <div id="toast-container"></div>
-
-    <div class="navbar-container">
-        <nav class="navbar">
-            <div class="nav-left">
-                <div class="nav-brand" onclick="navigateTo('home')">
-                    <div class="brand-icon">A</div>
-                    <span>ApexClient</span>
-                </div>
-                <ul class="nav-links">
-                    <li><a class="nav-link active" id="nav-home" onclick="navigateTo('home')">Главная</a></li>
-                    <li><a class="nav-link" id="nav-tariffs" onclick="navigateTo('tariffs')">Тарифы</a></li>
-                    <li><a class="nav-link" id="nav-help" onclick="navigateTo('help')">Помощь</a></li>
-                    <li><a class="nav-link" id="nav-ask" onclick="navigateTo('ask')">Задать вопрос</a></li>
-                </ul>
-            </div>
-            
-            <div class="nav-right">
-                <div class="lang-switcher">
-                    <button class="lang-btn active" id="btn-ru" onclick="setLanguage('ru')">RU</button>
-                    <button class="lang-btn" id="btn-en" onclick="setLanguage('en')">EN</button>
-                </div>
-
-                <button class="btn-cabinet" onclick="navigateTo('cabinet')">
-                    👤 <span>Кабинет</span>
-                </button>
-            </div>
-        </nav>
-    </div>
-
-    <!-- ГЛАВНАЯ СТРАНИЦА -->
-    <div id="page-home" class="page-section">
-        <div class="hero">
-            <div class="hero-badge">⚡ Fabric 1.21.4 Next-Gen Client</div>
-            <h1>Абсолютное Доминирование</h1>
-            <p>Премиальный клиент нового поколения. Полная незаметность для античитов, непревзойденный визуал и идеальная оптимизация.</p>
+    <nav>
+        <div class="logo">VerseDLC</div>
+        <div class="nav-links">
+            <button class="tab-btn active" onclick="switchTab('main')">Главная</button>
+            <button class="tab-btn" onclick="switchTab('reviews')">Отзывы</button>
         </div>
+    </nav>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-val">420+</div>
-                <div class="stat-lbl">Онлайн игроков</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-val">1,480+</div>
-                <div class="stat-lbl">Активных подписок</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-val">99.9%</div>
-                <div class="stat-lbl">Аптайм обходов</div>
-            </div>
-        </div>
-
-        <div class="promo-banner">
-            <h2>🚀 Невероятная оптимизация</h2>
-            <p>Забудьте про лаги, фризы и просадки кадров во время жестких замесов. В нашем клиенте реализована глубокая оптимизация движка Fabric: мгновенный отклик, сверхстабильный FPS и плавный фреймрейт даже на слабых ПК.</p>
-            <div class="tags-grid">
-                <div class="tag-item green">✓ Максимальный FPS</div>
-                <div class="tag-item green">✓ Быстрый рендер</div>
-                <div class="tag-item green">✓ Без просадок</div>
-            </div>
-        </div>
-
-        <div class="promo-banner">
-            <h2>🎨 Красивый визуал, который точно дополнит вашу игру!</h2>
-            <p>Превратите игру в эстетическое удовольствие с гибко настраиваемыми модулями внешней кастомизации:</p>
-            <div class="tags-grid">
-                <div class="tag-item">SkyShader</div>
-                <div class="tag-item">Custom Hand</div>
-                <div class="tag-item">3D Wings</div>
-                <div class="tag-item">Swemming Animation</div>
-                <div class="tag-item">Кастомный ClickGUI & HUD</div>
-                <div class="tag-item">И много другого!</div>
-            </div>
-        </div>
-
-        <div class="promo-banner">
-            <h2>⚔️ Мощный PvP и PvE функционал</h2>
-            <p>В клиенте присутствуют передовые алгоритмы для превосходства над любым соперником. Будьте всегда на шаг впереди в любой битве:</p>
-            <div class="tags-grid">
-                <div class="tag-item">KillAura</div>
-                <div class="tag-item">TriggerBot</div>
-                <div class="tag-item">AirStuck</div>
-                <div class="tag-item">AutoSwap</div>
-                <div class="tag-item">TargetStrafe</div>
-                <div class="tag-item">И многое другое!</div>
-            </div>
-        </div>
-
-        <div class="servers-section">
-            <div class="servers-title">Поддержка популярных проектов</div>
-            <div class="servers-subtitle">Полная адаптация и обходы под самые жесткие античиты</div>
-
+    <div class="container">
+        <!-- Главная вкладка -->
+        <div id="main" class="tab-content active">
+            <h2>Поддерживаемые Серверы</h2>
             <div class="servers-grid">
                 <div class="server-card">
-                    <img src="funTime.webp" alt="FunTime" class="server-avatar">
-                    <div class="server-name">FunTime</div>
+                    <div class="server-title">FunTime</div>
+                    <div class="server-status">● Работает</div>
                 </div>
-
                 <div class="server-card">
-                    <img src="spookyTime.webp" alt="SpookyTime" class="server-avatar">
-                    <div class="server-name">SpookyTime</div>
-                </div>
-
-                <div class="server-card">
-                    <img src="image_bae6a1.png" alt="ReallyWorld" class="server-avatar">
-                    <div class="server-name">ReallyWorld</div>
+                    <div class="server-title">SpookyTime</div>
+                    <div class="server-status">● Работает</div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- СТРАНИЦА: ЗАДАТЬ ВОПРОС -->
-    <div id="page-ask" class="page-section hidden">
-        <div class="hero">
-            <h1>Обращение к Администрации</h1>
-            <p>Есть сложности с клиентом или предложение по разработке? Напишите нам напрямую!</p>
-        </div>
-
-        <div class="promo-banner" style="max-width: 650px; margin: 0 auto;">
-            <h2>💬 Задать вопрос</h2>
-            <p>Опишите вашу проблему или обращение максимально подробно.</p>
+        <!-- Вкладка отзывов -->
+        <div id="reviews" class="tab-content">
+            <h2>Отзывы пользователей</h2>
             
-            <div class="form-group" style="margin-top: 16px;">
-                <label>Ваш вопрос</label>
-                <textarea id="askQuestionInput" class="form-textarea" placeholder="Введите суть обращения..."></textarea>
-            </div>
-            
-            <button class="action-btn green" style="width: 100%; padding: 12px; font-size: 13px;" onclick="sendQuestion()">Отправить вопрос</button>
-        </div>
-    </div>
-
-    <!-- ТАРИФЫ -->
-    <div id="page-tariffs" class="page-section hidden">
-        <div class="hero">
-            <h1>Выберите ваш план</h1>
-            <p>Получите мгновенный доступ к ApexClient сразу после оплаты.</p>
-        </div>
-
-        <div class="tariffs-grid">
-            <div class="tariff-card">
-                <div>
-                    <div class="tariff-name">7 Дней</div>
-                    <div class="tariff-price">69 <span>₽</span></div>
-                </div>
-                <button class="btn-buy" onclick="buyTariff('7 дней')">Приобрести</button>
-            </div>
-
-            <div class="tariff-card popular">
-                <div class="tariff-badge">ХИТ ПРОДАЖ</div>
-                <div>
-                    <div class="tariff-name">1 Месяц</div>
-                    <div class="tariff-price">149 <span>₽</span></div>
-                </div>
-                <button class="btn-buy" onclick="buyTariff('30 дней')">Приобрести</button>
-            </div>
-
-            <div class="tariff-card">
-                <div>
-                    <div class="tariff-name">3 Месяца</div>
-                    <div class="tariff-price">239 <span>₽</span></div>
-                </div>
-                <button class="btn-buy" onclick="buyTariff('90 дней')">Приобрести</button>
-            </div>
-
-            <div class="tariff-card">
-                <div>
-                    <div class="tariff-name">Навсегда</div>
-                    <div class="tariff-price">449 <span>₽</span></div>
-                </div>
-                <button class="btn-buy" onclick="buyTariff('Навсегда')">Приобрести</button>
-            </div>
-
-            <div class="tariff-card special">
-                <div class="tariff-badge blue">УСЛУГА</div>
-                <div>
-                    <div class="tariff-name">Сброс HWID</div>
-                    <div class="tariff-price">49 <span>₽</span></div>
-                </div>
-                <button class="btn-buy blue" onclick="resetHWID()">Сбросить</button>
-            </div>
-
-            <!-- ПРЕДЗАКАЗЫ -->
-            <div class="tariff-card special">
-                <div class="tariff-badge blue">PRE-ORDER</div>
-                <div>
-                    <div class="tariff-name">Предзаказ (1 Месяц)</div>
-                    <div class="tariff-price">149 <span>₽</span></div>
-                </div>
-                <button class="btn-buy blue" onclick="makePreorder('1 Месяц (149 ₽)')">Оформить</button>
-            </div>
-
-            <div class="tariff-card special">
-                <div class="tariff-badge blue">PRE-ORDER</div>
-                <div>
-                    <div class="tariff-name">Предзаказ (3 Месяца)</div>
-                    <div class="tariff-price">239 <span>₽</span></div>
-                </div>
-                <button class="btn-buy blue" onclick="makePreorder('3 Месяца (239 ₽)')">Оформить</button>
-            </div>
-
-            <div class="tariff-card special">
-                <div class="tariff-badge blue">PRE-ORDER</div>
-                <div>
-                    <div class="tariff-name">Предзаказ (Навсегда)</div>
-                    <div class="tariff-price">449 <span>₽</span></div>
-                </div>
-                <button class="btn-buy blue" onclick="makePreorder('Навсегда (449 ₽)')">Оформить</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ПОМОЩЬ -->
-    <div id="page-help" class="page-section hidden">
-        <div class="faq-section-title">Часто задаваемые вопросы</div>
-        <div class="faq-divider"></div>
-
-        <div style="max-width: 750px; margin: 0 auto;">
-            <div class="faq-card">
-                <div class="faq-header" onclick="toggleFaq('faq1')">
-                    <span>❓ Как установить клиент?</span>
-                    <span id="faq1-icon">▼</span>
-                </div>
-                <div id="faq1" class="faq-body">
-                    <ol>
-                        <li>Запустите Minecraft <b>1.21.4 Fabric</b>.</li>
-                        <li>Запустите лоадер ApexClient.</li>
-                        <li>Войдите в свой аккаунт и нажмите <b>"Inject"</b>.</li>
-                    </ol>
+            <div class="card">
+                <h3>Оставить отзыв</h3>
+                <div id="review-form-container">
+                    <!-- Заполняется динамически через JS -->
                 </div>
             </div>
 
-            <div class="faq-card">
-                <div class="faq-header" onclick="toggleFaq('faq2')">
-                    <span>🛡️ Как пройти или обойти проверку на читы?</span>
-                    <span id="faq2-icon">▼</span>
-                </div>
-                <div id="faq2" class="faq-body">
-                    <p>Для успешного прохождения проверки модерацией выполняйте следующие шаги:</p>
-                    <ol>
-                        <li><b>Использование маскировки:</b> Запускайте софт только через легитимный Fabric Loader, переименовав `.jar` файл под обычный оптимизационный мод.</li>
-                        <li><b>Очистка истории запуска:</b> Перед проверкой обязательно очищайте папку `logs` и историю последних запущенных файлов Windows (`Win + R` ➔ `recent`).</li>
-                        <li><b>Скрытие элементов меню:</b> Назначьте клавишу скрытия ClickGUI на незаметную кнопку.</li>
-                        <li><b>Чистка реестра:</b> При экстренном завершении используйте встроенную функцию полного выгружения софта из памяти JVM.</li>
-                    </ol>
+            <div class="card">
+                <h3>Все отзывы</h3>
+                <div id="reviews-list">
+                    <!-- Список отзывов -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- КАБИНЕТ -->
-    <div id="page-cabinet" class="page-section hidden">
-        <div id="authScreen" class="auth-wrapper">
-            <div class="auth-card">
-                <div class="auth-title">Apex<span>Client</span></div>
-                <div class="auth-subtitle">Панель управления (1.21.4 Fabric)</div>
-
-                <div class="tabs">
-                    <button type="button" id="tabLogin" class="tab-btn active" onclick="switchAuth(false)">Вход</button>
-                    <button type="button" id="tabRegister" class="tab-btn" onclick="switchAuth(true)">Регистрация</button>
-                </div>
-
-                <form id="authForm" onsubmit="handleAuth(event)">
-                    <div class="form-group">
-                        <label>Никнейм</label>
-                        <input type="text" id="usernameInput" class="form-input" placeholder="Введите ваш никнейм" required autocomplete="off">
-                    </div>
-                    <div class="form-group">
-                        <label>Пароль</label>
-                        <input type="password" id="passwordInput" class="form-input" placeholder="••••••••" required>
-                    </div>
-                    <button type="submit" id="submitBtn" class="btn-submit">Войти</button>
-                </form>
-            </div>
-        </div>
-
-        <div id="dashScreen" class="dash-container hidden">
-            <div class="sidebar">
-                <div>
-                    <div class="user-card-side">
-                        <div class="avatar" id="sideAvatar">U</div>
-                        <div class="user-details">
-                            <div class="uname" id="sideUname">User</div>
-                            <div class="urole" id="sideUrole">OWNER</div>
-                        </div>
-                    </div>
-
-                    <ul class="nav-menu">
-                        <li class="nav-item active" id="nav-item-profile" onclick="switchDashTab('profile', event)">👤 <span>Профиль</span></li>
-                        <li class="nav-item" id="nav-item-download" onclick="switchDashTab('download', event)">⚡ <span>Скачать</span></li>
-                        <li class="nav-item" id="nav-item-sub" onclick="switchDashTab('sub', event)">🔑 <span>Подписка</span></li>
-                        <li class="nav-item" id="nav-item-preorders" onclick="switchDashTab('preorders', event)">📦 <span>Предзаказы</span></li>
-                        <li class="nav-item" id="nav-item-questions" onclick="switchDashTab('questions', event)">❓ <span>Вопросы</span></li>
-                        <li class="nav-item" id="adminNav" onclick="switchDashTab('admin', event)" style="color: var(--accent-red); font-weight: 800;">👑 <span>Админка</span></li>
-                    </ul>
-                </div>
-
-                <button class="btn-logout" onclick="logout()">Выйти</button>
-            </div>
-
-            <div class="content">
-                <!-- ПРОФИЛЬ -->
-                <div id="tab-profile" class="tab-content">
-                    <div class="card">
-                        <div class="card-header">Профиль пользователя</div>
-                        <div style="display: flex; align-items: center; gap: 16px;">
-                            <div class="avatar" style="width: 48px; height: 48px; font-size: 20px;" id="mainAvatar">U</div>
-                            <div>
-                                <h2 style="font-size: 18px; font-weight: 800;" id="mainUname">User</h2>
-                                <div class="grid-info">
-                                    <div class="info-item">
-                                        <label>HWID Status</label>
-                                        <val style="color: var(--accent-green);" id="hwidStatus">OK</val>
-                                    </div>
-                                    <div class="info-item">
-                                        <label>Client Version</label>
-                                        <val>1.21.4 Fabric</val>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">Текущий статус подписки</div>
-                        <div class="sub-title" id="subStatus">Активна (Навсегда)</div>
-                        <div class="sub-desc">Успешно синхронизировано с сервером.</div>
-                    </div>
-                </div>
-
-                <!-- СКАЧАТЬ -->
-                <div id="tab-download" class="tab-content hidden">
-                    <div class="card">
-                        <div class="card-header">Загрузка клиента</div>
-                        <h2 style="font-size: 18px; font-weight: 800; margin-bottom: 10px;">ApexClient Loader.exe</h2>
-                        <button class="action-btn" onclick="downloadLoader()">📥 Скачать Loader.exe</button>
-                    </div>
-                </div>
-
-                <!-- ПОДПИСКА -->
-                <div id="tab-sub" class="tab-content hidden">
-                    <div class="card">
-                        <div class="card-header">Активация Лицензионного Ключа</div>
-                        <div style="display: flex; gap: 10px; max-width: 400px;">
-                            <input type="text" id="keyInput" class="form-input" placeholder="APEX-XXXX-XXXX">
-                            <button class="action-btn" onclick="activateKey()">Активировать</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ПРЕДЗАКАЗЫ -->
-                <div id="tab-preorders" class="tab-content hidden">
-                    <div class="card">
-                        <div class="card-header">Ваши Предзаказы</div>
-                        <div id="userPreordersList">
-                            <p style="font-size: 13px; color: var(--text-sub);">У вас пока нет активных предзаказов.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ВОПРОСЫ ПОЛЬЗОВАТЕЛЯ -->
-                <div id="tab-questions" class="tab-content hidden">
-                    <div class="card">
-                        <div class="card-header">История Обращений</div>
-                        <div id="userQuestionsList">
-                            <p style="font-size: 13px; color: var(--text-sub);">У вас пока нет отправленных вопросов.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- АДМИН ПАНЕЛЬ -->
-                <div id="tab-admin" class="tab-content hidden">
-                    
-                    <!-- 1. ПОИСК И УПРАВЛЕНИЕ ПОЛЬЗОВАТЕЛЯМИ -->
-                    <div class="card">
-                        <div class="card-header">1. Управление Пользователем</div>
-                        <div style="margin-bottom: 14px;">
-                            <div style="display: flex; gap: 10px;">
-                                <input type="text" id="adminSearchInput" class="form-input" placeholder="Введите никнейм...">
-                                <button class="action-btn" onclick="adminSearchUser()">Найти</button>
-                            </div>
-                        </div>
-
-                        <div id="adminUserCard" class="hidden" style="background: rgba(0,0,0,0.3); padding: 16px; border-radius: 12px; border: 1px solid var(--border-color);">
-                            <div style="font-size: 16px; font-weight: 800; margin-bottom: 12px;" id="adminTargetName">User</div>
-                            <div class="admin-form-grid">
-                                <div class="form-group">
-                                    <label>Роль</label>
-                                    <select id="adminRoleSelect" class="form-select">
-                                        <option value="USER">USER</option>
-                                        <option value="BETA">BETA</option>
-                                        <option value="MEDIA">MEDIA</option>
-                                        <option value="ADMIN">ADMIN</option>
-                                        <option value="OWNER">OWNER</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Статус подписки</label>
-                                    <select id="adminSubSelect" class="form-select">
-                                        <option value="Активна (Навсегда)">Навсегда</option>
-                                        <option value="Активна (90 дней)">90 дней</option>
-                                        <option value="Активна (30 дней)">30 дней</option>
-                                        <option value="Не активна">Отсутствует</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <button class="action-btn green" onclick="adminSaveUser()">Сохранить изменения</button>
-                        </div>
-                    </div>
-
-                    <!-- 2. ГЕНЕРАТОР КЛЮЧЕЙ (ВЫДАЧА ДЛЯ КОПИРОВАНИЯ) -->
-                    <div class="card">
-                        <div class="card-header">2. Генератор Ключей</div>
-                        <div class="admin-form-grid" style="align-items: flex-end;">
-                            <div class="form-group" style="margin-bottom:0;">
-                                <label>Тариф ключа</label>
-                                <select id="keyTariffSelect" class="form-select">
-                                    <option value="30 дней">30 Дней</option>
-                                    <option value="90 дней">90 Дней</option>
-                                    <option value="Навсегда">Навсегда</option>
-                                    <option value="Предзаказ 30д">Предзаказ (30 дней)</option>
-                                </select>
-                            </div>
-                            <button class="action-btn blue" onclick="generateKey()">Сгенерировать ключ</button>
-                        </div>
-
-                        <div id="generatedKeyBox" class="hidden" style="margin-top: 14px; background: rgba(0,0,0,0.3); padding: 14px; border-radius: 12px; border: 1px dashed var(--accent-blue); display: flex; align-items: center; justify-content: space-between;">
-                            <div>
-                                <span style="font-size: 11px; color: var(--text-sub); display: block; font-weight: 700;">СГЕНЕРИРОВАННЫЙ КЛЮЧ:</span>
-                                <strong id="generatedKeyVal" style="font-size: 16px; color: var(--accent-green); letter-spacing: 1px;">APEX-XXXX-XXXX</strong>
-                            </div>
-                            <button class="action-btn green" onclick="copyGeneratedKey()">📋 Скопировать</button>
-                        </div>
-                    </div>
-
-                    <!-- 3. ВОПРОСЫ ПОЛЬЗОВАТЕЛЕЙ И ОТВЕТЫ -->
-                    <div class="card">
-                        <div class="card-header">3. Обращения от Пользователей</div>
-                        <div id="adminQuestionsContainer">
-                            <p style="font-size: 12px; color: var(--text-sub);">Вопросов нет.</p>
-                        </div>
-                    </div>
-
-                    <!-- 4. ЗАЯВКИ НА СБРОС HWID -->
-                    <div class="card">
-                        <div class="card-header">4. Заявки на сброс HWID</div>
-                        <div id="adminHwidContainer">
-                            <p style="font-size: 12px; color: var(--text-sub);">Заявок на сброс HWID нет.</p>
-                        </div>
-                    </div>
-
-                    <!-- 5. ЗАЯВКИ НА ПРЕДЗАКАЗЫ -->
-                    <div class="card">
-                        <div class="card-header">5. Активные Предзаказы Игроков</div>
-                        <div id="adminPreordersContainer">
-                            <p style="font-size: 12px; color: var(--text-sub);">Заявок на предзаказ нет.</p>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- SCRIPT LOGIC -->
     <script>
-        let isRegistering = false;
-        let currentUser = null;
+        // Демо-данные текущей сессии пользователя
+        // Подтягивает зарегистрированных пользователей
+        const currentUser = {
+            username: "Player123",
+            hasActiveSubscription: true, // Флаг наличия подписки
+            hasLeftReview: false          // Флаг: оставлял ли отзыв
+        };
 
-        function getUsers() { return JSON.parse(localStorage.getItem('apex_users') || '{}'); }
-        function saveUsers(users) { localStorage.setItem('apex_users', JSON.stringify(users)); }
+        // Фоновый подсчет зарегистрированных пользователей (без отображения графиков)
+        const registeredUsers = ["Player123", "User2", "User3", "User4"];
+        let activeUsersCount = registeredUsers.length; 
 
-        function getQuestions() { return JSON.parse(localStorage.getItem('apex_questions') || '[]'); }
-        function saveQuestions(q) { localStorage.setItem('apex_questions', JSON.stringify(q)); }
+        // Инициализация базы отзывов
+        let reviewsData = [
+            { username: "Alex_PvP", rating: 5, text: "Отличный софт, всё работает стабильно!" },
+            { username: "Dragon_Killer", rating: 4, text: "Всё гуд, фпс не проседает." }
+        ];
 
-        function getHwidRequests() { return JSON.parse(localStorage.getItem('apex_hwid_reqs') || '[]'); }
-        function saveHwidRequests(h) { localStorage.setItem('apex_hwid_reqs', JSON.stringify(h)); }
+        let selectedRating = 0;
 
-        function getPreorders() { return JSON.parse(localStorage.getItem('apex_preorders') || '[]'); }
-        function savePreorders(p) { localStorage.setItem('apex_preorders', JSON.stringify(p)); }
-
-        function getKeys() { return JSON.parse(localStorage.getItem('apex_keys') || '{}'); }
-        function saveKeys(k) { localStorage.setItem('apex_keys', JSON.stringify(k)); }
-
-        function showToast(msg, isSuccess = false) {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${isSuccess ? 'success' : ''}`;
-            toast.innerText = msg;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
-
-        function navigateTo(page) {
-            document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             
-            const targetPage = document.getElementById(`page-${page}`);
-            if (targetPage) targetPage.classList.remove('hidden');
-            
-            const navLink = document.getElementById(`nav-${page}`);
-            if (navLink) navLink.classList.add('active');
-        }
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
 
-        function toggleFaq(id) {
-            const body = document.getElementById(id);
-            const icon = document.getElementById(`${id}-icon`);
-            if (body.classList.contains('open')) {
-                body.classList.remove('open');
-                if(icon) icon.innerText = '▼';
-            } else {
-                body.classList.add('open');
-                if(icon) icon.innerText = '▲';
+            if (tabId === 'reviews') {
+                renderReviewForm();
+                renderReviews();
             }
         }
 
-        function switchAuth(reg) {
-            isRegistering = reg;
-            document.getElementById('tabLogin').classList.toggle('active', !reg);
-            document.getElementById('tabRegister').classList.toggle('active', reg);
-            document.getElementById('submitBtn').innerText = reg ? 'Зарегистрироваться' : 'Войти';
-        }
+        function renderReviewForm() {
+            const container = document.getElementById('review-form-container');
 
-        function handleAuth(e) {
-            e.preventDefault();
-            const rawUname = document.getElementById('usernameInput').value.trim();
-            const pass = document.getElementById('passwordInput').value.trim();
-
-            if (!rawUname || !pass) return;
-
-            let users = getUsers();
-            const unameKey = rawUname.toLowerCase();
-
-            if (!users[unameKey]) {
-                users[unameKey] = {
-                    displayName: rawUname,
-                    pass: pass,
-                    role: 'OWNER',
-                    sub: 'Активна (Навсегда)',
-                    hwid: 'OK'
-                };
-                saveUsers(users);
-                showToast('Аккаунт создан! Назначена роль OWNER.', true);
-            } else {
-                showToast('Успешный вход!', true);
+            if (!currentUser.hasActiveSubscription) {
+                container.innerHTML = `<div class="alert alert-info">Оставлять отзывы могут только пользователи с активной подпиской.</div>`;
+                return;
             }
 
-            loginUser(unameKey);
-        }
-
-        function loginUser(unameKey) {
-            let users = getUsers();
-            const userObj = users[unameKey];
-            currentUser = { key: unameKey, ...userObj };
-
-            document.getElementById('authScreen').classList.add('hidden');
-            document.getElementById('dashScreen').classList.remove('hidden');
-
-            const nameToShow = userObj.displayName || unameKey;
-            document.getElementById('sideAvatar').innerText = nameToShow[0].toUpperCase();
-            document.getElementById('mainAvatar').innerText = nameToShow[0].toUpperCase();
-            document.getElementById('sideUname').innerText = nameToShow;
-            document.getElementById('mainUname').innerText = nameToShow;
-            document.getElementById('sideUrole').innerText = userObj.role;
-            document.getElementById('subStatus').innerText = userObj.sub;
-            document.getElementById('hwidStatus').innerText = userObj.hwid || 'OK';
-
-            const adminElem = document.getElementById('adminNav');
-            adminElem.style.display = 'flex';
-            adminElem.classList.remove('hidden');
-
-            renderUserData();
-            renderAdminData();
-        }
-
-        function logout() {
-            currentUser = null;
-            document.getElementById('authScreen').classList.remove('hidden');
-            document.getElementById('dashScreen').classList.add('hidden');
-            document.getElementById('usernameInput').value = '';
-            document.getElementById('passwordInput').value = '';
-        }
-
-        function switchDashTab(tab, event) {
-            document.querySelectorAll('.nav-menu .nav-item').forEach(el => el.classList.remove('active'));
-            if(event && event.currentTarget) {
-                event.currentTarget.classList.add('active');
-            } else {
-                const targetNavItem = document.getElementById(`nav-item-${tab}`) || document.getElementById('adminNav');
-                if(targetNavItem) targetNavItem.classList.add('active');
+            if (currentUser.hasLeftReview) {
+                container.innerHTML = `<div class="alert alert-info">Вы уже оставили отзыв. Повторная отправка недоступна.</div>`;
+                return;
             }
 
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            const target = document.getElementById(`tab-${tab}`);
-            if (target) target.classList.remove('hidden');
+            container.innerHTML = `
+                <div>
+                    <label>Ваш ник:</label>
+                    <input type="text" value="${currentUser.username}" disabled>
+                </div>
+                <div>
+                    <label>Оценка:</label>
+                    <div class="star-rating" id="star-container">
+                        <span class="star" onclick="setRating(1)">★</span>
+                        <span class="star" onclick="setRating(2)">★</span>
+                        <span class="star" onclick="setRating(3)">★</span>
+                        <span class="star" onclick="setRating(4)">★</span>
+                        <span class="star" onclick="setRating(5)">★</span>
+                    </div>
+                </div>
+                <div>
+                    <textarea id="review-text" rows="4" placeholder="Напишите ваш отзыв..."></textarea>
+                </div>
+                <button class="btn-primary" onclick="submitReview()">Отправить отзыв</button>
+            `;
         }
 
-        /* ----- ЛОГИКА ПОЛЬЗОВАТЕЛЕЙ ----- */
-
-        function sendQuestion() {
-            const qText = document.getElementById('askQuestionInput').value.trim();
-            if(!qText) return showToast('Введите текст вопроса!');
-
-            const author = currentUser ? currentUser.key : 'Гость';
-            let questions = getQuestions();
-            questions.push({
-                id: Date.now(),
-                user: author,
-                text: qText,
-                answer: null,
-                date: new Date().toLocaleDateString()
+        function setRating(rating) {
+            selectedRating = rating;
+            const stars = document.querySelectorAll('#star-container .star');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
             });
-            saveQuestions(questions);
-
-            showToast('Вопрос успешно отправлен администрации!', true);
-            document.getElementById('askQuestionInput').value = '';
-            renderUserData();
         }
 
-        function resetHWID() {
-            if (!currentUser) return showToast('Сначала войдите в кабинет!');
-            let reqs = getHwidRequests();
-            reqs.push({
-                id: Date.now(),
-                user: currentUser.key,
-                status: 'В обработке'
+        function submitReview() {
+            const text = document.getElementById('review-text').value.trim();
+
+            if (selectedRating === 0) {
+                alert('Пожалуйста, укажите количество звезд.');
+                return;
+            }
+
+            if (!text) {
+                alert('Пожалуйста, напишите текст отзыва.');
+                return;
+            }
+
+            // Сохранение отзыва
+            reviewsData.unshift({
+                username: currentUser.username,
+                rating: selectedRating,
+                text: text
             });
-            saveHwidRequests(reqs);
-            showToast('Заявка на сброс HWID отправлена!', true);
-            renderAdminData();
+
+            currentUser.hasLeftReview = true;
+            selectedRating = 0;
+
+            renderReviewForm();
+            renderReviews();
         }
 
-        function makePreorder(plan) {
-            if (!currentUser) return showToast('Сначала войдите в кабинет!');
-            let preorders = getPreorders();
-            preorders.push({
-                id: Date.now(),
-                user: currentUser.key,
-                plan: plan,
-                date: new Date().toLocaleDateString()
+        function renderReviews() {
+            const list = document.getElementById('reviews-list');
+            list.innerHTML = '';
+
+            if (reviewsData.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-sub);">Пока нет отзывов.</p>';
+                return;
+            }
+
+            reviewsData.forEach(item => {
+                const starsStr = '★'.repeat(item.rating) + '☆'.repeat(5 - item.rating);
+                const reviewEl = document.createElement('div');
+                reviewEl.className = 'review-item';
+                reviewEl.innerHTML = `
+                    <div class="review-header">
+                        <span class="review-user">${item.username}</span>
+                        <span class="review-stars">${starsStr}</span>
+                    </div>
+                    <div class="review-text">${item.text}</div>
+                `;
+                list.appendChild(reviewEl);
             });
-            savePreorders(preorders);
-            showToast(`Предзаказ "${plan}" оформлен!`, true);
-            renderUserData();
-            renderAdminData();
-        }
-
-        function activateKey() {
-            const k = document.getElementById('keyInput').value.trim();
-            if(!k) return showToast('Введите ключ!');
-
-            let keys = getKeys();
-            if (keys[k]) {
-                const plan = keys[k].tariff;
-                delete keys[k];
-                saveKeys(keys);
-
-                let users = getUsers();
-                users[currentUser.key].sub = `Активна (${plan})`;
-                saveUsers(users);
-
-                showToast(`Ключ активирован! Тариф: ${plan}`, true);
-                loginUser(currentUser.key);
-            } else {
-                showToast('Недействительный или уже использованный ключ!');
-            }
-        }
-
-        function renderUserData() {
-            if (!currentUser) return;
-
-            const questions = getQuestions().filter(q => q.user === currentUser.key);
-            const qContainer = document.getElementById('userQuestionsList');
-            if (questions.length === 0) {
-                qContainer.innerHTML = '<p style="font-size: 13px; color: var(--text-sub);">У вас пока нет отправленных вопросов.</p>';
-            } else {
-                qContainer.innerHTML = questions.map(q => `
-                    <div class="list-box">
-                        <div class="list-box-header"><span>Обращение от ${q.date}</span></div>
-                        <p style="margin-bottom:6px;"><b>Вопрос:</b> ${q.text}</p>
-                        <p style="color: ${q.answer ? 'var(--accent-green)' : '#ffaa00'};"><b>Ответ:</b> ${q.answer || 'Ожидает ответа...'}</p>
-                    </div>
-                `).join('');
-            }
-
-            const preorders = getPreorders().filter(p => p.user === currentUser.key);
-            const pContainer = document.getElementById('userPreordersList');
-            if (preorders.length === 0) {
-                pContainer.innerHTML = '<p style="font-size: 13px; color: var(--text-sub);">У вас пока нет активных предзаказов.</p>';
-            } else {
-                pContainer.innerHTML = preorders.map(p => `
-                    <div class="list-box">
-                        <div class="list-box-header"><span>Предзаказ: ${p.plan}</span> <span class="badge done">ОФОРМЛЕН</span></div>
-                        <p style="color: var(--text-sub);">Дата оформления: ${p.date}</p>
-                    </div>
-                `).join('');
-            }
-        }
-
-        /* ----- ЛОГИКА АДМИН ПАНЕЛИ ----- */
-
-        let targetAdminUserKey = null;
-
-        function adminSearchUser() {
-            const query = document.getElementById('adminSearchInput').value.trim().toLowerCase();
-            let users = getUsers();
-
-            if (users[query]) {
-                targetAdminUserKey = query;
-                document.getElementById('adminUserCard').classList.remove('hidden');
-                document.getElementById('adminTargetName').innerText = `Пользователь: ${users[query].displayName || query}`;
-                document.getElementById('adminRoleSelect').value = users[query].role || 'USER';
-                document.getElementById('adminSubSelect').value = users[query].sub || 'Не активна';
-            } else {
-                showToast('Пользователь не найден!');
-                document.getElementById('adminUserCard').classList.add('hidden');
-            }
-        }
-
-        function adminSaveUser() {
-            if (!targetAdminUserKey) return;
-            let users = getUsers();
-
-            users[targetAdminUserKey].role = document.getElementById('adminRoleSelect').value;
-            users[targetAdminUserKey].sub = document.getElementById('adminSubSelect').value;
-
-            saveUsers(users);
-            showToast('Изменения пользователя сохранены!', true);
-
-            if (currentUser && currentUser.key === targetAdminUserKey) {
-                loginUser(targetAdminUserKey);
-            }
-        }
-
-        function generateKey() {
-            const tariff = document.getElementById('keyTariffSelect').value;
-            const randPart = Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
-            const newKey = `APEX-${randPart}`;
-
-            let keys = getKeys();
-            keys[newKey] = { tariff: tariff, created: new Date().toLocaleDateString() };
-            saveKeys(keys);
-
-            document.getElementById('generatedKeyVal').innerText = newKey;
-            document.getElementById('generatedKeyBox').classList.remove('hidden');
-            showToast(`Сгенерирован ключ на ${tariff}!`, true);
-        }
-
-        function copyGeneratedKey() {
-            const keyText = document.getElementById('generatedKeyVal').innerText;
-            navigator.clipboard.writeText(keyText);
-            showToast('Ключ скопирован в буфер обмена!', true);
-        }
-
-        function answerQuestion(id) {
-            const ansInput = document.getElementById(`ans-input-${id}`);
-            if (!ansInput || !ansInput.value.trim()) return showToast('Введите текст ответа!');
-
-            let questions = getQuestions();
-            const idx = questions.findIndex(q => q.id === id);
-            if (idx !== -1) {
-                questions[idx].answer = ansInput.value.trim();
-                saveQuestions(questions);
-                showToast('Ответ отправлен пользователю!', true);
-                renderAdminData();
-            }
-        }
-
-        function approveHwid(id, userKey) {
-            let users = getUsers();
-            if (users[userKey]) {
-                users[userKey].hwid = 'OK (Сброшен)';
-                saveUsers(users);
-            }
-
-            let reqs = getHwidRequests().filter(r => r.id !== id);
-            saveHwidRequests(reqs);
-
-            showToast(`HWID сброшен для ${userKey}!`, true);
-            renderAdminData();
-        }
-
-        function renderAdminData() {
-            const questions = getQuestions();
-            const qAdminCont = document.getElementById('adminQuestionsContainer');
-            if (questions.length === 0) {
-                qAdminCont.innerHTML = '<p style="font-size: 12px; color: var(--text-sub);">Обращений пока нет.</p>';
-            } else {
-                qAdminCont.innerHTML = questions.map(q => `
-                    <div class="list-box">
-                        <div class="list-box-header">
-                            <span>От: <b>${q.user}</b> (${q.date})</span>
-                            <span class="badge ${q.answer ? 'done' : 'pending'}">${q.answer ? 'Отвечено' : 'Ожидает'}</span>
-                        </div>
-                        <p style="margin-bottom:8px; color: #fff;"><b>Вопрос:</b> ${q.text}</p>
-                        ${q.answer ? `<p style="color:var(--accent-green);"><b>Ваш ответ:</b> ${q.answer}</p>` : `
-                            <div style="display:flex; gap:8px; margin-top:8px;">
-                                <input type="text" id="ans-input-${q.id}" class="form-input" placeholder="Напишите ответ...">
-                                <button class="action-btn green" onclick="answerQuestion(${q.id})">Ответить</button>
-                            </div>
-                        `}
-                    </div>
-                `).join('');
-            }
-
-            const hwidReqs = getHwidRequests();
-            const hAdminCont = document.getElementById('adminHwidContainer');
-            if (hwidReqs.length === 0) {
-                hAdminCont.innerHTML = '<p style="font-size: 12px; color: var(--text-sub);">Заявок на сброс HWID нет.</p>';
-            } else {
-                hAdminCont.innerHTML = hwidReqs.map(r => `
-                    <div class="list-box" style="display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <span>Запрос на сброс HWID от: <b style="color:#fff;">${r.user}</b></span>
-                        </div>
-                        <button class="action-btn green" onclick="approveHwid(${r.id}, '${r.user}')">✓ Сбросить HWID</button>
-                    </div>
-                `).join('');
-            }
-
-            const preorders = getPreorders();
-            const pAdminCont = document.getElementById('adminPreordersContainer');
-            if (preorders.length === 0) {
-                pAdminCont.innerHTML = '<p style="font-size: 12px; color: var(--text-sub);">Заявок на предзаказ нет.</p>';
-            } else {
-                pAdminCont.innerHTML = preorders.map(p => `
-                    <div class="list-box" style="display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <span>Игрок: <b style="color:#fff;">${p.user}</b></span>
-                            <span style="display:block; font-size:10px; color:var(--text-sub);">Тариф: ${p.plan} (${p.date})</span>
-                        </div>
-                        <span class="badge done">Активен</span>
-                    </div>
-                `).join('');
-            }
-        }
-
-        function buyTariff(plan) { showToast(`Переход к оплате тарифа: ${plan}`, true); }
-        function downloadLoader() { showToast('Загрузка Loader.exe началась...', true); }
-        function setLanguage(lang) {
-            document.getElementById('btn-ru').classList.toggle('active', lang==='ru');
-            document.getElementById('btn-en').classList.toggle('active', lang==='en');
         }
     </script>
 </body>
