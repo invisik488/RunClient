@@ -152,7 +152,8 @@
             display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.02);
         }
         .faq-header:hover { background: rgba(255, 255, 255, 0.04); }
-        .faq-body { padding: 0 20px 16px 20px; font-size: 13px; color: #aaa; line-height: 1.6; }
+        .faq-body { padding: 0 20px 16px 20px; font-size: 13px; color: #aaa; line-height: 1.6; display: none; }
+        .faq-body.open { display: block; }
         .faq-body ol { padding-left: 18px; margin-top: 8px; }
         .faq-body li { margin-bottom: 6px; }
         .warning-box {
@@ -245,11 +246,11 @@
     <!-- ГЛАВНАЯ СТРАНИЦА (HOME) -->
     <div id="page-home" class="page-section">
         <div class="hero">
-            <h1 data-lang="hero_title">ApexClient 1.21.4 Fabric</h1>
+            <h1 data-lang="hero_title">ApexClient 1.21.11 Fabric</h1>
             <p data-lang="hero_desc">Премиальный клиент для доминирования на серверах. Недосягаемая скорость, продвинутый визуал и максимальная незаметность.</p>
         </div>
 
-        <!-- СТАТИСТИЧЕСКИЕ КАРТОЧКИ (ЗАПОЛНЕНИЕ ПУСТОГО МЕСТА) -->
+        <!-- СТАТИСТИЧЕСКИЕ КАРТОЧКИ -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-val">420+</div>
@@ -354,7 +355,7 @@
                 <div id="faq1" class="faq-body">
                     <ol>
                         <li data-lang="faq1_step1">Скачайте наш лоадер (.exe) и разместите на рабочем столе.</li>
-                        <li data-lang="faq1_step2">Запустите Minecraft <b>1.21.4 Fabric</b>.</li>
+                        <li data-lang="faq1_step2">Запустите Minecraft <b>1.21.11 Fabric</b>.</li>
                         <li data-lang="faq1_step3">В лоадере нажмите <b>"Inject"</b> и дождитесь загрузки консоли.</li>
                         <li data-lang="faq1_step4">Готово! Чит успешно загружен в игру.</li>
                     </ol>
@@ -384,7 +385,7 @@
         <div id="authScreen" class="auth-wrapper">
             <div class="auth-card">
                 <div class="auth-title">Apex<span>Client</span></div>
-                <div class="auth-subtitle">Панель управления (1.21.4 Fabric)</div>
+                <div class="auth-subtitle">Панель управления (1.21.11 Fabric)</div>
 
                 <div class="tabs">
                     <button type="button" id="tabLogin" class="tab-btn active" onclick="switchAuth(false)" data-lang="tab_login">Вход</button>
@@ -420,7 +421,7 @@
                         <li class="nav-item active" onclick="switchDashTab('profile', event)">👤 <span data-lang="dash_prof">Профиль</span></li>
                         <li class="nav-item" onclick="switchDashTab('download', event)">⚡ <span data-lang="dash_down">Скачать</span></li>
                         <li class="nav-item" onclick="switchDashTab('sub', event)">🔑 <span data-lang="dash_sub">Подписка</span></li>
-                        <li class="nav-item" id="adminNav" onclick="switchDashTab('admin', event)" style="color: #ff3333;">👑 <span data-lang="dash_admin">Админка</span></li>
+                        <li class="nav-item hidden" id="adminNav" onclick="switchDashTab('admin', event)" style="color: #ff3333;">👑 <span data-lang="dash_admin">Админка</span></li>
                     </ul>
                 </div>
 
@@ -442,7 +443,7 @@
                                     </div>
                                     <div class="info-item">
                                         <label>Version</label>
-                                        <val>1.21.4 Fabric</val>
+                                        <val>1.21.11 Fabric</val>
                                     </div>
                                 </div>
                             </div>
@@ -518,12 +519,20 @@
         </div>
     </div>
 
+    <!-- СКТРИПТЫ И ЛОГИКА -->
     <script>
+        // АВТО-ОПРЕДЕЛЕНИЕ API
+        const API_BASE = window.location.origin;
+
+        let isRegisterState = false;
+        let currentUser = null;
+        let currentLang = 'ru';
+
         // ДАННЫЕ ПЕРЕВОДА (RU / EN)
         const i18n = {
             ru: {
                 nav_home: "Главная", nav_tariffs: "Тарифы", nav_help: "Помощь", nav_cabinet: "Кабинет",
-                hero_title: "ApexClient 1.21.4 Fabric",
+                hero_title: "ApexClient 1.21.11 Fabric",
                 hero_desc: "Премиальный клиент для доминирования на серверах. Недосягаемая скорость, продвинутый визуал и максимальная незаметность.",
                 stat_online: "Онлайн игроков", stat_subs: "Активных подписок", stat_uptime: "Аптайм обходов",
                 feat1_title: "Топовая оптимизация", feat1_desc: "Минимальный просад FPS, мгновенный отклик и плавный фреймрейт даже во время замесов 50v50.",
@@ -536,48 +545,48 @@
                 faq_title: "Часто задаваемые вопросы",
                 faq1_q: "❓ Как установить клиент?",
                 faq1_step1: "Скачайте наш лоадер (.exe) и разместите на рабочем столе.",
-                faq1_step2: "Запустите Minecraft 1.21.4 Fabric.",
+                faq1_step2: "Запустите Minecraft 1.21.11 Fabric.",
                 faq1_step3: "В лоадере нажмите 'Inject' и дождитесь загрузки консоли.",
                 faq1_step4: "Готово! Чит успешно загружен в игру.",
                 faq2_q: "🛡️ Как обойти проверку на читы?",
                 faq2_step1: "Нажмите кнопку 'AntiInject' в лоадере.",
                 faq2_step2: "Переименуйте файл лоадера под системную утилиту или браузер.",
                 faq2_warn: "⚠️ Переименовывайте файл под программу, которая уже есть у вас на ПК (например Telegram, Discord).",
-                tab_login: "Вход", tab_reg: "Регистрация", lbl_user: "Никнейм", lbl_pass: "Пароль", btn_submit_login: "Войти", btn_submit_reg: "Зарегистрироваться",
+                tab_login: "Вход", tab_reg: "Регистрация", lbl_user: "Никнейм", lbl_pass: "Пароль",
+                btn_submit_login: "Войти", btn_submit_reg: "Зарегистрироваться",
                 dash_prof: "Профиль", dash_down: "Скачать", dash_sub: "Подписка", dash_admin: "Админка", btn_logout: "Выйти",
                 prof_title: "Профиль пользователя", sub_card_title: "Текущая подписка", sub_sync: "Синхронизировано с сервером.",
                 key_act_title: "Активация Ключа", btn_act: "Активировать"
             },
             en: {
                 nav_home: "Home", nav_tariffs: "Pricing", nav_help: "Help", nav_cabinet: "Dashboard",
-                hero_title: "ApexClient 1.21.4 Fabric",
-                hero_desc: "Premium client for server domination. Unmatched speed, advanced visuals, and maximum stealth.",
-                stat_online: "Online Players", stat_subs: "Active Subs", stat_uptime: "Bypass Uptime",
-                feat1_title: "Top Optimization", feat1_desc: "Minimal FPS drop, instant response, and smooth framerate even in 50v50 fights.",
-                feat2_title: "Beautiful Visuals", feat2_desc: "Custom HUD, flexible Render modules, smooth animations, and UI customization.",
-                feat3_title: "Advanced Features", feat3_desc: "Advanced AutoSwap, smart TriggerBot, ClickGUI, and auto presets.",
-                chart_title: "Active User Growth", chart_sub: "Community expansion stats",
-                tariffs_title: "Choose Your Plan", tariffs_desc: "Get instant access to ApexClient right after payment.",
+                hero_title: "ApexClient 1.21.11 Fabric",
+                hero_desc: "Premium client to dominate every server. Unmatched speed, advanced visuals, and maximum stealth.",
+                stat_online: "Online Players", stat_subs: "Active Subscriptions", stat_uptime: "Bypass Uptime",
+                feat1_title: "Top Optimization", feat1_desc: "Minimal FPS drops, instant response, and smooth frame rate even in 50v50 fights.",
+                feat2_title: "Stunning Visuals", feat2_desc: "Custom HUD, flexible Render modules, animations, and sleek GUI.",
+                feat3_title: "Advanced Features", feat3_desc: "Smart AutoSwap, TriggerBot, ClickGUI, and auto presets.",
+                chart_title: "Active Users Dynamics", chart_sub: "Community Growth Statistics",
+                tariffs_title: "Choose Your Plan", tariffs_desc: "Get instant access to ApexClient right after purchase.",
                 plan_7d: "7 Days", plan_30d: "1 Month", plan_90d: "3 Months", plan_life: "Lifetime",
-                badge_hit: "MOST POPULAR", btn_buy: "Purchase",
+                badge_hit: "BESTSELLER", btn_buy: "Purchase",
                 faq_title: "Frequently Asked Questions",
                 faq1_q: "❓ How to install the client?",
                 faq1_step1: "Download our loader (.exe) and place it on your desktop.",
-                faq1_step2: "Launch Minecraft 1.21.4 Fabric.",
-                faq1_step3: "In loader press 'Inject' and wait for console to complete.",
-                faq1_step4: "Done! Cheat is successfully injected into the game.",
-                faq2_q: "🛡️ How to bypass screen shares?",
-                faq2_step1: "Press 'AntiInject' button inside the loader.",
-                faq2_step2: "Rename the loader file to a regular system app or browser.",
-                faq2_warn: "⚠️ Rename to an app already installed on your PC (e.g. Telegram, Discord).",
-                tab_login: "Login", tab_reg: "Register", lbl_user: "Username", lbl_pass: "Password", btn_submit_login: "Log In", btn_submit_reg: "Sign Up",
-                dash_prof: "Profile", dash_down: "Download", dash_sub: "Subscription", dash_admin: "Admin", btn_logout: "Log Out",
-                prof_title: "User Profile", sub_card_title: "Current Subscription", sub_sync: "Synchronized with server.",
-                key_act_title: "Redeem Key", btn_act: "Activate"
+                faq1_step2: "Launch Minecraft 1.21.11 Fabric.",
+                faq1_step3: "In the loader, click 'Inject' and wait for console output.",
+                faq1_step4: "Done! The client is loaded into the game.",
+                faq2_q: "🛡️ How to bypass staff checks?",
+                faq2_step1: "Click 'AntiInject' in the loader.",
+                faq2_step2: "Rename the loader file to a system utility or browser.",
+                faq2_warn: "⚠️ Rename the file to software already present on your PC (e.g. Telegram, Discord).",
+                tab_login: "Login", tab_reg: "Register", lbl_user: "Username", lbl_pass: "Password",
+                btn_submit_login: "Sign In", btn_submit_reg: "Sign Up",
+                dash_prof: "Profile", dash_down: "Download", dash_sub: "Subscription", dash_admin: "Admin Panel", btn_logout: "Logout",
+                prof_title: "User Profile", sub_card_title: "Current Subscription", sub_sync: "Synced with server.",
+                key_act_title: "Activate Key", btn_act: "Activate"
             }
         };
-
-        let currentLang = 'ru';
 
         function setLanguage(lang) {
             currentLang = lang;
@@ -587,319 +596,216 @@
             document.querySelectorAll('[data-lang]').forEach(el => {
                 const key = el.getAttribute('data-lang');
                 if (i18n[lang][key]) {
-                    if (el.tagName === 'INPUT' && el.type === 'submit') {
-                        el.value = i18n[lang][key];
-                    } else {
-                        el.innerText = i18n[lang][key];
-                    }
+                    el.innerText = i18n[lang][key];
                 }
             });
 
-            // Обновляем кнопку формы
-            const submitBtn = document.getElementById('submitBtn');
-            if (submitBtn) {
-                submitBtn.innerText = isRegister ? i18n[lang].btn_submit_reg : i18n[lang].btn_submit_login;
-            }
+            document.getElementById('submitBtn').innerText = isRegisterState ? i18n[lang].btn_submit_reg : i18n[lang].btn_submit_login;
+        }
+
+        function showToast(msg, isSuccess = false) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${isSuccess ? 'success' : ''}`;
+            toast.innerText = msg;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
         }
 
         function navigateTo(page) {
-            document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.page-section').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
 
-            const target = document.getElementById(`page-${page}`);
-            if (target) target.classList.remove('hidden');
-
-            const navLink = document.getElementById(`nav-${page}`);
-            if (navLink) navLink.classList.add('active');
-
-            if (page === 'home') renderChart();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById(`page-${page}`).classList.remove('hidden');
+            const navBtn = document.getElementById(`nav-${page}`);
+            if (navBtn) navBtn.classList.add('active');
         }
 
         function toggleFaq(id) {
             const el = document.getElementById(id);
             const icon = document.getElementById(`${id}-icon`);
-            if (el.classList.contains('hidden')) {
-                el.classList.remove('hidden');
-                icon.innerText = '▲';
-            } else {
-                el.classList.add('hidden');
+            if (el.classList.contains('open')) {
+                el.classList.remove('open');
                 icon.innerText = '▼';
+            } else {
+                el.classList.add('open');
+                icon.innerText = '▲';
             }
         }
 
-        function buyTariff() {
-            showToast(currentLang === 'ru' ? 'Покупка временно недоступна!' : 'Purchases are temporarily disabled!', 'danger');
-        }
-
-        // ДИНАМИЧЕСКИЙ ГРАФИК
-        let salesData = [320, 410, 580, 720, 890, 1150, 1482];
-        
-        function renderChart() {
-            const canvas = document.getElementById('salesChart');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            
-            canvas.width = canvas.parentElement.clientWidth - 48;
-            canvas.height = 110;
-
-            const width = canvas.width;
-            const height = canvas.height;
-            const maxVal = Math.max(...salesData) * 1.2;
-
-            ctx.clearRect(0, 0, width, height);
-
-            const gradient = ctx.createLinearGradient(0, 0, 0, height);
-            gradient.addColorStop(0, 'rgba(255, 51, 51, 0.35)');
-            gradient.addColorStop(1, 'rgba(255, 51, 51, 0.0)');
-
-            ctx.beginPath();
-            const stepX = width / (salesData.length - 1);
-
-            salesData.forEach((val, i) => {
-                const x = i * stepX;
-                const y = height - (val / maxVal) * height;
-                if (i === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
-            });
-
-            ctx.strokeStyle = '#ff3333';
-            ctx.lineWidth = 2.5;
-            ctx.stroke();
-
-            ctx.lineTo(width, height);
-            ctx.lineTo(0, height);
-            ctx.fillStyle = gradient;
-            ctx.fill();
-
-            salesData.forEach((val, i) => {
-                const x = i * stepX;
-                const y = height - (val / maxVal) * height;
-                ctx.beginPath();
-                ctx.arc(x, y, 3.5, 0, Math.PI * 2);
-                ctx.fillStyle = '#ffffff';
-                ctx.fill();
-                ctx.strokeStyle = '#ff3333';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            });
-        }
-
-        // БАЗА ДАННЫХ И КАБИНЕТ
-        let isRegister = false;
-        let DB = { users: [], keys: [] };
-
-        async function fetchDB() {
-            const localData = localStorage.getItem('apex_db');
-            if (localData) {
-                try { DB = JSON.parse(localData); } catch(e){}
-            }
-            if (!DB.users) DB.users = [];
-            if (!DB.keys) DB.keys = [];
-
-            try {
-                const res = await fetch('https://api.myjson.online/v1/records/4eb9d84e-399a-4c91-a5bf-ef0e1cfbc39b');
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data && data.data && Array.isArray(data.data.users)) {
-                        data.data.users.forEach(ru => {
-                            if (!DB.users.some(lu => lu.username.trim().toLowerCase() === ru.username.trim().toLowerCase())) {
-                                DB.users.push(ru);
-                            }
-                        });
-                        if (data.data.keys) DB.keys = data.data.keys;
-                    }
-                }
-            } catch (e) {}
-            localStorage.setItem('apex_db', JSON.stringify(DB));
-        }
-
-        async function saveDB() {
-            localStorage.setItem('apex_db', JSON.stringify(DB));
-            try {
-                await fetch('https://api.myjson.online/v1/records/4eb9d84e-399a-4c91-a5bf-ef0e1cfbc39b', {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: DB })
-                });
-            } catch (e) {}
-        }
-
-        function showToast(message, type = 'danger') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type === 'success' ? 'success' : ''}`;
-            toast.innerText = message;
-            container.appendChild(toast);
-            setTimeout(() => { toast.remove(); }, 3000);
-        }
-
-        function switchDashTab(tabName, event) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-
-            const target = document.getElementById(`tab-${tabName}`);
-            if (target) target.classList.remove('hidden');
-
-            if (event) event.currentTarget.classList.add('active');
-            if (tabName === 'admin') renderUserTable();
-        }
-
-        function downloadLoader() {
-            const session = localStorage.getItem('apex_session');
-            const user = DB.users.find(u => u.username.trim().toLowerCase() === (session || '').trim().toLowerCase());
-            if (!user || user.sub === 'Закончилась' || user.sub === 'Нет') {
-                showToast('Ошибка: у вас нет активной подписки!', 'danger');
-                return;
-            }
-            showToast('Загрузка Loader.exe началась...', 'success');
-        }
-
-        async function generateKey() {
-            await fetchDB();
-            const duration = document.getElementById('genDuration').value;
-            const uses = parseInt(document.getElementById('genUses').value) || 1;
-            const randomCode = 'APEX-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
-            
-            DB.keys.push({ code: randomCode, duration: duration, usesLeft: uses });
-            await saveDB();
-            document.getElementById('generatedKeyResult').value = randomCode;
-            showToast(`Ключ создан на ${duration}`, 'success');
-        }
-
-        async function activateKey() {
-            await fetchDB();
-            const keyVal = document.getElementById('keyInput').value.trim();
-            if (!keyVal) return showToast('Введите ключ!');
-
-            const keyIndex = DB.keys.findIndex(k => k.code.trim().toUpperCase() === keyVal.toUpperCase());
-            if (keyIndex === -1) return showToast('Неверный ключ!');
-
-            const keyObj = DB.keys[keyIndex];
-            const session = localStorage.getItem('apex_session');
-            let user = DB.users.find(u => u.username.trim().toLowerCase() === session.trim().toLowerCase());
-
-            if (user) {
-                user.sub = keyObj.duration;
-                keyObj.usesLeft -= 1;
-                if (keyObj.usesLeft <= 0) DB.keys.splice(keyIndex, 1);
-                
-                salesData[salesData.length - 1] += 1;
-                document.getElementById('salesCount').innerText = `${salesData[salesData.length - 1]} users`;
-
-                await saveDB();
-                document.getElementById('keyInput').value = '';
-                await renderCabinet();
-                showToast(`Подписка "${keyObj.duration}" активирована!`, 'success');
-            }
-        }
-
-        async function renderUserTable() {
-            await fetchDB();
-            const tbody = document.getElementById('userTableBody');
-            const searchQuery = document.getElementById('userSearch').value.trim().toLowerCase();
-            tbody.innerHTML = '';
-
-            const filtered = DB.users.filter(u => u.username.toLowerCase().includes(searchQuery));
-            if (filtered.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="color: #666; text-align: center;">Пусто</td></tr>';
-                return;
-            }
-
-            filtered.forEach(u => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><b>${u.username}</b></td>
-                    <td>${u.role}</td>
-                    <td>${u.sub || 'Нет'}</td>
-                    <td><span style="color: ${u.hwid === 'Сброшен' ? '#ff3333' : '#00ff66'}">${u.hwid || 'OK'}</span></td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function switchAuth(reg) {
-            isRegister = reg;
-            document.getElementById('tabLogin').classList.toggle('active', !reg);
-            document.getElementById('tabRegister').classList.toggle('active', reg);
-            document.getElementById('submitBtn').innerText = reg ? i18n[currentLang].btn_submit_reg : i18n[currentLang].btn_submit_login;
+        function switchAuth(isReg) {
+            isRegisterState = isReg;
+            document.getElementById('tabLogin').classList.toggle('active', !isReg);
+            document.getElementById('tabRegister').classList.toggle('active', isReg);
+            document.getElementById('submitBtn').innerText = isReg ? i18n[currentLang].btn_submit_reg : i18n[currentLang].btn_submit_login;
         }
 
         document.getElementById('authForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            await fetchDB();
+            const username = document.getElementById('usernameInput').value.trim();
+            const password = document.getElementById('passwordInput').value.trim();
 
-            const u = document.getElementById('usernameInput').value.trim();
-            const p = document.getElementById('passwordInput').value.trim();
+            const endpoint = isRegisterState ? '/api/register' : '/api/login';
+            try {
+                const res = await fetch(`${API_BASE}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
 
-            let user = DB.users.find(x => x.username.trim().toLowerCase() === u.toLowerCase());
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Ошибка');
 
-            if (isRegister) {
-                if (user) return showToast('Ник занят!', 'danger');
-                user = {
-                    username: u, password: p,
-                    role: (u.toLowerCase() === 'invisik') ? 'OWNER' : 'USER',
-                    sub: (u.toLowerCase() === 'invisik') ? 'Навсегда' : 'Закончилась',
-                    hwid: 'Зафиксирован'
-                };
-                DB.users.push(user);
-                await saveDB();
-                localStorage.setItem('apex_session', user.username);
-                await renderCabinet();
-                showToast('Успешная регистрация!', 'success');
-            } else {
-                if (!user || user.password !== p) return showToast('Неверные данные!', 'danger');
-                localStorage.setItem('apex_session', user.username);
-                await renderCabinet();
-                showToast(`С возвращением, ${user.username}!`, 'success');
+                showToast(data.message, true);
+                if (!isRegisterState) {
+                    currentUser = data.user;
+                    updateDashboardUI();
+                } else {
+                    switchAuth(false);
+                }
+            } catch (err) {
+                showToast(err.message);
             }
         });
+
+        function updateDashboardUI() {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('dashScreen').classList.remove('hidden');
+
+            const initial = currentUser.username.charAt(0).toUpperCase();
+            document.getElementById('sideAvatar').innerText = initial;
+            document.getElementById('mainAvatar').innerText = initial;
+            document.getElementById('sideUname').innerText = currentUser.username;
+            document.getElementById('mainUname').innerText = currentUser.username;
+            document.getElementById('sideUrole').innerText = currentUser.role.toUpperCase();
+
+            document.getElementById('subStatus').innerText = currentUser.subscription || 'Отсутствует';
+            document.getElementById('hwidStatus').innerText = currentUser.hwid ? 'Привязан' : 'Не привязан';
+
+            if (currentUser.role === 'admin') {
+                document.getElementById('adminNav').classList.remove('hidden');
+            } else {
+                document.getElementById('adminNav').classList.add('hidden');
+            }
+        }
 
         function logout() {
-            localStorage.removeItem('apex_session');
-            renderCabinet();
-            showToast('Вы вышли из аккаунта');
+            currentUser = null;
+            document.getElementById('dashScreen').classList.add('hidden');
+            document.getElementById('authScreen').classList.remove('hidden');
+            document.getElementById('authForm').reset();
+            showToast('Вы вышли из системы');
         }
 
-        async function renderCabinet() {
-            await fetchDB();
-            const session = localStorage.getItem('apex_session');
-            const authScreen = document.getElementById('authScreen');
-            const dashScreen = document.getElementById('dashScreen');
+        function switchDashTab(tabName, evt) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.querySelectorAll('.nav-menu .nav-item').forEach(i => i.classList.remove('active'));
 
-            if (session) {
-                authScreen.classList.add('hidden');
-                dashScreen.classList.remove('hidden');
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            if (evt) evt.currentTarget.classList.add('active');
 
-                let user = DB.users.find(x => x.username.trim().toLowerCase() === session.trim().toLowerCase()) || {
-                    username: session, role: 'USER', sub: 'Закончилась', hwid: 'Зафиксирован'
-                };
+            if (tabName === 'admin') renderUserTable();
+        }
 
-                const initial = user.username.charAt(0).toUpperCase();
-                document.getElementById('sideAvatar').innerText = initial;
-                document.getElementById('mainAvatar').innerText = initial;
-                document.getElementById('sideUname').innerText = user.username;
-                document.getElementById('mainUname').innerText = user.username;
-                document.getElementById('sideUrole').innerText = user.role;
+        async function activateKey() {
+            const key = document.getElementById('keyInput').value.trim();
+            if (!key) return showToast('Введите ключ');
 
-                const isSubActive = user.sub && user.sub !== 'Закончилась' && user.sub !== 'Нет';
-                const subElem = document.getElementById('subStatus');
-                subElem.innerText = isSubActive ? `Active (${user.sub})` : 'Expired / Inactive';
-                subElem.style.color = isSubActive ? '#00ff66' : '#ff3333';
+            try {
+                const res = await fetch(`${API_BASE}/api/activate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentUser.username, key })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message);
 
-                document.getElementById('adminNav').style.display = (user.role === 'OWNER' || user.role === 'ADMIN') ? 'flex' : 'none';
-            } else {
-                authScreen.classList.remove('hidden');
-                dashScreen.classList.add('hidden');
+                currentUser.subscription = data.subscription;
+                updateDashboardUI();
+                showToast('Ключ успешно активирован!', true);
+                document.getElementById('keyInput').value = '';
+            } catch (err) {
+                showToast(err.message);
             }
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            renderCabinet();
-            renderChart();
-        });
+        async function generateKey() {
+            const duration = document.getElementById('genDuration').value;
+            const uses = document.getElementById('genUses').value;
 
-        window.addEventListener('resize', renderChart);
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/generate-key`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ duration, uses })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message);
+
+                document.getElementById('generatedKeyResult').value = data.key;
+                showToast('Ключ сгенерирован!', true);
+            } catch (err) {
+                showToast(err.message);
+            }
+        }
+
+        async function renderUserTable() {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/users`);
+                const users = await res.json();
+                const filter = document.getElementById('userSearch').value.toLowerCase();
+                const tbody = document.getElementById('userTableBody');
+                tbody.innerHTML = '';
+
+                users.filter(u => u.username.toLowerCase().includes(filter)).forEach(u => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><b>${u.username}</b></td>
+                        <td>${u.role}</td>
+                        <td>${u.subscription || 'Нет'}</td>
+                        <td>${u.hwid ? 'YES' : 'NO'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error('Ошибка загрузки пользователей:', err);
+            }
+        }
+
+        function downloadLoader() {
+            showToast('Загрузка Loader.exe началась...', true);
+        }
+
+        function buyTariff() {
+            navigateTo('cabinet');
+            showToast('Войдите или зарегистрируйтесь для покупки');
+        }
+
+        // ОТРИСОВКА ГРАФИКА (CANVAS)
+        function drawChart() {
+            const canvas = document.getElementById('salesChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const points = [40, 55, 45, 70, 85, 80, 110, 130, 125, 160];
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.strokeStyle = '#6366f1';
+            ctx.lineWidth = 3;
+
+            const step = canvas.width / (points.length - 1);
+            points.forEach((pt, i) => {
+                const x = i * step;
+                const y = canvas.height - (pt / 180 * canvas.height);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+        }
+
+        window.onload = () => {
+            drawChart();
+        };
     </script>
 </body>
 </html>
