@@ -3,169 +3,903 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApexClient — Главная</title>
+    <title>ApexClient — Official</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #0b0708; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: #050508; color: #ffffff; min-height: 100vh; position: relative; overflow-x: hidden; }
 
-        /* Navigation Header */
-        nav {
-            background: #140c0e;
-            border-bottom: 1px solid #2a1215;
-            padding: 16px 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 20px rgba(220, 38, 38, 0.15);
+        .hidden { display: none !important; }
+
+        /* TOAST NOTIFICATIONS */
+        #toast-container {
+            position: fixed; bottom: 20px; right: 20px; z-index: 9999;
+            display: flex; flex-direction: column-reverse; gap: 10px;
         }
-        .logo { font-size: 22px; font-weight: 800; color: #dc2626; letter-spacing: 1.5px; text-shadow: 0 0 10px rgba(220, 38, 38, 0.5); }
-        .logo span { color: #ffffff; }
-        .nav-links { display: flex; gap: 24px; list-style: none; }
-        .nav-links a { color: #9ca3af; text-decoration: none; font-weight: 500; transition: 0.2s; }
-        .nav-links a:hover { color: #dc2626; }
-
-        /* Container Layout */
-        .container { display: flex; flex: 1; padding: 32px; gap: 32px; max-width: 1200px; margin: 0 auto; width: 100%; }
-
-        /* Panels */
-        .panel {
-            background: #140c0e;
-            border: 1px solid #2a1215;
-            border-radius: 12px;
-            padding: 24px;
-            flex: 1;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        .toast {
+            background: #0f0f14; border: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #ff3333; padding: 12px 18px; border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: flex; align-items: center;
+            gap: 12px; font-size: 13px; font-weight: 600; animation: slideInRight 0.3s ease;
         }
-        .panel h3 { font-size: 18px; margin-bottom: 16px; color: #f3f4f6; border-bottom: 1px solid #2a1215; padding-bottom: 10px; }
-
-        /* Forms & Controls */
-        .form-group { margin-bottom: 16px; }
-        label { display: block; font-size: 13px; color: #9ca3af; margin-bottom: 6px; }
-        input {
-            width: 100%;
-            padding: 12px;
-            background: #080405;
-            border: 1px solid #2a1215;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 14px;
-            outline: none;
+        .toast.success { border-left-color: #00ff66; }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
-        input:focus { border-color: #dc2626; box-shadow: 0 0 8px rgba(220, 38, 38, 0.3); }
 
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #dc2626;
-            border: none;
-            border-radius: 8px;
-            color: #fff;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        /* FLOATING COMPACT NAVBAR WITH LANG SWITCHER */
+        .navbar-container {
+            position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
+            z-index: 1000; width: 92%; max-width: 780px;
         }
-        button:hover { background: #b91c1c; }
-        .btn-secondary { background: #1f1315; border: 1px solid #2a1215; }
-        .btn-secondary:hover { background: #2a1a1d; }
+        .navbar {
+            background: rgba(15, 18, 16, 0.8);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 40px; padding: 6px 14px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+        }
+        .nav-left { display: flex; align-items: center; gap: 16px; }
+        .nav-brand {
+            display: flex; align-items: center; gap: 8px; font-weight: 800;
+            font-size: 16px; color: #fff; cursor: pointer; text-decoration: none;
+        }
+        .brand-icon {
+            width: 26px; height: 26px; background: #6366f1; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 13px; color: #fff; box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+        }
+        .nav-links { display: flex; align-items: center; gap: 14px; list-style: none; }
+        .nav-link {
+            color: #a0a0ab; font-size: 13px; font-weight: 500; cursor: pointer;
+            transition: 0.2s; text-decoration: none;
+        }
+        .nav-link:hover, .nav-link.active { color: #ffffff; }
 
-        /* Status Output */
-        .status-box {
-            margin-top: 16px;
-            padding: 12px;
-            background: #080405;
-            border: 1px solid #2a1215;
-            border-radius: 8px;
-            font-size: 14px;
-            display: none;
-            word-break: break-all;
+        .nav-right { display: flex; align-items: center; gap: 10px; }
+
+        /* LANGUAGE SWITCHER */
+        .lang-switcher {
+            display: flex; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px; padding: 2px;
         }
+        .lang-btn {
+            background: none; border: none; color: #777; font-size: 11px; font-weight: 700;
+            padding: 4px 8px; border-radius: 16px; cursor: pointer; transition: 0.2s;
+        }
+        .lang-btn.active { background: #ff3333; color: #fff; }
+
+        .btn-cabinet {
+            background: #7c3aed; color: #fff; border: none; padding: 6px 14px;
+            border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer;
+            transition: 0.3s; display: flex; align-items: center; gap: 6px;
+            box-shadow: 0 3px 12px rgba(124, 58, 237, 0.4);
+        }
+        .btn-cabinet:hover { background: #6d28d9; transform: translateY(-1px); }
+
+        /* PAGE LAYOUT */
+        .page-section { padding-top: 100px; padding-bottom: 60px; max-width: 1000px; margin: 0 auto; width: 90%; }
+
+        /* HOME PAGE STYLES */
+        .hero { text-align: center; margin-bottom: 35px; }
+        .hero h1 { font-size: 42px; font-weight: 800; margin-bottom: 10px; background: linear-gradient(135deg, #fff 0%, #888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { color: #888; font-size: 15px; max-width: 550px; margin: 0 auto 20px; line-height: 1.5; }
+
+        /* QUICK STATS COUNTER */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 30px; }
+        .stat-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 14px; text-align: center; }
+        .stat-val { font-size: 20px; font-weight: 800; color: #00ff66; margin-bottom: 2px; }
+        .stat-lbl { font-size: 11px; color: #666; font-weight: 600; text-transform: uppercase; }
+
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 30px; }
+        .feature-card {
+            background: #0d0d12; border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px; padding: 20px; transition: 0.3s;
+        }
+        .feature-card:hover { transform: translateY(-4px); border-color: rgba(255, 51, 51, 0.3); }
+        .feature-icon { font-size: 24px; margin-bottom: 10px; display: inline-block; }
+        .feature-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: #fff; }
+        .feature-desc { font-size: 12px; color: #777; line-height: 1.5; }
+
+        .chart-section {
+            background: #0d0d12; border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px; padding: 24px; margin-bottom: 30px;
+        }
+        .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .chart-title { font-size: 18px; font-weight: 700; }
+        .chart-stats { font-size: 13px; color: #00ff66; font-weight: 600; }
+
+        /* TARIFFS PAGE */
+        .tariffs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; }
+        .tariff-card {
+            background: #0d0d12; border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px; padding: 24px 18px; text-align: center; position: relative;
+            transition: 0.3s ease; display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .tariff-card:hover { transform: translateY(-6px); border-color: #ff3333; }
+        .tariff-card.popular { border-color: #7c3aed; background: linear-gradient(180deg, rgba(124, 58, 237, 0.05) 0%, #0d0d12 100%); }
+        .tariff-badge {
+            position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+            background: #7c3aed; color: #fff; font-size: 9px; font-weight: 800;
+            padding: 3px 10px; border-radius: 20px; text-transform: uppercase;
+        }
+        .tariff-name { font-size: 16px; font-weight: 700; color: #aaa; margin-bottom: 10px; }
+        .tariff-price { font-size: 32px; font-weight: 800; color: #fff; margin-bottom: 16px; }
+        .tariff-price span { font-size: 14px; color: #666; font-weight: 500; }
+
+        .btn-buy {
+            width: 100%; background: #ff3333; color: #fff; border: none; padding: 10px;
+            border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s;
+        }
+        .btn-buy:hover { background: #e62e2e; }
+
+        /* HELP / FAQ PAGE */
+        .faq-section-title {
+            text-align: center; font-size: 26px; font-weight: 800; margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff, #888); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .faq-divider { width: 60px; height: 3px; background: #ff3333; margin: 0 auto 30px; border-radius: 2px; }
+
+        .faq-card {
+            background: #0d0d12; border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px; margin-bottom: 12px; overflow: hidden; transition: 0.3s;
+        }
+        .faq-header {
+            padding: 16px 20px; font-size: 15px; font-weight: 700; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.02);
+        }
+        .faq-header:hover { background: rgba(255, 255, 255, 0.04); }
+        .faq-body { padding: 0 20px 16px 20px; font-size: 13px; color: #aaa; line-height: 1.6; }
+        .faq-body ol { padding-left: 18px; margin-top: 8px; }
+        .faq-body li { margin-bottom: 6px; }
+        .warning-box {
+            background: rgba(255, 51, 51, 0.1); border: 1px solid rgba(255, 51, 51, 0.3);
+            border-radius: 8px; padding: 10px; color: #ff6666; font-size: 11px; margin: 8px 0; font-weight: 600;
+        }
+
+        /* CABINET / DASHBOARD STYLES */
+        .auth-wrapper { display: flex; align-items: center; justify-content: center; min-height: 70vh; }
+        .auth-card {
+            background: #0a0a0c; border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px; padding: 30px; width: 100%; max-width: 380px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+        }
+        .auth-title { font-size: 24px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+        .auth-title span { color: #ff3333; }
+        .auth-subtitle { font-size: 12px; color: #666; text-align: center; margin-bottom: 20px; }
+        .tabs { display: flex; background: #121215; padding: 4px; border-radius: 8px; margin-bottom: 16px; }
+        .tab-btn { flex: 1; background: none; border: none; color: #666; padding: 8px; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .tab-btn.active { background: #1c1c21; color: #fff; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 10px; color: #888; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+        .form-input, .form-select { width: 100%; background: #121215; border: 1px solid rgba(255, 255, 255, 0.06); padding: 10px 12px; border-radius: 8px; color: #fff; font-size: 13px; outline: none; transition: 0.2s; }
+        .form-input:focus, .form-select:focus { border-color: #ff3333; }
+        .btn-submit { width: 100%; background: #ff3333; color: #fff; border: none; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 6px; }
+        .btn-submit:hover { background: #e62e2e; }
+
+        .dash-container { display: grid; grid-template-columns: 220px 1fr; gap: 16px; background: #0a0a0c; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 16px; min-height: 480px; }
+        .sidebar { border-right: 1px solid rgba(255, 255, 255, 0.06); padding-right: 16px; display: flex; flex-direction: column; justify-content: space-between; }
+        .user-card-side { display: flex; align-items: center; gap: 10px; padding: 10px; background: #121215; border-radius: 8px; margin-bottom: 16px; }
+        .avatar { width: 36px; height: 36px; background: rgba(255, 51, 51, 0.15); border: 1px solid #ff3333; color: #ff3333; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+        .user-details .uname { font-size: 13px; font-weight: 700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .user-details .urole { font-size: 9px; color: #ff3333; font-weight: 800; letter-spacing: 0.5px; }
+        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+        .nav-item { padding: 8px 10px; border-radius: 6px; color: #777; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
+        .nav-item:hover, .nav-item.active { background: rgba(255, 51, 51, 0.1); color: #ff3333; }
+        .btn-logout { background: none; border: 1px solid rgba(255, 255, 255, 0.08); color: #777; padding: 8px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; transition: 0.2s; width: 100%; }
+        .btn-logout:hover { border-color: #ff3333; color: #ff3333; }
+        .content { padding: 8px; display: flex; flex-direction: column; gap: 16px; }
+        .card { background: #121215; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 16px; }
+        .card-header { font-size: 10px; color: #555; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .sub-title { font-size: 18px; font-weight: 700; color: #00ff66; margin-bottom: 2px; }
+        .sub-desc { font-size: 12px; color: #666; }
+        .grid-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 12px; }
+        .info-item { background: #0a0a0c; padding: 10px; border-radius: 6px; }
+        .info-item label { font-size: 9px; color: #666; display: block; margin-bottom: 2px; text-transform: uppercase; }
+        .info-item val { font-size: 12px; font-weight: 600; }
+        .action-btn { background: #ff3333; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+        .action-btn:hover { background: #e62e2e; }
+        .action-btn.secondary { background: #1f1f25; color: #fff; }
+        .action-btn.secondary:hover { background: #2a2a32; }
+        .user-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+        .user-table th, .user-table td { padding: 8px; text-align: left; font-size: 11px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .user-table th { color: #555; font-size: 9px; text-transform: uppercase; }
+        .admin-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="logo">APEX<span>CLIENT</span></div>
-        <ul class="nav-links">
-            <li><a href="#">Главная</a></li>
-            <li><a href="#">Личный кабинет</a></li>
-            <li><a href="#">База пользователей</a></li>
-        </ul>
-    </nav>
+    <div id="toast-container"></div>
 
-    <div class="container">
-        <!-- Личный кабинет -->
-        <div class="panel">
-            <h3>Личный Кабинет</h3>
-            <div class="form-group">
-                <label>Пользователь</label>
-                <input type="text" id="currentUser" value="Quesst" readonly>
+    <!-- УМЕНЬШЕННАЯ НАВИГАЦИОННАЯ ПАНЕЛЬ С ЯЗЫКАМИ -->
+    <div class="navbar-container">
+        <nav class="navbar">
+            <div class="nav-left">
+                <div class="nav-brand" onclick="navigateTo('home')">
+                    <div class="brand-icon">A</div>
+                    <span>Apex</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a class="nav-link active" id="nav-home" onclick="navigateTo('home')" data-lang="nav_home">Главная</a></li>
+                    <li><a class="nav-link" id="nav-tariffs" onclick="navigateTo('tariffs')" data-lang="nav_tariffs">Тарифы</a></li>
+                    <li><a class="nav-link" id="nav-help" onclick="navigateTo('help')" data-lang="nav_help">Помощь</a></li>
+                </ul>
             </div>
-            <div class="form-group">
-                <label>Статус подписки</label>
-                <input type="text" value="Активна (FULL ACCESS)" readonly style="color: #22c55e;">
+            
+            <div class="nav-right">
+                <!-- ПЕРЕКЛЮЧЕНИЕ ЯЗЫКА -->
+                <div class="lang-switcher">
+                    <button class="lang-btn active" id="btn-ru" onclick="setLanguage('ru')">RU</button>
+                    <button class="lang-btn" id="btn-en" onclick="setLanguage('en')">EN</button>
+                </div>
+
+                <button class="btn-cabinet" onclick="navigateTo('cabinet')">
+                    👤 <span data-lang="nav_cabinet">Кабинет</span>
+                </button>
             </div>
-            <button onclick="alert('Ключ скопирован в буфер!')">Скопировать ключ подписки</button>
+        </nav>
+    </div>
+
+    <!-- ГЛАВНАЯ СТРАНИЦА (HOME) -->
+    <div id="page-home" class="page-section">
+        <div class="hero">
+            <h1 data-lang="hero_title">ApexClient 1.21.4 Fabric</h1>
+            <p data-lang="hero_desc">Премиальный клиент для доминирования на серверах. Недосягаемая скорость, продвинутый визуал и максимальная незаметность.</p>
         </div>
 
-        <!-- Поиск пользователей -->
-        <div class="panel">
-            <h3>Поиск пользователя в базе</h3>
-            <div class="form-group">
-                <label>Никнейм</label>
-                <input type="text" id="searchInput" placeholder="Введите ник (например, Quesst)">
+        <!-- СТАТИСТИЧЕСКИЕ КАРТОЧКИ (ЗАПОЛНЕНИЕ ПУСТОГО МЕСТА) -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-val">420+</div>
+                <div class="stat-lbl" data-lang="stat_online">Онлайн игроков</div>
             </div>
-            <button onclick="searchUser()">Найти в базе</button>
-            <button class="btn-secondary" onclick="generateKey()">Сгенерировать ключ</button>
+            <div class="stat-card">
+                <div class="stat-val">1,480+</div>
+                <div class="stat-lbl" data-lang="stat_subs">Активных подписок</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val">99.9%</div>
+                <div class="stat-lbl" data-lang="stat_uptime">Аптайм обходов</div>
+            </div>
+        </div>
 
-            <div id="statusBox" class="status-box"></div>
+        <!-- КАРТОЧКИ ПРЕИМУЩЕСТВ -->
+        <div class="features-grid">
+            <div class="feature-card">
+                <span class="feature-icon">⚡</span>
+                <div class="feature-title" data-lang="feat1_title">Топовая оптимизация</div>
+                <div class="feature-desc" data-lang="feat1_desc">Минимальный просад FPS, мгновенный отклик и плавный фреймрейт даже во время замесов 50v50.</div>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🎨</span>
+                <div class="feature-title" data-lang="feat2_title">Красивый визуал</div>
+                <div class="feature-desc" data-lang="feat2_desc">Кастомный HUD, гибкая настройка Render-модулей, анимаций и интерфейса.</div>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">⚔️</span>
+                <div class="feature-title" data-lang="feat3_title">Топовый функционал</div>
+                <div class="feature-desc" data-lang="feat3_desc">Продвинутый AutoSwap, умный TriggerBot, ClickGUI и автоматические пресеты.</div>
+            </div>
+        </div>
+
+        <!-- ГРАФИК ПОКУПОК -->
+        <div class="chart-section">
+            <div class="chart-header">
+                <div>
+                    <div class="chart-title" data-lang="chart_title">Динамика активных пользователей</div>
+                    <div style="font-size: 11px; color: #666; margin-top: 2px;" data-lang="chart_sub">Статистика прироста сообщества</div>
+                </div>
+                <div class="chart-stats" id="salesCount">1,482 users</div>
+            </div>
+            <canvas id="salesChart" height="110" style="width: 100%;"></canvas>
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА ТАРИФОВ -->
+    <div id="page-tariffs" class="page-section hidden">
+        <div class="hero">
+            <h1 data-lang="tariffs_title">Выберите ваш тариф</h1>
+            <p data-lang="tariffs_desc">Получите мгновенный доступ к ApexClient сразу после оплаты.</p>
+        </div>
+
+        <div class="tariffs-grid">
+            <div class="tariff-card">
+                <div>
+                    <div class="tariff-name" data-lang="plan_7d">7 Дней</div>
+                    <div class="tariff-price">69 <span>₽</span></div>
+                </div>
+                <button class="btn-buy" onclick="buyTariff()" data-lang="btn_buy">Приобрести</button>
+            </div>
+
+            <div class="tariff-card popular">
+                <div class="tariff-badge" data-lang="badge_hit">ХИТ ПРОДАЖ</div>
+                <div>
+                    <div class="tariff-name" data-lang="plan_30d">1 Месяц</div>
+                    <div class="tariff-price">149 <span>₽</span></div>
+                </div>
+                <button class="btn-buy" onclick="buyTariff()" data-lang="btn_buy">Приобрести</button>
+            </div>
+
+            <div class="tariff-card">
+                <div>
+                    <div class="tariff-name" data-lang="plan_90d">3 Месяца</div>
+                    <div class="tariff-price">239 <span>₽</span></div>
+                </div>
+                <button class="btn-buy" onclick="buyTariff()" data-lang="btn_buy">Приобрести</button>
+            </div>
+
+            <div class="tariff-card">
+                <div>
+                    <div class="tariff-name" data-lang="plan_life">Навсегда</div>
+                    <div class="tariff-price">449 <span>₽</span></div>
+                </div>
+                <button class="btn-buy" onclick="buyTariff()" data-lang="btn_buy">Приобрести</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА ПОМОЩИ (HELP / FAQ) -->
+    <div id="page-help" class="page-section hidden">
+        <div class="faq-section-title" data-lang="faq_title">Часто задаваемые вопросы</div>
+        <div class="faq-divider"></div>
+
+        <div style="max-width: 750px; margin: 0 auto;">
+            <div class="faq-card">
+                <div class="faq-header" onclick="toggleFaq('faq1')">
+                    <span data-lang="faq1_q">❓ Как установить клиент?</span>
+                    <span id="faq1-icon">▼</span>
+                </div>
+                <div id="faq1" class="faq-body">
+                    <ol>
+                        <li data-lang="faq1_step1">Скачайте наш лоадер (.exe) и разместите на рабочем столе.</li>
+                        <li data-lang="faq1_step2">Запустите Minecraft <b>1.21.4 Fabric</b>.</li>
+                        <li data-lang="faq1_step3">В лоадере нажмите <b>"Inject"</b> и дождитесь загрузки консоли.</li>
+                        <li data-lang="faq1_step4">Готово! Чит успешно загружен в игру.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="faq-card">
+                <div class="faq-header" onclick="toggleFaq('faq2')">
+                    <span data-lang="faq2_q">🛡️ Как обойти проверку на читы?</span>
+                    <span id="faq2-icon">▼</span>
+                </div>
+                <div id="faq2" class="faq-body">
+                    <ol>
+                        <li data-lang="faq2_step1">Нажмите кнопку <b>"AntiInject"</b> в лоадере.</li>
+                        <li data-lang="faq2_step2">Переименуйте файл лоадера под системную утилиту или браузер.</li>
+                    </ol>
+                    <div class="warning-box" data-lang="faq2_warn">
+                        ⚠️ Переименовывайте файл под программу, которая уже есть у вас на ПК (например Telegram, Discord).
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЛИЧНЫЙ КАБИНЕТ -->
+    <div id="page-cabinet" class="page-section hidden">
+        <div id="authScreen" class="auth-wrapper">
+            <div class="auth-card">
+                <div class="auth-title">Apex<span>Client</span></div>
+                <div class="auth-subtitle">Панель управления (1.21.4 Fabric)</div>
+
+                <div class="tabs">
+                    <button type="button" id="tabLogin" class="tab-btn active" onclick="switchAuth(false)" data-lang="tab_login">Вход</button>
+                    <button type="button" id="tabRegister" class="tab-btn" onclick="switchAuth(true)" data-lang="tab_reg">Регистрация</button>
+                </div>
+
+                <form id="authForm">
+                    <div class="form-group">
+                        <label data-lang="lbl_user">Никнейм</label>
+                        <input type="text" id="usernameInput" class="form-input" placeholder="Введите ник" required autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label data-lang="lbl_pass">Пароль</label>
+                        <input type="password" id="passwordInput" class="form-input" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" id="submitBtn" class="btn-submit" data-lang="btn_submit_login">Войти</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="dashScreen" class="dash-container hidden">
+            <div class="sidebar">
+                <div>
+                    <div class="user-card-side">
+                        <div class="avatar" id="sideAvatar">U</div>
+                        <div class="user-details">
+                            <div class="uname" id="sideUname">User</div>
+                            <div class="urole" id="sideUrole">USER</div>
+                        </div>
+                    </div>
+
+                    <ul class="nav-menu">
+                        <li class="nav-item active" onclick="switchDashTab('profile', event)">👤 <span data-lang="dash_prof">Профиль</span></li>
+                        <li class="nav-item" onclick="switchDashTab('download', event)">⚡ <span data-lang="dash_down">Скачать</span></li>
+                        <li class="nav-item" onclick="switchDashTab('sub', event)">🔑 <span data-lang="dash_sub">Подписка</span></li>
+                        <li class="nav-item" id="adminNav" onclick="switchDashTab('admin', event)" style="color: #ff3333;">👑 <span data-lang="dash_admin">Админка</span></li>
+                    </ul>
+                </div>
+
+                <button class="btn-logout" onclick="logout()" data-lang="btn_logout">Выйти</button>
+            </div>
+
+            <div class="content">
+                <div id="tab-profile" class="tab-content">
+                    <div class="card">
+                        <div class="card-header" data-lang="prof_title">Профиль пользователя</div>
+                        <div style="display: flex; align-items: center; gap: 14px;">
+                            <div class="avatar" style="width: 44px; height: 44px; font-size: 18px;" id="mainAvatar">U</div>
+                            <div>
+                                <h2 style="font-size: 16px; font-weight: 700;" id="mainUname">User</h2>
+                                <div class="grid-info">
+                                    <div class="info-item">
+                                        <label>HWID</label>
+                                        <val style="color: #00ff66;" id="hwidStatus">OK</val>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Version</label>
+                                        <val>1.21.4 Fabric</val>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header" data-lang="sub_card_title">Текущая подписка</div>
+                        <div class="sub-title" id="subStatus">...</div>
+                        <div class="sub-desc" data-lang="sub_sync">Синхронизировано с сервером.</div>
+                    </div>
+                </div>
+
+                <div id="tab-download" class="tab-content hidden">
+                    <div class="card">
+                        <div class="card-header">ApexClient Loader</div>
+                        <h2 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Loader.exe</h2>
+                        <button class="action-btn" onclick="downloadLoader()">📥 Скачать Loader.exe</button>
+                    </div>
+                </div>
+
+                <div id="tab-sub" class="tab-content hidden">
+                    <div class="card">
+                        <div class="card-header" data-lang="key_act_title">Активация Ключа</div>
+                        <div style="display: flex; gap: 8px; max-width: 380px;">
+                            <input type="text" id="keyInput" class="form-input" placeholder="APEX-XXXX-XXXX">
+                            <button class="action-btn" onclick="activateKey()" data-lang="btn_act">Активировать</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-admin" class="tab-content hidden">
+                    <div class="card">
+                        <div class="card-header">Генератор ключей</div>
+                        <div class="admin-form-grid">
+                            <div class="form-group">
+                                <label>Срок</label>
+                                <select id="genDuration" class="form-select">
+                                    <option value="3 дня">3 Дня</option>
+                                    <option value="7 дней">7 Дней</option>
+                                    <option value="30 дней">30 Дней</option>
+                                    <option value="Навсегда" selected>Навсегда</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Кол-во</label>
+                                <input type="number" id="genUses" class="form-input" value="1" min="1">
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="action-btn" onclick="generateKey()">🔑 Создать</button>
+                            <input type="text" id="generatedKeyResult" class="form-input" placeholder="Ключ..." readonly>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">Игроки</div>
+                        <input type="text" id="userSearch" class="form-input" placeholder="Поиск..." oninput="renderUserTable()" style="max-width: 200px; margin-bottom: 10px;">
+                        <table class="user-table">
+                            <thead>
+                                <tr>
+                                    <th>Ник</th>
+                                    <th>Роль</th>
+                                    <th>Саб</th>
+                                    <th>HWID</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        async function searchUser() {
-            const nickname = document.getElementById('searchInput').value.trim();
-            const statusBox = document.getElementById('statusBox');
+        // ДАННЫЕ ПЕРЕВОДА (RU / EN)
+        const i18n = {
+            ru: {
+                nav_home: "Главная", nav_tariffs: "Тарифы", nav_help: "Помощь", nav_cabinet: "Кабинет",
+                hero_title: "ApexClient 1.21.4 Fabric",
+                hero_desc: "Премиальный клиент для доминирования на серверах. Недосягаемая скорость, продвинутый визуал и максимальная незаметность.",
+                stat_online: "Онлайн игроков", stat_subs: "Активных подписок", stat_uptime: "Аптайм обходов",
+                feat1_title: "Топовая оптимизация", feat1_desc: "Минимальный просад FPS, мгновенный отклик и плавный фреймрейт даже во время замесов 50v50.",
+                feat2_title: "Красивый визуал", feat2_desc: "Кастомный HUD, гибкая настройка Render-модулей, анимаций и интерфейса.",
+                feat3_title: "Топовый функционал", feat3_desc: "Продвинутый AutoSwap, умный TriggerBot, ClickGUI и автоматические пресеты.",
+                chart_title: "Динамика активных пользователей", chart_sub: "Статистика прироста сообщества",
+                tariffs_title: "Выберите ваш тариф", tariffs_desc: "Получите мгновенный доступ к ApexClient сразу после оплаты.",
+                plan_7d: "7 Дней", plan_30d: "1 Месяц", plan_90d: "3 Месяца", plan_life: "Навсегда",
+                badge_hit: "ХИТ ПРОДАЖ", btn_buy: "Приобрести",
+                faq_title: "Часто задаваемые вопросы",
+                faq1_q: "❓ Как установить клиент?",
+                faq1_step1: "Скачайте наш лоадер (.exe) и разместите на рабочем столе.",
+                faq1_step2: "Запустите Minecraft 1.21.4 Fabric.",
+                faq1_step3: "В лоадере нажмите 'Inject' и дождитесь загрузки консоли.",
+                faq1_step4: "Готово! Чит успешно загружен в игру.",
+                faq2_q: "🛡️ Как обойти проверку на читы?",
+                faq2_step1: "Нажмите кнопку 'AntiInject' в лоадере.",
+                faq2_step2: "Переименуйте файл лоадера под системную утилиту или браузер.",
+                faq2_warn: "⚠️ Переименовывайте файл под программу, которая уже есть у вас на ПК (например Telegram, Discord).",
+                tab_login: "Вход", tab_reg: "Регистрация", lbl_user: "Никнейм", lbl_pass: "Пароль", btn_submit_login: "Войти", btn_submit_reg: "Зарегистрироваться",
+                dash_prof: "Профиль", dash_down: "Скачать", dash_sub: "Подписка", dash_admin: "Админка", btn_logout: "Выйти",
+                prof_title: "Профиль пользователя", sub_card_title: "Текущая подписка", sub_sync: "Синхронизировано с сервером.",
+                key_act_title: "Активация Ключа", btn_act: "Активировать"
+            },
+            en: {
+                nav_home: "Home", nav_tariffs: "Pricing", nav_help: "Help", nav_cabinet: "Dashboard",
+                hero_title: "ApexClient 1.21.4 Fabric",
+                hero_desc: "Premium client for server domination. Unmatched speed, advanced visuals, and maximum stealth.",
+                stat_online: "Online Players", stat_subs: "Active Subs", stat_uptime: "Bypass Uptime",
+                feat1_title: "Top Optimization", feat1_desc: "Minimal FPS drop, instant response, and smooth framerate even in 50v50 fights.",
+                feat2_title: "Beautiful Visuals", feat2_desc: "Custom HUD, flexible Render modules, smooth animations, and UI customization.",
+                feat3_title: "Advanced Features", feat3_desc: "Advanced AutoSwap, smart TriggerBot, ClickGUI, and auto presets.",
+                chart_title: "Active User Growth", chart_sub: "Community expansion stats",
+                tariffs_title: "Choose Your Plan", tariffs_desc: "Get instant access to ApexClient right after payment.",
+                plan_7d: "7 Days", plan_30d: "1 Month", plan_90d: "3 Months", plan_life: "Lifetime",
+                badge_hit: "MOST POPULAR", btn_buy: "Purchase",
+                faq_title: "Frequently Asked Questions",
+                faq1_q: "❓ How to install the client?",
+                faq1_step1: "Download our loader (.exe) and place it on your desktop.",
+                faq1_step2: "Launch Minecraft 1.21.4 Fabric.",
+                faq1_step3: "In loader press 'Inject' and wait for console to complete.",
+                faq1_step4: "Done! Cheat is successfully injected into the game.",
+                faq2_q: "🛡️ How to bypass screen shares?",
+                faq2_step1: "Press 'AntiInject' button inside the loader.",
+                faq2_step2: "Rename the loader file to a regular system app or browser.",
+                faq2_warn: "⚠️ Rename to an app already installed on your PC (e.g. Telegram, Discord).",
+                tab_login: "Login", tab_reg: "Register", lbl_user: "Username", lbl_pass: "Password", btn_submit_login: "Log In", btn_submit_reg: "Sign Up",
+                dash_prof: "Profile", dash_down: "Download", dash_sub: "Subscription", dash_admin: "Admin", btn_logout: "Log Out",
+                prof_title: "User Profile", sub_card_title: "Current Subscription", sub_sync: "Synchronized with server.",
+                key_act_title: "Redeem Key", btn_act: "Activate"
+            }
+        };
 
-            if (!nickname) {
-                alert('Введите ник!');
+        let currentLang = 'ru';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('btn-ru').classList.toggle('active', lang === 'ru');
+            document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+
+            document.querySelectorAll('[data-lang]').forEach(el => {
+                const key = el.getAttribute('data-lang');
+                if (i18n[lang][key]) {
+                    if (el.tagName === 'INPUT' && el.type === 'submit') {
+                        el.value = i18n[lang][key];
+                    } else {
+                        el.innerText = i18n[lang][key];
+                    }
+                }
+            });
+
+            // Обновляем кнопку формы
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) {
+                submitBtn.innerText = isRegister ? i18n[lang].btn_submit_reg : i18n[lang].btn_submit_login;
+            }
+        }
+
+        function navigateTo(page) {
+            document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+
+            const target = document.getElementById(`page-${page}`);
+            if (target) target.classList.remove('hidden');
+
+            const navLink = document.getElementById(`nav-${page}`);
+            if (navLink) navLink.classList.add('active');
+
+            if (page === 'home') renderChart();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleFaq(id) {
+            const el = document.getElementById(id);
+            const icon = document.getElementById(`${id}-icon`);
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                icon.innerText = '▲';
+            } else {
+                el.classList.add('hidden');
+                icon.innerText = '▼';
+            }
+        }
+
+        function buyTariff() {
+            showToast(currentLang === 'ru' ? 'Покупка временно недоступна!' : 'Purchases are temporarily disabled!', 'danger');
+        }
+
+        // ДИНАМИЧЕСКИЙ ГРАФИК
+        let salesData = [320, 410, 580, 720, 890, 1150, 1482];
+        
+        function renderChart() {
+            const canvas = document.getElementById('salesChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = canvas.parentElement.clientWidth - 48;
+            canvas.height = 110;
+
+            const width = canvas.width;
+            const height = canvas.height;
+            const maxVal = Math.max(...salesData) * 1.2;
+
+            ctx.clearRect(0, 0, width, height);
+
+            const gradient = ctx.createLinearGradient(0, 0, 0, height);
+            gradient.addColorStop(0, 'rgba(255, 51, 51, 0.35)');
+            gradient.addColorStop(1, 'rgba(255, 51, 51, 0.0)');
+
+            ctx.beginPath();
+            const stepX = width / (salesData.length - 1);
+
+            salesData.forEach((val, i) => {
+                const x = i * stepX;
+                const y = height - (val / maxVal) * height;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+
+            ctx.strokeStyle = '#ff3333';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            ctx.lineTo(width, height);
+            ctx.lineTo(0, height);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            salesData.forEach((val, i) => {
+                const x = i * stepX;
+                const y = height - (val / maxVal) * height;
+                ctx.beginPath();
+                ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+                ctx.strokeStyle = '#ff3333';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+        }
+
+        // БАЗА ДАННЫХ И КАБИНЕТ
+        let isRegister = false;
+        let DB = { users: [], keys: [] };
+
+        async function fetchDB() {
+            const localData = localStorage.getItem('apex_db');
+            if (localData) {
+                try { DB = JSON.parse(localData); } catch(e){}
+            }
+            if (!DB.users) DB.users = [];
+            if (!DB.keys) DB.keys = [];
+
+            try {
+                const res = await fetch('https://api.myjson.online/v1/records/4eb9d84e-399a-4c91-a5bf-ef0e1cfbc39b');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.data && Array.isArray(data.data.users)) {
+                        data.data.users.forEach(ru => {
+                            if (!DB.users.some(lu => lu.username.trim().toLowerCase() === ru.username.trim().toLowerCase())) {
+                                DB.users.push(ru);
+                            }
+                        });
+                        if (data.data.keys) DB.keys = data.data.keys;
+                    }
+                }
+            } catch (e) {}
+            localStorage.setItem('apex_db', JSON.stringify(DB));
+        }
+
+        async function saveDB() {
+            localStorage.setItem('apex_db', JSON.stringify(DB));
+            try {
+                await fetch('https://api.myjson.online/v1/records/4eb9d84e-399a-4c91-a5bf-ef0e1cfbc39b', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ data: DB })
+                });
+            } catch (e) {}
+        }
+
+        function showToast(message, type = 'danger') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type === 'success' ? 'success' : ''}`;
+            toast.innerText = message;
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3000);
+        }
+
+        function switchDashTab(tabName, event) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            const target = document.getElementById(`tab-${tabName}`);
+            if (target) target.classList.remove('hidden');
+
+            if (event) event.currentTarget.classList.add('active');
+            if (tabName === 'admin') renderUserTable();
+        }
+
+        function downloadLoader() {
+            const session = localStorage.getItem('apex_session');
+            const user = DB.users.find(u => u.username.trim().toLowerCase() === (session || '').trim().toLowerCase());
+            if (!user || user.sub === 'Закончилась' || user.sub === 'Нет') {
+                showToast('Ошибка: у вас нет активной подписки!', 'danger');
+                return;
+            }
+            showToast('Загрузка Loader.exe началась...', 'success');
+        }
+
+        async function generateKey() {
+            await fetchDB();
+            const duration = document.getElementById('genDuration').value;
+            const uses = parseInt(document.getElementById('genUses').value) || 1;
+            const randomCode = 'APEX-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+            
+            DB.keys.push({ code: randomCode, duration: duration, usesLeft: uses });
+            await saveDB();
+            document.getElementById('generatedKeyResult').value = randomCode;
+            showToast(`Ключ создан на ${duration}`, 'success');
+        }
+
+        async function activateKey() {
+            await fetchDB();
+            const keyVal = document.getElementById('keyInput').value.trim();
+            if (!keyVal) return showToast('Введите ключ!');
+
+            const keyIndex = DB.keys.findIndex(k => k.code.trim().toUpperCase() === keyVal.toUpperCase());
+            if (keyIndex === -1) return showToast('Неверный ключ!');
+
+            const keyObj = DB.keys[keyIndex];
+            const session = localStorage.getItem('apex_session');
+            let user = DB.users.find(u => u.username.trim().toLowerCase() === session.trim().toLowerCase());
+
+            if (user) {
+                user.sub = keyObj.duration;
+                keyObj.usesLeft -= 1;
+                if (keyObj.usesLeft <= 0) DB.keys.splice(keyIndex, 1);
+                
+                salesData[salesData.length - 1] += 1;
+                document.getElementById('salesCount').innerText = `${salesData[salesData.length - 1]} users`;
+
+                await saveDB();
+                document.getElementById('keyInput').value = '';
+                await renderCabinet();
+                showToast(`Подписка "${keyObj.duration}" активирована!`, 'success');
+            }
+        }
+
+        async function renderUserTable() {
+            await fetchDB();
+            const tbody = document.getElementById('userTableBody');
+            const searchQuery = document.getElementById('userSearch').value.trim().toLowerCase();
+            tbody.innerHTML = '';
+
+            const filtered = DB.users.filter(u => u.username.toLowerCase().includes(searchQuery));
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="color: #666; text-align: center;">Пусто</td></tr>';
                 return;
             }
 
-            statusBox.style.display = 'block';
-            statusBox.innerText = 'Поиск...';
+            filtered.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><b>${u.username}</b></td>
+                    <td>${u.role}</td>
+                    <td>${u.sub || 'Нет'}</td>
+                    <td><span style="color: ${u.hwid === 'Сброшен' ? '#ff3333' : '#00ff66'}">${u.hwid || 'OK'}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
 
-            try {
-                const response = await fetch('/api/search', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: nickname })
-                });
+        function switchAuth(reg) {
+            isRegister = reg;
+            document.getElementById('tabLogin').classList.toggle('active', !reg);
+            document.getElementById('tabRegister').classList.toggle('active', reg);
+            document.getElementById('submitBtn').innerText = reg ? i18n[currentLang].btn_submit_reg : i18n[currentLang].btn_submit_login;
+        }
 
-                const data = await response.json();
+        document.getElementById('authForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await fetchDB();
 
-                if (data.success) {
-                    statusBox.style.color = '#22c55e';
-                    statusBox.innerText = `[SUCCESS] Пользователь ${data.user.username} найден в базе ApexClient.`;
-                } else {
-                    statusBox.style.color = '#ef4444';
-                    statusBox.innerText = `[ERROR] ${data.message}`;
-                }
-            } catch (err) {
-                statusBox.style.color = '#ef4444';
-                statusBox.innerText = '[ERROR] Ошибка подключения к серверу.';
+            const u = document.getElementById('usernameInput').value.trim();
+            const p = document.getElementById('passwordInput').value.trim();
+
+            let user = DB.users.find(x => x.username.trim().toLowerCase() === u.toLowerCase());
+
+            if (isRegister) {
+                if (user) return showToast('Ник занят!', 'danger');
+                user = {
+                    username: u, password: p,
+                    role: (u.toLowerCase() === 'invisik') ? 'OWNER' : 'USER',
+                    sub: (u.toLowerCase() === 'invisik') ? 'Навсегда' : 'Закончилась',
+                    hwid: 'Зафиксирован'
+                };
+                DB.users.push(user);
+                await saveDB();
+                localStorage.setItem('apex_session', user.username);
+                await renderCabinet();
+                showToast('Успешная регистрация!', 'success');
+            } else {
+                if (!user || user.password !== p) return showToast('Неверные данные!', 'danger');
+                localStorage.setItem('apex_session', user.username);
+                await renderCabinet();
+                showToast(`С возвращением, ${user.username}!`, 'success');
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('apex_session');
+            renderCabinet();
+            showToast('Вы вышли из аккаунта');
+        }
+
+        async function renderCabinet() {
+            await fetchDB();
+            const session = localStorage.getItem('apex_session');
+            const authScreen = document.getElementById('authScreen');
+            const dashScreen = document.getElementById('dashScreen');
+
+            if (session) {
+                authScreen.classList.add('hidden');
+                dashScreen.classList.remove('hidden');
+
+                let user = DB.users.find(x => x.username.trim().toLowerCase() === session.trim().toLowerCase()) || {
+                    username: session, role: 'USER', sub: 'Закончилась', hwid: 'Зафиксирован'
+                };
+
+                const initial = user.username.charAt(0).toUpperCase();
+                document.getElementById('sideAvatar').innerText = initial;
+                document.getElementById('mainAvatar').innerText = initial;
+                document.getElementById('sideUname').innerText = user.username;
+                document.getElementById('mainUname').innerText = user.username;
+                document.getElementById('sideUrole').innerText = user.role;
+
+                const isSubActive = user.sub && user.sub !== 'Закончилась' && user.sub !== 'Нет';
+                const subElem = document.getElementById('subStatus');
+                subElem.innerText = isSubActive ? `Active (${user.sub})` : 'Expired / Inactive';
+                subElem.style.color = isSubActive ? '#00ff66' : '#ff3333';
+
+                document.getElementById('adminNav').style.display = (user.role === 'OWNER' || user.role === 'ADMIN') ? 'flex' : 'none';
+            } else {
+                authScreen.classList.remove('hidden');
+                dashScreen.classList.add('hidden');
             }
         }
 
-        function generateKey() {
-            const statusBox = document.getElementById('statusBox');
-            const key = "APEX-" + Math.random().toString(36).substring(2, 10).toUpperCase();
-            statusBox.style.display = 'block';
-            statusBox.style.color = '#f87171';
-            statusBox.innerText = `Сгенерирован ключ: ${key}`;
-        }
-    </script>
+        window.addEventListener('DOMContentLoaded', () => {
+            renderCabinet();
+            renderChart();
+        });
 
+        window.addEventListener('resize', renderChart);
+    </script>
 </body>
 </html>
