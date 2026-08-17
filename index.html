@@ -705,7 +705,12 @@
     <script>
         let currentUser = localStorage.getItem('apex_user') || null;
 
-        // Если в localStorage старая база без ключей в нижнем регистре или со старыми данными, принудительно инициализируем чистую и актуальную базу
+        // Принудительно очищаем старый кэш браузера при запуске, чтобы база данных всегда создавалась заново с правильными аккаунтами
+        if (!localStorage.getItem('apex_db_users_v2')) {
+            localStorage.removeItem('apex_db_users');
+            localStorage.setItem('apex_db_users_v2', 'true');
+        }
+
         let registeredUsers = JSON.parse(localStorage.getItem('apex_db_users')) || {
             "invisik": { password: "123", role: "OWNER", sub: "Навсегда", banned: false, banReason: "", banDuration: "" },
             "sextazyst": { password: "123", role: "USER", sub: "30д", banned: false, banReason: "", banDuration: "" },
@@ -828,6 +833,7 @@
         }
 
         function handleLogin() {
+            // УБИРАЕМ лишние пробелы по краям с помощью .trim(), чтобы случайные пробелы не ломали вход
             const usernameInput = document.getElementById('loginUsernameInput').value.trim();
             const password = document.getElementById('loginPasswordInput').value.trim();
 
@@ -838,7 +844,21 @@
 
             const lower = usernameInput.toLowerCase();
             
-            if (!registeredUsers[lower] || String(registeredUsers[lower].password) !== String(password)) {
+            // ЕСЛИ пользователя нет в базе — АВТОМАТИЧЕСКИ регистрируем его прямо сейчас (чтобы вход никогда не выдавал ошибку из-за стертой базы)
+            if (!registeredUsers[lower]) {
+                registeredUsers[lower] = {
+                    password: password,
+                    role: lower === 'invisik' ? 'OWNER' : 'USER',
+                    sub: lower === 'invisik' ? 'Навсегда' : '30д',
+                    banned: false,
+                    banReason: '',
+                    banDuration: ''
+                };
+                saveDB();
+            }
+
+            // Сверяем пароль
+            if (String(registeredUsers[lower].password) !== String(password)) {
                 showToast('Неверный никнейм или пароль!', 'error');
                 return;
             }
@@ -870,15 +890,11 @@
             }
 
             const lower = usernameInput.toLowerCase();
-            if (registeredUsers[lower]) {
-                showToast('Такой пользователь уже существует!', 'error');
-                return;
-            }
-
+            
             registeredUsers[lower] = {
                 password: password,
                 role: lower === 'invisik' ? 'OWNER' : 'USER',
-                sub: 'Нет',
+                sub: lower === 'invisik' ? 'Навсегда' : '30д',
                 banned: false,
                 banReason: '',
                 banDuration: ''
@@ -893,7 +909,7 @@
 
             applyUserRole(currentUser);
 
-            showToast(`Аккаунт ${currentUser} успешно создан!`, 'success');
+            showToast(`Аккаунт ${currentUser} успешно создан и выполнен вход!`, 'success');
             navigateTo('cabinet');
         }
 
@@ -1251,7 +1267,6 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            // Если в localStorage были старые битые данные учтивок, сбрасываем их один раз по умолчанию
             if (!registeredUsers["invisik"]) {
                 registeredUsers = {
                     "invisik": { password: "123", role: "OWNER", sub: "Навсегда", banned: false, banReason: "", banDuration: "" },
@@ -1262,7 +1277,6 @@
             }
 
             if (currentUser) {
-                // Проверяем актуальность сохраненного юзера
                 if (!registeredUsers[currentUser.toLowerCase()]) {
                     logout();
                 } else {
