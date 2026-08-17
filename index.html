@@ -218,8 +218,6 @@
         .btn-buy.blue:hover { background: #0077e6; }
 
         /* FAQ */
-        .faq-section-title { text-align: center; font-size: 28px; font-weight: 900; margin-bottom: 10px; color: #fff; }
-        .faq-divider { width: 50px; height: 4px; background: var(--accent-red); margin: 0 auto 36px; border-radius: 2px; }
         .faq-card {
             background: var(--bg-card); border: 1px solid var(--border-color);
             border-radius: 18px; margin-bottom: 14px; overflow: hidden; transition: 0.3s;
@@ -645,37 +643,99 @@
                             <div class="urole">USER</div>
                         </div>
                     </div>
+                    <!-- Полное боковое меню закладок -->
                     <ul class="nav-menu">
-                        <li class="nav-item active">📦 <span class="i18n" data-ru="Подписка" data-en="Subscription">Подписка</span></li>
+                        <li class="nav-item active" id="tab-btn-sub" onclick="switchCabinetTab('sub')">
+                            📦 <span class="i18n" data-ru="Подписка" data-en="Subscription">Подписка</span>
+                        </li>
+                        <li class="nav-item" id="tab-btn-hwid" onclick="switchCabinetTab('hwid')">
+                            💻 <span class="i18n" data-ru="Сброс HWID" data-en="Reset HWID">Сброс HWID</span>
+                        </li>
+                        <li class="nav-item" id="tab-btn-key" onclick="switchCabinetTab('key')">
+                            🔑 <span class="i18n" data-ru="Активация ключа" data-en="Activate Key">Активация ключа</span>
+                        </li>
+                        <li class="nav-item" id="tab-btn-download" onclick="switchCabinetTab('download')">
+                            ⬇️ <span class="i18n" data-ru="Загрузки" data-en="Downloads">Загрузки</span>
+                        </li>
+                        <li class="nav-item" id="tab-btn-settings" onclick="switchCabinetTab('settings')">
+                            ⚙️ <span class="i18n" data-ru="Настройки" data-en="Settings">Настройки</span>
+                        </li>
                     </ul>
                 </div>
                 <button class="btn-logout i18n" data-ru="Выйти из аккаунта" data-en="Logout" onclick="logoutUser()">Выйти из аккаунта</button>
             </div>
 
             <div class="content">
-                <div class="card">
-                    <div class="card-header i18n" data-ru="Текущий статус" data-en="Current Status">Текущий статус</div>
-                    <div class="sub-title i18n" data-ru="Активна (Lifetime)" data-en="Active (Lifetime)">Активна (Lifetime)</div>
-                    <div class="sub-desc i18n" data-ru="Доступ ко всем функциям и обновлениям открыт." data-en="Access to all features and updates is unlocked.">Доступ ко всем функциям и обновлениям открыт.</div>
-                    
-                    <div class="grid-info">
-                        <div class="info-item">
-                            <label>HWID Status</label>
-                            <val style="color: var(--accent-green);">Bound</val>
-                        </div>
-                        <div class="info-item">
-                            <label>Version</label>
-                            <val>1.21.4 Fabric</val>
+                <!-- Вкладка: Подписка -->
+                <div id="tab-content-sub" class="cab-tab-content">
+                    <div class="card">
+                        <div class="card-header i18n" data-ru="Текущий статус" data-en="Current Status">Текущий статус</div>
+                        <div class="sub-title i18n" data-ru="Активна (Lifetime)" data-en="Active (Lifetime)">Активна (Lifetime)</div>
+                        <div class="sub-desc i18n" data-ru="Доступ ко всем функциям и обновлениям открыт." data-en="Access to all features and updates is unlocked.">Доступ ко всем функциям и обновлениям открыт.</div>
+                        
+                        <div class="grid-info">
+                            <div class="info-item">
+                                <label>HWID Status</label>
+                                <val style="color: var(--accent-green);">Bound</val>
+                            </div>
+                            <div class="info-item">
+                                <label>Version</label>
+                                <val>1.21.4 Fabric</val>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-header i18n" data-ru="Загрузки" data-en="Downloads">Загрузки</div>
-                    <button class="action-btn green" onclick="showToast('Загрузка лаунчера началась...', 'success')">
-                        ⬇ <span class="i18n" data-ru="Скачать Лаунчер (.exe)" data-en="Download Launcher (.exe)">Скачать Лаунчер (.exe)</span>
-                    </button>
+                <!-- Вкладка: Сброс HWID -->
+                <div id="tab-content-hwid" class="cab-tab-content hidden">
+                    <div class="card">
+                        <div class="card-header i18n" data-ru="Управление привязкой ПК" data-en="HWID Binding Management">Управление привязкой ПК</div>
+                        <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 16px;" class="i18n" data-ru="Если вы сменили комплектующие или ПК, запросите сброс аппаратного идентификатора." data-en="If you changed PC hardware, request a HWID reset.">Если вы сменили комплектующие или ПК, запросите сброс аппаратного идентификатора.</p>
+                        <button class="action-btn blue" onclick="resetHWID()">
+                            🔄 <span class="i18n" data-ru="Отправить запрос на сброс" data-en="Send Reset Request">Отправить запрос на сброс</span>
+                        </button>
+                    </div>
                 </div>
+
+                <!-- Вкладка: Активация ключа -->
+                <div id="tab-content-key" class="cab-tab-content hidden">
+                    <div class="card">
+                        <div class="card-header i18n" data-ru="Активировать лицензионный ключ" data-en="Activate License Key">Активировать лицензионный ключ</div>
+                        <div class="form-group" style="max-width: 360px;">
+                            <label class="i18n" data-ru="Введите ключ доступа" data-en="Enter Key">Введите ключ доступа</label>
+                            <input type="text" class="form-input" id="key-input" placeholder="APEX-XXXX-XXXX-XXXX">
+                        </div>
+                        <button class="action-btn green" onclick="activateKey()">
+                            ✨ <span class="i18n" data-ru="Активировать" data-en="Activate">Активировать</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Вкладка: Загрузки -->
+                <div id="tab-content-download" class="cab-tab-content hidden">
+                    <div class="card">
+                        <div class="card-header i18n" data-ru="Загрузки" data-en="Downloads">Загрузки</div>
+                        <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 16px;" class="i18n" data-ru="Скачайте актуальный лаунчер для вашей системы." data-en="Download the latest launcher for your OS.">Скачайте актуальный лаунчер для вашей системы.</p>
+                        <button class="action-btn green" onclick="showToast('Загрузка лаунчера началась...', 'success')">
+                            ⬇ <span class="i18n" data-ru="Скачать Лаунчер (.exe)" data-en="Download Launcher (.exe)">Скачать Лаунчер (.exe)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Вкладка: Настройки -->
+                <div id="tab-content-settings" class="cab-tab-content hidden">
+                    <div class="card">
+                        <div class="card-header i18n" data-ru="Безопасность" data-en="Security">Безопасность</div>
+                        <div class="form-group" style="max-width: 360px;">
+                            <label class="i18n" data-ru="Новый пароль" data-en="New Password">Новый пароль</label>
+                            <input type="password" class="form-input" id="new-pass" placeholder="••••••••">
+                        </div>
+                        <button class="action-btn red" onclick="changePass()">
+                            💾 <span class="i18n" data-ru="Сохранить изменения" data-en="Save Changes">Сохранить изменения</span>
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -709,6 +769,17 @@
             if (activeNav) activeNav.classList.add('active');
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function switchCabinetTab(tabId) {
+            document.querySelectorAll('.cab-tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-menu .nav-item').forEach(el => el.classList.remove('active'));
+
+            const targetContent = document.getElementById(`tab-content-${tabId}`);
+            if (targetContent) targetContent.classList.remove('hidden');
+
+            const targetBtn = document.getElementById(`tab-btn-${tabId}`);
+            if (targetBtn) targetBtn.classList.add('active');
         }
 
         function setLanguage(lang) {
@@ -760,6 +831,26 @@
 
         function resetHWID() {
             showToast(currentLang === 'ru' ? 'Запрос на сброс HWID отправлен' : 'HWID reset requested', 'success');
+        }
+
+        function activateKey() {
+            const val = document.getElementById('key-input').value.trim();
+            if(!val) {
+                showToast(currentLang === 'ru' ? 'Введите ключ!' : 'Enter key!', 'error');
+                return;
+            }
+            showToast(currentLang === 'ru' ? 'Ключ успешно активирован!' : 'Key activated!', 'success');
+            document.getElementById('key-input').value = '';
+        }
+
+        function changePass() {
+            const val = document.getElementById('new-pass').value.trim();
+            if(!val) {
+                showToast(currentLang === 'ru' ? 'Введите новый пароль!' : 'Enter new password!', 'error');
+                return;
+            }
+            showToast(currentLang === 'ru' ? 'Пароль изменен!' : 'Password changed!', 'success');
+            document.getElementById('new-pass').value = '';
         }
 
         function makePreorder(plan) {
