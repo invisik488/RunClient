@@ -336,7 +336,6 @@
                     <li><a class="nav-link" id="nav-tariffs" onclick="navigateTo('tariffs')">Тарифы</a></li>
                     <li><a class="nav-link" id="nav-reviews" onclick="navigateTo('reviews')">Отзывы</a></li>
                     <li><a class="nav-link" id="nav-help" onclick="navigateTo('help')">Помощь</a></li>
-                    <li><a class="nav-link" id="nav-ask" onclick="navigateTo('ask')">Задать вопрос</a></li>
                 </ul>
             </div>
             
@@ -386,49 +385,18 @@
             </div>
         </div>
 
-        <div class="promo-banner">
-            <h2>🎨 Красивый визуал, который точно дополнит вашу игру!</h2>
-            <p>Превратите игру в эстетическое удовольствие с гибко настраиваемыми модулями внешней кастомизации:</p>
-            <div class="tags-grid">
-                <div class="tag-item">SkyShader</div>
-                <div class="tag-item">Custom Hand</div>
-                <div class="tag-item">3D Wings</div>
-                <div class="tag-item">Swemming Animation</div>
-                <div class="tag-item">Кастомный ClickGUI & HUD</div>
-                <div class="tag-item">И много другого!</div>
-            </div>
-        </div>
-
-        <div class="promo-banner">
-            <h2>⚔️ Мощный PvP и PvE функционал</h2>
-            <p>В клиенте присутствуют передовые алгоритмы для превосходства над любым соперником. Будьте всегда на шаг впереди в любой битве:</p>
-            <div class="tags-grid">
-                <div class="tag-item">KillAura</div>
-                <div class="tag-item">TriggerBot</div>
-                <div class="tag-item">AirStuck</div>
-                <div class="tag-item">AutoSwap</div>
-                <div class="tag-item">TargetStrafe</div>
-                <div class="tag-item">И многое другое!</div>
-            </div>
-        </div>
-
         <div class="servers-section">
             <div class="servers-title">Поддержка популярных проектов</div>
             <div class="servers-subtitle">Полная адаптация и обходы под самые жесткие античиты</div>
 
             <div class="servers-grid">
                 <div class="server-card animated-server">
-                    <img src="funTime.webp" alt="FunTime" class="server-avatar" onerror="this.src='https://via.placeholder.com/44'">
                     <div class="server-name">FunTime</div>
                 </div>
-
                 <div class="server-card animated-server">
-                    <img src="spookyTime.webp" alt="SpookyTime" class="server-avatar" onerror="this.src='https://via.placeholder.com/44'">
                     <div class="server-name">SpookyTime</div>
                 </div>
-
                 <div class="server-card">
-                    <img src="image_bae6a1.png" alt="ReallyWorld" class="server-avatar" onerror="this.src='https://via.placeholder.com/44'">
                     <div class="server-name">ReallyWorld</div>
                 </div>
             </div>
@@ -475,42 +443,6 @@
                 </div>
                 <button class="btn-buy" onclick="buyTariff('Навсегда')">Приобрести</button>
             </div>
-
-            <div class="tariff-card special">
-                <div class="tariff-badge blue">УСЛУГА</div>
-                <div>
-                    <div class="tariff-name">Сброс HWID</div>
-                    <div class="tariff-price">49 <span>₽</span></div>
-                </div>
-                <button class="btn-buy blue" onclick="resetHWID()">Сбросить</button>
-            </div>
-
-            <div class="tariff-card special">
-                <div class="tariff-badge blue">PRE-ORDER</div>
-                <div>
-                    <div class="tariff-name">Предзаказ (1 Месяц)</div>
-                    <div class="tariff-price">149 <span>₽</span></div>
-                </div>
-                <button class="btn-buy blue" onclick="makePreorder('1 Месяц (149 ₽)')">Оформить</button>
-            </div>
-
-            <div class="tariff-card special">
-                <div class="tariff-badge blue">PRE-ORDER</div>
-                <div>
-                    <div class="tariff-name">Предзаказ (3 Месяца)</div>
-                    <div class="tariff-price">239 <span>₽</span></div>
-                </div>
-                <button class="btn-buy blue" onclick="makePreorder('3 Месяца (239 ₽)')">Оформить</button>
-            </div>
-
-            <div class="tariff-card special">
-                <div class="tariff-badge blue">PRE-ORDER</div>
-                <div>
-                    <div class="tariff-name">Предзаказ (Навсегда)</div>
-                    <div class="tariff-price">449 <span>₽</span></div>
-                </div>
-                <button class="btn-buy blue" onclick="makePreorder('Навсегда (449 ₽)')">Оформить</button>
-            </div>
         </div>
     </div>
 
@@ -521,38 +453,11 @@
             <p>Мнения наших клиентов о качестве ApexClient и его обходах.</p>
         </div>
 
-        <div class="promo-banner" style="max-width: 650px; margin: 0 auto 30px;">
-            <h2>Оставить отзыв</h2>
-            <p>Только пользователи с активной подпиской могут публиковать отзывы.</p>
-            
-            <div class="form-group">
-                <label>Ваша оценка</label>
-                <div class="star-rating" id="starRating">
-                    <span class="star active" onclick="setRating(1)">★</span>
-                    <span class="star active" onclick="setRating(2)">★</span>
-                    <span class="star active" onclick="setRating(3)">★</span>
-                    <span class="star active" onclick="setRating(4)">★</span>
-                    <span class="star active" onclick="setRating(5)">★</span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Ваш отзыв</label>
-                <textarea id="reviewTextInput" class="form-textarea" placeholder="Напишите впечатление от использования..."></textarea>
-            </div>
-            <button class="action-btn" style="width:100%;" onclick="submitReview()">Опубликовать отзыв</button>
-        </div>
-
         <div class="reviews-grid" id="reviewsContainer">
             <div class="review-card">
                 <div class="review-author"><span>DarkKnight</span> <span>5/5</span></div>
                 <div class="review-stars">★★★★★</div>
                 <div class="review-text">Софт огонь! Обходы на FunTime работают стабильно, ФПС не проседает вообще.</div>
-            </div>
-            <div class="review-card">
-                <div class="review-author"><span>PvP_King</span> <span>5/5</span></div>
-                <div class="review-stars">★★★★★</div>
-                <div class="review-text">Визуалы очень сочные, киллаура бьет плавно. Лучший клиент за свои деньги!</div>
             </div>
         </div>
     </div>
@@ -572,233 +477,56 @@
                 </ol>
             </div>
         </div>
-
-        <div class="faq-card">
-            <div class="faq-header" onclick="toggleFaq(this)">Что делать, если привязан другой HWID? <span>▼</span></div>
-            <div class="faq-body">
-                <p>Вы можете запросить сброс HWID в вашем личном кабинете или приобрести услугу мгновенного сброса на странице тарифов.</p>
-            </div>
-        </div>
     </div>
 
-    <!-- ЗАДАТЬ ВОПРОС -->
-    <div id="page-ask" class="page-section hidden">
-        <div class="auth-wrapper">
-            <div class="auth-card" style="max-width: 500px;">
-                <div class="auth-title">Служба <span>поддержки</span></div>
-                <div class="auth-subtitle">Задайте любой вопрос или сообщите о проблеме</div>
-                <div class="form-group">
-                    <label>Ваш никнейм</label>
-                    <input type="text" id="askUser" class="form-input" placeholder="Введите ваш ник">
-                </div>
-                <div class="form-group">
-                    <label>Тема обращения</label>
-                    <input type="text" id="askSubject" class="form-input" placeholder="Пример: Проблема с HWID">
-                </div>
-                <div class="form-group">
-                    <label>Сообщение</label>
-                    <textarea id="askText" class="form-textarea" placeholder="Опишите вашу проблему максимально подробно..."></textarea>
-                </div>
-                <button class="btn-submit" onclick="sendSupportQuestion()">Отправить запрос</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- КАБИНЕТ / АВТОРИЗАЦИЯ -->
+    <!-- КАБИНЕТ -->
     <div id="page-cabinet" class="page-section hidden">
-        <!-- Окно входа / регистрации -->
-        <div id="authSection" class="auth-wrapper">
-            <div class="auth-card">
-                <div class="auth-title">Apex<span>Client</span></div>
-                <div class="auth-subtitle">Войдите в систему для доступа к личному кабинету</div>
-                <div class="tabs">
-                    <button class="tab-btn active" id="tabLoginBtn" onclick="switchAuthTab('login')">Вход</button>
-                    <button class="tab-btn" id="tabRegBtn" onclick="switchAuthTab('register')">Регистрация</button>
-                </div>
-                <form id="authForm" onsubmit="handleAuthSubmit(event)">
-                    <div class="form-group">
-                        <label>Никнейм</label>
-                        <input type="text" id="authUsername" class="form-input" required placeholder="Введите ваш ник">
-                    </div>
-                    <div class="form-group">
-                        <label>Пароль</label>
-                        <input type="password" id="authPassword" class="form-input" required placeholder="••••••••">
-                    </div>
-                    <button type="submit" class="btn-submit" id="authSubmitBtn">Войти в аккаунт</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Панель личного кабинета -->
-        <div id="dashSection" class="dash-container hidden">
+        <div class="dash-container">
             <div class="sidebar">
                 <div>
                     <div class="user-card-side">
-                        <div class="avatar" id="dashAvatar">U</div>
+                        <div class="avatar">A</div>
                         <div class="user-details">
-                            <div class="uname" id="dashUsername">User</div>
-                            <div class="urole" id="dashRole">OWNER</div>
+                            <div class="uname" id="sidebarUsername">User</div>
+                            <div class="urole">CLIENT</div>
                         </div>
                     </div>
-                    
-                    <!-- ВСЕ ВЫПРАВЛЕННЫЕ И ВОЗВРАЩЕННЫЕ ВКЛАДКИ СИДЕБАРА -->
                     <ul class="nav-menu">
-                        <li class="nav-item active" onclick="switchDashTab('main', this)">📌 Главная</li>
-                        <li class="nav-item" onclick="switchDashTab('preorder', this)">🎁 Мой предзаказ</li>
-                        <li class="nav-item" onclick="switchDashTab('downloads', this)">📥 Загрузки</li>
-                        <li class="nav-item" onclick="switchDashTab('key', this)">🔑 Активация ключа</li>
-                        <li class="nav-item" onclick="switchDashTab('admin', this)">👑 Админ панель</li>
-                        <li class="nav-item" onclick="switchDashTab('moderation', this)">🛡️ Модерация</li>
+                        <li class="nav-item active" onclick="switchCabinetTab('sub', this)">🔑 Подписка</li>
+                        <li class="nav-item" onclick="switchCabinetTab('settings', this)">⚙️ Настройки</li>
                     </ul>
                 </div>
-                <button class="btn-logout" onclick="logout()">Выйти</button>
+                <button class="btn-logout" onclick="navigateTo('home')">Выйти</button>
             </div>
-
             <div class="content">
-                <!-- ВКЛАДКА: ГЛАВНАЯ -->
-                <div id="dashTab-main">
+                <div id="cab-sub" class="cab-tab-content">
                     <div class="card">
                         <div class="card-header">Статус подписки</div>
-                        <div class="sub-title" id="subStatus">Активна (Навсегда)</div>
-                        <div class="sub-desc">У вас есть полный доступ ко всем функциям и обновлениям ApexClient.</div>
-                        <div class="grid-info">
-                            <div class="info-item">
-                                <label>Привязанный HWID</label>
-                                <val id="hwidVal">REGISTERED</val>
-                            </div>
-                            <div class="info-item">
-                                <label>Версия клиента</label>
-                                <val>v1.2.4 Fabric</val>
-                            </div>
-                        </div>
+                        <div class="sub-title" id="subStatusText">АКТИВНА</div>
+                        <div class="sub-desc" id="subDateText">Доступ к Fabric 1.21.4 открыт</div>
                     </div>
                 </div>
-
-                <!-- ВКЛАДКА: МОЙ ПРЕДЗАКАЗ -->
-                <div id="dashTab-preorder" class="hidden">
+                <div id="cab-settings" class="cab-tab-content hidden">
                     <div class="card">
-                        <div class="card-header">Мои предзаказы</div>
-                        <p class="sub-desc" style="margin-bottom: 14px;">Здесь отображается текущий статус вашего предзаказа перед официальным релизом версии.</p>
-                        <div class="list-box">
-                            <div class="list-box-header">
-                                <span>Предзаказ: ApexClient Forever</span>
-                                <span class="badge done">АКТИВЕН</span>
-                            </div>
-                            <div style="color: var(--text-sub); font-size: 12px;">Вы получите ранний доступ к следующей версии Fabric 1.21.4 в первой волне.</div>
-                        </div>
+                        <div class="card-header">Управление HWID</div>
+                        <p class="sub-desc" style="margin-bottom: 12px;">Сброс привязки оборудования к аккаунту.</p>
+                        <button class="action-btn" onclick="resetHWID()">Сбросить HWID</button>
                     </div>
                 </div>
-
-                <!-- ВКЛАДКА: ЗАГРУЗКИ -->
-                <div id="dashTab-downloads" class="hidden">
-                    <div class="card">
-                        <div class="card-header">Скачать лаунчер</div>
-                        <p class="sub-desc" style="margin-bottom: 14px;">Загрузите официальный лаунчер для автоматической установки и запуска клиента.</p>
-                        <button class="action-btn green" onclick="showToast('Загрузка лаунчера началась...', 'success')">💻 Скачать для Windows (.exe)</button>
-                    </div>
-                </div>
-
-                <!-- ВКЛАДКА: АКТИВАЦИЯ КЛЮЧА -->
-                <div id="dashTab-key" class="hidden">
-                    <div class="card">
-                        <div class="card-header">Активировать лицензионный ключ</div>
-                        <div class="form-group">
-                            <input type="text" id="licenseKeyInput" class="form-input" placeholder="APEX-XXXX-XXXX-XXXX">
-                        </div>
-                        <button class="action-btn red" onclick="activateKey()">Активировать</button>
-                    </div>
-                </div>
-
-                <!-- ВКЛАДКА: АДМИН ПАНЕЛЬ -->
-                <div id="dashTab-admin" class="hidden">
-                    <div class="card">
-                        <div class="card-header">Панель Администратора</div>
-                        <p class="sub-desc" style="margin-bottom: 14px;">Управление пользователями, подписками и генерацией ключей.</p>
-                        
-                        <div class="admin-form-grid">
-                            <div class="form-group">
-                                <label>Ник пользователя</label>
-                                <input type="text" id="adminUserTarget" class="form-input" placeholder="UserNickname">
-                            </div>
-                            <div class="form-group">
-                                <label>Срок подписки</label>
-                                <select id="adminSubTime" class="form-select">
-                                    <option value="7">7 Дней</option>
-                                    <option value="30">30 Дней</option>
-                                    <option value="90">90 Дней</option>
-                                    <option value="3650">Навсегда</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div style="display:flex; gap:10px;">
-                            <button class="action-btn green" onclick="adminGrantSub()">Выдать подписку</button>
-                            <button class="action-btn blue" onclick="adminResetHwid()">Сбросить HWID</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ВКЛАДКА: МОДЕРАЦИЯ -->
-                <div id="dashTab-moderation" class="hidden">
-                    <div class="card">
-                        <div class="card-header">Центр Модерации & Вопросов</div>
-                        <p class="sub-desc" style="margin-bottom: 14px;">Ответы на вопросы и тикеты от пользователей сайта.</p>
-                        
-                        <div id="moderationTicketList">
-                            <div class="list-box">
-                                <div class="list-box-header">
-                                    <span>Тикет #1024 от PvP_Master</span>
-                                    <span class="badge pending">ОЖИДАЕТ ОТВЕТА</span>
-                                </div>
-                                <div style="color: #fff; margin-bottom: 10px;">Вопрос: "Не могу зайти на FunTime, пишет HWID Mismatch"</div>
-                                <div class="form-group">
-                                    <input type="text" class="form-input" placeholder="Напишите ответ..." style="margin-bottom: 8px;">
-                                    <button class="action-btn blue" onclick="replyTicket(this)">Отправить ответ</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
     </div>
 
-    <!-- JS LOGIC -->
     <script>
-        let currentAuthMode = 'login';
-        let currentUser = null;
-        let selectedRating = 5;
-
-        function showToast(msg, type = 'info') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = `<span>${type === 'success' ? '✓' : 'ℹ'}</span> <span>${msg}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(100%)';
-                toast.style.transition = '0.3s ease';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
         function navigateTo(pageId) {
-            document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
-            const targetPage = document.getElementById(`page-${pageId}`);
-            if (targetPage) targetPage.classList.remove('hidden');
+            document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
+            const target = document.getElementById('page-' + pageId);
+            if (target) target.classList.remove('hidden');
 
-            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-            const activeNav = document.getElementById(`nav-${pageId}`);
-            if (activeNav) activeNav.classList.add('active');
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function setLanguage(lang) {
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`btn-${lang}`).classList.add('active');
-            showToast(lang === 'ru' ? 'Язык изменен на Русский' : 'Language set to English', 'success');
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+            const nav = document.getElementById('nav-' + pageId);
+            if (nav) nav.classList.add('active');
+            window.scrollTo(0, 0);
         }
 
         function toggleFaq(header) {
@@ -806,139 +534,38 @@
             body.classList.toggle('open');
         }
 
+        function setLanguage(lang) {
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-' + lang).classList.add('active');
+            showToast('Язык изменен на ' + lang.toUpperCase(), 'success');
+        }
+
+        function showToast(text, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            toast.innerHTML = `<span>${type === 'success' ? '✔' : '✖'}</span> ${text}`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
         function buyTariff(tariffName) {
-            showToast(`Выбран тариф: ${tariffName}. Перенаправление на оплату...`, 'success');
+            showToast('Переход к оплате тарифа: ' + tariffName, 'success');
         }
 
         function resetHWID() {
-            showToast('Запрос на сброс HWID отправлен', 'success');
+            showToast('Запрос на сброс HWID отправлен!', 'success');
         }
 
-        function makePreorder(plan) {
-            showToast(`Предзаказ [${plan}] оформлен!`, 'success');
-        }
-
-        function setRating(rating) {
-            selectedRating = rating;
-            const stars = document.querySelectorAll('#starRating .star');
-            stars.forEach((star, idx) => {
-                if (idx < rating) {
-                    star.classList.add('active');
-                } else {
-                    star.classList.remove('active');
-                }
-            });
-        }
-
-        function submitReview() {
-            const text = document.getElementById('reviewTextInput').value.trim();
-            if (!text) {
-                showToast('Введите текст отзыва!', 'error');
-                return;
-            }
-            const container = document.getElementById('reviewsContainer');
-            const card = document.createElement('div');
-            card.className = 'review-card';
-            const user = currentUser ? currentUser : 'Пользователь';
-            card.innerHTML = `
-                <div class="review-author"><span>${user}</span> <span>${selectedRating}/5</span></div>
-                <div class="review-stars">${'★'.repeat(selectedRating)}${'☆'.repeat(5 - selectedRating)}</div>
-                <div class="review-text">${text}</div>
-            `;
-            container.prepend(card);
-            document.getElementById('reviewTextInput').value = '';
-            showToast('Спасибо! Ваш отзыв опубликован.', 'success');
-        }
-
-        function sendSupportQuestion() {
-            const user = document.getElementById('askUser').value.trim();
-            const text = document.getElementById('askText').value.trim();
-            if (!user || !text) {
-                showToast('Заполните обязательные поля!', 'error');
-                return;
-            }
-            showToast('Ваше сообщение отправлено в техническую поддержку!', 'success');
-            document.getElementById('askUser').value = '';
-            document.getElementById('askSubject').value = '';
-            document.getElementById('askText').value = '';
-        }
-
-        function switchAuthTab(mode) {
-            currentAuthMode = mode;
-            document.getElementById('tabLoginBtn').classList.toggle('active', mode === 'login');
-            document.getElementById('tabRegBtn').classList.toggle('active', mode === 'register');
-            document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'Войти в аккаунт' : 'Зарегистрироваться';
-        }
-
-        function handleAuthSubmit(e) {
-            e.preventDefault();
-            const username = document.getElementById('authUsername').value.trim();
-            if (!username) return;
-
-            currentUser = username;
-            document.getElementById('dashUsername').innerText = username;
-            document.getElementById('dashAvatar').innerText = username.charAt(0).toUpperCase();
-
-            document.getElementById('authSection').classList.add('hidden');
-            document.getElementById('dashSection').classList.remove('hidden');
-
-            showToast(currentAuthMode === 'login' ? `С возвращением, ${username}!` : 'Аккаунт успешно создан!', 'success');
-        }
-
-        function logout() {
-            currentUser = null;
-            document.getElementById('dashSection').classList.add('hidden');
-            document.getElementById('authSection').classList.remove('hidden');
-            showToast('Вы вышли из аккаунта');
-        }
-
-        function switchDashTab(tabName, element) {
-            // Прячем все вкладки в контенте
-            const tabs = ['main', 'preorder', 'downloads', 'key', 'admin', 'moderation'];
-            tabs.forEach(t => {
-                const el = document.getElementById(`dashTab-${t}`);
-                if(el) el.classList.add('hidden');
-            });
-            
-            // Показываем нужную
-            const activeTab = document.getElementById(`dashTab-${tabName}`);
-            if(activeTab) activeTab.classList.remove('hidden');
-            
-            // Подсвечиваем пункт в боковом меню
-            document.querySelectorAll('.nav-menu .nav-item').forEach(item => item.classList.remove('active'));
-            if(element) element.classList.add('active');
-        }
-
-        function activateKey() {
-            const key = document.getElementById('licenseKeyInput').value.trim();
-            if (!key) {
-                showToast('Введите ключ активации!', 'error');
-                return;
-            }
-            showToast('Ключ успешно активирован!', 'success');
-            document.getElementById('licenseKeyInput').value = '';
-        }
-
-        /* Админ действия */
-        function adminGrantSub() {
-            const user = document.getElementById('adminUserTarget').value.trim();
-            if(!user) { showToast('Укажите ник!', 'error'); return; }
-            showToast(`Подписка выдана пользователю ${user}!`, 'success');
-        }
-
-        function adminResetHwid() {
-            const user = document.getElementById('adminUserTarget').value.trim();
-            if(!user) { showToast('Укажите ник!', 'error'); return; }
-            showToast(`HWID сброшен для ${user}!`, 'success');
-        }
-
-        /* Модерация действия */
-        function replyTicket(btn) {
-            const box = btn.closest('.list-box');
-            const badge = box.querySelector('.badge');
-            badge.className = 'badge done';
-            badge.innerText = 'ОТВЕЧЕНО';
-            showToast('Ответ отправлен пользователю!', 'success');
+        function switchCabinetTab(tabName, element) {
+            document.querySelectorAll('.cab-tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('cab-' + tabName).classList.remove('hidden');
+            document.querySelectorAll('.sidebar .nav-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
         }
     </script>
 </body>
