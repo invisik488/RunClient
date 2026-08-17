@@ -126,7 +126,6 @@
         .stat-val { font-size: 28px; font-weight: 900; color: #fff; }
         .stat-lbl { font-size: 11px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; }
 
-        /* Вертикальный список особенностей (1 и 2 друг под другом) */
         .features-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 30px; }
         .feature-card { padding: 22px 26px; }
         .feature-card h3 { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 6px; }
@@ -138,8 +137,11 @@
         .servers-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
         .server-card { padding: 16px; font-weight: 800; color: #fff; font-size: 14px; text-align: center; }
 
-        /* Тарифы сетка */
-        .tariffs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-bottom: 20px; }
+        /* Тарифы и Услуги: 2 слоя */
+        .tariffs-container { display: flex; flex-direction: column; gap: 24px; }
+        .tariffs-row-title { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        
+        .tariffs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
         .tariff-card {
             padding: 24px 18px; text-align: center; position: relative;
             display: flex; flex-direction: column; justify-content: space-between;
@@ -273,38 +275,53 @@
         </div>
     </div>
 
-    <!-- Тарифы и Сброс HWID карточками -->
+    <!-- Тарифы и Услуги: 2 слоя -->
     <div id="page-tariffs" class="page-section hidden">
         <div class="hero">
             <h1>Тарифные планы и Услуги</h1>
-            <p>Выберите подходящий срок доступа или воспользуйтесь услугами привязки.</p>
+            <p>Выберите подходящий срок доступа, оформите предзаказ или запросите сброс устройства.</p>
         </div>
-        <!-- Первый ряд: Тарифы -->
-        <div class="tariffs-grid">
-            <div class="tariff-card">
-                <div><div class="tariff-name">7 Дней</div><div class="tariff-price">69 <span>₽</span></div></div>
-                <button class="btn-buy" onclick="buyTariff('7 дней (69 ₽)')">Купить</button>
+        
+        <div class="tariffs-container">
+            <!-- Слой 1: Обычные подписки -->
+            <div>
+                <div class="tariffs-row-title">📦 Основные подписки</div>
+                <div class="tariffs-grid">
+                    <div class="tariff-card">
+                        <div><div class="tariff-name">7 Дней</div><div class="tariff-price">69 <span>₽</span></div></div>
+                        <button class="btn-buy" onclick="buyTariff('7 дней (69 ₽)')">Купить</button>
+                    </div>
+                    <div class="tariff-card">
+                        <div><div class="tariff-name">1 Месяц</div><div class="tariff-price">149 <span>₽</span></div></div>
+                        <button class="btn-buy" onclick="buyTariff('1 месяц (149 ₽)')">Купить</button>
+                    </div>
+                    <div class="tariff-card popular">
+                        <div class="tariff-badge">ХИТ</div>
+                        <div><div class="tariff-name">3 Месяца</div><div class="tariff-price">239 <span>₽</span></div></div>
+                        <button class="btn-buy" onclick="buyTariff('3 месяца (239 ₽)')">Купить</button>
+                    </div>
+                    <div class="tariff-card">
+                        <div><div class="tariff-name">Навсегда</div><div class="tariff-price">449 <span>₽</span></div></div>
+                        <button class="btn-buy" onclick="buyTariff('Навсегда (449 ₽)')">Купить</button>
+                    </div>
+                </div>
             </div>
-            <div class="tariff-card">
-                <div><div class="tariff-name">1 Месяц</div><div class="tariff-price">149 <span>₽</span></div></div>
-                <button class="btn-buy" onclick="buyTariff('1 месяц (149 ₽)')">Купить</button>
+
+            <!-- Слой 2: Предзаказ и Сброс HWID -->
+            <div>
+                <div class="tariffs-row-title">🚀 Предзаказы и Дополнительные услуги</div>
+                <div class="tariffs-grid">
+                    <div class="tariff-card popular">
+                        <div class="tariff-badge">NEW</div>
+                        <div><div class="tariff-name">Предзаказ DLC</div><div class="tariff-price">299 <span>₽</span></div></div>
+                        <button class="btn-buy" onclick="buyTariff('Предзаказ DLC (299 ₽)')">Оформить предзаказ</button>
+                    </div>
+                    <div class="tariff-card">
+                        <div><div class="tariff-name">Сброс HWID</div><div class="tariff-price">139 <span>₽</span></div></div>
+                        <button class="action-btn" onclick="requestHWIDReset()">Запросить сброс HWID</button>
+                    </div>
+                </div>
             </div>
-            <div class="tariff-card popular">
-                <div class="tariff-badge">ХИТ</div>
-                <div><div class="tariff-name">3 Месяца</div><div class="tariff-price">239 <span>₽</span></div></div>
-                <button class="btn-buy" onclick="buyTariff('3 месяца (239 ₽)')">Купить</button>
-            </div>
-            <div class="tariff-card">
-                <div><div class="tariff-name">Навсегда</div><div class="tariff-price">449 <span>₽</span></div></div>
-                <button class="btn-buy" onclick="buyTariff('Навсегда (449 ₽)')">Купить</button>
-            </div>
-        </div>
-        <!-- Второй ряд: Карточка сброса HWID -->
-        <div class="tariff-card" style="max-width: 450px; margin: 20px auto 0 auto; text-align: center; padding: 26px;">
-            <div style="font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 6px;">Сброс HWID устройства</div>
-            <div style="font-size: 13px; color: var(--text-sub); margin-bottom: 16px;">Смена привязки железа ПК. Заявка отправляется модераторам на проверку.</div>
-            <div style="font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 16px;">139 <span>₽</span></div>
-            <button class="action-btn" onclick="requestHWIDReset()">Запросить сброс HWID</button>
         </div>
     </div>
 
@@ -370,7 +387,7 @@
             </div>
             <div class="card">
                 <div class="card-header">Что делать при смене ПК (HWID ошибка)?</div>
-                <p class="sub-desc">Перейдите в раздел «Тарифы» и оформите платную заявку на сброс HWID за 139 рублей. После одобрения привязка ПК сбросится.</p>
+                <p class="sub-desc">Перейдите в раздел «Тарифы» во второй ряд и оформите платную заявку на сброс HWID за 139 рублей или активируйте ключ сброса.</p>
             </div>
         </div>
     </div>
@@ -436,7 +453,7 @@
                         <li class="nav-item hidden" id="navItemPost" onclick="switchCabinetTab('post', this)">📝 Сделать пост</li>
                         <li class="nav-item" onclick="switchCabinetTab('downloads', this)">📥 Загрузки</li>
                         <li class="nav-item hidden" id="navItemModeration" onclick="switchCabinetTab('moderation', this)">🛡️ Модерация (<span id="modCountBadge">0</span>)</li>
-                        <li class="nav-item hidden" id="navItemAdmin" onclick="switchCabinetTab('admin', this)">⚙️ Админ панель</li>
+                        <li class="nav-item hidden" id="navItemAdmin" onclick="switchCabinetTab('admin', this)">⚙️ Панель Владельца</li>
                     </ul>
                 </div>
                 <button class="btn-logout" onclick="logout()">Выйти</button>
@@ -452,7 +469,7 @@
 
                 <div id="cab-orders" class="cab-tab-content hidden">
                     <div class="card">
-                        <div class="card-header">История и Подписки</div>
+                        <div class="card-header">История и Подписки / Заявки</div>
                         <div id="ordersListContainer">
                             <p class="sub-desc">У вас пока нет активных подписок. Вы можете оформить их на вкладке «Тарифы».</p>
                         </div>
@@ -468,13 +485,21 @@
                     </div>
                 </div>
 
+                <!-- Два блока активации ключей: подписка и сброс HWID -->
                 <div id="cab-keys" class="cab-tab-content hidden">
                     <div class="card">
-                        <div class="card-header">Активация промо / ключа</div>
+                        <div class="card-header">Активация ключа подписки</div>
                         <div class="form-group" style="margin-bottom: 12px;">
-                            <input type="text" class="form-input" placeholder="Введите ключ активации...">
+                            <input type="text" id="subKeyInput" class="form-input" placeholder="Введите ключ подписки (например, APEX-XXXX)...">
                         </div>
-                        <button class="action-btn green" onclick="showToast('Ключ успешно активирован!', 'success')">Активировать</button>
+                        <button class="action-btn green" onclick="activateSubKey()">Активировать подписку</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">Активация ключа сброса HWID</div>
+                        <div class="form-group" style="margin-bottom: 12px;">
+                            <input type="text" id="hwidKeyInput" class="form-input" placeholder="Введите ключ сброса HWID...">
+                        </div>
+                        <button class="action-btn green" onclick="activateHWIDKey()">Сбросить HWID ключом</button>
                     </div>
                 </div>
 
@@ -503,6 +528,12 @@
 
                 <div id="cab-moderation" class="cab-tab-content hidden">
                     <div class="card">
+                        <div class="card-header">Запросы на покупку подписок / тарифов</div>
+                        <div id="purchaseRequestsContainer">
+                            <p class="sub-desc">Нет активных запросов на покупку.</p>
+                        </div>
+                    </div>
+                    <div class="card">
                         <div class="card-header">Заявки на сброс HWID (139 ₽)</div>
                         <div id="hwidRequestsContainer">
                             <p class="sub-desc">Нет активных заявок на сброс HWID.</p>
@@ -516,11 +547,42 @@
                     </div>
                 </div>
 
+                <!-- Панель Владельца с 2 блоками внизу -->
                 <div id="cab-admin" class="cab-tab-content hidden">
                     <div class="card">
-                        <div class="card-header">Панель Владельца</div>
-                        <p class="sub-desc" style="margin-bottom: 12px;">Управление ключами доступа и пользователями.</p>
-                        <button class="action-btn" onclick="showToast('Ключ сгенерирован!', 'success')">➕ Сгенерировать ключ подписки</button>
+                        <div class="card-header">Панель Владельца — Управление</div>
+                        <p class="sub-desc" style="margin-bottom: 16px;">Системные инструменты управления доступом и генерации ключей.</p>
+                    </div>
+
+                    <!-- Блок 1: Ключ на подписку -->
+                    <div class="card">
+                        <div class="card-header">🔑 Генерация ключа подписки</div>
+                        <div class="form-group">
+                            <label>Срок подписки</label>
+                            <select id="genSubTerm" class="form-select">
+                                <option value="7 Дней">7 Дней</option>
+                                <option value="1 Месяц">1 Месяц</option>
+                                <option value="3 Месяца">3 Месяца</option>
+                                <option value="Навсегда">Навсегда</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Кол-во использований</label>
+                            <input type="number" id="genSubUses" class="form-input" value="1" min="1" max="100">
+                        </div>
+                        <button class="action-btn" onclick="generateSubKeyAction()">Сгенерировать ключ подписки</button>
+                        <div id="generatedSubKeyResult" style="margin-top: 12px; font-size: 13px; font-weight: 700; color: var(--accent-green);"></div>
+                    </div>
+
+                    <!-- Блок 2: Ключ для сброса HWID -->
+                    <div class="card">
+                        <div class="card-header">⚙️ Генерация ключа сброса HWID</div>
+                        <div class="form-group">
+                            <label>Кол-во использований</label>
+                            <input type="number" id="genHwidUses" class="form-input" value="1" min="1" max="50">
+                        </div>
+                        <button class="action-btn" onclick="generateHWIDKeyAction()">Сгенерировать ключ сброса HWID</button>
+                        <div id="generatedHwidKeyResult" style="margin-top: 12px; font-size: 13px; font-weight: 700; color: var(--accent-green);"></div>
                     </div>
                 </div>
             </div>
@@ -531,7 +593,10 @@
         let currentUser = null;
         let userOrders = [];
         let hwidRequests = [];
+        let purchaseRequests = [];
         let supportTickets = [];
+        let databaseSubKeys = [];
+        let databaseHwidKeys = [];
 
         function navigateTo(pageId) {
             if (pageId === 'cabinet' && !currentUser) {
@@ -599,6 +664,7 @@
             showToast('Успешный вход!', 'success');
             navigateTo('cabinet');
             updateHWIDRequestsUI();
+            updatePurchaseRequestsUI();
             updateTicketsUI();
         }
 
@@ -619,9 +685,61 @@
         }
 
         function buyTariff(tariffName) {
-            userOrders.push(tariffName);
-            updateOrdersUI();
-            showToast('Оформлен тариф: ' + tariffName, 'success');
+            if (!currentUser) {
+                showToast('Сначала войдите в личный кабинет!', 'error');
+                navigateTo('auth');
+                return;
+            }
+            const reqId = Date.now();
+            purchaseRequests.push({ id: reqId, username: currentUser.username, tariff: tariffName, status: 'pending' });
+            updatePurchaseRequestsUI();
+            showToast('Запрос на покупку «' + tariffName + '» отправлен администраторам!', 'success');
+        }
+
+        function updatePurchaseRequestsUI() {
+            const container = document.getElementById('purchaseRequestsContainer');
+            const badge = document.getElementById('modCountBadge');
+            
+            const pendingPurchases = purchaseRequests.filter(p => p.status === 'pending');
+            const pendingHWID = hwidRequests.filter(r => r.status === 'pending');
+            const pendingTickets = supportTickets.filter(t => !t.answer);
+            
+            if (badge) badge.innerText = pendingPurchases.length + pendingHWID.length + pendingTickets.length;
+
+            if (purchaseRequests.length === 0) {
+                container.innerHTML = `<p class="sub-desc">Нет активных запросов на покупку.</p>`;
+                return;
+            }
+
+            container.innerHTML = purchaseRequests.map(req => `
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-size: 13px; font-weight: 700; color: #fff;">👤 ${req.username} — Запрос: ${req.tariff}</div>
+                        <div style="font-size: 11px; color: ${req.status === 'pending' ? '#ffbc00' : req.status === 'approved' ? 'var(--accent-green)' : 'var(--accent-red)'}; font-weight: 800; margin-top: 2px;">
+                            Статус: ${req.status === 'pending' ? 'ОЖИДАЕТ' : req.status === 'approved' ? 'ОДОБРЕНО' : 'ОТКЛОНЕНО'}
+                        </div>
+                    </div>
+                    ${req.status === 'pending' ? `
+                        <div style="display: flex; gap: 6px;">
+                            <button onclick="resolvePurchase(${req.id}, 'approved')" style="background: var(--accent-green); border:none; padding: 6px 10px; border-radius: 8px; font-weight:800; font-size:11px; cursor:pointer;">Принять</button>
+                            <button onclick="resolvePurchase(${req.id}, 'rejected')" style="background: var(--accent-red); color:#fff; border:none; padding: 6px 10px; border-radius: 8px; font-weight:800; font-size:11px; cursor:pointer;">Отклонить</button>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function resolvePurchase(id, status) {
+            const req = purchaseRequests.find(r => r.id === id);
+            if (req) {
+                req.status = status;
+                if (status === 'approved') {
+                    userOrders.push(req.tariff);
+                    updateOrdersUI();
+                }
+                updatePurchaseRequestsUI();
+                showToast(`Запрос на покупку ${status === 'approved' ? 'одобрен' : 'отклонен'}`, status === 'approved' ? 'success' : 'error');
+            }
         }
 
         function updateOrdersUI() {
@@ -631,7 +749,7 @@
             } else {
                 container.innerHTML = userOrders.map((order, idx) => `
                     <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 13px; font-weight: 700; color: #fff;">📦 Подписка #${idx + 1}: ${order}</span>
+                        <span style="font-size: 13px; font-weight: 700; color: #fff;">📦 Подписка / Услуга #${idx + 1}: ${order}</span>
                         <span style="font-size: 11px; color: var(--accent-green); font-weight: 800;">АКТИВНА</span>
                     </div>
                 `).join('');
@@ -655,7 +773,7 @@
             const badge = document.getElementById('modCountBadge');
             const pendingReqs = hwidRequests.filter(r => r.status === 'pending');
             
-            badge.innerText = pendingReqs.length + supportTickets.filter(t => !t.answer).length;
+            if (badge) badge.innerText = pendingReqs.length + purchaseRequests.filter(p => p.status === 'pending').length + supportTickets.filter(t => !t.answer).length;
 
             if (hwidRequests.length === 0) {
                 container.innerHTML = `<p class="sub-desc">Нет активных заявок на сброс HWID.</p>`;
@@ -686,6 +804,63 @@
                 req.status = status;
                 updateHWIDRequestsUI();
                 showToast(`Заявка HWID ${status === 'approved' ? 'одобрена' : 'отклонена'}`, status === 'approved' ? 'success' : 'error');
+            }
+        }
+
+        /* Генерация ключей в панели владельца */
+        function generateSubKeyAction() {
+            const term = document.getElementById('genSubTerm').value;
+            const uses = document.getElementById('genSubUses').value;
+            const randomCode = 'APEX-SUB-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            
+            databaseSubKeys.push({ code: randomCode, term: term, uses: parseInt(uses) });
+            document.getElementById('generatedSubKeyResult').innerText = `Создан ключ: ${randomCode} (${term}, исп: ${uses})`;
+            showToast('Ключ подписки успешно сгенерирован!', 'success');
+        }
+
+        function generateHWIDKeyAction() {
+            const uses = document.getElementById('genHwidUses').value;
+            const randomCode = 'APEX-HWID-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            
+            databaseHwidKeys.push({ code: randomCode, uses: parseInt(uses) });
+            document.getElementById('generatedHwidKeyResult').innerText = `Создан ключ: ${randomCode} (исп: ${uses})`;
+            showToast('Ключ сброса HWID успешно сгенерирован!', 'success');
+        }
+
+        /* Активация ключей пользователем */
+        function activateSubKey() {
+            const code = document.getElementById('subKeyInput').value.trim();
+            if (!code) {
+                showToast('Введите ключ подписки!', 'error');
+                return;
+            }
+            const found = databaseSubKeys.find(k => k.code === code);
+            if (found && found.uses > 0) {
+                found.uses--;
+                userOrders.push(`Ключ подписки (${found.term})`);
+                updateOrdersUI();
+                showToast('Подписка успешно активирована ключом!', 'success');
+                document.getElementById('subKeyInput').value = '';
+            } else {
+                showToast('Недействительный ключ или закончились использования!', 'error');
+            }
+        }
+
+        function activateHWIDKey() {
+            const code = document.getElementById('hwidKeyInput').value.trim();
+            if (!code) {
+                showToast('Введите ключ сброса HWID!', 'error');
+                return;
+            }
+            const found = databaseHwidKeys.find(k => k.code === code);
+            if (found && found.uses > 0) {
+                found.uses--;
+                userOrders.push('Сброс HWID (по ключу)');
+                updateOrdersUI();
+                showToast('HWID успешно сброшен по ключу!', 'success');
+                document.getElementById('hwidKeyInput').value = '';
+            } else {
+                showToast('Недействительный ключ HWID или исчерпан лимит!', 'error');
             }
         }
 
