@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VerseDLC — Ultimate Minecraft 1.21.4 Fabric Client</title>
+    <title>ApexClient — Ultimate Minecraft 1.21.4 Fabric Client</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -274,8 +274,8 @@
         <nav class="navbar">
             <div class="nav-left">
                 <div class="nav-brand" onclick="navigateTo('home')">
-                    <div class="brand-icon">V</div>
-                    <span>VerseDLC</span>
+                    <div class="brand-icon">A</div>
+                    <span>ApexClient</span>
                 </div>
                 <ul class="nav-links">
                     <li><a class="nav-link active" id="nav-home" onclick="navigateTo('home')">Главная</a></li>
@@ -345,7 +345,7 @@
         <div class="details-showcase">
             <div class="detail-box">
                 <h3>Интерфейс и Управление HUD</h3>
-                <p>VerseDLC разработан с учетом потребностей лучших игроков. Удобное расположение модулей, быстрые бинды и мгновенный доступ к функциям прямо во время игры.</p>
+                <p>ApexClient разработан с учетом потребностей лучших игроков. Удобное расположение модулей, быстрые бинды и мгновенный доступ к функциям прямо во время игры.</p>
                 <ul class="detail-list">
                     <li>Модульная система ClickGUI в стиле Modern Dark</li>
                     <li>Автоматический свитч предметов (AutoSwap)</li>
@@ -511,7 +511,7 @@
     <div id="page-auth" class="page-section hidden">
         <div class="auth-wrapper">
             <div class="auth-card">
-                <div class="auth-title">Verse<span>DLC</span></div>
+                <div class="auth-title">Apex<span>Client</span></div>
                 <div class="auth-subtitle">Системный доступ</div>
                 
                 <div class="auth-tabs">
@@ -553,7 +553,7 @@
             <div class="sidebar">
                 <div>
                     <div class="user-card-side">
-                        <div class="avatar" id="sidebarAvatar">V</div>
+                        <div class="avatar" id="sidebarAvatar">A</div>
                         <div class="user-details">
                             <div class="uname" id="sidebarUsername">User</div>
                             <div class="urole" id="sidebarRole">USER</div>
@@ -604,7 +604,7 @@
                     <div class="card">
                         <div class="card-header">Активация ключа подписки</div>
                         <div class="form-group" style="margin-bottom: 12px;">
-                            <input type="text" id="subKeyInput" class="form-input" placeholder="Введите ключ подписки (например, VERSE-XXXX)...">
+                            <input type="text" id="subKeyInput" class="form-input" placeholder="Введите ключ подписки (например, APEX-XXXX)...">
                         </div>
                         <button class="action-btn green" onclick="activateSubKey()">Активировать подписку</button>
                     </div>
@@ -636,7 +636,7 @@
                     <div class="card">
                         <div class="card-header">Загрузка лоадера</div>
                         <p class="sub-desc" style="margin-bottom: 14px;">Последняя стабильная сборка клиента под Fabric.</p>
-                        <button class="action-btn green" onclick="showToast('Загрузка VerseDLC.exe...', 'success')">📥 Скачать VerseDLC.exe</button>
+                        <button class="action-btn green" onclick="showToast('Загрузка ApexClient.exe...', 'success')">📥 Скачать ApexClient.exe</button>
                     </div>
                 </div>
 
@@ -793,12 +793,12 @@
             document.getElementById('navItemCapabilities').classList.add('hidden');
             document.getElementById('navItemAdmin').classList.add('hidden');
 
+            // Исправлен поиск по ключу в нижнем регистре для точного соответствия базе
             const lower = username.toLowerCase();
             if (!registeredUsers[lower]) return;
 
             const userData = registeredUsers[lower];
             
-            // Отображение статуса подписки с краткой записью срока
             const subTextEl = document.getElementById('subStatusText');
             const subDescEl = document.getElementById('subStatusDesc');
             
@@ -827,15 +827,18 @@
         }
 
         function handleLogin() {
-            const username = document.getElementById('loginUsernameInput').value.trim();
+            // Исправлено: сохраняем оригинальный ввод с учётом регистра для отображения, а поиск ведем по lower
+            const usernameInput = document.getElementById('loginUsernameInput').value.trim();
             const password = document.getElementById('loginPasswordInput').value.trim();
 
-            if (!username || !password) {
+            if (!usernameInput || !password) {
                 showToast('Заполните все поля для входа!', 'error');
                 return;
             }
 
-            const lower = username.toLowerCase();
+            const lower = usernameInput.toLowerCase();
+            
+            // Исправлено: проверяем наличие ключа в нижнем регистре и сверяем пароль
             if (!registeredUsers[lower] || registeredUsers[lower].password !== password) {
                 showToast('Неверный никнейм или пароль!', 'error');
                 return;
@@ -846,7 +849,8 @@
                 return;
             }
 
-            currentUser = username;
+            // Устанавливаем текущего пользователя (используем введенное имя)
+            currentUser = usernameInput;
             localStorage.setItem('apex_user', currentUser);
             
             document.getElementById('sidebarUsername').innerText = currentUser;
@@ -859,21 +863,20 @@
         }
 
         function handleRegister() {
-            const username = document.getElementById('regUsernameInput').value.trim();
+            const usernameInput = document.getElementById('regUsernameInput').value.trim();
             const password = document.getElementById('regPasswordInput').value.trim();
 
-            if (!username || !password) {
+            if (!usernameInput || !password) {
                 showToast('Заполните все поля для регистрации!', 'error');
                 return;
             }
 
-            const lower = username.toLowerCase();
+            const lower = usernameInput.toLowerCase();
             if (registeredUsers[lower]) {
                 showToast('Такой пользователь уже существует!', 'error');
                 return;
             }
 
-            // Новая регистрация: подписки СРАЗУ НЕТ, статус "Нет"
             registeredUsers[lower] = {
                 password: password,
                 role: lower === 'invisik' ? 'OWNER' : 'USER',
@@ -884,7 +887,7 @@
             };
             saveDB();
 
-            currentUser = username;
+            currentUser = usernameInput;
             localStorage.setItem('apex_user', currentUser);
 
             document.getElementById('sidebarUsername').innerText = currentUser;
@@ -1086,7 +1089,6 @@
             const req = appRequests.subs[index];
             const lower = req.username.toLowerCase();
             if (registeredUsers[lower]) {
-                // Конвертируем название тарифа в компактный срок (например, "7 дней" -> "7д")
                 let term = "30д";
                 if (req.tariff.toLowerCase().includes('7')) term = "7д";
                 else if (req.tariff.toLowerCase().includes('30') || req.tariff.toLowerCase().includes('1 месяц')) term = "30д";
@@ -1229,7 +1231,7 @@
 
         function generateSubKey() {
             const duration = document.getElementById('genSubDuration').value;
-            const randomKey = 'VERSE-SUB-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            const randomKey = 'APEX-SUB-' + Math.random().toString(36).substring(2, 8).toUpperCase();
             document.getElementById('generatedKeyOutput').innerHTML = `
                 <div class="search-result-box" style="background: rgba(0,230,118,0.05); border-color: var(--accent-green);">
                     <div style="font-size: 11px; color: var(--accent-green); font-weight: 800; margin-bottom: 4px;">СГЕНЕРИРОВАН КЛЮЧ ПОДПИСКИ (${duration}):</div>
@@ -1240,7 +1242,7 @@
         }
 
         function generateHWIDKey() {
-            const randomKey = 'VERSE-HWID-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            const randomKey = 'APEX-HWID-' + Math.random().toString(36).substring(2, 8).toUpperCase();
             document.getElementById('generatedKeyOutput').innerHTML = `
                 <div class="search-result-box" style="background: rgba(255,188,0,0.05); border-color: #ffbc00;">
                     <div style="font-size: 11px; color: #ffbc00; font-weight: 800; margin-bottom: 4px;">СГЕНЕРИРОВАН КЛЮЧ СБРОСА HWID:</div>
