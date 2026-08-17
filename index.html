@@ -175,7 +175,6 @@
             position: relative; overflow: hidden;
         }
         .server-card:hover { transform: translateY(-4px); border-color: var(--accent-red); box-shadow: 0 10px 30px var(--accent-red-glow); }
-        .server-avatar { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border-color); z-index: 2; }
         .server-name { font-size: 16px; font-weight: 800; color: #fff; z-index: 2; }
         
         .server-card.animated-server { border-color: rgba(255, 51, 68, 0.3); }
@@ -196,14 +195,12 @@
         }
         .tariff-card:hover { transform: translateY(-6px); border-color: var(--accent-red); }
         .tariff-card.popular { border-color: var(--accent-red); background: linear-gradient(180deg, rgba(255, 51, 68, 0.08) 0%, var(--bg-card) 100%); }
-        .tariff-card.special { border-color: var(--accent-blue); background: linear-gradient(180deg, rgba(0, 136, 255, 0.08) 0%, var(--bg-card) 100%); }
         .tariff-badge {
             position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
             background: var(--accent-red); color: #fff; font-size: 10px; font-weight: 800;
             padding: 4px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;
             box-shadow: 0 4px 15px var(--accent-red-glow);
         }
-        .tariff-badge.blue { background: var(--accent-blue); box-shadow: 0 4px 15px var(--accent-blue-glow); }
         .tariff-name { font-size: 16px; font-weight: 700; color: var(--text-sub); margin-bottom: 12px; }
         .tariff-price { font-size: 36px; font-weight: 900; color: #fff; margin-bottom: 20px; }
         .tariff-price span { font-size: 16px; color: var(--text-sub); font-weight: 600; }
@@ -214,8 +211,6 @@
             box-shadow: 0 4px 15px var(--accent-red-glow);
         }
         .btn-buy:hover { background: #e62e3d; transform: scale(1.02); }
-        .btn-buy.blue { background: var(--accent-blue); box-shadow: 0 4px 15px var(--accent-blue-glow); }
-        .btn-buy.blue:hover { background: #0077e6; }
 
         /* FAQ */
         .faq-section-title { text-align: center; font-size: 28px; font-weight: 900; margin-bottom: 10px; color: #fff; }
@@ -243,8 +238,6 @@
         .review-author { font-size: 14px; font-weight: 800; color: #fff; display: flex; justify-content: space-between; align-items: center; }
         .review-stars { color: #ffb703; font-size: 14px; margin: 6px 0; }
         .review-text { font-size: 13px; color: var(--text-sub); line-height: 1.5; }
-        .star-rating { display: flex; gap: 6px; font-size: 20px; cursor: pointer; color: #444; margin-bottom: 12px; }
-        .star-rating .star.active { color: #ffb703; }
 
         /* Auth Screen */
         .auth-wrapper { display: flex; align-items: center; justify-content: center; min-height: 65vh; }
@@ -295,25 +288,10 @@
         .sub-title { font-size: 20px; font-weight: 800; color: var(--accent-green); margin-bottom: 4px; }
         .sub-desc { font-size: 13px; color: var(--text-sub); }
 
-        .grid-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 14px; }
-        .info-item { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); }
-        .info-item label { font-size: 10px; color: var(--text-sub); display: block; margin-bottom: 2px; text-transform: uppercase; font-weight: 700; }
-        .info-item val { font-size: 13px; font-weight: 700; }
-
         .action-btn { background: var(--accent-red); color: #fff; border: none; padding: 10px 16px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
         .action-btn:hover { background: #e62e3d; }
         .action-btn.green { background: var(--accent-green); color: #000; }
         .action-btn.green:hover { background: #00c853; }
-        .action-btn.blue { background: var(--accent-blue); }
-        .action-btn.blue:hover { background: #0077e6; }
-
-        .admin-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 12px; }
-        
-        .list-box { background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-bottom: 10px; font-size: 13px; }
-        .list-box-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 800; color: var(--accent-red); }
-        .badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
-        .badge.pending { background: rgba(255,170,0,0.15); color: #ffaa00; }
-        .badge.done { background: rgba(0,230,118,0.15); color: var(--accent-green); }
     </style>
 </head>
 <body>
@@ -346,7 +324,7 @@
                 </div>
 
                 <button class="btn-cabinet" onclick="navigateTo('cabinet')">
-                    👤 <span>Кабинет</span>
+                    👤 <span id="navCabinetText">Кабинет</span>
                 </button>
             </div>
         </nav>
@@ -390,15 +368,9 @@
             <div class="servers-subtitle">Полная адаптация и обходы под самые жесткие античиты</div>
 
             <div class="servers-grid">
-                <div class="server-card animated-server">
-                    <div class="server-name">FunTime</div>
-                </div>
-                <div class="server-card animated-server">
-                    <div class="server-name">SpookyTime</div>
-                </div>
-                <div class="server-card">
-                    <div class="server-name">ReallyWorld</div>
-                </div>
+                <div class="server-card animated-server"><div class="server-name">FunTime</div></div>
+                <div class="server-card animated-server"><div class="server-name">SpookyTime</div></div>
+                <div class="server-card"><div class="server-name">ReallyWorld</div></div>
             </div>
         </div>
     </div>
@@ -446,14 +418,13 @@
         </div>
     </div>
 
-    <!-- СТРАНИЦА: ОТЗЫВЫ -->
+    <!-- ОТЗЫВЫ -->
     <div id="page-reviews" class="page-section hidden">
         <div class="hero">
             <h1>Отзывы пользователей</h1>
             <p>Мнения наших клиентов о качестве ApexClient и его обходах.</p>
         </div>
-
-        <div class="reviews-grid" id="reviewsContainer">
+        <div class="reviews-grid">
             <div class="review-card">
                 <div class="review-author"><span>DarkKnight</span> <span>5/5</span></div>
                 <div class="review-stars">★★★★★</div>
@@ -466,7 +437,6 @@
     <div id="page-help" class="page-section hidden">
         <div class="faq-section-title">Часто задаваемые вопросы</div>
         <div class="faq-divider"></div>
-
         <div class="faq-card">
             <div class="faq-header" onclick="toggleFaq(this)">Как установить ApexClient? <span>▼</span></div>
             <div class="faq-body">
@@ -479,33 +449,64 @@
         </div>
     </div>
 
+    <!-- АВТОРИЗАЦИЯ -->
+    <div id="page-auth" class="page-section hidden">
+        <div class="auth-wrapper">
+            <div class="auth-card">
+                <div class="auth-title">Apex<span>Client</span></div>
+                <div class="auth-subtitle">Авторизация в системе</div>
+                <div class="tabs">
+                    <button class="tab-btn active" id="tabLoginBtn" onclick="switchAuthMode('login')">Вход</button>
+                    <button class="tab-btn" id="tabRegisterBtn" onclick="switchAuthMode('register')">Регистрация</button>
+                </div>
+                <div id="authErrorMsg" style="color: var(--accent-red); font-size: 12px; margin-bottom: 12px; text-align: center; font-weight: 700;"></div>
+                <div class="form-group">
+                    <label>Логин</label>
+                    <input type="text" id="authUsernameInput" class="form-input" placeholder="Введите никнейм">
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="authPasswordInput" class="form-input" placeholder="••••••••">
+                </div>
+                <button class="btn-submit" id="authSubmitBtn" onclick="handleAuthSubmit()">Войти</button>
+            </div>
+        </div>
+    </div>
+
     <!-- КАБИНЕТ -->
     <div id="page-cabinet" class="page-section hidden">
         <div class="dash-container">
             <div class="sidebar">
                 <div>
                     <div class="user-card-side">
-                        <div class="avatar">A</div>
+                        <div class="avatar" id="sidebarAvatar">A</div>
                         <div class="user-details">
                             <div class="uname" id="sidebarUsername">User</div>
-                            <div class="urole">CLIENT</div>
+                            <div class="urole" id="sidebarRole">CLIENT</div>
                         </div>
                     </div>
                     <ul class="nav-menu">
                         <li class="nav-item active" onclick="switchCabinetTab('sub', this)">🔑 Подписка</li>
                         <li class="nav-item" onclick="switchCabinetTab('settings', this)">⚙️ Настройки</li>
+                        <li class="nav-item" id="navItemAdmin" onclick="switchCabinetTab('admin', this)">🛡️ Админка</li>
                     </ul>
                 </div>
-                <button class="btn-logout" onclick="navigateTo('home')">Выйти</button>
+                <button class="btn-logout" onclick="logout()">Выйти</button>
             </div>
             <div class="content">
+                <!-- Подписка -->
                 <div id="cab-sub" class="cab-tab-content">
                     <div class="card">
                         <div class="card-header">Статус подписки</div>
                         <div class="sub-title" id="subStatusText">АКТИВНА</div>
                         <div class="sub-desc" id="subDateText">Доступ к Fabric 1.21.4 открыт</div>
                     </div>
+                    <div class="card">
+                        <div class="card-header">Загрузка лоадера</div>
+                        <button class="action-btn green" onclick="downloadLoader()">📥 Скачать ApexClient.jar</button>
+                    </div>
                 </div>
+                <!-- Настройки -->
                 <div id="cab-settings" class="cab-tab-content hidden">
                     <div class="card">
                         <div class="card-header">Управление HWID</div>
@@ -513,12 +514,25 @@
                         <button class="action-btn" onclick="resetHWID()">Сбросить HWID</button>
                     </div>
                 </div>
+                <!-- Админка -->
+                <div id="cab-admin" class="cab-tab-content hidden">
+                    <div class="card">
+                        <div class="card-header">Панель управления ключами</div>
+                        <button class="action-btn" onclick="generateKeyAdmin()">➕ Сгенерировать ключ</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        let currentUser = null;
+        let authMode = 'login';
+
         function navigateTo(pageId) {
+            if (pageId === 'cabinet' && !currentUser) {
+                pageId = 'auth';
+            }
             document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
             const target = document.getElementById('page-' + pageId);
             if (target) target.classList.remove('hidden');
@@ -530,8 +544,7 @@
         }
 
         function toggleFaq(header) {
-            const body = header.nextElementSibling;
-            body.classList.toggle('open');
+            header.nextElementSibling.classList.toggle('open');
         }
 
         function setLanguage(lang) {
@@ -557,8 +570,41 @@
             showToast('Переход к оплате тарифа: ' + tariffName, 'success');
         }
 
-        function resetHWID() {
-            showToast('Запрос на сброс HWID отправлен!', 'success');
+        function switchAuthMode(mode) {
+            authMode = mode;
+            document.getElementById('tabLoginBtn').classList.toggle('active', mode === 'login');
+            document.getElementById('tabRegisterBtn').classList.toggle('active', mode === 'register');
+            document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'Войти' : 'Зарегистрироваться';
+        }
+
+        function handleAuthSubmit() {
+            const username = document.getElementById('authUsernameInput').value.trim();
+            if (!username) {
+                showToast('Введите никнейм!', 'error');
+                return;
+            }
+            currentUser = { username: username, role: username.toLowerCase() === 'owner' ? 'OWNER' : 'CLIENT' };
+            
+            document.getElementById('sidebarUsername').innerText = currentUser.username;
+            document.getElementById('sidebarAvatar').innerText = currentUser.username.charAt(0).toUpperCase();
+            document.getElementById('sidebarRole').innerText = currentUser.role;
+            document.getElementById('navCabinetText').innerText = currentUser.username;
+            
+            if(currentUser.role === 'OWNER') {
+                document.getElementById('navItemAdmin').style.display = 'flex';
+            } else {
+                document.getElementById('navItemAdmin').style.display = 'none';
+            }
+
+            showToast('Успешный вход в аккаунт!', 'success');
+            navigateTo('cabinet');
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('navCabinetText').innerText = 'Кабинет';
+            navigateTo('home');
+            showToast('Вы вышли из аккаунта', 'success');
         }
 
         function switchCabinetTab(tabName, element) {
@@ -566,6 +612,18 @@
             document.getElementById('cab-' + tabName).classList.remove('hidden');
             document.querySelectorAll('.sidebar .nav-item').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
+        }
+
+        function resetHWID() {
+            showToast('HWID успешно сброшен!', 'success');
+        }
+
+        function downloadLoader() {
+            showToast('Загрузка ApexClient.jar...', 'success');
+        }
+
+        function generateKeyAdmin() {
+            showToast('Ключ успешно сгенерирован!', 'success');
         }
     </script>
 </body>
