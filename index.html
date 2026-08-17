@@ -4,321 +4,1181 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ApexClient — Official Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0f1015;
-            --card-bg: #161821;
-            --accent: #ef4444;
-            --accent-hover: #dc2626;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --border: #2d3748;
-            --success: #10b981;
+            --bg-main: #06070a;
+            --bg-card: rgba(18, 20, 29, 0.65);
+            --bg-card-hover: rgba(26, 30, 44, 0.85);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-red: #ff3344;
+            --accent-red-glow: rgba(255, 51, 68, 0.35);
+            --accent-blue: #0088ff;
+            --accent-blue-glow: rgba(0, 136, 255, 0.35);
+            --accent-green: #00e676;
+            --text-main: #ffffff;
+            --text-sub: #949aab;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
 
         body {
-            background-color: var(--bg-color);
+            background-color: var(--bg-main);
             color: var(--text-main);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        .container {
-            width: 100%;
-            max-width: 900px;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-            margin-top: 20px;
+        /* Background Glows */
+        .bg-glow-1 {
+            position: fixed; top: -150px; left: 50%; transform: translateX(-50%);
+            width: 700px; height: 400px; background: radial-gradient(circle, rgba(255, 51, 68, 0.15) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1; pointer-events: none; filter: blur(60px);
+        }
+        .bg-glow-2 {
+            position: fixed; bottom: -100px; right: -100px;
+            width: 500px; height: 500px; background: radial-gradient(circle, rgba(0, 136, 255, 0.08) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1; pointer-events: none; filter: blur(80px);
         }
 
-        h1, h3 {
-            color: var(--text-main);
+        .hidden { display: none !important; }
+
+        /* Toast Notifications */
+        #toast-container {
+            position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+            display: flex; flex-direction: column-reverse; gap: 12px;
+        }
+        .toast {
+            background: rgba(15, 17, 23, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-red);
+            padding: 14px 20px; border-radius: 12px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.8); display: flex; align-items: center;
+            gap: 12px; font-size: 13px; font-weight: 600; animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .toast.success { border-left-color: var(--accent-green); }
+        .toast.error { border-left-color: var(--accent-red); }
+        @keyframes slideInRight {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
-        /* Навигация / Вкладки */
-        .nav-tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 30px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 15px;
+        /* Header / Navbar */
+        .navbar-container {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 1000; width: 92%; max-width: 1000px;
         }
+        .navbar {
+            background: rgba(12, 14, 20, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px; padding: 8px 18px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        .nav-left { display: flex; align-items: center; gap: 28px; }
+        .nav-brand {
+            display: flex; align-items: center; gap: 10px; font-weight: 900;
+            font-size: 17px; color: #fff; cursor: pointer; text-decoration: none; letter-spacing: -0.5px;
+        }
+        .brand-icon {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, #ff3344 0%, #cc0022 100%);
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 15px; color: #fff;
+            box-shadow: 0 0 15px var(--accent-red-glow);
+        }
+        .nav-links { display: flex; align-items: center; gap: 8px; list-style: none; }
+        .nav-link {
+            color: var(--text-sub); font-size: 13px; font-weight: 600; cursor: pointer;
+            padding: 8px 14px; border-radius: 12px; transition: all 0.2s ease; text-decoration: none;
+        }
+        .nav-link:hover, .nav-link.active { color: #ffffff; background: rgba(255, 255, 255, 0.05); }
 
-        .tab-btn {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-muted);
-            padding: 10px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            font-weight: 600;
-        }
+        .nav-right { display: flex; align-items: center; gap: 12px; }
 
-        .tab-btn:hover {
-            border-color: var(--accent);
-            color: var(--text-main);
+        .lang-switcher {
+            display: flex; background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color); border-radius: 12px; padding: 3px;
         }
+        .lang-btn {
+            background: none; border: none; color: var(--text-sub); font-size: 11px; font-weight: 700;
+            padding: 4px 10px; border-radius: 8px; cursor: pointer; transition: 0.2s;
+        }
+        .lang-btn.active { background: var(--accent-red); color: #fff; }
 
-        .tab-btn.active {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: white;
+        .btn-cabinet {
+            background: linear-gradient(135deg, #ff3344 0%, #d61b2c 100%);
+            color: #fff; border: none; padding: 8px 18px; border-radius: 14px;
+            font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.25s ease;
+            display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 20px var(--accent-red-glow);
         }
+        .btn-cabinet:hover { transform: translateY(-2px); box-shadow: 0 6px 25px var(--accent-red-glow); }
 
-        /* Контент вкладок */
-        .tab-content {
-            display: none;
-        }
+        /* Page Layout */
+        .page-section { padding-top: 120px; padding-bottom: 80px; max-width: 1050px; margin: 0 auto; width: 90%; }
 
-        .tab-content.active {
-            display: block;
+        /* Hero */
+        .hero { text-align: center; margin-bottom: 50px; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(255, 51, 68, 0.1); border: 1px solid rgba(255, 51, 68, 0.25);
+            color: #ff6675; font-size: 12px; font-weight: 700; padding: 6px 14px;
+            border-radius: 20px; margin-bottom: 16px;
         }
+        .hero h1 {
+            font-size: 52px; font-weight: 900; margin-bottom: 16px; letter-spacing: -1.5px;
+            background: linear-gradient(180deg, #ffffff 0%, #a5adbe 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero p { color: var(--text-sub); font-size: 16px; max-width: 640px; margin: 0 auto; line-height: 1.6; }
 
-        .form-group {
-            margin-bottom: 15px;
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 40px; }
+        .stat-card {
+            background: var(--bg-card); backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color); border-radius: 20px; padding: 20px; text-align: center;
         }
+        .stat-val { font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 2px; }
+        .stat-lbl { font-size: 11px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
 
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: var(--text-muted);
-            font-size: 13px;
+        /* Promo Banners */
+        .promo-banner {
+            background: var(--bg-card); backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color); border-radius: 24px; padding: 32px; margin-bottom: 24px;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
         }
+        .promo-banner:hover { border-color: rgba(255, 51, 68, 0.3); transform: translateY(-3px); }
+        .promo-banner h2 { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+        .promo-banner p { color: var(--text-sub); font-size: 14px; line-height: 1.7; margin-bottom: 18px; }
 
-        input, select, textarea {
-            width: 100%;
-            padding: 10px 14px;
-            background: var(--bg-color);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            color: var(--text-main);
-            font-size: 14px;
+        .tags-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag-item {
+            background: rgba(255, 51, 68, 0.08); border: 1px solid rgba(255, 51, 68, 0.2);
+            color: #ff6675; font-size: 12px; font-weight: 700; padding: 7px 16px; border-radius: 12px;
         }
+        .tag-item.green { background: rgba(0, 230, 118, 0.08); border-color: rgba(0, 230, 118, 0.2); color: var(--accent-green); }
 
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--accent);
+        /* Servers Section */
+        .servers-section { text-align: center; margin-top: 60px; }
+        .servers-title { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: #fff; }
+        .servers-subtitle { font-size: 14px; color: var(--text-sub); margin-bottom: 28px; }
+        .servers-grid { display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; }
+        .server-card {
+            background: var(--bg-card); backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color); border-radius: 20px; padding: 18px 28px;
+            display: flex; align-items: center; gap: 16px; transition: all 0.3s ease;
+            position: relative; overflow: hidden;
         }
-
-        button.action-btn {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            width: 100%;
-            transition: background 0.2s;
-        }
-
-        button.action-btn:hover {
-            background: var(--accent-hover);
-        }
-
-        .status-message {
-            margin-top: 15px;
-            text-align: center;
-            font-size: 14px;
-        }
+        .server-card:hover { transform: translateY(-4px); border-color: var(--accent-red); box-shadow: 0 10px 30px var(--accent-red-glow); }
+        .server-avatar { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border-color); z-index: 2; }
+        .server-name { font-size: 16px; font-weight: 800; color: #fff; z-index: 2; }
         
-        .user-info-box {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
+        .server-card.animated-server { border-color: rgba(255, 51, 68, 0.3); }
+        .server-card.animated-server::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 51, 68, 0.15), transparent);
+            transform: skewX(-25deg); animation: shine 3s infinite;
         }
+        @keyframes shine { 0% { left: -100%; } 100% { left: 200%; } }
+
+        /* Tariffs Grid */
+        .tariffs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 30px; }
+        .tariff-card {
+            background: var(--bg-card); backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color); border-radius: 24px; padding: 28px 22px;
+            text-align: center; position: relative; transition: all 0.3s ease;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .tariff-card:hover { transform: translateY(-6px); border-color: var(--accent-red); }
+        .tariff-card.popular { border-color: var(--accent-red); background: linear-gradient(180deg, rgba(255, 51, 68, 0.08) 0%, var(--bg-card) 100%); }
+        .tariff-card.special { border-color: var(--accent-blue); background: linear-gradient(180deg, rgba(0, 136, 255, 0.08) 0%, var(--bg-card) 100%); }
+        .tariff-badge {
+            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            background: var(--accent-red); color: #fff; font-size: 10px; font-weight: 800;
+            padding: 4px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px var(--accent-red-glow);
+        }
+        .tariff-badge.blue { background: var(--accent-blue); box-shadow: 0 4px 15px var(--accent-blue-glow); }
+        .tariff-name { font-size: 16px; font-weight: 700; color: var(--text-sub); margin-bottom: 12px; }
+        .tariff-price { font-size: 36px; font-weight: 900; color: #fff; margin-bottom: 20px; }
+        .tariff-price span { font-size: 16px; color: var(--text-sub); font-weight: 600; }
+
+        .btn-buy {
+            width: 100%; background: var(--accent-red); color: #fff; border: none; padding: 12px;
+            border-radius: 14px; font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.2s;
+            box-shadow: 0 4px 15px var(--accent-red-glow);
+        }
+        .btn-buy:hover { background: #e62e3d; transform: scale(1.02); }
+        .btn-buy.blue { background: var(--accent-blue); box-shadow: 0 4px 15px var(--accent-blue-glow); }
+        .btn-buy.blue:hover { background: #0077e6; }
+
+        /* FAQ */
+        .faq-section-title { text-align: center; font-size: 28px; font-weight: 900; margin-bottom: 10px; color: #fff; }
+        .faq-divider { width: 50px; height: 4px; background: var(--accent-red); margin: 0 auto 36px; border-radius: 2px; }
+        .faq-card {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 18px; margin-bottom: 14px; overflow: hidden; transition: 0.3s;
+        }
+        .faq-header {
+            padding: 18px 24px; font-size: 15px; font-weight: 700; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .faq-header:hover { background: rgba(255, 255, 255, 0.02); }
+        .faq-body { padding: 0 24px 20px 24px; font-size: 14px; color: var(--text-sub); line-height: 1.6; display: none; }
+        .faq-body.open { display: block; }
+        .faq-body ol { padding-left: 20px; margin-top: 10px; }
+        .faq-body li { margin-bottom: 8px; }
+
+        /* Reviews */
+        .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 30px; }
+        .review-card {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 18px; padding: 20px; backdrop-filter: blur(12px);
+        }
+        .review-author { font-size: 14px; font-weight: 800; color: #fff; display: flex; justify-content: space-between; align-items: center; }
+        .review-stars { color: #ffb703; font-size: 14px; margin: 6px 0; }
+        .review-text { font-size: 13px; color: var(--text-sub); line-height: 1.5; }
+        .star-rating { display: flex; gap: 6px; font-size: 20px; cursor: pointer; color: #444; margin-bottom: 12px; }
+        .star-rating .star.active { color: #ffb703; }
+
+        /* Auth Screen */
+        .auth-wrapper { display: flex; align-items: center; justify-content: center; min-height: 65vh; }
+        .auth-card {
+            background: var(--bg-card); backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color); border-radius: 28px; padding: 36px;
+            width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+        }
+        .auth-title { font-size: 26px; font-weight: 900; text-align: center; margin-bottom: 4px; }
+        .auth-title span { color: var(--accent-red); }
+        .auth-subtitle { font-size: 12px; color: var(--text-sub); text-align: center; margin-bottom: 24px; font-weight: 600; }
+        .tabs { display: flex; background: rgba(0,0,0,0.3); padding: 4px; border-radius: 12px; margin-bottom: 20px; }
+        .tab-btn { flex: 1; background: none; border: none; color: var(--text-sub); padding: 10px; font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .tab-btn.active { background: rgba(255,255,255,0.08); color: #fff; }
+        
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 11px; color: var(--text-sub); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 700; }
+        .form-input, .form-select, .form-textarea {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color);
+            padding: 12px 14px; border-radius: 12px; color: #fff; font-size: 13px; outline: none; transition: 0.2s;
+        }
+        .form-textarea { resize: vertical; min-height: 100px; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent-red); }
+        .btn-submit { width: 100%; background: var(--accent-red); color: #fff; border: none; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.2s; margin-top: 8px; box-shadow: 0 4px 15px var(--accent-red-glow); }
+
+        /* Cabinet Dashboard */
+        .dash-container {
+            display: grid; grid-template-columns: 240px 1fr; gap: 20px;
+            background: var(--bg-card); backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color); border-radius: 28px; padding: 20px; min-height: 520px;
+        }
+        .sidebar { border-right: 1px solid var(--border-color); padding-right: 18px; display: flex; flex-direction: column; justify-content: space-between; }
+        .user-card-side { display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(0,0,0,0.25); border-radius: 14px; margin-bottom: 20px; border: 1px solid var(--border-color); }
+        .avatar { width: 40px; height: 40px; background: rgba(255, 51, 68, 0.15); border: 1px solid var(--accent-red); color: var(--accent-red); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+        .user-details .uname { font-size: 14px; font-weight: 800; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .user-details .urole { font-size: 10px; color: var(--accent-red); font-weight: 800; letter-spacing: 0.5px; }
+        
+        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+        .nav-item { padding: 10px 12px; border-radius: 10px; color: var(--text-sub); font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+        .nav-item:hover, .nav-item.active { background: rgba(255, 51, 68, 0.1); color: var(--accent-red); }
+        
+        .btn-logout { background: none; border: 1px solid var(--border-color); color: var(--text-sub); padding: 10px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 12px; transition: 0.2s; width: 100%; }
+        .btn-logout:hover { border-color: var(--accent-red); color: var(--accent-red); }
+
+        .content { padding: 10px; display: flex; flex-direction: column; gap: 16px; }
+        .card { background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); border-radius: 18px; padding: 20px; margin-bottom: 12px; }
+        .card-header { font-size: 11px; color: var(--text-sub); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+        .sub-title { font-size: 20px; font-weight: 800; color: var(--accent-green); margin-bottom: 4px; }
+        .sub-desc { font-size: 13px; color: var(--text-sub); }
+
+        .grid-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 14px; }
+        .info-item { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); }
+        .info-item label { font-size: 10px; color: var(--text-sub); display: block; margin-bottom: 2px; text-transform: uppercase; font-weight: 700; }
+        .info-item val { font-size: 13px; font-weight: 700; }
+
+        .action-btn { background: var(--accent-red); color: #fff; border: none; padding: 10px 16px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+        .action-btn:hover { background: #e62e3d; }
+        .action-btn.green { background: var(--accent-green); color: #000; }
+        .action-btn.green:hover { background: #00c853; }
+        .action-btn.blue { background: var(--accent-blue); }
+        .action-btn.blue:hover { background: #0077e6; }
+
+        .admin-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 12px; }
+        
+        .list-box { background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-bottom: 10px; font-size: 13px; }
+        .list-box-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 800; color: var(--accent-red); }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+        .badge.pending { background: rgba(255,170,0,0.15); color: #ffaa00; }
+        .badge.done { background: rgba(0,230,118,0.15); color: var(--accent-green); }
     </style>
 </head>
 <body>
 
-    <div class="container" id="appContainer">
-        <h1 style="margin-bottom: 20px; text-align: center;">Личный кабинет ApexClient</h1>
+    <div class="bg-glow-1"></div>
+    <div class="bg-glow-2"></div>
 
-        <!-- Навигационные вкладки -->
-        <div class="nav-tabs" id="navTabs">
-            <button class="tab-btn active" onclick="switchTab('profile', this)">👤 Профиль</button>
-            <button class="tab-btn" onclick="switchTab('activate', this)">🔑 Активация ключа</button>
-            <button class="tab-btn" id="adminTabBtn" onclick="switchTab('admin', this)" style="display: none;">⚙️ Админ панель</button>
-            <button class="tab-btn" onclick="switchTab('posts', this)">📝 Сделать пост</button>
-            <button class="tab-btn" onclick="logout()" style="border-color: var(--accent); color: var(--accent);">🚪 Выйти</button>
-        </div>
+    <div id="toast-container"></div>
 
-        <!-- Вкладка: Профиль -->
-        <div id="profile" class="tab-content active">
-            <h3>Информация о подписке</h3>
-            <div class="user-info-box" style="margin-top: 15px;">
-                <p>Роль: <span id="userRoleDisplay" style="color: var(--accent); font-weight: bold;">OWNER</span></p>
-                <p style="margin-top: 5px;">Статус: <span id="userSubStatus" style="color: var(--success);">Активна</span></p>
+    <!-- Header / Navbar -->
+    <div class="navbar-container">
+        <nav class="navbar">
+            <div class="nav-left">
+                <div class="nav-brand" onclick="navigateTo('home')">
+                    <div class="brand-icon">A</div>
+                    <span id="nav-brand-title">ApexClient</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a class="nav-link active" id="nav-home" onclick="navigateTo('home')">Главная</a></li>
+                    <li><a class="nav-link" id="nav-tariffs" onclick="navigateTo('tariffs')">Тарифы</a></li>
+                    <li><a class="nav-link" id="nav-reviews" onclick="navigateTo('reviews')">Отзывы</a></li>
+                    <li><a class="nav-link" id="nav-help" onclick="navigateTo('help')">Помощь</a></li>
+                    <li><a class="nav-link" id="nav-ask" onclick="navigateTo('ask')">Задать вопрос</a></li>
+                </ul>
             </div>
-            <button class="action-btn" onclick="resetHwid()">Сбросить HWID клиентом</button>
-        </div>
-
-        <!-- Вкладка: Активация ключа -->
-        <div id="activate" class="tab-content">
-            <h3>Активация подписки или ключа сброса HWID</h3>
-            <div class="form-group" style="margin-top: 15px;">
-                <label>Введите ключ</label>
-                <input type="text" id="keyCode" placeholder="APEX-XXXX или HWID-XXXX">
-            </div>
-            <button class="action-btn" onclick="activateKey()">Активировать ключ</button>
-            <div id="activateStatus" class="status-message"></div>
-        </div>
-
-        <!-- Вкладка: Админ-панель -->
-        <div id="admin" class="tab-content">
-            <h3>Генератор ключей подписки</h3>
-            <div class="form-group" style="margin-top: 15px;">
-                <label>Тариф</label>
-                <select id="tariffSelect">
-                    <option value="1">1 Месяц</option>
-                    <option value="3">3 Месяца</option>
-                    <option value="life">Навсегда</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Кол-во использований</label>
-                <input type="number" id="usesCount" value="1" min="1">
-            </div>
-            <button class="action-btn" onclick="generateKey()">Сгенерировать ключ</button>
             
-            <h3 style="margin-top: 25px;">Генератор ключей сброса HWID</h3>
-            <button class="action-btn" style="margin-top: 10px;" onclick="generateHwidKey()">Создать ключ сброса HWID</button>
-            <div id="adminStatus" class="status-message"></div>
+            <div class="nav-right">
+                <div class="lang-switcher">
+                    <button class="lang-btn active" id="btn-ru" onclick="setLanguage('ru')">RU</button>
+                    <button class="lang-btn" id="btn-en" onclick="setLanguage('en')">EN</button>
+                </div>
+
+                <button class="btn-cabinet" onclick="navigateTo('cabinet')">
+                    👤 <span id="cabinet-btn-text">Кабинет</span>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- ГЛАВНАЯ СТРАНИЦА -->
+    <div id="page-home" class="page-section">
+        <div class="hero">
+            <div class="hero-badge" id="h-badge">⚡ Fabric 1.21.4 Next-Gen Client</div>
+            <h1 id="h-title">Абсолютное Доминирование</h1>
+            <p id="h-desc">Премиальный клиент нового поколения. Полная незаметность для античитов, непревзойденный визуал и идеальная оптимизация.</p>
         </div>
 
-        <!-- Вкладка: Сделать пост -->
-        <div id="posts" class="tab-content">
-            <h3>Создать публикацию</h3>
-            <div class="form-group" style="margin-top: 15px;">
-                <label>Текст поста</label>
-                <textarea rows="4" id="postContent" placeholder="Введите текст..."></textarea>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-val">420+</div>
+                <div class="stat-lbl" id="st-1">Онлайн игроков</div>
             </div>
-            <button class="action-btn" onclick="makePost()">Опубликовать</button>
-            <div id="postStatus" class="status-message"></div>
+            <div class="stat-card">
+                <div class="stat-val">1,480+</div>
+                <div class="stat-lbl" id="st-2">Активных подписок</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val">99.9%</div>
+                <div class="stat-lbl" id="st-3">Аптайм обходов</div>
+            </div>
+        </div>
+
+        <div class="promo-banner">
+            <h2 id="p1-title">🚀 Невероятная оптимизация</h2>
+            <p id="p1-desc">Забудьте про лаги, фризы и просадки кадров во время жестких замесов. В нашем клиенте реализована глубокая оптимизация движка Fabric: мгновенный отклик, сверхстабильный FPS и плавный фреймрейт даже на слабых ПК.</p>
+            <div class="tags-grid">
+                <div class="tag-item green" id="t1">✓ Максимальный FPS</div>
+                <div class="tag-item green" id="t2">✓ Быстрый рендер</div>
+                <div class="tag-item green" id="t3">✓ Без просадок</div>
+            </div>
+        </div>
+
+        <div class="promo-banner">
+            <h2 id="p2-title">🎨 Красивый визуал, который точно дополнит вашу игру!</h2>
+            <p id="p2-desc">Превратите игру в эстетическое удовольствие с гибко настраиваемыми модулями внешней кастомизации:</p>
+            <div class="tags-grid">
+                <div class="tag-item">SkyShader</div>
+                <div class="tag-item">Custom Hand</div>
+                <div class="tag-item">3D Wings</div>
+                <div class="tag-item">Swemming Animation</div>
+                <div class="tag-item" id="t-hud">Кастомный ClickGUI & HUD</div>
+                <div class="tag-item" id="t-more">И много другого!</div>
+            </div>
+        </div>
+
+        <div class="servers-section">
+            <div class="servers-title" id="srv-title">Поддержка популярных проектов</div>
+            <div class="servers-subtitle" id="srv-sub">Полная адаптация и обходы под самые жесткие античиты</div>
+
+            <div class="servers-grid">
+                <div class="server-card animated-server">
+                    <img src="funTime.webp" alt="FunTime" class="server-avatar" onerror="this.src='https://via.placeholder.com/44'">
+                    <div class="server-name">FunTime</div>
+                </div>
+                <div class="server-card animated-server">
+                    <img src="spookyTime.webp" alt="SpookyTime" class="server-avatar" onerror="this.src='https://via.placeholder.com/44'">
+                    <div class="server-name">SpookyTime</div>
+                </div>
+                <div class="server-card">
+                    <img src="image_bae6a1.png" alt="ReallyWorld" class="server-avatar" onerror="this.src='https://via.placeholder.com/44'">
+                    <div class="server-name">ReallyWorld</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ТАРИФЫ -->
+    <div id="page-tariffs" class="page-section hidden">
+        <div class="hero">
+            <h1 id="tr-title">Выберите ваш план</h1>
+            <p id="tr-desc">Получите мгновенный доступ к ApexClient сразу после оплаты.</p>
+        </div>
+
+        <div class="tariffs-grid">
+            <div class="tariff-card">
+                <div>
+                    <div class="tariff-name">7 Дней</div>
+                    <div class="tariff-price">69 <span>₽</span></div>
+                </div>
+                <button class="btn-buy" onclick="buyTariff('7 дней')">Приобрести</button>
+            </div>
+
+            <div class="tariff-card popular">
+                <div class="tariff-badge">ХИТ ПРОДАЖ</div>
+                <div>
+                    <div class="tariff-name">1 Месяц</div>
+                    <div class="tariff-price">149 <span>₽</span></div>
+                </div>
+                <button class="btn-buy" onclick="buyTariff('30 дней')">Приобрести</button>
+            </div>
+
+            <div class="tariff-card">
+                <div>
+                    <div class="tariff-name">3 Месяца</div>
+                    <div class="tariff-price">239 <span>₽</span></div>
+                </div>
+                <button class="btn-buy" onclick="buyTariff('90 дней')">Приобрести</button>
+            </div>
+
+            <div class="tariff-card">
+                <div>
+                    <div class="tariff-name">Навсегда</div>
+                    <div class="tariff-price">449 <span>₽</span></div>
+                </div>
+                <button class="btn-buy" onclick="buyTariff('Навсегда')">Приобрести</button>
+            </div>
+
+            <div class="tariff-card special">
+                <div class="tariff-badge blue">УСЛУГА</div>
+                <div>
+                    <div class="tariff-name">Сброс HWID</div>
+                    <div class="tariff-price">49 <span>₽</span></div>
+                </div>
+                <button class="btn-buy blue" onclick="resetHWID()">Сбросить</button>
+            </div>
+
+            <div class="tariff-card special">
+                <div class="tariff-badge blue">PRE-ORDER</div>
+                <div>
+                    <div class="tariff-name">Предзаказ (1 Месяц)</div>
+                    <div class="tariff-price">149 <span>₽</span></div>
+                </div>
+                <button class="btn-buy blue" onclick="makePreorder('1 Месяц (149 ₽)')">Оформить</button>
+            </div>
+
+            <div class="tariff-card special">
+                <div class="tariff-badge blue">PRE-ORDER</div>
+                <div>
+                    <div class="tariff-name">Предзаказ (3 Месяца)</div>
+                    <div class="tariff-price">239 <span>₽</span></div>
+                </div>
+                <button class="btn-buy blue" onclick="makePreorder('3 Месяца (239 ₽)')">Оформить</button>
+            </div>
+
+            <div class="tariff-card special">
+                <div class="tariff-badge blue">PRE-ORDER</div>
+                <div>
+                    <div class="tariff-name">Предзаказ (Навсегда)</div>
+                    <div class="tariff-price">449 <span>₽</span></div>
+                </div>
+                <button class="btn-buy blue" onclick="makePreorder('Навсегда (449 ₽)')">Оформить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА: ОТЗЫВЫ -->
+    <div id="page-reviews" class="page-section hidden">
+        <div class="hero">
+            <h1>Отзывы пользователей</h1>
+            <p>Мнения наших клиентов о качестве ApexClient и его обходах.</p>
+        </div>
+
+        <div class="promo-banner" style="max-width: 650px; margin: 0 auto 30px;">
+            <h2>Оставить отзыв</h2>
+            <p>Только пользователи с активной подпиской могут публиковать отзывы.</p>
+            
+            <div class="form-group">
+                <label>Ваша оценка</label>
+                <div class="star-rating" id="starRating">
+                    <span class="star active" onclick="setRating(1)">★</span>
+                    <span class="star active" onclick="setRating(2)">★</span>
+                    <span class="star active" onclick="setRating(3)">★</span>
+                    <span class="star active" onclick="setRating(4)">★</span>
+                    <span class="star active" onclick="setRating(5)">★</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Ваш отзыв</label>
+                <textarea id="reviewTextInput" class="form-textarea" placeholder="Напишите впечатление от использования..."></textarea>
+            </div>
+            <button class="action-btn" style="width:100%;" onclick="submitReview()">Опубликовать отзыв</button>
+        </div>
+
+        <div class="reviews-grid" id="reviewsContainer">
+            <div class="review-card">
+                <div class="review-author"><span>DarkKnight</span> <span>5/5</span></div>
+                <div class="review-stars">★★★★★</div>
+                <div class="review-text">Софт огонь! Обходы на FunTime работают стабильно, ФПС не проседает вообще.</div>
+            </div>
+            <div class="review-card">
+                <div class="review-author"><span>PvP_King</span> <span>5/5</span></div>
+                <div class="review-stars">★★★★★</div>
+                <div class="review-text">Визуалы очень сочные, киллаура бьет плавно. Лучший клиент за свои деньги!</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ПОМОЩЬ -->
+    <div id="page-help" class="page-section hidden">
+        <div class="hero">
+            <h1>Центр помощи</h1>
+            <p>Инструкции по установке, запуску и частые вопросы.</p>
+        </div>
+
+        <div style="max-width: 800px; margin: 0 auto;">
+            <div class="faq-card">
+                <div class="faq-header" onclick="toggleFaq(this)">Как установить и запустить чит? <span>▼</span></div>
+                <div class="faq-body open">
+                    <ol>
+                        <li>запустите обычный майнкрафт 1.21.4 фабрик;</li>
+                        <li>запустите ехе и нажмите инджект после чего чит загрузится в майнкрафт.</li>
+                    </ol>
+                </div>
+            </div>
+            <div id="dynamic-posts-container"></div>
+        </div>
+    </div>
+
+    <!-- ЗАДАТЬ ВОПРОС -->
+    <div id="page-ask" class="page-section hidden">
+        <div class="hero">
+            <h1>Задать вопрос</h1>
+            <p>Возникла проблема? Напишите нам, поддержка отвечает оперативно.</p>
+        </div>
+        <div class="promo-banner" style="max-width: 600px; margin: 0 auto;">
+            <div class="form-group">
+                <label>Ваш вопрос / Описание проблемы</label>
+                <textarea id="askInput" class="form-textarea" placeholder="Подробно опишите проблему..."></textarea>
+            </div>
+            <button class="action-btn" style="width: 100%;" onclick="submitAsk()">Отправить вопрос</button>
+        </div>
+    </div>
+
+    <!-- КАБИНЕТ / АВТОРИЗАЦИЯ -->
+    <div id="page-cabinet" class="page-section hidden">
+        <div id="authContainer" class="auth-wrapper">
+            <div class="auth-card">
+                <div class="auth-title">Apex<span>Client</span></div>
+                <div class="auth-subtitle">Личный кабинет платформы</div>
+
+                <div class="tabs">
+                    <button class="tab-btn active" id="tabLoginBtn" onclick="switchAuthTab('login')">Вход</button>
+                    <button class="tab-btn" id="tabRegBtn" onclick="switchAuthTab('reg')">Регистрация</button>
+                </div>
+
+                <div id="loginFormSection">
+                    <div class="form-group">
+                        <label>Логин или Ключ</label>
+                        <input type="text" id="loginUserInput" class="form-input" placeholder="Введите логин или ключ подписки...">
+                    </div>
+                    <button class="btn-submit" onclick="handleLogin()">Войти в кабинет</button>
+                </div>
+
+                <div id="regFormSection" class="hidden">
+                    <div class="form-group">
+                        <label>Придумайте логин</label>
+                        <input type="text" id="regUserInput" class="form-input" placeholder="Ваш никнейм...">
+                    </div>
+                    <button class="btn-submit" onclick="handleRegister()">Зарегистрироваться</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="dashboardContainer" class="dash-container hidden">
+            <div class="sidebar">
+                <div>
+                    <div class="user-card-side">
+                        <div class="avatar" id="dashUserAvatar">U</div>
+                        <div class="user-details">
+                            <div class="uname" id="dashUserName">User</div>
+                            <div class="urole" id="dashUserRole">USER</div>
+                        </div>
+                    </div>
+
+                    <ul class="nav-menu">
+                        <li class="nav-item active" onclick="switchDashTab('profile')" id="menu-profile">👤 Профиль</li>
+                        <li class="nav-item" onclick="switchDashTab('activate')" id="menu-activate">🔑 Активация ключа</li>
+                        <li class="nav-item hidden" id="menu-admin" onclick="switchDashTab('admin')">⚙️ Админ панель</li>
+                        <li class="nav-item hidden" id="menu-owner-post" onclick="switchDashTab('owner-post')" style="color: var(--accent-blue);">📝 Сделать пост</li>
+                    </ul>
+                </div>
+                <button class="btn-logout" onclick="handleLogout()">Выйти из аккаунта</button>
+            </div>
+
+            <div class="content" id="dashContentArea">
+                <!-- Контент дашборда подставляется динамически -->
+            </div>
         </div>
     </div>
 
     <script>
-        // Переключение вкладок
-        function switchTab(tabId, element) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            
-            document.getElementById(tabId).classList.add('active');
-            if(element) element.classList.add('active');
-        }
+        // Глобальное состояние
+        let currentLang = 'ru';
+        let currentUser = JSON.parse(localStorage.getItem('apex_current_user')) || null;
+        let usersDB = JSON.parse(localStorage.getItem('apex_users_db')) || {
+            "owner": { role: "owner", sub: "Навсегда", hwid: "Not Bound", key: "OWNER-ROOT" }
+        };
+        let keysDB = JSON.parse(localStorage.getItem('apex_keys_db')) || []; // {key, type, uses}
+        let hwidResetKeysDB = JSON.parse(localStorage.getItem('apex_hwid_keys_db')) || []; // ключи сброса хвида
+        let requestsDB = JSON.parse(localStorage.getItem('apex_requests_db')) || []; // предзаказы и сбросы
+        let reviewsDB = JSON.parse(localStorage.getItem('apex_reviews_db')) || [];
+        let postsDB = JSON.parse(localStorage.getItem('apex_posts_db')) || [];
 
-        // Проверка сессии при загрузке страницы через fetch к бэкенду Vercel
-        window.onload = function() {
-            fetch('/api/user-session') // Замени на свой реальный эндпоинт, если он отличается
-                .then(res => res.json())
-                .then(data => {
-                    const role = data && data.role ? data.role.toLowerCase().trim() : 'owner';
-                    document.getElementById('userRoleDisplay').innerText = role.toUpperCase();
-                    
-                    // Показываем админку для owner/moder
-                    if (role === 'owner' || role === 'moder') {
-                        document.getElementById('adminTabBtn').style.display = 'inline-block';
-                    }
-                })
-                .catch(err => {
-                    console.log("Режим разработчика / сессия локальная:", err);
-                    // Оставляем полный доступ владельца, если API недоступно на клиенте
-                    document.getElementById('adminTabBtn').style.display = 'inline-block';
-                    document.getElementById('userRoleDisplay').innerText = 'OWNER';
-                });
+        // Переводы текстов
+        const translations = {
+            ru: {
+                "nav-home": "Главная",
+                "nav-tariffs": "Тарифы",
+                "nav-reviews": "Отзывы",
+                "nav-help": "Помощь",
+                "nav-ask": "Задать вопрос",
+                "cabinet-btn-text": "Кабинет",
+                "nav-brand-title": "ApexClient",
+                "h-badge": "⚡ Fabric 1.21.4 Next-Gen Client",
+                "h-title": "Абсолютное Доминирование",
+                "h-desc": "Премиальный клиент нового поколения. Полная незаметность для античитов, непревзойденный визуал и идеальная оптимизация.",
+                "st-1": "Онлайн игроков",
+                "st-2": "Активных подписок",
+                "st-3": "Аптайм обходов",
+                "p1-title": "🚀 Невероятная оптимизация",
+                "p1-desc": "Забудьте про лаги, фризы и просадки кадров во время жестких замесов. В нашем клиенте реализована глубокая оптимизация движка Fabric: мгновенный отклик, сверхстабильный FPS и плавный фреймрейт даже на слабых ПК.",
+                "t1": "✓ Максимальный FPS",
+                "t2": "✓ Быстрый рендер",
+                "t3": "✓ Без просадок",
+                "p2-title": "🎨 Красивый визуал, который точно дополнит вашу игру!",
+                "p2-desc": "Превратите игру в эстетическое удовольствие с гибко настраиваемыми модулями внешней кастомизации:",
+                "t-hud": "Кастомный ClickGUI & HUD",
+                "t-more": "И много другого!",
+                "srv-title": "Поддержка популярных проектов",
+                "srv-sub": "Полная адаптация и обходы под самые жесткие античиты",
+                "tr-title": "Выберите ваш план",
+                "tr-desc": "Получите мгновенный доступ к ApexClient сразу после оплаты."
+            },
+            en: {
+                "nav-home": "Home",
+                "nav-tariffs": "Tariffs",
+                "nav-reviews": "Reviews",
+                "nav-help": "Help",
+                "nav-ask": "Ask a question",
+                "cabinet-btn-text": "Cabinet",
+                "nav-brand-title": "ApexClient",
+                "h-badge": "⚡ Fabric 1.21.4 Next-Gen Client",
+                "h-title": "Absolute Domination",
+                "h-desc": "Next-generation premium client. Complete anti-cheat stealth, unmatched visuals and perfect optimization.",
+                "st-1": "Online Players",
+                "st-2": "Active Subscriptions",
+                "st-3": "Bypass Uptime",
+                "p1-title": "🚀 Incredible Optimization",
+                "p1-desc": "Forget lags, freezes and frame drops during fierce battles. Deep Fabric optimization ensures instant response and ultra-stable FPS.",
+                "t1": "✓ Max FPS",
+                "t2": "✓ Fast Render",
+                "t3": "✓ No Drops",
+                "p2-title": "🎨 Stunning Visuals to Complement Your Game!",
+                "p2-desc": "Turn gameplay into aesthetic pleasure with fully customizable modules:",
+                "t-hud": "Custom ClickGUI & HUD",
+                "t-more": "And much more!",
+                "srv-title": "Popular Projects Support",
+                "srv-sub": "Full adaptation and bypasses for the strictest anti-cheats",
+                "tr-title": "Choose Your Plan",
+                "tr-desc": "Get instant access to ApexClient right after payment."
+            }
         };
 
-        function activateKey() {
-            const code = document.getElementById('keyCode').value;
-            const status = document.getElementById('activateStatus');
-            if(!code) {
-                status.style.color = '#ef4444';
-                status.innerText = 'Введите ключ!';
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('btn-ru').classList.toggle('active', lang === 'ru');
+            document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+            
+            for (let id in translations[lang]) {
+                const el = document.getElementById(id);
+                if (el) el.innerText = translations[lang][id];
+            }
+            showToast(lang === 'ru' ? "Язык изменен на RU" : "Language changed to EN", "success");
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span>${type === 'success' ? '✓' : '✕'}</span> <span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'slideInRight 0.3s reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        // Навигация по страницам
+        function navigateTo(pageId) {
+            ['home', 'tariffs', 'reviews', 'help', 'ask', 'cabinet'].forEach(p => {
+                const el = document.getElementById(`page-${p}`);
+                if (el) el.classList.add('hidden');
+                const nav = document.getElementById(`nav-${p}`);
+                if (nav) nav.classList.remove('active');
+            });
+
+            const target = document.getElementById(`page-${pageId}`);
+            if (target) target.classList.remove('hidden');
+            const targetNav = document.getElementById(`nav-${pageId}`);
+            if (targetNav) targetNav.classList.add('active');
+
+            if (pageId === 'cabinet') {
+                renderCabinetState();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // FAQ аккордеон
+        function toggleFaq(header) {
+            const body = header.nextElementSibling;
+            body.classList.toggle('open');
+        }
+
+        // Оплата тарифов / предзаказ / сброс
+        function buyTariff(plan) {
+            showToast(`Заказ тарифа "${plan}" создан! Переход на оплату...`, "success");
+            setTimeout(() => {
+                if (!currentUser) {
+                    navigateTo('cabinet');
+                } else {
+                    requestsDB.push({ user: currentUser, type: `Покупка: ${plan}`, status: 'pending', id: Date.now() });
+                    localStorage.setItem('apex_requests_db', JSON.stringify(requestsDB));
+                    showToast("Запрос на покупку отправлен администраторам!", "success");
+                }
+            }, 1000);
+        }
+
+        function resetHWID() {
+            if (!currentUser) {
+                showToast("Сначала войдите в кабинет!", "error");
+                navigateTo('cabinet');
                 return;
             }
-            
-            fetch('/api/activate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code: code })
-            })
-            .then(res => res.json())
-            .then(data => {
-                status.style.color = data.success ? 'var(--success)' : '#ef4444';
-                status.innerText = data.message || 'Успешно!';
-            })
-            .catch(() => {
-                status.style.color = 'var(--success)';
-                status.innerText = '✔ HWID успешно сброшен!';
+            requestsDB.push({ user: currentUser, type: "Сброс HWID (Платный)", status: 'pending', id: Date.now() });
+            localStorage.setItem('apex_requests_db', JSON.stringify(requestsDB));
+            showToast("Запрос на сброс HWID отправлен администрации!", "success");
+        }
+
+        function makePreorder(plan) {
+            if (!currentUser) {
+                showToast("Сначала войдите в кабинет!", "error");
+                navigateTo('cabinet');
+                return;
+            }
+            requestsDB.push({ user: currentUser, type: `Предзаказ: ${plan}`, status: 'pending', id: Date.now() });
+            localStorage.setItem('apex_requests_db', JSON.stringify(requestsDB));
+            showToast("Предзаказ успешно оформлен и отправлен админам!", "success");
+        }
+
+        // Рейтинг и отзывы
+        let selectedRating = 5;
+        function setRating(r) {
+            selectedRating = r;
+            const stars = document.querySelectorAll('#starRating .star');
+            stars.forEach((s, idx) => {
+                s.classList.toggle('active', idx < r);
             });
         }
 
-        function generateKey() {
-            const status = document.getElementById('adminStatus');
-            const tariff = document.getElementById('tariffSelect').value;
-            
-            fetch('/api/generate-key', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ tariff: tariff })
-            })
-            .then(res => res.json())
-            .then(data => {
-                status.style.color = 'var(--success)';
-                status.innerText = '✔ Ключ создан: ' + (data.key || 'APEX-' + Math.random().toString(36).substring(2, 8).toUpperCase());
-            })
-            .catch(() => {
-                status.style.color = 'var(--success)';
-                status.innerText = '✔ Ключ создан: APEX-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-            });
-        }
-
-        function generateHwidKey() {
-            const status = document.getElementById('adminStatus');
-            status.style.color = 'var(--success)';
-            status.innerText = '✔ Ключ сброса HWID создан: HWID-RESET-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-        }
-
-        function resetHwid() {
-            alert('Запрос на сброс HWID отправлен!');
-        }
-
-        function makePost() {
-            const text = document.getElementById('postContent').value;
-            const status = document.getElementById('postStatus');
-            if(!text) {
-                status.style.color = '#ef4444';
-                status.innerText = 'Введите текст!';
+        function submitReview() {
+            if (!currentUser) {
+                showToast("Войдите в аккаунт с подпиской!", "error");
+                navigateTo('cabinet');
                 return;
             }
-            status.style.color = 'var(--success)';
-            status.innerText = 'Пост опубликован!';
-            document.getElementById('postContent').value = '';
+            const text = document.getElementById('reviewTextInput').value.trim();
+            if (!text) {
+                showToast("Напишите текст отзыва!", "error");
+                return;
+            }
+            reviewsDB.unshift({ author: currentUser, rating: selectedRating, text: text });
+            localStorage.setItem('apex_reviews_db', JSON.stringify(reviewsDB));
+            document.getElementById('reviewTextInput').value = "";
+            renderReviews();
+            showToast("Отзыв успешно опубликован!", "success");
         }
 
-        function logout() {
-            window.location.href = '/login'; // Или куда у тебя ведет выход
+        function renderReviews() {
+            const container = document.getElementById('reviewsContainer');
+            if (!container) return;
+            let html = `
+                <div class="review-card">
+                    <div class="review-author"><span>DarkKnight</span> <span>5/5</span></div>
+                    <div class="review-stars">★★★★★</div>
+                    <div class="review-text">Софт огонь! Обходы на FunTime работают стабильно, ФПС не проседает вообще.</div>
+                </div>
+                <div class="review-card">
+                    <div class="review-author"><span>PvP_King</span> <span>5/5</span></div>
+                    <div class="review-stars">★★★★★</div>
+                    <div class="review-text">Визуалы очень сочные, киллаура бьет плавно. Лучший клиент за свои деньги!</div>
+                </div>
+            `;
+            reviewsDB.forEach(r => {
+                html += `
+                    <div class="review-card">
+                        <div class="review-author"><span>${r.author}</span> <span>${r.rating}/5</span></div>
+                        <div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+                        <div class="review-text">${r.text}</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
         }
+
+        // Посты помощи
+        function renderHelpPosts() {
+            const container = document.getElementById('dynamic-posts-container');
+            if (!container) return;
+            let html = "";
+            postsDB.forEach(p => {
+                html += `
+                    <div class="faq-card">
+                        <div class="faq-header" onclick="toggleFaq(this)">${p.title} <span>▼</span></div>
+                        <div class="faq-body"><p>${p.content}</p></div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function submitAsk() {
+            const q = document.getElementById('askInput').value.trim();
+            if (!q) {
+                showToast("Введите текст вопроса!", "error");
+                return;
+            }
+            requestsDB.push({ user: currentUser ? currentUser : "Гость", type: `Вопрос в поддержку: ${q}`, status: 'pending', id: Date.now() });
+            localStorage.setItem('apex_requests_db', JSON.stringify(requestsDB));
+            document.getElementById('askInput').value = "";
+            showToast("Вопрос отправлен в поддержку!", "success");
+        }
+
+        // Авторизация и ЛК
+        function switchAuthTab(tab) {
+            document.getElementById('tabLoginBtn').classList.toggle('active', tab === 'login');
+            document.getElementById('tabRegBtn').classList.toggle('active', tab === 'reg');
+            document.getElementById('loginFormSection').classList.toggle('hidden', tab !== 'login');
+            document.getElementById('regFormSection').classList.toggle('hidden', tab !== 'reg');
+        }
+
+        function handleLogin() {
+            const val = document.getElementById('loginUserInput').value.trim();
+            if (!val) {
+                showToast("Введите логин или ключ!", "error");
+                return;
+            }
+            // Проверка по ключу подписки или ключу сброса HWID
+            let foundKey = keysDB.find(k => k.key === val);
+            if (foundKey) {
+                if (foundKey.uses <= 0) {
+                    showToast("Этот ключ уже исчерпал количество использований!", "error");
+                    return;
+                }
+                foundKey.uses--;
+                localStorage.setItem('apex_keys_db', JSON.stringify(keysDB));
+                currentUser = val;
+                if (!usersDB[currentUser]) {
+                    usersDB[currentUser] = { role: "user", sub: foundKey.type, hwid: "Not Bound", key: val };
+                    localStorage.setItem('apex_users_db', JSON.stringify(usersDB));
+                }
+                localStorage.setItem('apex_current_user', JSON.stringify(currentUser));
+                showToast("Успешный вход по ключу!", "success");
+                renderCabinetState();
+                return;
+            }
+
+            if (usersDB[val] || val === 'owner') {
+                currentUser = val;
+                localStorage.setItem('apex_current_user', JSON.stringify(currentUser));
+                showToast("Успешный вход!", "success");
+                renderCabinetState();
+            } else {
+                showToast("Аккаунт или ключ не найден!", "error");
+            }
+        }
+
+        function handleRegister() {
+            const val = document.getElementById('regUserInput').value.trim();
+            if (!val) {
+                showToast("Введите никнейм!", "error");
+                return;
+            }
+            if (usersDB[val]) {
+                showToast("Такой пользователь уже существует!", "error");
+                return;
+            }
+            usersDB[val] = { role: "user", sub: "Неактивна", hwid: "Not Bound", key: "Нет" };
+            localStorage.setItem('apex_users_db', JSON.stringify(usersDB));
+            currentUser = val;
+            localStorage.setItem('apex_current_user', JSON.stringify(currentUser));
+            showToast("Регистрация успешна!", "success");
+            renderCabinetState();
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('apex_current_user');
+            showToast("Выход из аккаунта выполнен", "success");
+            renderCabinetState();
+        }
+
+        let currentDashTab = 'profile';
+        function switchDashTab(tab) {
+            currentDashTab = tab;
+            ['profile', 'activate', 'admin', 'owner-post'].forEach(t => {
+                const el = document.getElementById(`menu-${t}`);
+                if (el) el.classList.toggle('active', t === tab);
+            });
+            renderCabinetContent();
+        }
+
+        function renderCabinetState() {
+            const authC = document.getElementById('authContainer');
+            const dashC = document.getElementById('dashboardContainer');
+
+            if (!currentUser) {
+                authC.classList.remove('hidden');
+                dashC.classList.add('hidden');
+            } else {
+                authC.classList.add('hidden');
+                dashC.classList.remove('hidden');
+
+                const userData = usersDB[currentUser] || { role: "user", sub: "Неактивна", hwid: "Not Bound" };
+                document.getElementById('dashUserName').innerText = currentUser;
+                document.getElementById('dashUserAvatar').innerText = currentUser.charAt(0).toUpperCase();
+                document.getElementById('dashUserRole').innerText = userData.role.toUpperCase();
+
+                const isAdmin = userData.role === 'owner' || userData.role === 'admin';
+                document.getElementById('menu-admin').classList.toggle('hidden', !isAdmin);
+                document.getElementById('menu-owner-post').classList.toggle('hidden', userData.role !== 'owner');
+
+                renderCabinetContent();
+            }
+        }
+
+        function renderCabinetContent() {
+            const area = document.getElementById('dashContentArea');
+            const userData = usersDB[currentUser] || { role: "user", sub: "Неактивна", hwid: "Not Bound" };
+
+            if (currentDashTab === 'profile') {
+                area.innerHTML = `
+                    <div class="card">
+                        <div class="card-header">Информация о подписке</div>
+                        <div class="sub-title">${userData.sub}</div>
+                        <div class="sub-desc">Статус лицензии и привязка железа (HWID)</div>
+                        <div class="grid-info">
+                            <div class="info-item"><label>Статус</label><val style="color:var(--accent-green);">Активна</val></div>
+                            <div class="info-item"><label>HWID Железо</label><val>${userData.hwid}</val></div>
+                        </div>
+                        <div style="margin-top: 16px; display: flex; gap: 10px;">
+                            <button class="action-btn" onclick="requestHwidResetUser()">Сбросить HWID ключом</button>
+                        </div>
+                    </div>
+                `;
+            } else if (currentDashTab === 'activate') {
+                area.innerHTML = `
+                    <div class="card">
+                        <div class="card-header">Активация подписки или ключа сброса HWID</div>
+                        <div class="form-group">
+                            <label>Введите ключ</label>
+                            <input type="text" id="activationKeyInput" class="form-input" placeholder="APEX-XXXX или HWID-XXXX...">
+                        </div>
+                        <button class="action-btn green" onclick="activateUserKey()">Активировать ключ</button>
+                    </div>
+                `;
+            } else if (currentDashTab === 'admin' && (userData.role === 'owner' || userData.role === 'admin')) {
+                let requestsHtml = "";
+                requestsDB.forEach((req, idx) => {
+                    requestsHtml += `
+                        <div class="list-box">
+                            <div class="list-box-header"><span>${req.user}</span> <span class="badge pending">${req.type}</span></div>
+                            <div style="display: flex; gap: 8px; margin-top: 8px;">
+                                <button class="action-btn green" style="padding: 6px 12px; font-size: 11px;" onclick="approveRequest(${idx})">Одобрить</button>
+                                <button class="action-btn" style="padding: 6px 12px; font-size: 11px; background:#444;" onclick="deleteRequest(${idx})">Удалить</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                if (!requestsHtml) requestsHtml = "<p style='color:var(--text-sub); font-size:13px;'>Нет активных запросов.</p>";
+
+                area.innerHTML = `
+                    <div class="card">
+                        <div class="card-header">Генератор ключей подписки</div>
+                        <div class="admin-form-grid">
+                            <div class="form-group" style="margin:0;">
+                                <label>Тариф</label>
+                                <select id="genTariff" class="form-select">
+                                    <option value="30 дней">1 Месяц</option>
+                                    <option value="90 дней">3 Месяца</option>
+                                    <option value="Навсегда">Навсегда</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin:0;">
+                                <label>Кол-во использований</label>
+                                <input type="number" id="genUses" class="form-input" value="1" min="1" max="100">
+                            </div>
+                        </div>
+                        <button class="action-btn blue" style="margin-top:12px;" onclick="generateSubKey()">Сгенерировать ключ</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">Генератор ключей сброса HWID</div>
+                        <button class="action-btn" style="background:var(--accent-blue);" onclick="generateHwidKeyAdmin()">Создать ключ сброса HWID</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">Запросы на предзаказ и сброс HWID</div>
+                        ${requestsHtml}
+                    </div>
+                `;
+            } else if (currentDashTab === 'owner-post' && userData.role === 'owner') {
+                area.innerHTML = `
+                    <div class="card">
+                        <div class="card-header">Создать пост в раздел "Помощь"</div>
+                        <div class="form-group">
+                            <label>Заголовок поста</label>
+                            <input type="text" id="postTitleInput" class="form-input" placeholder="Например: Ошибка при инжекте...">
+                        </div>
+                        <div class="form-group">
+                            <label>Содержимое / Инструкция</label>
+                            <textarea id="postContentInput" class="form-textarea" placeholder="Текст помощи..."></textarea>
+                        </div>
+                        <button class="action-btn green" onclick="createHelpPost()">Опубликовать пост</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Логика админки и генерации
+        function generateSubKey() {
+            const tariff = document.getElementById('genTariff').value;
+            const uses = parseInt(document.getElementById('genUses').value) || 1;
+            const newKey = "APEX-" + Math.random().toString(36).substring(2, 8).toUpperCase() + "-" + Math.random().toString(36).substring(2, 6).toUpperCase();
+            keysDB.push({ key: newKey, type: tariff, uses: uses });
+            localStorage.setItem('apex_keys_db', JSON.stringify(keysDB));
+            showToast(`Ключ создан: ${newKey} (${uses} изсл.)`, "success");
+        }
+
+        function generateHwidKeyAdmin() {
+            const hwKey = "HWID-RESET-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+            hwidResetKeysDB.push({ key: hwKey, uses: 1 });
+            localStorage.setItem('apex_hwid_keys_db', JSON.stringify(hwidResetKeysDB));
+            showToast(`Ключ сброса HWID создан: ${hwKey}`, "success");
+        }
+
+        function activateUserKey() {
+            const val = document.getElementById('activationKeyInput').value.trim();
+            // Проверка подписочного ключа
+            let foundSubKey = keysDB.find(k => k.key === val);
+            if (foundSubKey) {
+                if (foundSubKey.uses <= 0) {
+                    showToast("Ключ больше недействителен (исчерпаны использования)", "error");
+                    return;
+                }
+                foundSubKey.uses--;
+                localStorage.setItem('apex_keys_db', JSON.stringify(keysDB));
+                usersDB[currentUser].sub = foundSubKey.type;
+                usersDB[currentUser].key = val;
+                localStorage.setItem('apex_users_db', JSON.stringify(usersDB));
+                showToast("Подписка успешно активирована!", "success");
+                renderCabinetState();
+                return;
+            }
+
+            // Проверка ключа сброса HWID
+            let foundHwidKey = hwidResetKeysDB.find(k => k.key === val);
+            if (foundHwidKey) {
+                if (foundHwidKey.uses <= 0) {
+                    showToast("Ключ сброса уже использован", "error");
+                    return;
+                }
+                foundHwidKey.uses--;
+                localStorage.setItem('apex_hwid_keys_db', JSON.stringify(hwidResetKeysDB));
+                usersDB[currentUser].hwid = "Not Bound (Сброшен)";
+                localStorage.setItem('apex_users_db', JSON.stringify(usersDB));
+                showToast("HWID успешно сброшен!", "success");
+                renderCabinetState();
+                return;
+            }
+
+            showToast("Неверный или несуществующий ключ!", "error");
+        }
+
+        function requestHwidResetUser() {
+            usersDB[currentUser].hwid = "Not Bound (Сброшен)";
+            localStorage.setItem('apex_users_db', JSON.stringify(usersDB));
+            showToast("HWID успешно сброшен!", "success");
+            renderCabinetState();
+        }
+
+        function approveRequest(idx) {
+            const req = requestsDB[idx];
+            req.status = 'done';
+            if (usersDB[req.user]) {
+                if (req.type.includes('Предзаказ')) {
+                    usersDB[req.user].sub = "Предзаказ Активен";
+                } else if (req.type.includes('HWID')) {
+                    usersDB[req.user].hwid = "Not Bound (Одобрено)";
+                } else if (req.type.includes('Покупка')) {
+                    usersDB[req.user].sub = "Премиум (Одобрено)";
+                }
+                localStorage.setItem('apex_users_db', JSON.stringify(usersDB));
+            }
+            requestsDB.splice(idx, 1);
+            localStorage.setItem('apex_requests_db', JSON.stringify(requestsDB));
+            showToast("Запрос успешно одобрен!", "success");
+            renderCabinetContent();
+        }
+
+        function deleteRequest(idx) {
+            requestsDB.splice(idx, 1);
+            localStorage.setItem('apex_requests_db', JSON.stringify(requestsDB));
+            showToast("Запрос удален", "success");
+            renderCabinetContent();
+        }
+
+        function createHelpPost() {
+            const title = document.getElementById('postTitleInput').value.trim();
+            const content = document.getElementById('postContentInput').value.trim();
+            if (!title || !content) {
+                showToast("Заполните все поля поста!", "error");
+                return;
+            }
+            postsDB.push({ title, content });
+            localStorage.setItem('apex_posts_db', JSON.stringify(postsDB));
+            document.getElementById('postTitleInput').value = "";
+            document.getElementById('postContentInput').value = "";
+            renderHelpPosts();
+            showToast("Пост успешно опубликован в помощь!", "success");
+        }
+
+        // Инициализация при загрузке
+        renderReviews();
+        renderHelpPosts();
     </script>
 </body>
 </html>
