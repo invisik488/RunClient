@@ -12,7 +12,6 @@
             --border-color: rgba(255, 255, 255, 0.08);
             --accent-red: #ff3344;
             --accent-red-glow: rgba(255, 51, 68, 0.35);
-            --accent-blue: #0088ff;
             --accent-green: #00e676;
             --text-main: #ffffff;
             --text-sub: #949aab;
@@ -58,7 +57,7 @@
 
         .navbar-container {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            z-index: 1000; width: 92%; max-width: 1000px;
+            z-index: 1000; width: 92%; max-width: 1050px;
         }
         .navbar {
             background: rgba(12, 14, 20, 0.75); backdrop-filter: blur(20px);
@@ -66,7 +65,7 @@
             display: flex; align-items: center; justify-content: space-between;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
-        .nav-left { display: flex; align-items: center; gap: 28px; }
+        .nav-left { display: flex; align-items: center; gap: 20px; }
         .nav-brand {
             display: flex; align-items: center; gap: 10px; font-weight: 900;
             font-size: 17px; color: #fff; cursor: pointer; text-decoration: none;
@@ -77,18 +76,18 @@
             border-radius: 10px; display: flex; align-items: center; justify-content: center;
             font-weight: 900; font-size: 15px; color: #fff; box-shadow: 0 0 15px var(--accent-red-glow);
         }
-        .nav-links { display: flex; align-items: center; gap: 8px; list-style: none; }
+        .nav-links { display: flex; align-items: center; gap: 6px; list-style: none; }
         .nav-link {
-            color: var(--text-sub); font-size: 13px; font-weight: 600; cursor: pointer;
-            padding: 8px 14px; border-radius: 12px; transition: all 0.2s ease; text-decoration: none;
+            color: var(--text-sub); font-size: 12px; font-weight: 600; cursor: pointer;
+            padding: 8px 12px; border-radius: 12px; transition: all 0.2s ease; text-decoration: none;
         }
         .nav-link:hover, .nav-link.active { color: #ffffff; background: rgba(255, 255, 255, 0.05); }
 
         .btn-cabinet {
             background: linear-gradient(135deg, #ff3344 0%, #d61b2c 100%);
-            color: #fff; border: none; padding: 8px 18px; border-radius: 14px;
-            font-size: 13px; font-weight: 700; cursor: pointer;
-            display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 20px var(--accent-red-glow);
+            color: #fff; border: none; padding: 8px 16px; border-radius: 14px;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 20px var(--accent-red-glow);
         }
 
         .page-section { padding-top: 120px; padding-bottom: 80px; max-width: 1050px; margin: 0 auto; width: 90%; }
@@ -112,6 +111,14 @@
         }
         .promo-banner h2 { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 10px; }
         .promo-banner p { color: var(--text-sub); font-size: 14px; line-height: 1.6; }
+
+        .servers-section { text-align: center; margin-top: 40px; }
+        .servers-title { font-size: 20px; font-weight: 800; margin-bottom: 6px; color: #fff; }
+        .servers-subtitle { font-size: 13px; color: var(--text-sub); margin-bottom: 20px; }
+        .servers-grid { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .server-card {
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 14px 22px; font-weight: 800; color: #fff; font-size: 13px;
+        }
 
         .tariffs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 30px; }
         .tariff-card {
@@ -184,7 +191,7 @@
     <div class="bg-glow-2"></div>
     <div id="toast-container"></div>
 
-    <!-- Header -->
+    <!-- Верхний навигационный блок (Динам остров) -->
     <div class="navbar-container">
         <nav class="navbar">
             <div class="nav-left">
@@ -195,6 +202,8 @@
                 <ul class="nav-links">
                     <li><a class="nav-link active" id="nav-home" onclick="navigateTo('home')">Главная</a></li>
                     <li><a class="nav-link" id="nav-tariffs" onclick="navigateTo('tariffs')">Тарифы</a></li>
+                    <li><a class="nav-link" id="nav-help" onclick="navigateTo('help')">Помощь</a></li>
+                    <li><a class="nav-link" id="nav-support" onclick="navigateTo('support')">Задать вопрос</a></li>
                 </ul>
             </div>
             <div class="nav-right">
@@ -210,7 +219,7 @@
         <div class="hero">
             <div class="hero-badge">⚡ Fabric 1.21.4 Client</div>
             <h1>Абсолютное Доминирование</h1>
-            <p>Премиальный софт с идеальным обходом и максимальным FPS.</p>
+            <p>Премиальный софт с идеальным обходом античитов и максимальным FPS.</p>
         </div>
         <div class="stats-grid">
             <div class="stat-card"><div class="stat-val">420+</div><div class="stat-lbl">Онлайн</div></div>
@@ -218,11 +227,20 @@
         </div>
         <div class="promo-banner">
             <h2>🚀 Быстрый запуск и оптимизация</h2>
-            <p>Стабильный фреймрейт на любых серверах без просадок.</p>
+            <p>Стабильный фреймрейт на любых серверах без просадок, кастомный визуальный интерфейс и продвинутый функционал для PvP.</p>
+        </div>
+        <div class="servers-section">
+            <div class="servers-title">Поддерживаемые серверы</div>
+            <div class="servers-subtitle">Полная совместимость и надежный обход</div>
+            <div class="servers-grid">
+                <div class="server-card">FunTime</div>
+                <div class="server-card">HolyWorld</div>
+                <div class="server-card">ReallyWorld</div>
+            </div>
         </div>
     </div>
 
-    <!-- Тарифы (со сбросом HWID и предзаказами) -->
+    <!-- Тарифы (Цены + предзаказ + сброс HWID) -->
     <div id="page-tariffs" class="page-section hidden">
         <div class="hero">
             <h1>Тарифные планы и Предзаказы</h1>
@@ -243,8 +261,48 @@
                 <button class="btn-buy" onclick="buyTariff('Навсегда (449 ₽)')">Предзаказ / Купить</button>
             </div>
         </div>
-        <div style="margin-top: 30px; text-align: center;">
+        <div style="margin-top: 35px; text-align: center;">
             <button class="action-btn" style="max-width: 280px; margin: 0 auto;" onclick="resetHWID()">Сбросить HWID устройства</button>
+        </div>
+    </div>
+
+    <!-- Страница: Помощь -->
+    <div id="page-help" class="page-section hidden">
+        <div class="hero">
+            <h1>Центр помощи</h1>
+            <p>Часто задаваемые вопросы и инструкции по установке.</p>
+        </div>
+        <div style="max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px;">
+            <div class="card">
+                <div class="card-header">Как запустить клиент?</div>
+                <p class="sub-desc">Скачайте лоадер в личном кабинете, запустите его и войдите под своей учетной записью с активной подпиской.</p>
+            </div>
+            <div class="card">
+                <div class="card-header">Что делать при ошибке HWID?</div>
+                <p class="sub-desc">Вы можете самостоятельно сбросить привязку оборудования на вкладке «Тарифы» или через личный кабинет.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Страница: Задать вопрос -->
+    <div id="page-support" class="page-section hidden">
+        <div class="hero">
+            <h1>Техническая поддержка</h1>
+            <p>Возникли вопросы или проблемы с запуском? Напишите нам.</p>
+        </div>
+        <div style="max-width: 500px; margin: 0 auto;">
+            <div class="card">
+                <div class="card-header">Форма обращения</div>
+                <div class="form-group">
+                    <label>Ваш ник / почта</label>
+                    <input type="text" class="form-input" placeholder="Введите имя...">
+                </div>
+                <div class="form-group">
+                    <label>Опишите проблему</label>
+                    <textarea class="form-textarea" placeholder="Детали ошибки..."></textarea>
+                </div>
+                <button class="action-btn" onclick="showToast('Вопрос успешно отправлен!', 'success')">Отправить вопрос</button>
+            </div>
         </div>
     </div>
 
@@ -255,7 +313,7 @@
                 <div class="auth-title">Apex<span>Client</span></div>
                 <div class="auth-subtitle">Авторизация в системе</div>
                 <div class="form-group">
-                    <label>Логин (Введите admin или owner для прав)</label>
+                    <label>Логин (admin или owner для прав)</label>
                     <input type="text" id="authUsernameInput" class="form-input" placeholder="Никнейм">
                 </div>
                 <button class="btn-submit action-btn" onclick="handleAuthSubmit()">Войти в кабинет</button>
@@ -283,7 +341,6 @@
                         <li class="nav-item" onclick="switchCabinetTab('downloads', this)">📥 Загрузки</li>
                         <li class="nav-item" onclick="switchCabinetTab('moderation', this)">🛡️ Модерация</li>
                         <li class="nav-item hidden" id="navItemAdmin" onclick="switchCabinetTab('admin', this)">⚙️ Админ панель</li>
-                        <li class="nav-item" onclick="switchCabinetTab('support', this)">❓ Задать вопрос</li>
                     </ul>
                 </div>
                 <button class="btn-logout" onclick="logout()">Выйти</button>
@@ -358,18 +415,6 @@
                         <button class="action-btn" onclick="showToast('Ключ сгенерирован в консоль!', 'success')">➕ Сгенерировать ключ доступа</button>
                     </div>
                 </div>
-
-                <!-- Вкладка: Задать вопрос -->
-                <div id="cab-support" class="cab-tab-content hidden">
-                    <div class="card">
-                        <div class="card-header">Техническая поддержка</div>
-                        <div class="form-group">
-                            <label>Опишите вашу проблему</label>
-                            <textarea class="form-textarea" placeholder="Детали ошибки или вопроса..."></textarea>
-                        </div>
-                        <button class="action-btn" onclick="showToast('Вопрос отправлен поддержке!', 'success')">Отправить вопрос</button>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -422,7 +467,6 @@
             document.getElementById('sidebarRole').innerText = currentUser.role;
             document.getElementById('navCabinetText').innerText = currentUser.username;
             
-            // Права на вкладки «Сделать пост» (admin и owner) и «Админ панель» (owner)
             const postTab = document.getElementById('navItemPost');
             const adminTab = document.getElementById('navItemAdmin');
 
