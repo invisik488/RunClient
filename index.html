@@ -705,6 +705,7 @@
     <script>
         let currentUser = localStorage.getItem('apex_user') || null;
 
+        // Если в localStorage старая база без ключей в нижнем регистре или со старыми данными, принудительно инициализируем чистую и актуальную базу
         let registeredUsers = JSON.parse(localStorage.getItem('apex_db_users')) || {
             "invisik": { password: "123", role: "OWNER", sub: "Навсегда", banned: false, banReason: "", banDuration: "" },
             "sextazyst": { password: "123", role: "USER", sub: "30д", banned: false, banReason: "", banDuration: "" },
@@ -793,7 +794,7 @@
             document.getElementById('navItemCapabilities').classList.add('hidden');
             document.getElementById('navItemAdmin').classList.add('hidden');
 
-            // Исправлен поиск по ключу в нижнем регистре для точного соответствия базе
+            if (!username) return;
             const lower = username.toLowerCase();
             if (!registeredUsers[lower]) return;
 
@@ -827,7 +828,6 @@
         }
 
         function handleLogin() {
-            // Исправлено: сохраняем оригинальный ввод с учётом регистра для отображения, а поиск ведем по lower
             const usernameInput = document.getElementById('loginUsernameInput').value.trim();
             const password = document.getElementById('loginPasswordInput').value.trim();
 
@@ -838,8 +838,7 @@
 
             const lower = usernameInput.toLowerCase();
             
-            // Исправлено: проверяем наличие ключа в нижнем регистре и сверяем пароль
-            if (!registeredUsers[lower] || registeredUsers[lower].password !== password) {
+            if (!registeredUsers[lower] || String(registeredUsers[lower].password) !== String(password)) {
                 showToast('Неверный никнейм или пароль!', 'error');
                 return;
             }
@@ -849,7 +848,6 @@
                 return;
             }
 
-            // Устанавливаем текущего пользователя (используем введенное имя)
             currentUser = usernameInput;
             localStorage.setItem('apex_user', currentUser);
             
@@ -1253,10 +1251,25 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            // Если в localStorage были старые битые данные учтивок, сбрасываем их один раз по умолчанию
+            if (!registeredUsers["invisik"]) {
+                registeredUsers = {
+                    "invisik": { password: "123", role: "OWNER", sub: "Навсегда", banned: false, banReason: "", banDuration: "" },
+                    "sextazyst": { password: "123", role: "USER", sub: "30д", banned: false, banReason: "", banDuration: "" },
+                    "veselchak": { password: "123", role: "USER", sub: "90д", banned: false, banReason: "", banDuration: "" }
+                };
+                saveDB();
+            }
+
             if (currentUser) {
-                document.getElementById('sidebarUsername').innerText = currentUser;
-                document.getElementById('navCabinetText').innerText = currentUser;
-                applyUserRole(currentUser);
+                // Проверяем актуальность сохраненного юзера
+                if (!registeredUsers[currentUser.toLowerCase()]) {
+                    logout();
+                } else {
+                    document.getElementById('sidebarUsername').innerText = currentUser;
+                    document.getElementById('navCabinetText').innerText = currentUser;
+                    applyUserRole(currentUser);
+                }
             }
         });
     </script>
