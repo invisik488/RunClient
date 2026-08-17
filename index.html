@@ -243,6 +243,8 @@
         .review-author { font-size: 14px; font-weight: 800; color: #fff; display: flex; justify-content: space-between; align-items: center; }
         .review-stars { color: #ffb703; font-size: 14px; margin: 6px 0; }
         .review-text { font-size: 13px; color: var(--text-sub); line-height: 1.5; }
+        .star-rating { display: flex; gap: 6px; font-size: 20px; cursor: pointer; color: #444; margin-bottom: 12px; }
+        .star-rating .star.active { color: #ffb703; }
 
         /* Auth Screen */
         .auth-wrapper { display: flex; align-items: center; justify-content: center; min-height: 65vh; }
@@ -254,74 +256,40 @@
         .auth-title { font-size: 26px; font-weight: 900; text-align: center; margin-bottom: 4px; }
         .auth-title span { color: var(--accent-red); }
         .auth-subtitle { font-size: 12px; color: var(--text-sub); text-align: center; margin-bottom: 24px; font-weight: 600; }
+        .tabs { display: flex; background: rgba(0,0,0,0.3); padding: 4px; border-radius: 12px; margin-bottom: 20px; }
+        .tab-btn { flex: 1; background: none; border: none; color: var(--text-sub); padding: 10px; font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .tab-btn.active { background: rgba(255,255,255,0.08); color: #fff; }
         
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 11px; color: var(--text-sub); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 700; }
-        .form-input, .form-textarea {
+        .form-input, .form-select, .form-textarea {
             width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color);
             padding: 12px 14px; border-radius: 12px; color: #fff; font-size: 13px; outline: none; transition: 0.2s;
         }
         .form-textarea { resize: vertical; min-height: 100px; }
-        .form-input:focus, .form-textarea:focus { border-color: var(--accent-red); }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent-red); }
         .btn-submit { width: 100%; background: var(--accent-red); color: #fff; border: none; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.2s; margin-top: 8px; box-shadow: 0 4px 15px var(--accent-red-glow); }
 
-        /* Cabinet Dashboard Styles Fix */
+        /* Cabinet Dashboard */
         .dash-container {
-            display: grid; grid-template-columns: 260px 1fr; gap: 24px;
+            display: grid; grid-template-columns: 240px 1fr; gap: 20px;
             background: var(--bg-card); backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color); border-radius: 28px; padding: 24px; min-height: 520px;
+            border: 1px solid var(--border-color); border-radius: 28px; padding: 20px; min-height: 520px;
         }
-        .sidebar { 
-            border-right: 1px solid var(--border-color); 
-            padding-right: 20px; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between; 
-        }
-        .user-card-side { 
-            display: flex; 
-            align-items: center; 
-            gap: 14px; 
-            padding: 14px; 
-            background: rgba(0,0,0,0.3); 
-            border-radius: 16px; 
-            margin-bottom: 24px; 
-            border: 1px solid var(--border-color); 
-        }
-        .avatar { 
-            width: 44px; height: 44px; 
-            background: rgba(255, 51, 68, 0.15); 
-            border: 1.5px solid var(--accent-red); 
-            color: var(--accent-red); 
-            border-radius: 12px; 
-            display: flex; align-items: center; justify-content: center; 
-            font-weight: 900; font-size: 18px; flex-shrink: 0;
-        }
-        .user-details { display: flex; flex-direction: column; gap: 2px; }
-        .user-details .uname { font-size: 14px; font-weight: 800; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .user-details .urole { font-size: 10px; color: var(--accent-red); font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
+        .sidebar { border-right: 1px solid var(--border-color); padding-right: 18px; display: flex; flex-direction: column; justify-content: space-between; }
+        .user-card-side { display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(0,0,0,0.25); border-radius: 14px; margin-bottom: 20px; border: 1px solid var(--border-color); }
+        .avatar { width: 40px; height: 40px; background: rgba(255, 51, 68, 0.15); border: 1px solid var(--accent-red); color: var(--accent-red); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+        .user-details .uname { font-size: 14px; font-weight: 800; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .user-details .urole { font-size: 10px; color: var(--accent-red); font-weight: 800; letter-spacing: 0.5px; }
         
-        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; }
-        .nav-item { 
-            padding: 12px 16px; 
-            border-radius: 12px; 
-            color: var(--text-sub); 
-            font-size: 13px; 
-            font-weight: 700; 
-            cursor: pointer; 
-            transition: all 0.2s ease; 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            background: transparent;
-        }
-        .nav-item:hover { background: rgba(255, 255, 255, 0.04); color: #fff; }
-        .nav-item.active { background: rgba(255, 51, 68, 0.12); color: var(--accent-red); border: 1px solid rgba(255, 51, 68, 0.2); }
+        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+        .nav-item { padding: 10px 12px; border-radius: 10px; color: var(--text-sub); font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+        .nav-item:hover, .nav-item.active { background: rgba(255, 51, 68, 0.1); color: var(--accent-red); }
         
-        .btn-logout { background: none; border: 1px solid var(--border-color); color: var(--text-sub); padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 12px; transition: 0.2s; width: 100%; margin-top: 20px; }
-        .btn-logout:hover { border-color: var(--accent-red); color: var(--accent-red); background: rgba(255, 51, 68, 0.05); }
+        .btn-logout { background: none; border: 1px solid var(--border-color); color: var(--text-sub); padding: 10px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 12px; transition: 0.2s; width: 100%; }
+        .btn-logout:hover { border-color: var(--accent-red); color: var(--accent-red); }
 
-        .content { padding: 4px; display: flex; flex-direction: column; gap: 16px; }
+        .content { padding: 10px; display: flex; flex-direction: column; gap: 16px; }
         .card { background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); border-radius: 18px; padding: 20px; margin-bottom: 12px; }
         .card-header { font-size: 11px; color: var(--text-sub); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
         .sub-title { font-size: 20px; font-weight: 800; color: var(--accent-green); margin-bottom: 4px; }
@@ -338,6 +306,14 @@
         .action-btn.green:hover { background: #00c853; }
         .action-btn.blue { background: var(--accent-blue); }
         .action-btn.blue:hover { background: #0077e6; }
+
+        .admin-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 12px; }
+        
+        .list-box { background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-bottom: 10px; font-size: 13px; }
+        .list-box-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 800; color: var(--accent-red); }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+        .badge.pending { background: rgba(255,170,0,0.15); color: #ffaa00; }
+        .badge.done { background: rgba(0,230,118,0.15); color: var(--accent-green); }
     </style>
 </head>
 <body>
@@ -417,7 +393,7 @@
                 <div class="tag-item">SkyShader</div>
                 <div class="tag-item">Custom Hand</div>
                 <div class="tag-item">3D Wings</div>
-                <div class="tag-item">Swimming Animation</div>
+                <div class="tag-item">Swemming Animation</div>
                 <div class="tag-item i18n" data-ru="Кастомный ClickGUI & HUD" data-en="Custom ClickGUI & HUD">Кастомный ClickGUI & HUD</div>
                 <div class="tag-item i18n" data-ru="И много другого!" data-en="And much more!">И много другого!</div>
             </div>
@@ -526,61 +502,81 @@
                 </div>
                 <button class="btn-buy blue i18n" data-ru="Оформить" data-en="Preorder" onclick="makePreorder('3 Месяца (239 ₽)')">Оформить</button>
             </div>
+
+            <div class="tariff-card special">
+                <div class="tariff-badge blue">PRE-ORDER</div>
+                <div>
+                    <div class="tariff-name i18n" data-ru="Предзаказ (Навсегда)" data-en="Preorder (Lifetime)">Предзаказ (Навсегда)</div>
+                    <div class="tariff-price">449 <span>₽</span></div>
+                </div>
+                <button class="btn-buy blue i18n" data-ru="Оформить" data-en="Preorder" onclick="makePreorder('Навсегда (449 ₽)')">Оформить</button>
+            </div>
         </div>
     </div>
 
-    <!-- ОТЗЫВЫ -->
+    <!-- СТРАНИЦА: ОТЗЫВЫ -->
     <div id="page-reviews" class="page-section hidden">
         <div class="hero">
-            <h1 class="i18n" data-ru="Отзывы комьюнити" data-en="Community Reviews">Отзывы комьюнити</h1>
-            <p class="i18n" data-ru="Что говорят реальные пользователи о работе ApexClient." data-en="What real users say about ApexClient performance.">Что говорят реальные пользователи о работе ApexClient.</p>
+            <h1 class="i18n" data-ru="Отзывы пользователей" data-en="User Reviews">Отзывы пользователей</h1>
+            <p class="i18n" data-ru="Мнения наших клиентов о качестве ApexClient и его обходах." data-en="Feedback from our clients on ApexClient quality and bypasses.">Мнения наших клиентов о качестве ApexClient и его обходах.</p>
         </div>
 
-        <div class="reviews-grid">
+        <div class="promo-banner" style="max-width: 650px; margin: 0 auto 30px;">
+            <h2 class="i18n" data-ru="Оставить отзыв" data-en="Leave a Review">Оставить отзыв</h2>
+            <p class="i18n" data-ru="Только пользователи с активной подпиской могут публиковать отзывы." data-en="Only users with active subscription can post reviews.">Только пользователи с активной подпиской могут публиковать отзывы.</p>
+            
+            <div class="form-group">
+                <label class="i18n" data-ru="Ваша оценка" data-en="Your Rating">Ваша оценка</label>
+                <div class="star-rating" id="starRating">
+                    <span class="star active" onclick="setRating(1)">★</span>
+                    <span class="star active" onclick="setRating(2)">★</span>
+                    <span class="star active" onclick="setRating(3)">★</span>
+                    <span class="star active" onclick="setRating(4)">★</span>
+                    <span class="star active" onclick="setRating(5)">★</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="i18n" data-ru="Ваш отзыв" data-en="Your Review">Ваш отзыв</label>
+                <textarea id="reviewTextInput" class="form-textarea i18n-ph" data-ru="Напишите впечатление от использования..." data-en="Write your experience..." placeholder="Напишите впечатление от использования..."></textarea>
+            </div>
+            <button class="action-btn i18n" data-ru="Опубликовать отзыв" data-en="Submit Review" style="width:100%;" onclick="submitReview()">Опубликовать отзыв</button>
+        </div>
+
+        <div class="reviews-grid" id="reviewsContainer">
             <div class="review-card">
-                <div class="review-author">DarkKnight <span>✓ Verified</span></div>
+                <div class="review-author"><span>DarkKnight</span> <span>5/5</span></div>
                 <div class="review-stars">★★★★★</div>
-                <div class="review-text">Клиент топовый, на FunTime летает без просадок! Аура отрабатывает на ура.</div>
+                <div class="review-text">Софт огонь! Обходы на FunTime работают стабильно, ФПС не проседает вообще.</div>
             </div>
             <div class="review-card">
-                <div class="review-author">X_PvP_God_X <span>✓ Verified</span></div>
+                <div class="review-author"><span>PvP_King</span> <span>5/5</span></div>
                 <div class="review-stars">★★★★★</div>
-                <div class="review-text">Визуалы очень сочные, кастомные анимации плавания прям порадовали. Рекомендую.</div>
-            </div>
-            <div class="review-card">
-                <div class="review-author">LegitPlayer <span>✓ Verified</span></div>
-                <div class="review-stars">★★★★★</div>
-                <div class="review-text">Обходы действительно работают, саппорт ответил и помог с установкой за 5 минут.</div>
+                <div class="review-text">Визуалы очень сочные, киллаура бьет плавно. Лучший клиент за свои деньги!</div>
             </div>
         </div>
     </div>
 
-    <!-- ПОМОЩЬ / FAQ -->
+    <!-- ПОМОЩЬ -->
     <div id="page-help" class="page-section hidden">
-        <h2 class="faq-section-title i18n" data-ru="Часто задаваемые вопросы" data-en="Frequently Asked Questions">Часто задаваемые вопросы</h2>
+        <div class="faq-section-title i18n" data-ru="Часто задаваемые вопросы" data-en="Frequently Asked Questions">Часто задаваемые вопросы</div>
         <div class="faq-divider"></div>
 
         <div class="faq-card">
-            <div class="faq-header" onclick="toggleFaq(this)">
-                <span class="i18n" data-ru="Как установить ApexClient?" data-en="How to install ApexClient?">Как установить ApexClient?</span>
-                <span>▼</span>
-            </div>
+            <div class="faq-header" onclick="toggleFaq(this)"><span class="i18n" data-ru="Как установить ApexClient?" data-en="How to install ApexClient?">Как установить ApexClient?</span> <span>▼</span></div>
             <div class="faq-body">
                 <ol>
-                    <li>Скачайте наш официальный лоунчер из личного кабинета.</li>
-                    <li>Запустите установщик и укажите путь к вашей папке `.minecraft`.</li>
-                    <li>Авторизуйтесь в клиенте под своими данными с сайта и нажмите "Запуск".</li>
+                    <li class="i18n" data-ru="Скачайте наш лаунчер из личного кабинета после покупки." data-en="Download launcher from user area after purchase.">Скачайте наш лаунчер из личного кабинета после покупки.</li>
+                    <li class="i18n" data-ru="Убедитесь, что у вас установлена Java 21+." data-en="Make sure Java 21+ is installed.">Убедитесь, что у вас установлена Java 21+.</li>
+                    <li class="i18n" data-ru="Запустите лаунчер, войдите в аккаунт и нажмите «Запустить»." data-en="Run launcher, login and press 'Launch'.">Запустите лаунчер, войдите в аккаунт и нажмите «Запустить».</li>
                 </ol>
             </div>
         </div>
 
         <div class="faq-card">
-            <div class="faq-header" onclick="toggleFaq(this)">
-                <span class="i18n" data-ru="Что делать при смене комплектующих (HWID)?" data-en="What to do if hardware changes (HWID)?">Что делать при смене комплектующих (HWID)?</span>
-                <span>▼</span>
-            </div>
+            <div class="faq-header" onclick="toggleFaq(this)"><span class="i18n" data-ru="Что делать, если привязан другой HWID?" data-en="What to do if another HWID is linked?">Что делать, если привязан другой HWID?</span> <span>▼</span></div>
             <div class="faq-body">
-                Воспользуйтесь услугой «Сброс HWID» на странице тарифов или обратитесь в поддержку через раздел «Задать вопрос».
+                <p class="i18n" data-ru="Вы можете запросить сброс HWID в вашем личном кабинете или приобрести услугу мгновенного сброса на странице тарифов." data-en="You can request HWID reset in your cabinet or buy instant reset service on pricing page.">Вы можете запросить сброс HWID в вашем личном кабинете или приобрести услугу мгновенного сброса на странице тарифов.</p>
             </div>
         </div>
     </div>
@@ -588,134 +584,406 @@
     <!-- ЗАДАТЬ ВОПРОС -->
     <div id="page-ask" class="page-section hidden">
         <div class="auth-wrapper">
-            <div class="auth-card">
-                <div class="auth-title">Apex<span>Support</span></div>
-                <div class="auth-subtitle i18n" data-ru="Опишите вашу проблему, и поддержка ответит вам" data-en="Describe your issue and support will help you">Опишите вашу проблему, и поддержка ответит вам</div>
-                
+            <div class="auth-card" style="max-width: 500px;">
+                <div class="auth-title"><span class="i18n" data-ru="Служба" data-en="Support">Служба</span> <span>поддержки</span></div>
+                <div class="auth-subtitle i18n" data-ru="Задайте любой вопрос или сообщите о проблеме" data-en="Ask any question or report an issue">Задайте любой вопрос или сообщите о проблеме</div>
                 <div class="form-group">
-                    <label class="i18n" data-ru="Ваш Nickname / Discord" data-en="Your Nickname / Discord">Ваш Nickname / Discord</label>
-                    <input type="text" class="form-input" placeholder="User#1234">
+                    <label class="i18n" data-ru="Ваш никнейм" data-en="Your Nickname">Ваш никнейм</label>
+                    <input type="text" id="askUser" class="form-input i18n-ph" data-ru="Введите ваш ник" data-en="Enter nickname" placeholder="Введите ваш ник">
+                </div>
+                <div class="form-group">
+                    <label class="i18n" data-ru="Тема обращения" data-en="Subject">Тема обращения</label>
+                    <input type="text" id="askSubject" class="form-input i18n-ph" data-ru="Пример: Проблема с HWID" data-en="e.g. HWID Issue" placeholder="Пример: Проблема с HWID">
                 </div>
                 <div class="form-group">
                     <label class="i18n" data-ru="Сообщение" data-en="Message">Сообщение</label>
-                    <textarea class="form-textarea" placeholder="Подробно опишите вопрос..."></textarea>
+                    <textarea id="askText" class="form-textarea i18n-ph" data-ru="Опишите вашу проблему максимально подробно..." data-en="Describe your issue in detail..." placeholder="Опишите вашу проблему максимально подробно..."></textarea>
                 </div>
-                <button class="btn-submit i18n" data-ru="Отправить запрос" data-en="Submit Ticket" onclick="showToast('Запрос отправлен! Ожидайте ответа.', 'success')">Отправить запрос</button>
+                <button class="btn-submit i18n" data-ru="Отправить запрос" data-en="Send Request" onclick="sendSupportQuestion()">Отправить запрос</button>
             </div>
         </div>
     </div>
 
-    <!-- КАБИНЕТ (ИСПРАВЛЕННЫЙ ВЕРСТКОЙ СЕКЦИИ) -->
+    <!-- КАБИНЕТ / АВТОРИЗАЦИЯ -->
     <div id="page-cabinet" class="page-section hidden">
-        <div class="dash-container">
+        <!-- Окно входа / регистрации -->
+        <div id="authSection" class="auth-wrapper">
+            <div class="auth-card">
+                <div class="auth-title">Apex<span>Client</span></div>
+                <div class="auth-subtitle i18n" data-ru="Войдите в систему для доступа к личному кабинету" data-en="Sign in to access your personal dashboard">Войдите в систему для доступа к личному кабинету</div>
+                <div class="tabs">
+                    <button class="tab-btn active i18n" data-ru="Вход" data-en="Login" id="tabLoginBtn" onclick="switchAuthTab('login')">Вход</button>
+                    <button class="tab-btn i18n" data-ru="Регистрация" data-en="Register" id="tabRegBtn" onclick="switchAuthTab('register')">Регистрация</button>
+                </div>
+                <form id="authForm" onsubmit="handleAuthSubmit(event)">
+                    <div class="form-group">
+                        <label class="i18n" data-ru="Никнейм" data-en="Username">Никнейм</label>
+                        <input type="text" id="authUsername" class="form-input i18n-ph" data-ru="Введите ваш ник" data-en="Enter nickname" required placeholder="Введите ваш ник">
+                    </div>
+                    <div class="form-group">
+                        <label class="i18n" data-ru="Пароль" data-en="Password">Пароль</label>
+                        <input type="password" id="authPassword" class="form-input" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn-submit i18n" data-ru="Войти в аккаунт" data-en="Sign In" id="authSubmitBtn">Войти в аккаунт</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Панель личного кабинета -->
+        <div id="dashSection" class="dash-container hidden">
             <div class="sidebar">
                 <div>
-                    <!-- Юзербар -->
                     <div class="user-card-side">
-                        <div class="avatar">A</div>
+                        <div class="avatar" id="dashAvatar">U</div>
                         <div class="user-details">
-                            <div class="uname">User_Player</div>
-                            <div class="urole">USER</div>
+                            <div class="uname" id="dashUsername">User</div>
+                            <div class="urole" id="dashRole">OWNER</div>
                         </div>
                     </div>
-                    <!-- Меню переключений (Табы) -->
+                    
+                    <!-- ВКЛАДКИ СИДЕБАРА (МОДЕРАЦИЯ НАД АДМИН ПАНЕЛЬЮ) -->
                     <ul class="nav-menu">
-                        <li class="nav-item active">
-                            <span>📊</span>
-                            <span class="i18n" data-ru="Обзор" data-en="Overview">Обзор</span>
-                        </li>
-                        <li class="nav-item">
-                            <span>📥</span>
-                            <span class="i18n" data-ru="Загрузки" data-en="Downloads">Загрузки</span>
-                        </li>
-                        <li class="nav-item">
-                            <span>⚙️</span>
-                            <span class="i18n" data-ru="Настройки" data-en="Settings">Настройки</span>
-                        </li>
+                        <li class="nav-item active" onclick="switchDashTab('main', this)">📌 <span class="i18n" data-ru="Главная" data-en="Main">Главная</span></li>
+                        <li class="nav-item" onclick="switchDashTab('preorder', this)">🎁 <span class="i18n" data-ru="Мой предзаказ" data-en="My Preorder">Мой предзаказ</span></li>
+                        <li class="nav-item" onclick="switchDashTab('downloads', this)">📥 <span class="i18n" data-ru="Загрузки" data-en="Downloads">Загрузки</span></li>
+                        <li class="nav-item" onclick="switchDashTab('key', this)">🔑 <span class="i18n" data-ru="Активация ключа" data-en="Activate Key">Активация ключа</span></li>
+                        <li class="nav-item" onclick="switchDashTab('moderation', this)">🛡️ <span class="i18n" data-ru="Модерация" data-en="Moderation">Модерация</span></li>
+                        <li class="nav-item" onclick="switchDashTab('admin', this)">👑 <span class="i18n" data-ru="Админ панель" data-en="Admin Panel">Админ панель</span></li>
                     </ul>
                 </div>
-                <!-- Кнопка Выход отдельным блоком снизу -->
-                <button class="btn-logout i18n" data-ru="Выйти" data-en="Logout" onclick="showToast('Вы вышли из системы', 'error')">Выйти</button>
+                <button class="btn-logout i18n" data-ru="Выйти" data-en="Logout" onclick="logout()">Выйти</button>
             </div>
 
             <div class="content">
-                <div class="card">
-                    <div class="card-header i18n" data-ru="Статус подписки" data-en="Subscription Status">Статус подписки</div>
-                    <div class="sub-title i18n" data-ru="АКТИВНА" data-en="ACTIVE">АКТИВНА</div>
-                    <div class="sub-desc i18n" data-ru="Тариф: ApexClient Lifetime Access" data-en="Plan: ApexClient Lifetime Access">Тариф: ApexClient Lifetime Access</div>
-                    
-                    <div class="grid-info">
-                        <div class="info-item">
-                            <label>HWID Status</label>
-                            <val style="color: var(--accent-green);">LOCKED</val>
-                        </div>
-                        <div class="info-item">
-                            <label>Version</label>
-                            <val>1.21.4 (Fabric)</val>
+                <!-- ВКЛАДКА: ГЛАВНАЯ В КАБИНЕТЕ -->
+                <div id="dashTab-main">
+                    <div class="card">
+                        <div class="card-header i18n" data-ru="Статус подписки" data-en="Subscription Status">Статус подписки</div>
+                        <div class="sub-title i18n" data-ru="Активна (Навсегда)" data-en="Active (Lifetime)" id="subStatus">Активна (Навсегда)</div>
+                        <div class="sub-desc i18n" data-ru="У вас есть полный доступ ко всем функциям и обновлениям ApexClient." data-en="You have full access to all features and updates of ApexClient.">У вас есть полный доступ ко всем функциям и обновлениям ApexClient.</div>
+                        <div class="grid-info">
+                            <div class="info-item">
+                                <label class="i18n" data-ru="Привязанный HWID" data-en="Linked HWID">Привязанный HWID</label>
+                                <val id="hwidVal">REGISTERED</val>
+                            </div>
+                            <div class="info-item">
+                                <label class="i18n" data-ru="Версия клиента" data-en="Client Version">Версия клиента</label>
+                                <val>v1.2.4 Fabric</val>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-header i18n" data-ru="Быстрые действия" data-en="Quick Actions">Быстрые действия</div>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button class="action-btn green" onclick="showToast('Загрузка началась...', 'success')">📥 Скачать Launcher</button>
-                        <button class="action-btn blue" onclick="resetHWID()">🔄 Сброс HWID</button>
+                <!-- ВКЛАДКА: МОЙ ПРЕДЗАКАЗ -->
+                <div id="dashTab-preorder" class="hidden">
+                    <div class="card">
+                        <div class="card-header i18n" data-ru="Мои предзаказы" data-en="My Preorders">Мои предзаказы</div>
+                        <p class="sub-desc i18n" data-ru="Здесь отображается текущий статус вашего предзаказа перед официальным релизом версии." data-en="Displays the current status of your preorder prior to official release." style="margin-bottom: 14px;">Здесь отображается текущий статус вашего предзаказа перед официальным релизом версии.</p>
+                        <div class="list-box">
+                            <div class="list-box-header">
+                                <span>Предзаказ: ApexClient Forever</span>
+                                <span class="badge done i18n" data-ru="АКТИВЕН" data-en="ACTIVE">АКТИВЕН</span>
+                            </div>
+                            <div class="i18n" data-ru="Вы получите ранний доступ к следующей версии Fabric 1.21.4 в первой волне." data-en="You will receive early access to the upcoming Fabric 1.21.4 version in wave 1." style="color: var(--text-sub); font-size: 12px;">Вы получите ранний доступ к следующей версии Fabric 1.21.4 в первой волне.</div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- ВКЛАДКА: ЗАГРУЗКИ -->
+                <div id="dashTab-downloads" class="hidden">
+                    <div class="card">
+                        <div class="card-header i18n" data-ru="Скачать лаунчер" data-en="Download Launcher">Скачать лаунчер</div>
+                        <p class="sub-desc i18n" data-ru="Загрузите официальный лаунчер для автоматической установки и запуска клиента." data-en="Download official launcher for automatic installation and client launch." style="margin-bottom: 14px;">Загрузите официальный лаунчер для автоматической установки и запуска клиента.</p>
+                        <button class="action-btn green i18n" data-ru="💻 Скачать для Windows (.exe)" data-en="💻 Download for Windows (.exe)" onclick="showToast('Загрузка лаунчера началась...', 'success')">💻 Скачать для Windows (.exe)</button>
+                    </div>
+                </div>
+
+                <!-- ВКЛАДКА: АКТИВАЦИЯ КЛЮЧА -->
+                <div id="dashTab-key" class="hidden">
+                    <div class="card">
+                        <div class="card-header i18n" data-ru="Активировать лицензионный ключ" data-en="Activate License Key">Активировать лицензионный ключ</div>
+                        <div class="form-group">
+                            <input type="text" id="licenseKeyInput" class="form-input" placeholder="APEX-XXXX-XXXX-XXXX">
+                        </div>
+                        <button class="action-btn i18n" data-ru="Активировать" data-en="Activate" onclick="activateKey()">Активировать</button>
+                    </div>
+                </div>
+
+                <!-- ВКЛАДКА: МОДЕРАЦИЯ -->
+                <div id="dashTab-moderation" class="hidden">
+                    <div class="card">
+                        <div class="card-header i18n" data-ru="Центр Модерации & Вопросов" data-en="Moderation & Support Center">Центр Модерации & Вопросов</div>
+                        <p class="sub-desc i18n" data-ru="Ответы на вопросы и тикеты от пользователей сайта." data-en="Respond to user tickets and support requests." style="margin-bottom: 14px;">Ответы на вопросы и тикеты от пользователей сайта.</p>
+                        
+                        <div id="moderationTicketList">
+                            <div class="list-box">
+                                <div class="list-box-header">
+                                    <span>Тикет #1024 от PvP_Master</span>
+                                    <span class="badge pending i18n" data-ru="ОЖИДАЕТ ОТВЕТА" data-en="PENDING">ОЖИДАЕТ ОТВЕТА</span>
+                                </div>
+                                <div style="color: #fff; margin-bottom: 10px;">Вопрос: "Не могу зайти на FunTime, пишет HWID Mismatch"</div>
+                                <div class="form-group">
+                                    <input type="text" class="form-input i18n-ph" data-ru="Напишите ответ..." data-en="Type reply..." placeholder="Напишите ответ..." style="margin-bottom: 8px;">
+                                    <button class="action-btn blue i18n" data-ru="Отправить ответ" data-en="Send Reply" onclick="replyTicket(this)">Отправить ответ</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ВКЛАДКА: АДМИН ПАНЕЛЬ -->
+                <div id="dashTab-admin" class="hidden">
+                    <div class="card">
+                        <div class="card-header i18n" data-ru="Панель Администратора" data-en="Admin Panel">Панель Администратора</div>
+                        <p class="sub-desc i18n" data-ru="Управление пользователями и подписками." data-en="User and subscription management." style="margin-bottom: 14px;">Управление пользователями и подписками.</p>
+                        
+                        <div class="admin-form-grid">
+                            <div class="form-group">
+                                <label class="i18n" data-ru="Ник пользователя" data-en="User Nickname">Ник пользователя</label>
+                                <input type="text" id="adminUserTarget" class="form-input" placeholder="UserNickname">
+                            </div>
+                            <div class="form-group">
+                                <label class="i18n" data-ru="Срок подписки" data-en="Subscription Period">Срок подписки</label>
+                                <select id="adminSubTime" class="form-select">
+                                    <option value="7">7 Дней</option>
+                                    <option value="30">30 Дней</option>
+                                    <option value="90">90 Дней</option>
+                                    <option value="3650">Навсегда</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:10px; margin-bottom: 24px;">
+                            <button class="action-btn green i18n" data-ru="Выдать подписку" data-en="Grant Sub" onclick="adminGrantSub()">Выдать подписку</button>
+                            <button class="action-btn blue i18n" data-ru="Сбросить HWID" data-en="Reset HWID" onclick="adminResetHwid()">Сбросить HWID</button>
+                        </div>
+
+                        <!-- ПОЛНОЦЕННАЯ ГЕНЕРАЦИЯ КЛЮЧЕЙ С ВЫБОРОМ СРОКА И КОЛ-ВА ИСПОЛЬЗОВАНИЙ -->
+                        <div style="border-top: 1px solid var(--border-color); padding-top: 20px;">
+                            <div class="card-header i18n" data-ru="Генератор Лицензионных Ключей" data-en="License Key Generator">Генератор Лицензионных Ключей</div>
+                            <div class="admin-form-grid">
+                                <div class="form-group">
+                                    <label class="i18n" data-ru="Срок действия" data-en="Key Duration">Срок действия</label>
+                                    <select id="genKeyDuration" class="form-select">
+                                        <option value="7 Дней">7 Дней</option>
+                                        <option value="30 Дней">30 Дней (1 Месяц)</option>
+                                        <option value="90 Дней">90 Дней (3 Месяца)</option>
+                                        <option value="Навсегда">Навсегда</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="i18n" data-ru="Кол-во использований" data-en="Max Uses">Кол-во использований</label>
+                                    <input type="number" id="genKeyUses" class="form-input" value="1" min="1" max="500">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="i18n" data-ru="Сгенерированный ключ" data-en="Generated Key">Сгенерированный ключ</label>
+                                <input type="text" id="genKeyOutput" class="form-input" readonly placeholder="Нажмите кнопку ниже для генерации">
+                            </div>
+                            <button class="action-btn green i18n" data-ru="🔑 Сгенерировать ключ" data-en="🔑 Generate Key" onclick="generateAdminKey()">🔑 Сгенерировать ключ</button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 
+    <!-- JS LOGIC -->
     <script>
-        // Переключение страниц
+        let currentAuthMode = 'login';
+        let currentUser = null;
+        let selectedRating = 5;
+
+        function showToast(msg, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span>${type === 'success' ? '✓' : 'ℹ'}</span> <span>${msg}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.transition = '0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
         function navigateTo(pageId) {
             document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
-            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-            
-            const targetPage = document.getElementById('page-' + pageId);
+            const targetPage = document.getElementById(`page-${pageId}`);
             if (targetPage) targetPage.classList.remove('hidden');
-            
-            const activeNav = document.getElementById('nav-' + pageId);
+
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            const activeNav = document.getElementById(`nav-${pageId}`);
             if (activeNav) activeNav.classList.add('active');
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Переключение языков
+        /* ИСПРАВЛЕННОЕ И ПОЛНОЦЕННОЕ ПЕРЕКЛЮЧЕНИЕ ЯЗЫКА */
         function setLanguage(lang) {
-            document.getElementById('btn-ru').classList.toggle('active', lang === 'ru');
-            document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${lang}`).classList.add('active');
 
             document.querySelectorAll('.i18n').forEach(el => {
-                const text = el.getAttribute('data-' + lang);
-                if (text) el.textContent = text;
+                const text = el.getAttribute(`data-${lang}`);
+                if (text) el.innerText = text;
             });
+
+            document.querySelectorAll('.i18n-ph').forEach(el => {
+                const text = el.getAttribute(`data-${lang}`);
+                if (text) el.placeholder = text;
+            });
+
+            showToast(lang === 'ru' ? 'Язык интерфейса: Русский' : 'Language set: English', 'success');
         }
 
-        // FAQ Toggle
-        function toggleFaq(headerEl) {
-            const body = headerEl.nextElementSibling;
+        function toggleFaq(header) {
+            const body = header.nextElementSibling;
             body.classList.toggle('open');
         }
 
-        // Уведомления (Toasts)
-        function showToast(msg, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.textContent = msg;
-            container.appendChild(toast);
-
-            setTimeout(() => {
-                toast.style.animation = 'slideInRight 0.3s reverse forwards';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+        function buyTariff(tariffName) {
+            showToast(`Выбран тариф: ${tariffName}. Перенаправление на оплату...`, 'success');
         }
 
-        function buyTariff(tariff) { showToast(`Переход к оплате: ${tariff}`, 'success'); }
-        function resetHWID() { showToast('Заявка на сброс HWID создана!', 'success'); }
-        function makePreorder(plan) { showToast(`Оформлен предзаказ: ${plan}`, 'success'); }
+        function resetHWID() {
+            showToast('Запрос на сброс HWID отправлен', 'success');
+        }
+
+        function makePreorder(plan) {
+            showToast(`Предзаказ [${plan}] оформлен!`, 'success');
+        }
+
+        function setRating(rating) {
+            selectedRating = rating;
+            const stars = document.querySelectorAll('#starRating .star');
+            stars.forEach((star, idx) => {
+                if (idx < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        function submitReview() {
+            const text = document.getElementById('reviewTextInput').value.trim();
+            if (!text) {
+                showToast('Введите текст отзыва!', 'error');
+                return;
+            }
+            const container = document.getElementById('reviewsContainer');
+            const card = document.createElement('div');
+            card.className = 'review-card';
+            const user = currentUser ? currentUser : 'Пользователь';
+            card.innerHTML = `
+                <div class="review-author"><span>${user}</span> <span>${selectedRating}/5</span></div>
+                <div class="review-stars">${'★'.repeat(selectedRating)}${'☆'.repeat(5 - selectedRating)}</div>
+                <div class="review-text">${text}</div>
+            `;
+            container.prepend(card);
+            document.getElementById('reviewTextInput').value = '';
+            showToast('Спасибо! Ваш отзыв опубликован.', 'success');
+        }
+
+        function sendSupportQuestion() {
+            const user = document.getElementById('askUser').value.trim();
+            const text = document.getElementById('askText').value.trim();
+            if (!user || !text) {
+                showToast('Заполните обязательные поля!', 'error');
+                return;
+            }
+            showToast('Ваше сообщение отправлено в техническую поддержку!', 'success');
+            document.getElementById('askUser').value = '';
+            document.getElementById('askSubject').value = '';
+            document.getElementById('askText').value = '';
+        }
+
+        function switchAuthTab(mode) {
+            currentAuthMode = mode;
+            document.getElementById('tabLoginBtn').classList.toggle('active', mode === 'login');
+            document.getElementById('tabRegBtn').classList.toggle('active', mode === 'register');
+            document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'Войти в аккаунт' : 'Зарегистрироваться';
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const username = document.getElementById('authUsername').value.trim();
+            if (!username) return;
+
+            currentUser = username;
+            document.getElementById('dashUsername').innerText = username;
+            document.getElementById('dashAvatar').innerText = username.charAt(0).toUpperCase();
+
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('dashSection').classList.remove('hidden');
+
+            showToast(currentAuthMode === 'login' ? `С возвращением, ${username}!` : 'Аккаунт успешно создан!', 'success');
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('dashSection').classList.add('hidden');
+            document.getElementById('authSection').classList.remove('hidden');
+            showToast('Вы вышли из аккаунта');
+        }
+
+        function switchDashTab(tabName, element) {
+            const tabs = ['main', 'preorder', 'downloads', 'key', 'admin', 'moderation'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`dashTab-${t}`);
+                if(el) el.classList.add('hidden');
+            });
+            
+            const activeTab = document.getElementById(`dashTab-${tabName}`);
+            if(activeTab) activeTab.classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-menu .nav-item').forEach(item => item.classList.remove('active'));
+            if(element) element.classList.add('active');
+        }
+
+        function activateKey() {
+            const key = document.getElementById('licenseKeyInput').value.trim();
+            if (!key) {
+                showToast('Введите ключ активации!', 'error');
+                return;
+            }
+            showToast('Ключ успешно активирован!', 'success');
+            document.getElementById('licenseKeyInput').value = '';
+        }
+
+        /* ГЕНЕРАТОР КЛЮЧЕЙ С ВЫБОРОМ СРОКА И КОЛ-ВА ИСПОЛЬЗОВАНИЙ */
+        function generateAdminKey() {
+            const duration = document.getElementById('genKeyDuration').value;
+            const uses = document.getElementById('genKeyUses').value;
+
+            const randomPart = () => Math.random().toString(36).substring(2, 6).toUpperCase();
+            const generatedKey = `APEX-${randomPart()}-${randomPart()}-${randomPart()}`;
+
+            document.getElementById('genKeyOutput').value = generatedKey;
+            showToast(`Ключ на [${duration}] (Лимит: ${uses} исп.) сгенерирован!`, 'success');
+        }
+
+        function adminGrantSub() {
+            const user = document.getElementById('adminUserTarget').value.trim();
+            if(!user) { showToast('Укажите ник!', 'error'); return; }
+            showToast(`Подписка выдана пользователю ${user}!`, 'success');
+        }
+
+        function adminResetHwid() {
+            const user = document.getElementById('adminUserTarget').value.trim();
+            if(!user) { showToast('Укажите ник!', 'error'); return; }
+            showToast(`HWID сброшен для ${user}!`, 'success');
+        }
+
+        function replyTicket(btn) {
+            const box = btn.closest('.list-box');
+            const badge = box.querySelector('.badge');
+            badge.className = 'badge done';
+            badge.innerText = 'ОТВЕЧЕНО';
+            showToast('Ответ отправлен пользователю!', 'success');
+        }
     </script>
 </body>
 </html>
