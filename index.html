@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApexClient — Ultimate Minecraft 1.21.4 Fabric Client</title>
+    <title>VerseDLC — Ultimate Minecraft 1.21.4 Fabric Client</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -31,7 +31,6 @@
             overflow-x: hidden;
         }
 
-        /* Анимированные фоновые элементы */
         .bg-glow-1 {
             position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
             width: 800px; height: 500px; background: radial-gradient(circle, rgba(255, 51, 68, 0.18) 0%, rgba(0,0,0,0) 70%);
@@ -65,7 +64,6 @@
             box-shadow: 0 15px 35px var(--accent-red-glow);
         }
 
-        /* Уведомления Toast */
         #toast-container {
             position: fixed; bottom: 24px; right: 24px; z-index: 9999;
             display: flex; flex-direction: column-reverse; gap: 12px;
@@ -84,7 +82,6 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        /* Навигация */
         .navbar-container {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             z-index: 1000; width: 92%; max-width: 1100px;
@@ -122,7 +119,6 @@
 
         .page-section { padding-top: 130px; padding-bottom: 80px; max-width: 1100px; margin: 0 auto; width: 92%; }
 
-        /* Главная страница (Hero и расширенные блоки) */
         .hero { text-align: center; margin-bottom: 50px; }
         .hero-badge {
             display: inline-flex; align-items: center; gap: 6px;
@@ -178,7 +174,6 @@
         .server-card { padding: 20px; font-weight: 800; color: #fff; font-size: 15px; text-align: center; }
         .server-card span { display: block; font-size: 11px; color: var(--accent-green); font-weight: 600; margin-top: 4px; }
 
-        /* Тарифы */
         .tariffs-container { display: flex; flex-direction: column; gap: 30px; }
         .tariffs-row-title { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
         .tariffs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
@@ -205,7 +200,6 @@
         .action-btn.dark { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid var(--border-color); box-shadow: none; }
         .action-btn.yellow { background: #ffbc00; color: #000; box-shadow: 0 4px 15px rgba(255,188,0,0.3); }
 
-        /* Авторизация */
         .auth-wrapper { display: flex; align-items: center; justify-content: center; min-height: 60vh; }
         .auth-card {
             background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 28px; padding: 40px;
@@ -223,7 +217,6 @@
         .form-input:focus, .form-textarea:focus, .form-select:focus { border-color: var(--accent-red); box-shadow: 0 0 15px var(--accent-red-glow); }
         .form-textarea { resize: vertical; min-height: 100px; }
 
-        /* Кабинет и панель */
         .dash-container {
             display: grid; grid-template-columns: 260px 1fr; gap: 24px;
             background: var(--bg-card); backdrop-filter: blur(24px);
@@ -276,8 +269,8 @@
         <nav class="navbar">
             <div class="nav-left">
                 <div class="nav-brand" onclick="navigateTo('home')">
-                    <div class="brand-icon">A</div>
-                    <span>ApexClient</span>
+                    <div class="brand-icon">V</div>
+                    <span>VerseDLC</span>
                 </div>
                 <ul class="nav-links">
                     <li><a class="nav-link active" id="nav-home" onclick="navigateTo('home')">Главная</a></li>
@@ -295,7 +288,6 @@
         </nav>
     </div>
 
-    <!-- Главная страница -->
     <div id="page-home" class="page-section">
         <div class="hero">
             <div class="hero-badge">⚡ Fabric 1.21.4 Client Ecosystem</div>
@@ -348,7 +340,7 @@
         <div class="details-showcase">
             <div class="detail-box">
                 <h3>Интерфейс и Управление HUD</h3>
-                <p>ApexClient разработан с учетом потребностей лучших игроков. Удобное расположение модулей, быстрые бинды и мгновенный доступ к функциям прямо во время игры.</p>
+                <p>VerseDLC разработан с учетом потребностей лучших игроков. Удобное расположение модулей, быстрые бинды и мгновенный доступ к функциям прямо во время игры.</p>
                 <ul class="detail-list">
                     <li>Модульная система ClickGUI в стиле Modern Dark</li>
                     <li>Автоматический свитч предметов (AutoSwap)</li>
@@ -370,23 +362,13 @@
             <div class="servers-title" style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 6px;">Поддерживаемые Серверы</div>
             <div class="servers-subtitle" style="color: var(--text-sub); font-size: 14px;">Полная оптимизация и проверенная стабильность работы</div>
             <div class="servers-grid">
-                <div class="server-card">
-                    FunTime
-                    <span>Стабильный обход</span>
-                </div>
-                <div class="server-card">
-                    HolyWorld
-                    <span>Полная совместимость</span>
-                </div>
-                <div class="server-card">
-                    ReallyWorld
-                    <span>Максимальный FPS</span>
-                </div>
+                <div class="server-card">FunTime<span>Стабильный обход</span></div>
+                <div class="server-card">HolyWorld<span>Полная совместимость</span></div>
+                <div class="server-card">ReallyWorld<span>Максимальный FPS</span></div>
             </div>
         </div>
     </div>
 
-    <!-- Тарифы -->
     <div id="page-tariffs" class="page-section hidden">
         <div class="hero">
             <h1>Тарифные планы и Услуги</h1>
@@ -427,14 +409,13 @@
                     </div>
                     <div class="tariff-card">
                         <div><div class="tariff-name">Сброс HWID</div><div class="tariff-price">139 <span>₽</span></div></div>
-                        <button class="action-btn" onclick="requestHWIDReset()">Запросить сброс HWID</button>
+                        <button class="action-btn" onclick="requestHWIDResetModal()">Запросить сброс HWID</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Отзывы -->
     <div id="page-reviews" class="page-section hidden">
         <div class="hero">
             <h1>Отзывы пользователей</h1>
@@ -483,7 +464,6 @@
         </div>
     </div>
 
-    <!-- Помощь -->
     <div id="page-help" class="page-section hidden">
         <div class="hero">
             <h1>Центр помощи</h1>
@@ -501,7 +481,6 @@
         </div>
     </div>
 
-    <!-- Поддержка -->
     <div id="page-support" class="page-section hidden">
         <div class="hero">
             <h1>Техническая поддержка</h1>
@@ -523,11 +502,10 @@
         </div>
     </div>
 
-    <!-- Авторизация -->
     <div id="page-auth" class="page-section hidden">
         <div class="auth-wrapper">
             <div class="auth-card">
-                <div class="auth-title">Apex<span>Client</span></div>
+                <div class="auth-title">Verse<span>DLC</span></div>
                 <div class="auth-subtitle">Вход в систему или Регистрация</div>
                 <div class="form-group">
                     <label>Ваш логин (invisik — для прав owner)</label>
@@ -542,13 +520,12 @@
         </div>
     </div>
 
-    <!-- Личный кабинет -->
     <div id="page-cabinet" class="page-section hidden">
         <div class="dash-container">
             <div class="sidebar">
                 <div>
                     <div class="user-card-side">
-                        <div class="avatar" id="sidebarAvatar">A</div>
+                        <div class="avatar" id="sidebarAvatar">V</div>
                         <div class="user-details">
                             <div class="uname" id="sidebarUsername">User</div>
                             <div class="urole" id="sidebarRole">USER</div>
@@ -599,7 +576,7 @@
                     <div class="card">
                         <div class="card-header">Активация ключа подписки</div>
                         <div class="form-group" style="margin-bottom: 12px;">
-                            <input type="text" id="subKeyInput" class="form-input" placeholder="Введите ключ подписки (например, APEX-XXXX)...">
+                            <input type="text" id="subKeyInput" class="form-input" placeholder="Введите ключ подписки (например, VERSE-XXXX)...">
                         </div>
                         <button class="action-btn green" onclick="activateSubKey()">Активировать подписку</button>
                     </div>
@@ -631,7 +608,7 @@
                     <div class="card">
                         <div class="card-header">Загрузка лоадера</div>
                         <p class="sub-desc" style="margin-bottom: 14px;">Последняя стабильная сборка клиента под Fabric.</p>
-                        <button class="action-btn green" onclick="showToast('Загрузка ApexClient.exe...', 'success')">📥 Скачать ApexClient.exe</button>
+                        <button class="action-btn green" onclick="showToast('Загрузка VerseDLC.exe...', 'success')">📥 Скачать VerseDLC.exe</button>
                     </div>
                 </div>
 
@@ -700,15 +677,22 @@
     <script>
         let currentUser = localStorage.getItem('apex_user') || null;
 
-        // База данных пользователей
         let registeredUsers = JSON.parse(localStorage.getItem('apex_db_users')) || {
             "invisik": { role: "OWNER", sub: "Навсегда", banned: false, banReason: "", banDuration: "" },
             "sextazyst": { role: "USER", sub: "1 Месяц", banned: false, banReason: "", banDuration: "" },
             "veselchak": { role: "USER", sub: "3 Месяца", banned: false, banReason: "", banDuration: "" }
         };
 
+        // Хранилище заявок и тикетов
+        let appRequests = JSON.parse(localStorage.getItem('apex_requests')) || {
+            hwid: [],
+            subs: [],
+            tickets: []
+        };
+
         function saveDB() {
             localStorage.setItem('apex_db_users', JSON.stringify(registeredUsers));
+            localStorage.setItem('apex_requests', JSON.stringify(appRequests));
         }
 
         function showToast(message, type = 'success') {
@@ -747,6 +731,13 @@
 
             document.querySelectorAll('.dash-container .nav-item').forEach(item => item.classList.remove('active'));
             if (element) element.classList.add('active');
+
+            if (tabName === 'moderation') {
+                renderModerationData();
+            }
+            if (tabName === 'tickets') {
+                renderUserTickets();
+            }
         }
 
         function applyUserRole(username) {
@@ -787,7 +778,20 @@
             }
 
             const lower = usernameInput.toLowerCase();
-            if (registeredUsers[lower] && registeredUsers[lower].banned) {
+            
+            // Если аккаунта нет в базе, автоматически регистрируем его
+            if (!registeredUsers[lower]) {
+                registeredUsers[lower] = {
+                    role: lower === 'invisik' ? 'OWNER' : 'USER',
+                    sub: 'Нет',
+                    banned: false,
+                    banReason: '',
+                    banDuration: ''
+                };
+                saveDB();
+            }
+
+            if (registeredUsers[lower].banned) {
                 showToast('Этот аккаунт заблокирован!', 'error');
                 return;
             }
@@ -829,17 +833,37 @@
                 return;
             }
             if (checkUserBanAction()) return;
-            showToast(`Заявка на покупку "${tariffName}" создана!`, 'success');
+
+            appRequests.subs.push({
+                username: currentUser,
+                tariff: tariffName,
+                date: new Date().toLocaleDateString()
+            });
+            saveDB();
+
+            showToast(`Заявка на покупку "${tariffName}" успешно создана!`, 'success');
         }
 
-        function requestHWIDReset() {
+        function requestHWIDResetModal() {
             if (!currentUser) {
                 showToast('Сначала войдите в личный кабинет!', 'error');
                 navigateTo('cabinet');
                 return;
             }
             if (checkUserBanAction()) return;
-            showToast('Заявка на сброс HWID отправлена модераторам.', 'success');
+
+            const reason = prompt("Укажите причину для сброса HWID:");
+            if (!reason) return;
+
+            appRequests.hwid.push({
+                username: currentUser,
+                hwid: "HWID-PC-" + Math.floor(Math.random() * 89999 + 10000),
+                reason: reason,
+                date: new Date().toLocaleDateString()
+            });
+            saveDB();
+
+            showToast('Заявка на сброс HWID успешно отправлена модераторам.', 'success');
         }
 
         function addNewReview() {
@@ -879,12 +903,23 @@
                 return;
             }
             if (checkUserBanAction()) return;
+
             const subject = document.getElementById('ticketSubject').value.trim();
             const message = document.getElementById('ticketMessage').value.trim();
             if (!subject || !message) {
                 showToast('Заполните тему и описание вопроса!', 'error');
                 return;
             }
+
+            appRequests.tickets.push({
+                username: currentUser,
+                subject: subject,
+                message: message,
+                status: 'Открыт',
+                date: new Date().toLocaleDateString()
+            });
+            saveDB();
+
             showToast('Тикет успешно отправлен в поддержку!', 'success');
             document.getElementById('ticketSubject').value = '';
             document.getElementById('ticketMessage').value = '';
@@ -897,6 +932,8 @@
                 showToast('Введите ключ подписки!', 'error');
                 return;
             }
+            registeredUsers[currentUser.toLowerCase()].sub = 'Активна (Ключ)';
+            saveDB();
             showToast('Ключ подписки успешно активирован!', 'success');
             document.getElementById('subKeyInput').value = '';
         }
@@ -912,13 +949,115 @@
             document.getElementById('hwidKeyInput').value = '';
         }
 
-        // Поиск пользователя в настройке возможностей (с выводом точной ошибки)
+        // Отрисовка модерации заявок
+        function renderModerationData() {
+            const subContainer = document.getElementById('purchaseRequestsContainer');
+            const hwidContainer = document.getElementById('hwidRequestsContainer');
+            const ticketContainer = document.getElementById('adminTicketsContainer');
+
+            document.getElementById('modCountBadge').innerText = appRequests.hwid.length + appRequests.subs.length + appRequests.tickets.length;
+
+            // Запросы на подписки
+            if (appRequests.subs.length === 0) {
+                subContainer.innerHTML = `<p class="sub-desc">Нет активных запросов на покупку.</p>`;
+            } else {
+                subContainer.innerHTML = appRequests.subs.map((item, idx) => `
+                    <div style="background:rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--border-color);">
+                        <div style="font-size:13px; font-weight:800; color:#fff;">Игрок: ${item.username} | Тариф: ${item.tariff}</div>
+                        <div style="font-size:11px; color:var(--text-sub); margin-bottom:8px;">Дата: ${item.date}</div>
+                        <button class="action-btn green" style="padding:6px 12px; font-size:12px;" onclick="approveSub(${idx})">Одобрить подписку</button>
+                    </div>
+                `).join('');
+            }
+
+            // Запросы на HWID
+            if (appRequests.hwid.length === 0) {
+                hwidContainer.innerHTML = `<p class="sub-desc">Нет активных заявок на сброс HWID.</p>`;
+            } else {
+                hwidContainer.innerHTML = appRequests.hwid.map((item, idx) => `
+                    <div style="background:rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--border-color);">
+                        <div style="font-size:13px; font-weight:800; color:#fff;">Игрок: ${item.username} | Причина: ${item.reason}</div>
+                        <div style="font-size:11px; color:var(--text-sub); margin-bottom:8px;">HWID: ${item.hwid}</div>
+                        <button class="action-btn green" style="padding:6px 12px; font-size:12px;" onclick="approveHWID(${idx})">Сбросить HWID</button>
+                    </div>
+                `).join('');
+            }
+
+            // Тикеты
+            if (appRequests.tickets.length === 0) {
+                ticketContainer.innerHTML = `<p class="sub-desc">Нет активных вопросов.</p>`;
+            } else {
+                ticketContainer.innerHTML = appRequests.tickets.map((item, idx) => `
+                    <div style="background:rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--border-color);">
+                        <div style="font-size:13px; font-weight:800; color:#fff;">От: ${item.username} | Тема: ${item.subject}</div>
+                        <div style="font-size:12.5px; color:var(--text-sub); margin: 6px 0;">${item.message}</div>
+                        <button class="action-btn dark" style="padding:6px 12px; font-size:12px;" onclick="closeTicket(${idx})">Закрыть тикет</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function approveSub(index) {
+            const req = appRequests.subs[index];
+            if (registeredUsers[req.username.toLowerCase()]) {
+                registeredUsers[req.username.toLowerCase()].sub = req.tariff;
+                saveDB();
+            }
+            appRequests.subs.splice(index, 1);
+            saveDB();
+            showToast('Подписка успешно одобрена и выдана!');
+            renderModerationData();
+        }
+
+        function approveHWID(index) {
+            appRequests.hwid.splice(index, 1);
+            saveDB();
+            showToast('HWID успешно сброшен по заявке!');
+            renderModerationData();
+        }
+
+        function closeTicket(index) {
+            appRequests.tickets.splice(index, 1);
+            saveDB();
+            showToast('Тикет закрыт.');
+            renderModerationData();
+        }
+
+        function renderUserTickets() {
+            const userTicketBox = document.getElementById('userTicketsContainer');
+            if (!currentUser) return;
+            const myTickets = appRequests.tickets.filter(t => t.username.toLowerCase() === currentUser.toLowerCase());
+            
+            document.getElementById('ticketCountBadge').innerText = myTickets.length;
+
+            if (myTickets.length === 0) {
+                userTicketBox.innerHTML = `<p class="sub-desc">Вы еще не отправляли вопросы.</p>`;
+                return;
+            }
+
+            userTicketBox.innerHTML = myTickets.map(t => `
+                <div style="background:rgba(0,0,0,0.3); padding: 14px; border-radius: 14px; margin-bottom: 10px; border: 1px solid var(--border-color);">
+                    <div style="font-weight:800; color:#fff; font-size:14px; margin-bottom:4px;">Тема: ${t.subject}</div>
+                    <div style="font-size:13px; color:var(--text-sub); margin-bottom:8px;">${t.message}</div>
+                    <div style="font-size:11px; color:var(--accent-green); font-weight:700;">Статус: ${t.status}</div>
+                </div>
+            `).join('');
+        }
+
+        // Исправленный поиск пользователя в настройке возможностей (ищет по базе данных с учетом регистра и пробелов)
         function searchUserCapabilities() {
-            const query = document.getElementById('capSearchInput').value.trim().toLowerCase();
+            const rawQuery = document.getElementById('capSearchInput').value;
             const container = document.getElementById('capSearchResultContainer');
             container.innerHTML = '';
 
-            if (!query || !registeredUsers[query]) {
+            if (!rawQuery) {
+                container.innerHTML = `<div class="search-result-box" style="color: var(--accent-red); font-weight: 700; text-align: center;">данный игрок не найден или не правильные дынные</div>`;
+                return;
+            }
+
+            const query = rawQuery.trim().toLowerCase();
+
+            if (!registeredUsers[query]) {
                 container.innerHTML = `<div class="search-result-box" style="color: var(--accent-red); font-weight: 700; text-align: center;">данный игрок не найден или не правильные дынные</div>`;
                 return;
             }
@@ -960,7 +1099,6 @@
             searchUserCapabilities();
         }
 
-        // Система бана с вводом срока, причины и двойным подтверждением
         function adminPromptBan(username) {
             const u = registeredUsers[username];
             if (u.banned) {
@@ -994,10 +1132,9 @@
             searchUserCapabilities();
         }
 
-        // Генерация ключей в панели владельца
         function generateSubKey() {
             const duration = document.getElementById('genSubDuration').value;
-            const randomKey = 'APEX-SUB-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            const randomKey = 'VERSE-SUB-' + Math.random().toString(36).substring(2, 8).toUpperCase();
             document.getElementById('generatedKeyOutput').innerHTML = `
                 <div class="search-result-box" style="background: rgba(0,230,118,0.05); border-color: var(--accent-green);">
                     <div style="font-size: 11px; color: var(--accent-green); font-weight: 800; margin-bottom: 4px;">СГЕНЕРИРОВАН КЛЮЧ ПОДПИСКИ (${duration}):</div>
@@ -1008,7 +1145,7 @@
         }
 
         function generateHWIDKey() {
-            const randomKey = 'APEX-HWID-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            const randomKey = 'VERSE-HWID-' + Math.random().toString(36).substring(2, 8).toUpperCase();
             document.getElementById('generatedKeyOutput').innerHTML = `
                 <div class="search-result-box" style="background: rgba(255,188,0,0.05); border-color: #ffbc00;">
                     <div style="font-size: 11px; color: #ffbc00; font-weight: 800; margin-bottom: 4px;">СГЕНЕРИРОВАН КЛЮЧ СБРОСА HWID:</div>
@@ -1018,7 +1155,6 @@
             showToast('Ключ сброса HWID успешно сгенерирован!');
         }
 
-        // Авто-логин при загрузке
         window.addEventListener('DOMContentLoaded', () => {
             if (currentUser) {
                 document.getElementById('sidebarUsername').innerText = currentUser;
