@@ -43,7 +43,6 @@
 
         .hidden { display: none !important; }
 
-        /* Единый стиль премиальных карточек с эффектом при наведении */
         .card, .stat-card, .feature-card, .server-card, .tariff-card, .review-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -137,7 +136,6 @@
         .servers-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
         .server-card { padding: 16px; font-weight: 800; color: #fff; font-size: 14px; text-align: center; }
 
-        /* Тарифы и Услуги: 2 слоя */
         .tariffs-container { display: flex; flex-direction: column; gap: 24px; }
         .tariffs-row-title { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
         
@@ -161,8 +159,8 @@
             box-shadow: 0 4px 15px var(--accent-red-glow); display: inline-flex; align-items: center; justify-content: center; gap: 6px;
         }
         .action-btn.green { background: var(--accent-green); color: #000; box-shadow: 0 4px 15px rgba(0,230,118,0.3); }
+        .action-btn.dark { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid var(--border-color); box-shadow: none; }
 
-        /* Авторизация */
         .auth-wrapper { display: flex; align-items: center; justify-content: center; min-height: 55vh; }
         .auth-card {
             background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 28px; padding: 36px;
@@ -180,7 +178,6 @@
         .form-input:focus, .form-textarea:focus { border-color: var(--accent-red); }
         .form-textarea { resize: vertical; min-height: 90px; }
 
-        /* Кабинет */
         .dash-container {
             display: grid; grid-template-columns: 240px 1fr; gap: 20px;
             background: var(--bg-card); backdrop-filter: blur(20px);
@@ -205,7 +202,6 @@
         .sub-title { font-size: 20px; font-weight: 800; color: var(--accent-green); margin-bottom: 4px; }
         .sub-desc { font-size: 13px; color: var(--text-sub); line-height: 1.5; }
 
-        /* Отзывы */
         .review-card { padding: 20px; margin-bottom: 14px; }
         .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .review-author { font-weight: 800; font-size: 14px; color: #fff; }
@@ -219,7 +215,6 @@
     <div class="bg-glow-2"></div>
     <div id="toast-container"></div>
 
-    <!-- Навигация -->
     <div class="navbar-container">
         <nav class="navbar">
             <div class="nav-left">
@@ -243,7 +238,6 @@
         </nav>
     </div>
 
-    <!-- Главная страница -->
     <div id="page-home" class="page-section">
         <div class="hero">
             <div class="hero-badge">⚡ Fabric 1.21.4 Client</div>
@@ -275,7 +269,6 @@
         </div>
     </div>
 
-    <!-- Тарифы и Услуги: 2 слоя -->
     <div id="page-tariffs" class="page-section hidden">
         <div class="hero">
             <h1>Тарифные планы и Услуги</h1>
@@ -283,7 +276,6 @@
         </div>
         
         <div class="tariffs-container">
-            <!-- Слой 1: Обычные подписки -->
             <div>
                 <div class="tariffs-row-title">📦 Основные подписки</div>
                 <div class="tariffs-grid">
@@ -307,7 +299,6 @@
                 </div>
             </div>
 
-            <!-- Слой 2: Предзаказ и Сброс HWID -->
             <div>
                 <div class="tariffs-row-title">🚀 Предзаказы и Дополнительные услуги</div>
                 <div class="tariffs-grid">
@@ -325,7 +316,6 @@
         </div>
     </div>
 
-    <!-- Страница: Отзывы -->
     <div id="page-reviews" class="page-section hidden">
         <div class="hero">
             <h1>Отзывы пользователей</h1>
@@ -374,7 +364,6 @@
         </div>
     </div>
 
-    <!-- Страница: Помощь -->
     <div id="page-help" class="page-section hidden">
         <div class="hero">
             <h1>Центр помощи</h1>
@@ -392,7 +381,6 @@
         </div>
     </div>
 
-    <!-- Страница: Задать вопрос -->
     <div id="page-support" class="page-section hidden">
         <div class="hero">
             <h1>Техническая поддержка</h1>
@@ -414,7 +402,6 @@
         </div>
     </div>
 
-    <!-- Авторизация -->
     <div id="page-auth" class="page-section hidden">
         <div class="auth-wrapper">
             <div class="auth-card">
@@ -433,7 +420,6 @@
         </div>
     </div>
 
-    <!-- Кабинет -->
     <div id="page-cabinet" class="page-section hidden">
         <div class="dash-container">
             <div class="sidebar">
@@ -453,6 +439,7 @@
                         <li class="nav-item hidden" id="navItemPost" onclick="switchCabinetTab('post', this)">📝 Сделать пост</li>
                         <li class="nav-item" onclick="switchCabinetTab('downloads', this)">📥 Загрузки</li>
                         <li class="nav-item hidden" id="navItemModeration" onclick="switchCabinetTab('moderation', this)">🛡️ Модерация (<span id="modCountBadge">0</span>)</li>
+                        <li class="nav-item hidden" id="navItemCapabilities" onclick="switchCabinetTab('capabilities', this)">🛠️ Настройка возможностей</li>
                         <li class="nav-item hidden" id="navItemAdmin" onclick="switchCabinetTab('admin', this)">⚙️ Панель Владельца</li>
                     </ul>
                 </div>
@@ -485,7 +472,6 @@
                     </div>
                 </div>
 
-                <!-- Два блока активации ключей: подписка и сброс HWID -->
                 <div id="cab-keys" class="cab-tab-content hidden">
                     <div class="card">
                         <div class="card-header">Активация ключа подписки</div>
@@ -547,14 +533,74 @@
                     </div>
                 </div>
 
-                <!-- Панель Владельца с 2 блоками внизу -->
+                <!-- Вкладка: Настройка возможностей -->
+                <div id="cab-capabilities" class="cab-tab-content hidden">
+                    <div class="card">
+                        <div class="card-header">🛠️ Настройка возможностей пользователя</div>
+                        <div class="form-group">
+                            <label>Ник пользователя</label>
+                            <div style="display: flex; gap: 8px;">
+                                <input type="text" id="capSearchInput" class="form-input" placeholder="Введите точный ник...">
+                                <button class="action-btn" style="width: 140px;" onclick="searchUserCapabilities()">Найти</button>
+                            </div>
+                        </div>
+                        <div id="capResultArea" class="hidden" style="margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 16px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                                <div style="font-size: 14px; font-weight: 800; color: #fff;">Пользователь: <span id="capUserName" style="color: var(--accent-red);"></span></div>
+                                <div style="font-size: 12px; font-weight: 700; background: rgba(255,51,68,0.1); border: 1px solid rgba(255,51,68,0.3); padding: 4px 10px; border-radius: 8px; color: var(--accent-red);">Роль: <span id="capUserRoleBadge">USER</span></div>
+                            </div>
+                            <div class="card-header" style="margin-bottom: 8px;">Доступные разрешения и возможности роли</div>
+                            <div style="display: flex; flex-direction: column; gap: 8px;" id="capCheckboxesList">
+                                <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                    <input type="checkbox" id="cap_access_client" style="width: 16px; height: 16px; accent-color: var(--accent-red);"> Доступ к загрузке и запуску клиента
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                    <input type="checkbox" id="cap_bypass_hwid" style="width: 16px; height: 16px; accent-color: var(--accent-red);"> Бесплатный сброс HWID
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                    <input type="checkbox" id="cap_manage_tickets" style="width: 16px; height: 16px; accent-color: var(--accent-red);"> Право отвечать на тикеты поддержки
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                    <input type="checkbox" id="cap_access_admin" style="width: 16px; height: 16px; accent-color: var(--accent-red);"> Доступ к административной панели
+                                </label>
+                            </div>
+                            <button class="action-btn green" style="margin-top: 16px;" onclick="saveUserCapabilities()">Сохранить настройки возможностей</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Панель Владельца с поиском и управлением -->
                 <div id="cab-admin" class="cab-tab-content hidden">
                     <div class="card">
-                        <div class="card-header">Панель Владельца — Управление</div>
-                        <p class="sub-desc" style="margin-bottom: 16px;">Системные инструменты управления доступом и генерации ключей.</p>
+                        <div class="card-header">⚙️ Панель Владельца — Управление пользователями</div>
+                        <div class="form-group">
+                            <label>Поиск пользователя по нику</label>
+                            <div style="display: flex; gap: 8px;">
+                                <input type="text" id="adminUserSearchInput" class="form-input" placeholder="Введите ник игрока...">
+                                <button class="action-btn" style="width: 120px;" onclick="adminSearchUser()">Найти</button>
+                            </div>
+                        </div>
+                        <div id="adminUserEditArea" class="hidden" style="margin-top: 16px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 14px; padding: 16px;">
+                            <div style="font-size: 14px; font-weight: 800; color: #fff; margin-bottom: 12px;">Управление игроком: <span id="admEditUsername" style="color: var(--accent-red);"></span></div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                                <button class="action-btn dark" id="admBanToggleBtn" onclick="adminToggleBan()">Забанить</button>
+                                <button class="action-btn dark" onclick="adminToggleSub()">Выдать/Снять подписку</button>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 12px;">
+                                <label>Изменить роль</label>
+                                <select id="admRoleSelect" class="form-select" onchange="adminChangeRole(this.value)">
+                                    <option value="USER">USER</option>
+                                    <option value="MODER">MODER</option>
+                                    <option value="ADMIN">ADMIN</option>
+                                    <option value="OWNER">OWNER</option>
+                                </select>
+                            </div>
+                            <div id="admUserStatusInfo" style="font-size: 12px; color: var(--text-sub);"></div>
+                        </div>
                     </div>
 
-                    <!-- Блок 1: Ключ на подписку -->
                     <div class="card">
                         <div class="card-header">🔑 Генерация ключа подписки</div>
                         <div class="form-group">
@@ -574,7 +620,6 @@
                         <div id="generatedSubKeyResult" style="margin-top: 12px; font-size: 13px; font-weight: 700; color: var(--accent-green);"></div>
                     </div>
 
-                    <!-- Блок 2: Ключ для сброса HWID -->
                     <div class="card">
                         <div class="card-header">⚙️ Генерация ключа сброса HWID</div>
                         <div class="form-group">
@@ -591,6 +636,7 @@
 
     <script>
         let currentUser = null;
+        let registeredUsers = {}; // База пользователей: { username: { role, isBanned, hasSub, capabilities: {} } }
         let userOrders = [];
         let hwidRequests = [];
         let purchaseRequests = [];
@@ -636,18 +682,35 @@
             if (lowerName === 'invisik' || lowerName === 'owner') role = 'OWNER';
             else if (lowerName === 'admin') role = 'ADMIN';
 
-            currentUser = { username: username, role: role };
+            if (!registeredUsers[username]) {
+                registeredUsers[username] = {
+                    role: role,
+                    isBanned: false,
+                    hasSub: false,
+                    capabilities: { access_client: true, bypass_hwid: false, manage_tickets: role !== 'USER', access_admin: role === 'OWNER' || role === 'ADMIN' }
+                };
+            }
+
+            currentUser = { username: username };
+            let uData = registeredUsers[username];
             
-            document.getElementById('sidebarUsername').innerText = currentUser.username;
-            document.getElementById('sidebarAvatar').innerText = currentUser.username.charAt(0).toUpperCase();
-            document.getElementById('sidebarRole').innerText = currentUser.role;
-            document.getElementById('navCabinetText').innerText = currentUser.username;
+            if (uData.isBanned) {
+                showToast('Ваш аккаунт заблокирован администрацией!', 'error');
+                currentUser = null;
+                return;
+            }
+
+            document.getElementById('sidebarUsername').innerText = username;
+            document.getElementById('sidebarAvatar').innerText = username.charAt(0).toUpperCase();
+            document.getElementById('sidebarRole').innerText = uData.role;
+            document.getElementById('navCabinetText').innerText = username;
             
             const postTab = document.getElementById('navItemPost');
             const modTab = document.getElementById('navItemModeration');
+            const capTab = document.getElementById('navItemCapabilities');
             const adminTab = document.getElementById('navItemAdmin');
 
-            if (role === 'OWNER' || role === 'ADMIN') {
+            if (uData.role === 'OWNER' || uData.role === 'ADMIN' || uData.role === 'MODER') {
                 postTab.classList.remove('hidden');
                 modTab.classList.remove('hidden');
             } else {
@@ -655,7 +718,13 @@
                 modTab.classList.add('hidden');
             }
 
-            if (role === 'OWNER') {
+            if (uData.role === 'OWNER' || uData.role === 'ADMIN') {
+                capTab.classList.remove('hidden');
+            } else {
+                capTab.classList.add('hidden');
+            }
+
+            if (uData.role === 'OWNER') {
                 adminTab.classList.remove('hidden');
             } else {
                 adminTab.classList.add('hidden');
@@ -735,6 +804,7 @@
                 req.status = status;
                 if (status === 'approved') {
                     userOrders.push(req.tariff);
+                    if (registeredUsers[req.username]) registeredUsers[req.username].hasSub = true;
                     updateOrdersUI();
                 }
                 updatePurchaseRequestsUI();
@@ -807,7 +877,97 @@
             }
         }
 
-        /* Генерация ключей в панели владельца */
+        /* Управление пользователями в панели владельца */
+        let activeAdminTarget = null;
+        function adminSearchUser() {
+            const query = document.getElementById('adminUserSearchInput').value.trim();
+            if (!query) {
+                showToast('Введите ник для поиска!', 'error');
+                return;
+            }
+            if (!registeredUsers[query]) {
+                showToast('Пользователь не найден в базе!', 'error');
+                document.getElementById('adminUserEditArea').classList.add('hidden');
+                return;
+            }
+            activeAdminTarget = query;
+            let uData = registeredUsers[query];
+            document.getElementById('admEditUsername').innerText = query;
+            document.getElementById('admRoleSelect').value = uData.role;
+            document.getElementById('admBanToggleBtn').innerText = uData.isBanned ? 'Разбанить' : 'Забанить';
+            document.getElementById('admBanToggleBtn').style.background = uData.isBanned ? 'var(--accent-green)' : 'var(--accent-red)';
+            document.getElementById('admUserStatusInfo').innerText = `Подписка: ${uData.hasSub ? 'Активна' - 'Нет'}, Бан: ${uData.isBanned ? 'Да' : 'Нет'}`;
+            document.getElementById('adminUserEditArea').classList.remove('hidden');
+            showToast('Пользователь найден', 'success');
+        }
+
+        function adminToggleBan() {
+            if (!activeAdminTarget) return;
+            let uData = registeredUsers[activeAdminTarget];
+            uData.isBanned = !uData.isBanned;
+            document.getElementById('admBanToggleBtn').innerText = uData.isBanned ? 'Разбанить' : 'Забанить';
+            document.getElementById('admBanToggleBtn').style.background = uData.isBanned ? 'var(--accent-green)' : 'var(--accent-red)';
+            showToast(`Статус блокировки изменен: ${uData.isBanned ? 'Забанен' : 'Разбанен'}`, 'success');
+        }
+
+        function adminToggleSub() {
+            if (!activeAdminTarget) return;
+            let uData = registeredUsers[activeAdminTarget];
+            uData.hasSub = !uData.hasSub;
+            if (uData.hasSub) {
+                userOrders.push('Выдана владельцем');
+            } else {
+                userOrders = [];
+            }
+            updateOrdersUI();
+            showToast(`Подписка ${uData.hasSub ? 'выдана' : 'снята полностью'}`, 'success');
+        }
+
+        function adminChangeRole(newRole) {
+            if (!activeAdminTarget) return;
+            registeredUsers[activeAdminTarget].role = newRole;
+            showToast(`Роль обновлена на ${newRole}`, 'success');
+        }
+
+        /* Настройка возможностей */
+        let activeCapTarget = null;
+        function searchUserCapabilities() {
+            const query = document.getElementById('capSearchInput').value.trim();
+            if (!query) {
+                showToast('Введите ник!', 'error');
+                return;
+            }
+            if (!registeredUsers[query]) {
+                showToast('Пользователь не найден!', 'error');
+                document.getElementById('capResultArea').classList.add('hidden');
+                return;
+            }
+            activeCapTarget = query;
+            let uData = registeredUsers[query];
+            document.getElementById('capUserName').innerText = query;
+            document.getElementById('capUserRoleBadge').innerText = uData.role;
+            
+            document.getElementById('cap_access_client').checked = uData.capabilities.access_client;
+            document.getElementById('cap_bypass_hwid').checked = uData.capabilities.bypass_hwid;
+            document.getElementById('cap_manage_tickets').checked = uData.capabilities.manage_tickets;
+            document.getElementById('cap_access_admin').checked = uData.capabilities.access_admin;
+
+            document.getElementById('capResultArea').classList.remove('hidden');
+            showToast('Данные загружены', 'success');
+        }
+
+        function saveUserCapabilities() {
+            if (!activeCapTarget) return;
+            let uData = registeredUsers[activeCapTarget];
+            uData.capabilities = {
+                access_client: document.getElementById('cap_access_client').checked,
+                bypass_hwid: document.getElementById('cap_bypass_hwid').checked,
+                manage_tickets: document.getElementById('cap_manage_tickets').checked,
+                access_admin: document.getElementById('cap_access_admin').checked
+            };
+            showToast('Возможности успешно сохранены!', 'success');
+        }
+
         function generateSubKeyAction() {
             const term = document.getElementById('genSubTerm').value;
             const uses = document.getElementById('genSubUses').value;
@@ -827,7 +987,6 @@
             showToast('Ключ сброса HWID успешно сгенерирован!', 'success');
         }
 
-        /* Активация ключей пользователем */
         function activateSubKey() {
             const code = document.getElementById('subKeyInput').value.trim();
             if (!code) {
@@ -838,6 +997,7 @@
             if (found && found.uses > 0) {
                 found.uses--;
                 userOrders.push(`Ключ подписки (${found.term})`);
+                if (currentUser && registeredUsers[currentUser.username]) registeredUsers[currentUser.username].hasSub = true;
                 updateOrdersUI();
                 showToast('Подписка успешно активирована ключом!', 'success');
                 document.getElementById('subKeyInput').value = '';
