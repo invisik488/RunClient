@@ -4,16 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <title>Cabinet</title>
+  <title>ApexClient - Cabinet</title>
   <style>
     :root {
-      --bg: #0b0b0e;
-      --card-bg: rgba(22, 22, 29, 0.7);
+      --bg: #0d0b14;
+      --card-bg: rgba(255, 255, 255, 0.03);
       --card-border: rgba(255, 255, 255, 0.08);
       --accent: #5865f2;
       --accent-hover: #4752c4;
       --text: #ffffff;
-      --text-dim: #8a8e94;
+      --text-dim: #888888;
       --danger: #ed4245;
       --success: #57f287;
     }
@@ -26,47 +26,41 @@
     }
 
     body {
-      background-color: var(--bg);
+      background: linear-gradient(135deg, #0d0b14 0%, #171524 100%);
       color: var(--text);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding-bottom: 40px;
-      overflow-x: hidden;
     }
 
-    /* Динамический остров (Навигация) */
+    /* Верхняя панель */
     .dynamic-island {
-      background: rgba(18, 18, 24, 0.6);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--card-border);
-      border-radius: 24px;
-      padding: 6px;
-      margin-top: 24px;
+      border-radius: 20px;
+      padding: 8px 16px;
+      margin-top: 20px;
       display: flex;
-      gap: 6px;
+      gap: 12px;
       align-items: center;
       position: sticky;
       top: 20px;
       z-index: 100;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
 
     .nav-btn {
       background: transparent;
       border: none;
       color: var(--text-dim);
-      padding: 10px 20px;
-      border-radius: 18px;
+      padding: 8px 14px;
+      border-radius: 12px;
       cursor: pointer;
       font-weight: 500;
-      font-size: 0.9rem;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      transition: 0.2s;
     }
 
     .nav-btn:hover {
@@ -76,63 +70,52 @@
 
     .nav-btn.active {
       color: var(--text);
-      background: var(--accent);
+      background: rgba(88, 101, 242, 0.3);
+      border: 1px solid rgba(88, 101, 242, 0.5);
     }
 
     .lang-switcher {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--card-border);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       color: var(--text);
-      padding: 8px 14px;
-      border-radius: 16px;
+      padding: 6px 10px;
+      border-radius: 10px;
       cursor: pointer;
       font-size: 0.8rem;
-      font-weight: 600;
-      margin-left: 6px;
     }
 
     /* Логин */
     #loginSection {
-      margin-top: 12vh;
+      margin-top: 15vh;
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 40px;
-      width: 100%;
-      max-width: 400px;
+      border-radius: 16px;
+      padding: 32px;
+      width: 380px;
       text-align: center;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      backdrop-filter: blur(10px);
     }
 
     .input-field {
       width: 100%;
-      padding: 14px;
-      margin: 16px 0;
-      border-radius: 12px;
-      background: rgba(0, 0, 0, 0.4);
+      padding: 12px;
+      margin: 12px 0;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.3);
       border: 1px solid var(--card-border);
       color: #fff;
       outline: none;
-      font-size: 0.95rem;
-      transition: 0.2s;
-    }
-
-    .input-field:focus {
-      border-color: var(--accent);
     }
 
     .btn-primary {
       width: 100%;
-      padding: 14px;
-      border-radius: 12px;
+      padding: 12px;
+      border-radius: 8px;
       background: var(--accent);
       border: none;
       color: #fff;
       font-weight: 600;
       cursor: pointer;
-      font-size: 0.95rem;
-      transition: 0.2s;
     }
 
     .btn-primary:hover {
@@ -142,14 +125,14 @@
     /* Кабинет */
     .cabinet-container {
       width: 100%;
-      max-width: 850px;
-      padding: 40px 20px;
+      max-width: 900px;
+      padding: 30px 20px;
       display: none;
     }
 
     .tab-content {
       display: none;
-      animation: fadeIn 0.25s ease-in-out;
+      animation: fadeIn 0.3s ease;
     }
 
     .tab-content.active {
@@ -157,16 +140,16 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
+      from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     .glass-card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 28px;
+      backdrop-filter: blur(16px);
+      border-radius: 16px;
+      padding: 24px;
       margin-bottom: 20px;
     }
 
@@ -179,7 +162,7 @@
     .profile-left {
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 16px;
     }
 
     .avatar-img {
@@ -187,53 +170,50 @@
       height: 64px;
       border-radius: 50%;
       object-fit: cover;
-      background: #1a1a24;
-      border: 2px solid var(--card-border);
+      background: #1e1e2d;
+      border: 1px solid var(--card-border);
     }
 
     .badge {
-      background: rgba(88, 101, 242, 0.15);
-      border: 1px solid rgba(88, 101, 242, 0.3);
+      background: rgba(88, 101, 242, 0.2);
+      border: 1px solid rgba(88, 101, 242, 0.4);
       color: #a4aefa;
-      padding: 4px 12px;
-      border-radius: 8px;
+      padding: 4px 10px;
+      border-radius: 6px;
       font-size: 0.8rem;
-      font-weight: 600;
-      display: inline-block;
-      margin-top: 4px;
     }
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px;
-      margin: 20px 0;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 16px 0;
     }
 
     .stat-card {
-      padding: 20px;
-      border-radius: 16px;
-      background: rgba(0, 0, 0, 0.2);
+      padding: 16px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.02);
       border: 1px solid var(--card-border);
     }
 
     .stat-card span {
       color: var(--text-dim);
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       display: block;
       margin-bottom: 6px;
     }
 
     .faq-item {
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.02);
       border: 1px solid var(--card-border);
-      border-radius: 12px;
-      margin-bottom: 12px;
+      border-radius: 10px;
+      margin-bottom: 10px;
       overflow: hidden;
     }
 
     .faq-question {
-      padding: 18px;
+      padding: 16px;
       cursor: pointer;
       font-weight: 600;
       display: flex;
@@ -241,17 +221,16 @@
     }
 
     .faq-answer {
-      padding: 0 18px 18px 18px;
-      color: var(--text-dim);
+      padding: 0 16px 16px 16px;
+      color: #aaa;
       font-size: 0.9rem;
       display: none;
-      line-height: 1.5;
     }
   </style>
 </head>
 <body>
 
-  <!-- Динамический остров -->
+  <!-- Верхнее меню -->
   <nav class="dynamic-island">
     <button class="nav-btn active" onclick="switchTab('profileTab', this)" data-lang="navProfile">👤 Профиль</button>
     <button class="nav-btn" onclick="switchTab('preorderTab', this)" data-lang="navPreorder">🛒 Предзаказ</button>
@@ -259,23 +238,22 @@
     <button class="lang-switcher" onclick="toggleLanguage()" id="langBtn">RU</button>
   </nav>
 
-  <!-- Вход -->
+  <!-- Логин -->
   <div id="loginSection">
-    <h2 style="margin-bottom: 8px;" data-lang="loginTitle">Авторизация</h2>
-    <p style="color: var(--text-dim); font-size: 0.85rem;" data-lang="loginSub">Введите ваш ключ доступа или никнейм</p>
-    <input type="text" id="searchKey" class="input-field" placeholder="Ключ / Никнейм...">
+    <h2 data-lang="loginTitle">Вход в ApexClient</h2>
+    <input type="text" id="searchKey" class="input-field" placeholder="Введите ник или ключ...">
     <button class="btn-primary" onclick="loginUser()" data-lang="loginBtn">Войти</button>
   </div>
 
   <!-- Кабинет -->
   <div class="cabinet-container" id="cabinetSection">
     
-    <!-- ТАБ: ПРОФИЛЬ -->
+    <!-- ПРОФИЛЬ -->
     <div id="profileTab" class="tab-content active">
       <div class="glass-card profile-card">
         <div class="profile-left">
-          <!-- ФИКС ОШИБКИ КАРТИНКИ: onerror сбрасывается в null и подставляет внутренний SVG -->
-          <img id="userAvatar" class="avatar-img" src="https://via.placeholder.com/64" alt="Avatar" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'64\' height=\'64\' viewBox=\'0 0 64 64\'><rect width=\'100%\' height=\'100%\' fill=\'%235865f2\'/><text x=\'50%\' y=\'50%\' font-size=\'24\' fill=\'%23ffffff\' dominant-baseline=\'middle\' text-anchor=\'middle\'>A</text></svg>';">
+          <!-- ФИКС СТРОКИ 426: Безопасный аватарочный SVG прямо в памяти, никаких запросов в сеть -->
+          <img id="userAvatar" class="avatar-img" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'><rect width='100%' height='100%' fill='%235865f2'/><text x='50%' y='50%' font-size='24' fill='%23ffffff' dominant-baseline='middle' text-anchor='middle'>A</text></svg>" alt="Avatar">
           <div>
             <h2 id="profName">User</h2>
             <span class="badge" id="profRole">User</span>
@@ -283,53 +261,53 @@
         </div>
         <div style="text-align: right;">
           <span style="color: var(--text-dim); font-size: 0.8rem;" data-lang="lblExpire">ИСТЕКАЕТ</span>
-          <div id="profExpire" style="font-size: 1.1rem; font-weight: 600; margin-top: 4px;">Never</div>
+          <div id="profExpire" style="font-size: 1.2rem; font-weight: 600;">Lifetime</div>
         </div>
       </div>
 
       <div class="stats-grid">
-        <div class="stat-card"><span data-lang="lblDays">Осталось дней</span><strong id="statDays">Навсегда</strong></div>
+        <div class="stat-card"><span data-lang="lblDays">Осталось</span><strong id="statDays">Навсегда</strong></div>
         <div class="stat-card"><span data-lang="lblStatus">Статус</span><strong style="color: var(--success);" id="statStatus">Активен</strong></div>
         <div class="stat-card"><span>HWID</span><strong id="statHwid">Привязан</strong></div>
-        <div class="stat-card"><span>Версия</span><strong>1.21.4 Fabric</strong></div>
+        <div class="stat-card"><span>Client</span><strong>Apex 1.21.4</strong></div>
       </div>
 
-      <button class="btn-primary" style="background: rgba(237, 66, 69, 0.15); border: 1px solid rgba(237, 66, 69, 0.3); color: var(--danger);" onclick="logout()" data-lang="btnLogout">Выйти из аккаунта</button>
+      <button class="btn-primary" style="background: rgba(237, 66, 69, 0.2); border: 1px solid rgba(237, 66, 69, 0.4); color: var(--danger);" onclick="logout()" data-lang="btnLogout">Выйти</button>
     </div>
 
-    <!-- ТАБ: ПРЕДЗАКАЗ -->
+    <!-- ПРЕДЗАКАЗ -->
     <div id="preorderTab" class="tab-content">
       <div class="glass-card">
-        <h2 style="margin-bottom: 10px;" data-lang="preorderTitle">Оформить Предзаказ</h2>
-        <p style="color: var(--text-dim); margin-bottom: 20px; font-size: 0.9rem;" data-lang="preorderDesc">Получите ранний доступ к обновлению и эксклюзивным функциям.</p>
+        <h2 style="margin-bottom: 12px;" data-lang="preorderTitle">Заявка на предзаказ / Ранний доступ</h2>
+        <p style="color: var(--text-dim); margin-bottom: 20px; font-size: 0.9rem;" data-lang="preorderDesc">Заполните форму ниже, чтобы оставить запрос на предзаказ новой версии ApexClient.</p>
         
-        <label style="font-size: 0.85rem; color: var(--text-dim);" data-lang="lblDiscord">Контакт (Discord / Telegram):</label>
+        <label style="font-size: 0.85rem; color: var(--text-dim);" data-lang="lblDiscord">Ваш Discord / Telegram:</label>
         <input type="text" id="preorderContact" class="input-field" placeholder="@username">
         
-        <label style="font-size: 0.85rem; color: var(--text-dim);" data-lang="lblTariff">Тарифный план:</label>
-        <select id="preorderTariff" class="input-field" style="background: #000;">
-          <option value="30d">30 дней</option>
-          <option value="90d">90 дней</option>
-          <option value="lifetime">Forever (Lifetime)</option>
+        <label style="font-size: 0.85rem; color: var(--text-dim);" data-lang="lblTariff">Желаемый тариф:</label>
+        <select id="preorderTariff" class="input-field" style="background: #13111c;">
+          <option value="30d">30 Дней</option>
+          <option value="90d">90 Дней</option>
+          <option value="lifetime">Lifetime (Навсегда)</option>
         </select>
 
         <button class="btn-primary" onclick="sendPreorder()" data-lang="btnSendPreorder">Отправить заявку</button>
       </div>
     </div>
 
-    <!-- ТАБ: ВОПРОСЫ -->
+    <!-- ВОПРОСЫ -->
     <div id="faqTab" class="tab-content">
       <div class="glass-card">
-        <h2 style="margin-bottom: 16px;" data-lang="faqTitle">Частые вопросы</h2>
+        <h2 style="margin-bottom: 16px;" data-lang="faqTitle">Часто задаваемые вопросы</h2>
         
         <div class="faq-item">
           <div class="faq-question" onclick="toggleFaq(this)"><span>Как сбросить HWID?</span> <span>+</span></div>
-          <div class="faq-answer">Сброс HWID происходит через тикет-систему в нашем Discord сервере или через обращение к администрации.</div>
+          <div class="faq-answer">Сброс HWID происходит автоматически при входе через новый лаунчер или по запросу в поддержку.</div>
         </div>
 
         <div class="faq-item">
-          <div class="faq-question" onclick="toggleFaq(this)"><span>Как установить софт?</span> <span>+</span></div>
-          <div class="faq-answer">Скачайте наш установщик, запустите его и воспользуйтесь вашим ключом для авторизации.</div>
+          <div class="faq-question" onclick="toggleFaq(this)"><span>Как активировать ключ?</span> <span>+</span></div>
+          <div class="faq-answer">Введите полученный ключ на главном экране кабинета, система автоматически привяжет его к вашему нику.</div>
         </div>
       </div>
     </div>
@@ -337,23 +315,31 @@
   </div>
 
   <script>
+    // Фикс для глобального отлова падений сторонних аватарок
+    window.addEventListener('error', function(e) {
+      if (e.target && e.target.tagName === 'IMG') {
+        e.target.onerror = null;
+        e.target.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'><rect width='100%' height='100%' fill='%23333344'/><text x='50%' y='50%' font-size='16' fill='%23ffffff' dominant-baseline='middle' text-anchor='middle'>?</text></svg>";
+      }
+    }, true);
+
     let currentLang = 'RU';
 
     const translations = {
       RU: {
         navProfile: "👤 Профиль", navPreorder: "🛒 Предзаказ", navFaq: "❓ Вопросы",
-        loginTitle: "Авторизация", loginSub: "Введите ваш ключ доступа или никнейм", loginBtn: "Войти",
-        lblExpire: "ИСТЕКАЕТ", lblDays: "Осталось дней", lblStatus: "Статус", btnLogout: "Выйти из аккаунта",
-        preorderTitle: "Оформить Предзаказ", preorderDesc: "Получите ранний доступ к обновлению и эксклюзивным функциям.",
-        lblDiscord: "Контакт (Discord / Telegram):", lblTariff: "Тарифный план:", btnSendPreorder: "Отправить заявку",
-        faqTitle: "Частые вопросы"
+        loginTitle: "Вход в ApexClient", loginBtn: "Войти",
+        lblExpire: "ИСТЕКАЕТ", lblDays: "Осталось", lblStatus: "Статус", btnLogout: "Выйти",
+        preorderTitle: "Заявка на предзаказ / Ранний доступ", preorderDesc: "Заполните форму ниже, чтобы оставить запрос на предзаказ новой версии ApexClient.",
+        lblDiscord: "Ваш Discord / Telegram:", lblTariff: "Желаемый тариф:", btnSendPreorder: "Отправить заявку",
+        faqTitle: "Часто задаваемые вопросы"
       },
       EN: {
         navProfile: "👤 Profile", navPreorder: "🛒 Pre-order", navFaq: "❓ FAQ",
-        loginTitle: "Authorization", loginSub: "Enter your access key or username", loginBtn: "Login",
-        lblExpire: "EXPIRES", lblDays: "Days Left", lblStatus: "Status", btnLogout: "Logout",
-        preorderTitle: "Pre-order Access", preorderDesc: "Get early access to updates and exclusive features.",
-        lblDiscord: "Contact (Discord / Telegram):", lblTariff: "Tariff Plan:", btnSendPreorder: "Submit Request",
+        loginTitle: "ApexClient Login", loginBtn: "Login",
+        lblExpire: "EXPIRES", lblDays: "Days left", lblStatus: "Status", btnLogout: "Logout",
+        preorderTitle: "Pre-order Application / Early Access", preorderDesc: "Fill in the form below to submit a pre-order request for the new ApexClient version.",
+        lblDiscord: "Your Discord / Telegram:", lblTariff: "Selected plan:", btnSendPreorder: "Submit Request",
         faqTitle: "Frequently Asked Questions"
       }
     };
@@ -391,10 +377,9 @@
 
       document.getElementById('profName').innerText = val;
 
-      // Вызов Google Apps Script бэкенда
       if (typeof google !== 'undefined' && google.script && google.script.run) {
         google.script.run.withSuccessHandler(data => {
-          if (data) {
+          if (data && data.success) {
             if (data.role) document.getElementById('profRole').innerText = data.role;
             if (data.expireDate) document.getElementById('profExpire').innerText = data.expireDate;
             if (data.daysLeft) document.getElementById('statDays').innerText = data.daysLeft;
@@ -409,10 +394,10 @@
     function sendPreorder() {
       const contact = document.getElementById('preorderContact').value;
       if (!contact) {
-        alert(currentLang === 'RU' ? 'Заполните контакты!' : 'Fill in contacts!');
+        alert(currentLang === 'RU' ? 'Введите данные!' : 'Enter details!');
         return;
       }
-      alert(currentLang === 'RU' ? 'Заявка отправлена!' : 'Request sent!');
+      alert(currentLang === 'RU' ? 'Заявка отправлена!' : 'Submitted!');
       document.getElementById('preorderContact').value = '';
     }
 
