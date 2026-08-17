@@ -175,6 +175,7 @@
             position: relative; overflow: hidden;
         }
         .server-card:hover { transform: translateY(-4px); border-color: var(--accent-red); box-shadow: 0 10px 30px var(--accent-red-glow); }
+        .server-avatar { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border-color); z-index: 2; }
         .server-name { font-size: 16px; font-weight: 800; color: #fff; z-index: 2; }
         
         .server-card.animated-server { border-color: rgba(255, 51, 68, 0.3); }
@@ -242,6 +243,8 @@
         .review-author { font-size: 14px; font-weight: 800; color: #fff; display: flex; justify-content: space-between; align-items: center; }
         .review-stars { color: #ffb703; font-size: 14px; margin: 6px 0; }
         .review-text { font-size: 13px; color: var(--text-sub); line-height: 1.5; }
+        .star-rating { display: flex; gap: 6px; font-size: 20px; cursor: pointer; color: #444; margin-bottom: 12px; }
+        .star-rating .star.active { color: #ffb703; }
 
         /* Auth Screen */
         .auth-wrapper { display: flex; align-items: center; justify-content: center; min-height: 65vh; }
@@ -267,83 +270,26 @@
         .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent-red); }
         .btn-submit { width: 100%; background: var(--accent-red); color: #fff; border: none; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.2s; margin-top: 8px; box-shadow: 0 4px 15px var(--accent-red-glow); }
 
-        /* Cabinet Dashboard Grid Fix (ИСПРАВЛЕНО) */
+        /* Cabinet Dashboard */
         .dash-container {
-            display: flex !important;
-            gap: 24px;
-            background: var(--bg-card); 
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color); 
-            border-radius: 28px; 
-            padding: 24px; 
-            min-height: 520px;
-            align-items: flex-start;
+            display: grid; grid-template-columns: 240px 1fr; gap: 20px;
+            background: var(--bg-card); backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color); border-radius: 28px; padding: 20px; min-height: 520px;
         }
-        .sidebar { 
-            width: 260px;
-            min-width: 260px;
-            border-right: 1px solid var(--border-color); 
-            padding-right: 20px; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between;
-            min-height: 460px;
-        }
-        .user-card-side { 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-            padding: 12px; 
-            background: rgba(0,0,0,0.25); 
-            border-radius: 14px; 
-            margin-bottom: 20px; 
-            border: 1px solid var(--border-color); 
-        }
-        .avatar { 
-            width: 40px; 
-            min-width: 40px;
-            height: 40px; 
-            background: rgba(255, 51, 68, 0.15); 
-            border: 1px solid var(--accent-red); 
-            color: var(--accent-red); 
-            border-radius: 10px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-weight: 800; 
-        }
-        .user-details {
-            overflow: hidden;
-        }
-        .user-details .uname { 
-            font-size: 14px; 
-            font-weight: 800; 
-            width: 100%;
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-            white-space: nowrap; 
-        }
-        .user-details .urole { 
-            font-size: 10px; 
-            color: var(--accent-red); 
-            font-weight: 800; 
-            letter-spacing: 0.5px; 
-        }
+        .sidebar { border-right: 1px solid var(--border-color); padding-right: 18px; display: flex; flex-direction: column; justify-content: space-between; }
+        .user-card-side { display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(0,0,0,0.25); border-radius: 14px; margin-bottom: 20px; border: 1px solid var(--border-color); }
+        .avatar { width: 40px; height: 40px; background: rgba(255, 51, 68, 0.15); border: 1px solid var(--accent-red); color: var(--accent-red); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+        .user-details .uname { font-size: 14px; font-weight: 800; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .user-details .urole { font-size: 10px; color: var(--accent-red); font-weight: 800; letter-spacing: 0.5px; }
         
         .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; }
         .nav-item { padding: 10px 12px; border-radius: 10px; color: var(--text-sub); font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
         .nav-item:hover, .nav-item.active { background: rgba(255, 51, 68, 0.1); color: var(--accent-red); }
         
-        .btn-logout { background: none; border: 1px solid var(--border-color); color: var(--text-sub); padding: 10px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 12px; transition: 0.2s; width: 100%; margin-top: 20px; }
+        .btn-logout { background: none; border: 1px solid var(--border-color); color: var(--text-sub); padding: 10px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 12px; transition: 0.2s; width: 100%; }
         .btn-logout:hover { border-color: var(--accent-red); color: var(--accent-red); }
 
-        .content { 
-            flex: 1;
-            padding: 0 10px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 16px; 
-        }
+        .content { padding: 10px; display: flex; flex-direction: column; gap: 16px; }
         .card { background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); border-radius: 18px; padding: 20px; margin-bottom: 12px; }
         .card-header { font-size: 11px; color: var(--text-sub); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
         .sub-title { font-size: 20px; font-weight: 800; color: var(--accent-green); margin-bottom: 4px; }
@@ -358,8 +304,16 @@
         .action-btn:hover { background: #e62e3d; }
         .action-btn.green { background: var(--accent-green); color: #000; }
         .action-btn.green:hover { background: #00c853; }
+        .action-btn.blue { background: var(--accent-blue); }
+        .action-btn.blue:hover { background: #0077e6; }
 
         .admin-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 12px; }
+        
+        .list-box { background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-bottom: 10px; font-size: 13px; }
+        .list-box-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 800; color: var(--accent-red); }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+        .badge.pending { background: rgba(255,170,0,0.15); color: #ffaa00; }
+        .badge.done { background: rgba(0,230,118,0.15); color: var(--accent-green); }
     </style>
 </head>
 <body>
@@ -429,6 +383,32 @@
                 <div class="tag-item green i18n" data-ru="✓ Максимальный FPS" data-en="✓ Max FPS">✓ Максимальный FPS</div>
                 <div class="tag-item green i18n" data-ru="✓ Быстрый рендер" data-en="✓ Fast Render">✓ Быстрый рендер</div>
                 <div class="tag-item green i18n" data-ru="✓ Без просадок" data-en="✓ No Drops">✓ Без просадок</div>
+            </div>
+        </div>
+
+        <div class="promo-banner">
+            <h2 class="i18n" data-ru="🎨 Красивый визуал, который точно дополнит вашу игру!" data-en="🎨 Stunning Visuals to Enhance Your Game!">🎨 Красивый визуал, который точно дополнит вашу игру!</h2>
+            <p class="i18n" data-ru="Превратите игру в эстетическое удовольствие с гибко настраиваемыми модулями внешней кастомизации:" data-en="Turn your gameplay into an aesthetic pleasure with fully customizable visual modules:">Превратите игру в эстетическое удовольствие с гибко настраиваемыми модулями внешней кастомизации:</p>
+            <div class="tags-grid">
+                <div class="tag-item">SkyShader</div>
+                <div class="tag-item">Custom Hand</div>
+                <div class="tag-item">3D Wings</div>
+                <div class="tag-item">Swemming Animation</div>
+                <div class="tag-item i18n" data-ru="Кастомный ClickGUI & HUD" data-en="Custom ClickGUI & HUD">Кастомный ClickGUI & HUD</div>
+                <div class="tag-item i18n" data-ru="И много другого!" data-en="And much more!">И много другого!</div>
+            </div>
+        </div>
+
+        <div class="promo-banner">
+            <h2 class="i18n" data-ru="⚔️ Мощный PvP и PvE функционал" data-en="⚔️ Powerful PvP & PvE Features">⚔️ Мощный PvP и PvE функционал</h2>
+            <p class="i18n" data-ru="В клиенте присутствуют передовые алгоритмы для превосходства над любым соперником. Будьте всегда на шаг впереди в любой битве:" data-en="Advanced algorithms for complete domination over any opponent. Always stay one step ahead:">В клиенте присутствуют передовые алгоритмы для превосходства над любым соперником. Будьте всегда на шаг впереди в любой битве:</p>
+            <div class="tags-grid">
+                <div class="tag-item">KillAura</div>
+                <div class="tag-item">TriggerBot</div>
+                <div class="tag-item">AirStuck</div>
+                <div class="tag-item">AutoSwap</div>
+                <div class="tag-item">TargetStrafe</div>
+                <div class="tag-item i18n" data-ru="И многое другое!" data-en="And many more!">И многое другое!</div>
             </div>
         </div>
 
