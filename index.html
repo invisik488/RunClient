@@ -9,9 +9,12 @@
         :root {
             --bg-main: #06070a;
             --bg-card: rgba(18, 20, 29, 0.65);
+            --bg-card-hover: rgba(26, 30, 44, 0.85);
             --border-color: rgba(255, 255, 255, 0.08);
             --accent-red: #ff3344;
             --accent-red-glow: rgba(255, 51, 68, 0.35);
+            --accent-blue: #0088ff;
+            --accent-blue-glow: rgba(0, 136, 255, 0.35);
             --accent-green: #00e676;
             --text-main: #ffffff;
             --text-sub: #949aab;
@@ -27,6 +30,7 @@
             overflow-x: hidden;
         }
 
+        /* Background Glows */
         .bg-glow-1 {
             position: fixed; top: -150px; left: 50%; transform: translateX(-50%);
             width: 700px; height: 400px; background: radial-gradient(circle, rgba(255, 51, 68, 0.15) 0%, rgba(0,0,0,0) 70%);
@@ -40,35 +44,45 @@
 
         .hidden { display: none !important; }
 
+        /* Toast Notifications */
         #toast-container {
             position: fixed; bottom: 24px; right: 24px; z-index: 9999;
             display: flex; flex-direction: column-reverse; gap: 12px;
         }
         .toast {
-            background: rgba(15, 17, 23, 0.95); backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color); border-left: 4px solid var(--accent-red);
-            padding: 14px 20px; border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.8);
-            display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600;
-            animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            background: rgba(15, 17, 23, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-red);
+            padding: 14px 20px; border-radius: 12px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.8); display: flex; align-items: center;
+            gap: 12px; font-size: 13px; font-weight: 600; animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .toast.success { border-left-color: var(--accent-green); }
         .toast.error { border-left-color: var(--accent-red); }
-        @keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideInRight {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
 
+        /* Header / Navbar */
         .navbar-container {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             z-index: 1000; width: 92%; max-width: 1050px;
         }
         .navbar {
-            background: rgba(12, 14, 20, 0.75); backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color); border-radius: 24px; padding: 8px 18px;
+            background: rgba(12, 14, 20, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px; padding: 8px 18px;
             display: flex; align-items: center; justify-content: space-between;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
         .nav-left { display: flex; align-items: center; gap: 20px; }
         .nav-brand {
             display: flex; align-items: center; gap: 10px; font-weight: 900;
-            font-size: 17px; color: #fff; cursor: pointer; text-decoration: none;
+            font-size: 17px; color: #fff; cursor: pointer; text-decoration: none; letter-spacing: -0.5px;
         }
         .brand-icon {
             width: 32px; height: 32px;
@@ -191,7 +205,7 @@
     <div class="bg-glow-2"></div>
     <div id="toast-container"></div>
 
-    <!-- Верхний навигационный блок (Динам остров) -->
+    <!-- Верхний навигационный блок -->
     <div class="navbar-container">
         <nav class="navbar">
             <div class="nav-left">
@@ -202,6 +216,7 @@
                 <ul class="nav-links">
                     <li><a class="nav-link active" id="nav-home" onclick="navigateTo('home')">Главная</a></li>
                     <li><a class="nav-link" id="nav-tariffs" onclick="navigateTo('tariffs')">Тарифы</a></li>
+                    <li><a class="nav-link" id="nav-reviews" onclick="navigateTo('reviews')">Отзывы</a></li>
                     <li><a class="nav-link" id="nav-help" onclick="navigateTo('help')">Помощь</a></li>
                     <li><a class="nav-link" id="nav-support" onclick="navigateTo('support')">Задать вопрос</a></li>
                 </ul>
@@ -266,6 +281,24 @@
         </div>
     </div>
 
+    <!-- Страница: Отзывы -->
+    <div id="page-reviews" class="page-section hidden">
+        <div class="hero">
+            <h1>Отзывы пользователей</h1>
+            <p>Что говорят игроки об использовании ApexClient.</p>
+        </div>
+        <div style="max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px;">
+            <div class="card">
+                <div class="card-header">Sextazyst — ★★★★★</div>
+                <p class="sub-desc">«Лучший клиент под 1.21.4, функционал пушка, фпс держит стабильно на фантайме!»</p>
+            </div>
+            <div class="card">
+                <div class="card-header">Veselchak — ★★★★★</div>
+                <p class="sub-desc">«Очень удобный интерфейс, обход работает отлично. Рекомендую брать тариф навсегда.»</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Страница: Помощь -->
     <div id="page-help" class="page-section hidden">
         <div class="hero">
@@ -313,7 +346,7 @@
                 <div class="auth-title">Apex<span>Client</span></div>
                 <div class="auth-subtitle">Авторизация в системе</div>
                 <div class="form-group">
-                    <label>Логин (admin или owner для прав)</label>
+                    <label>Логин (owner или admin для прав)</label>
                     <input type="text" id="authUsernameInput" class="form-input" placeholder="Никнейм">
                 </div>
                 <button class="btn-submit action-btn" onclick="handleAuthSubmit()">Войти в кабинет</button>
@@ -339,7 +372,7 @@
                         <li class="nav-item" onclick="switchCabinetTab('keys', this)">🔑 Активация ключей</li>
                         <li class="nav-item hidden" id="navItemPost" onclick="switchCabinetTab('post', this)">📝 Сделать пост</li>
                         <li class="nav-item" onclick="switchCabinetTab('downloads', this)">📥 Загрузки</li>
-                        <li class="nav-item" onclick="switchCabinetTab('moderation', this)">🛡️ Модерация</li>
+                        <li class="nav-item hidden" id="navItemModeration" onclick="switchCabinetTab('moderation', this)">🛡️ Модерация</li>
                         <li class="nav-item hidden" id="navItemAdmin" onclick="switchCabinetTab('admin', this)">⚙️ Админ панель</li>
                     </ul>
                 </div>
@@ -359,7 +392,9 @@
                 <div id="cab-orders" class="cab-tab-content hidden">
                     <div class="card">
                         <div class="card-header">История и Предзаказы</div>
-                        <p class="sub-desc">У вас пока нет активных предзаказов. Вы можете оформить их на вкладке «Тарифы».</p>
+                        <div id="ordersListContainer">
+                            <p class="sub-desc">У вас пока нет активных предзаказов. Вы можете оформить их на вкладке «Тарифы».</p>
+                        </div>
                     </div>
                 </div>
 
@@ -374,7 +409,7 @@
                     </div>
                 </div>
 
-                <!-- Вкладка: Сделать пост (Только Admin и Owner) -->
+                <!-- Вкладка: Сделать пост (Admin & Owner) -->
                 <div id="cab-post" class="cab-tab-content hidden">
                     <div class="card">
                         <div class="card-header">Создать публикацию</div>
@@ -399,7 +434,7 @@
                     </div>
                 </div>
 
-                <!-- Вкладка: Модерация -->
+                <!-- Вкладка: Модерация (Только Admin & Owner) -->
                 <div id="cab-moderation" class="cab-tab-content hidden">
                     <div class="card">
                         <div class="card-header">Панель модерации</div>
@@ -421,6 +456,7 @@
 
     <script>
         let currentUser = null;
+        let userOrders = [];
 
         function navigateTo(pageId) {
             if (pageId === 'cabinet' && !currentUser) {
@@ -468,12 +504,15 @@
             document.getElementById('navCabinetText').innerText = currentUser.username;
             
             const postTab = document.getElementById('navItemPost');
+            const modTab = document.getElementById('navItemModeration');
             const adminTab = document.getElementById('navItemAdmin');
 
             if (role === 'OWNER' || role === 'ADMIN') {
                 postTab.classList.remove('hidden');
+                modTab.classList.remove('hidden');
             } else {
                 postTab.classList.add('hidden');
+                modTab.classList.add('hidden');
             }
 
             if (role === 'OWNER') {
@@ -503,7 +542,23 @@
         }
 
         function buyTariff(tariffName) {
+            userOrders.push(tariffName);
+            updateOrdersUI();
             showToast('Предзаказ оформлен: ' + tariffName, 'success');
+        }
+
+        function updateOrdersUI() {
+            const container = document.getElementById('ordersListContainer');
+            if (userOrders.length === 0) {
+                container.innerHTML = `<p class="sub-desc">У вас пока нет активных предзаказов. Вы можете оформить их на вкладке «Тарифы».</p>`;
+            } else {
+                container.innerHTML = userOrders.map((order, idx) => `
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 13px; font-weight: 700; color: #fff;">📦 Предзаказ #${idx + 1}: ${order}</span>
+                        <span style="font-size: 11px; color: var(--accent-green); font-weight: 800;">ОПЛАЧЕНО</span>
+                    </div>
+                `).join('');
+            }
         }
 
         function resetHWID() {
