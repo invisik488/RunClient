@@ -8,8 +8,8 @@
     <style>
         :root {
             --bg-main: #06070a;
-            --bg-card: rgba(18, 20, 29, 0.65);
-            --bg-card-hover: rgba(26, 30, 44, 0.85);
+            --bg-card: rgba(18, 20, 29, 0.7);
+            --bg-card-hover: rgba(26, 30, 44, 0.9);
             --border-color: rgba(255, 255, 255, 0.08);
             --accent-red: #ff3344;
             --accent-red-glow: rgba(255, 51, 68, 0.35);
@@ -30,7 +30,6 @@
             overflow-x: hidden;
         }
 
-        /* Background Glows */
         .bg-glow-1 {
             position: fixed; top: -150px; left: 50%; transform: translateX(-50%);
             width: 700px; height: 400px; background: radial-gradient(circle, rgba(255, 51, 68, 0.15) 0%, rgba(0,0,0,0) 70%);
@@ -44,19 +43,16 @@
 
         .hidden { display: none !important; }
 
-        /* Toast Notifications */
         #toast-container {
             position: fixed; bottom: 24px; right: 24px; z-index: 9999;
             display: flex; flex-direction: column-reverse; gap: 12px;
         }
         .toast {
-            background: rgba(15, 17, 23, 0.95);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color);
-            border-left: 4px solid var(--accent-red);
-            padding: 14px 20px; border-radius: 12px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.8); display: flex; align-items: center;
-            gap: 12px; font-size: 13px; font-weight: 600; animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            background: rgba(15, 17, 23, 0.95); backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color); border-left: 4px solid var(--accent-red);
+            padding: 14px 20px; border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.8);
+            display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600;
+            animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .toast.success { border-left-color: var(--accent-green); }
         .toast.error { border-left-color: var(--accent-red); }
@@ -65,78 +61,71 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        /* Header / Navbar */
         .navbar-container {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             z-index: 1000; width: 92%; max-width: 1050px;
         }
         .navbar {
-            background: rgba(12, 14, 20, 0.75);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color);
-            border-radius: 24px; padding: 8px 18px;
+            background: rgba(12, 14, 20, 0.8); backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color); border-radius: 24px; padding: 8px 18px;
             display: flex; align-items: center; justify-content: space-between;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
         .nav-left { display: flex; align-items: center; gap: 20px; }
         .nav-brand {
             display: flex; align-items: center; gap: 10px; font-weight: 900;
-            font-size: 17px; color: #fff; cursor: pointer; text-decoration: none; letter-spacing: -0.5px;
+            font-size: 17px; color: #fff; cursor: pointer; text-decoration: none;
         }
         .brand-icon {
-            width: 32px; height: 32px;
-            background: linear-gradient(135deg, #ff3344 0%, #cc0022 100%);
+            width: 32px; height: 32px; background: linear-gradient(135deg, #ff3344 0%, #cc0022 100%);
             border-radius: 10px; display: flex; align-items: center; justify-content: center;
             font-weight: 900; font-size: 15px; color: #fff; box-shadow: 0 0 15px var(--accent-red-glow);
         }
         .nav-links { display: flex; align-items: center; gap: 6px; list-style: none; }
         .nav-link {
             color: var(--text-sub); font-size: 12px; font-weight: 600; cursor: pointer;
-            padding: 8px 12px; border-radius: 12px; transition: all 0.2s ease; text-decoration: none;
+            padding: 8px 12px; border-radius: 12px; transition: all 0.2s; text-decoration: none;
         }
-        .nav-link:hover, .nav-link.active { color: #ffffff; background: rgba(255, 255, 255, 0.05); }
+        .nav-link:hover, .nav-link.active { color: #fff; background: rgba(255, 255, 255, 0.05); }
 
         .btn-cabinet {
             background: linear-gradient(135deg, #ff3344 0%, #d61b2c 100%);
             color: #fff; border: none; padding: 8px 16px; border-radius: 14px;
-            font-size: 12px; font-weight: 700; cursor: pointer;
-            display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 20px var(--accent-red-glow);
+            font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;
+            box-shadow: 0 4px 20px var(--accent-red-glow);
         }
 
         .page-section { padding-top: 120px; padding-bottom: 80px; max-width: 1050px; margin: 0 auto; width: 90%; }
 
-        .hero { text-align: center; margin-bottom: 50px; }
+        .hero { text-align: center; margin-bottom: 40px; }
         .hero-badge {
             display: inline-flex; align-items: center; gap: 6px;
             background: rgba(255, 51, 68, 0.1); border: 1px solid rgba(255, 51, 68, 0.25);
             color: #ff6675; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px; margin-bottom: 16px;
         }
-        .hero h1 { font-size: 48px; font-weight: 900; margin-bottom: 16px; color: #fff; letter-spacing: -1px; }
+        .hero h1 { font-size: 46px; font-weight: 900; margin-bottom: 14px; color: #fff; letter-spacing: -1px; }
         .hero p { color: var(--text-sub); font-size: 15px; max-width: 600px; margin: 0 auto; line-height: 1.6; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 40px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 30px; }
         .stat-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 20px; text-align: center; }
         .stat-val { font-size: 28px; font-weight: 900; color: #fff; }
         .stat-lbl { font-size: 11px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; }
 
-        .promo-banner {
-            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 24px; padding: 32px; margin-bottom: 24px;
-        }
-        .promo-banner h2 { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 10px; }
-        .promo-banner p { color: var(--text-sub); font-size: 14px; line-height: 1.6; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 30px; }
+        .feature-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; }
+        .feature-card h3 { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+        .feature-card p { font-size: 13px; color: var(--text-sub); line-height: 1.5; }
 
-        .servers-section { text-align: center; margin-top: 40px; }
-        .servers-title { font-size: 20px; font-weight: 800; margin-bottom: 6px; color: #fff; }
-        .servers-subtitle { font-size: 13px; color: var(--text-sub); margin-bottom: 20px; }
+        .servers-section { text-align: center; margin-top: 30px; }
+        .servers-title { font-size: 18px; font-weight: 800; margin-bottom: 6px; color: #fff; }
+        .servers-subtitle { font-size: 13px; color: var(--text-sub); margin-bottom: 16px; }
         .servers-grid { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
-        .server-card {
-            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 14px 22px; font-weight: 800; color: #fff; font-size: 13px;
-        }
+        .server-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 12px 20px; font-weight: 800; color: #fff; font-size: 13px; }
 
-        .tariffs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 30px; }
+        /* Tariffs Grid */
+        .tariffs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-top: 20px; }
         .tariff-card {
-            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 24px; padding: 28px 22px;
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 24px; padding: 24px 18px;
             text-align: center; position: relative; display: flex; flex-direction: column; justify-content: space-between;
         }
         .tariff-card.popular { border-color: var(--accent-red); background: linear-gradient(180deg, rgba(255, 51, 68, 0.08) 0%, var(--bg-card) 100%); }
@@ -144,12 +133,12 @@
             position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
             background: var(--accent-red); color: #fff; font-size: 10px; font-weight: 800; padding: 4px 14px; border-radius: 20px;
         }
-        .tariff-name { font-size: 15px; font-weight: 700; color: var(--text-sub); margin-bottom: 10px; }
-        .tariff-price { font-size: 34px; font-weight: 900; color: #fff; margin-bottom: 20px; }
-        .tariff-price span { font-size: 15px; color: var(--text-sub); }
+        .tariff-name { font-size: 14px; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; }
+        .tariff-price { font-size: 30px; font-weight: 900; color: #fff; margin-bottom: 16px; }
+        .tariff-price span { font-size: 14px; color: var(--text-sub); }
 
         .btn-buy, .action-btn {
-            width: 100%; background: var(--accent-red); color: #fff; border: none; padding: 12px;
+            width: 100%; background: var(--accent-red); color: #fff; border: none; padding: 11px;
             border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.2s;
             box-shadow: 0 4px 15px var(--accent-red-glow); display: inline-flex; align-items: center; justify-content: center; gap: 6px;
         }
@@ -166,7 +155,7 @@
         .auth-subtitle { font-size: 12px; color: var(--text-sub); text-align: center; margin-bottom: 24px; font-weight: 600; }
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 11px; color: var(--text-sub); margin-bottom: 6px; text-transform: uppercase; font-weight: 700; }
-        .form-input, .form-textarea {
+        .form-input, .form-textarea, .form-select {
             width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color);
             padding: 12px 14px; border-radius: 12px; color: #fff; font-size: 13px; outline: none;
         }
@@ -197,6 +186,15 @@
         .card-header { font-size: 11px; color: var(--text-sub); font-weight: 800; text-transform: uppercase; margin-bottom: 14px; }
         .sub-title { font-size: 20px; font-weight: 800; color: var(--accent-green); margin-bottom: 4px; }
         .sub-desc { font-size: 13px; color: var(--text-sub); line-height: 1.5; }
+
+        /* Reviews Custom Styles */
+        .review-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 20px; margin-bottom: 14px; }
+        .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .review-author { font-weight: 800; font-size: 14px; color: #fff; }
+        .review-stars { color: #ffbc00; font-size: 13px; letter-spacing: 2px; }
+        .review-text { font-size: 13px; color: var(--text-sub); line-height: 1.5; }
+
+        .rating-select { display: flex; gap: 8px; cursor: pointer; font-size: 20px; }
     </style>
 </head>
 <body>
@@ -205,7 +203,7 @@
     <div class="bg-glow-2"></div>
     <div id="toast-container"></div>
 
-    <!-- Верхний навигационный блок -->
+    <!-- Верхняя навигация -->
     <div class="navbar-container">
         <nav class="navbar">
             <div class="nav-left">
@@ -229,24 +227,30 @@
         </nav>
     </div>
 
-    <!-- Главная страница -->
+    <!-- Главная страница (полная версия со всеми блоками) -->
     <div id="page-home" class="page-section">
         <div class="hero">
             <div class="hero-badge">⚡ Fabric 1.21.4 Client</div>
             <h1>Абсолютное Доминирование</h1>
-            <p>Премиальный софт с идеальным обходом античитов и максимальным FPS.</p>
+            <p>Премиальный софт с идеальным обходом античитов, кастомными визуальными модулями и максимальным FPS для комфортной игры.</p>
         </div>
         <div class="stats-grid">
             <div class="stat-card"><div class="stat-val">420+</div><div class="stat-lbl">Онлайн</div></div>
             <div class="stat-card"><div class="stat-val">1,480+</div><div class="stat-lbl">Подписок</div></div>
         </div>
-        <div class="promo-banner">
-            <h2>🚀 Быстрый запуск и оптимизация</h2>
-            <p>Стабильный фреймрейт на любых серверах без просадок, кастомный визуальный интерфейс и продвинутый функционал для PvP.</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>🚀 Быстрый запуск и оптимизация</h3>
+                <p>Стабильный фреймрейт на любых серверах без просадок, быстрая загрузка модулей и мгновенный инжект.</p>
+            </div>
+            <div class="feature-card">
+                <h3>🛡️ Надежный обход античитов</h3>
+                <p>Продвинутая система маскировки защищает ваш игровой процесс на крупнейших проектах Minecraft.</p>
+            </div>
         </div>
         <div class="servers-section">
             <div class="servers-title">Поддерживаемые серверы</div>
-            <div class="servers-subtitle">Полная совместимость и надежный обход</div>
+            <div class="servers-subtitle">Полная совместимость и оптимизация под современные античиты</div>
             <div class="servers-grid">
                 <div class="server-card">FunTime</div>
                 <div class="server-card">HolyWorld</div>
@@ -255,106 +259,147 @@
         </div>
     </div>
 
-    <!-- Тарифы (Цены + предзаказ + сброс HWID) -->
+    <!-- Тарифы (С ценами и платным сбросом HWID) -->
     <div id="page-tariffs" class="page-section hidden">
         <div class="hero">
-            <h1>Тарифные планы и Предзаказы</h1>
-            <p>Выберите подходящий срок доступа к софту.</p>
+            <h1>Тарифные планы</h1>
+            <p>Выберите подходящий срок доступа к софту и оформите подписку.</p>
         </div>
         <div class="tariffs-grid">
             <div class="tariff-card">
+                <div><div class="tariff-name">7 Дней</div><div class="tariff-price">69 <span>₽</span></div></div>
+                <button class="btn-buy" onclick="buyTariff('7 дней (69 ₽)')">Купить</button>
+            </div>
+            <div class="tariff-card">
                 <div><div class="tariff-name">1 Месяц</div><div class="tariff-price">149 <span>₽</span></div></div>
-                <button class="btn-buy" onclick="buyTariff('1 месяц (149 ₽)')">Предзаказ / Купить</button>
+                <button class="btn-buy" onclick="buyTariff('1 месяц (149 ₽)')">Купить</button>
             </div>
             <div class="tariff-card popular">
                 <div class="tariff-badge">ХИТ</div>
                 <div><div class="tariff-name">3 Месяца</div><div class="tariff-price">239 <span>₽</span></div></div>
-                <button class="btn-buy" onclick="buyTariff('3 месяца (239 ₽)')">Предзаказ / Купить</button>
+                <button class="btn-buy" onclick="buyTariff('3 месяца (239 ₽)')">Купить</button>
             </div>
             <div class="tariff-card">
                 <div><div class="tariff-name">Навсегда</div><div class="tariff-price">449 <span>₽</span></div></div>
-                <button class="btn-buy" onclick="buyTariff('Навсегда (449 ₽)')">Предзаказ / Купить</button>
+                <button class="btn-buy" onclick="buyTariff('Навсегда (449 ₽)')">Купить</button>
             </div>
         </div>
-        <div style="margin-top: 35px; text-align: center;">
-            <button class="action-btn" style="max-width: 280px; margin: 0 auto;" onclick="resetHWID()">Сбросить HWID устройства</button>
+        <div style="margin-top: 40px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; text-align: center; max-width: 500px; margin-left: auto; margin-right: auto;">
+            <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 8px; color: #fff;">Сброс HWID устройства</h3>
+            <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 16px;">Смена привязки ПК стоит 139 ₽. Заявка отправляется на проверку администраторам.</p>
+            <button class="action-btn" onclick="requestHWIDReset()">Запросить сброс HWID (139 ₽)</button>
         </div>
     </div>
 
-    <!-- Страница: Отзывы -->
+    <!-- Страница: Отзывы (с добавлением своих) -->
     <div id="page-reviews" class="page-section hidden">
         <div class="hero">
             <h1>Отзывы пользователей</h1>
-            <p>Что говорят игроки об использовании ApexClient.</p>
+            <p>Поделитесь вашим впечатлением или посмотрите мнения других игроков.</p>
         </div>
-        <div style="max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px;">
-            <div class="card">
-                <div class="card-header">Sextazyst — ★★★★★</div>
-                <p class="sub-desc">«Лучший клиент под 1.21.4, функционал пушка, фпс держит стабильно на фантайме!»</p>
+        <div style="max-width: 650px; margin: 0 auto;">
+            <div class="card" style="margin-bottom: 30px;">
+                <div class="card-header">Оставить отзыв</div>
+                <div class="form-group">
+                    <label>Ваш ник</label>
+                    <input type="text" id="reviewAuthorInput" class="form-input" placeholder="Введите имя...">
+                </div>
+                <div class="form-group">
+                    <label>Оценка (звезды)</label>
+                    <select id="reviewRatingInput" class="form-select">
+                        <option value="5">★★★★★ (5/5)</option>
+                        <option value="4">★★★★☆ (4/5)</option>
+                        <option value="3">★★★☆☆ (3/5)</option>
+                        <option value="2">★★☆☆☆ (2/5)</option>
+                        <option value="1">★☆☆☆☆ (1/5)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Текст отзыва</label>
+                    <textarea id="reviewTextInput" class="form-textarea" placeholder="Напишите, что вам понравилось..."></textarea>
+                </div>
+                <button class="action-btn" onclick="addNewReview()">Опубликовать отзыв</button>
             </div>
-            <div class="card">
-                <div class="card-header">Veselchak — ★★★★★</div>
-                <p class="sub-desc">«Очень удобный интерфейс, обход работает отлично. Рекомендую брать тариф навсегда.»</p>
+
+            <div id="reviewsListContainer">
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="review-author">Sextazyst</span>
+                        <span class="review-stars">★★★★★</span>
+                    </div>
+                    <p class="review-text">Лучший клиент под 1.21.4, функционал пушка, фпс держит стабильно на фантайме!</p>
+                </div>
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="review-author">Veselchak</span>
+                        <span class="review-stars">★★★★★</span>
+                    </div>
+                    <p class="review-text">Очень удобный интерфейс, обход работает отлично. Рекомендую брать тариф навсегда.</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Страница: Помощь -->
+    <!-- Страница: Помощь / FAQ -->
     <div id="page-help" class="page-section hidden">
         <div class="hero">
             <h1>Центр помощи</h1>
-            <p>Часто задаваемые вопросы и инструкции по установке.</p>
+            <p>Часто задаваемые вопросы и руководства по использованию.</p>
         </div>
-        <div style="max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px;">
+        <div style="max-width: 650px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px;">
             <div class="card">
                 <div class="card-header">Как запустить клиент?</div>
                 <p class="sub-desc">Скачайте лоадер в личном кабинете, запустите его и войдите под своей учетной записью с активной подпиской.</p>
             </div>
             <div class="card">
-                <div class="card-header">Что делать при ошибке HWID?</div>
-                <p class="sub-desc">Вы можете самостоятельно сбросить привязку оборудования на вкладке «Тарифы» или через личный кабинет.</p>
+                <div class="card-header">Что делать при смене ПК (HWID ошибка)?</div>
+                <p class="sub-desc">Перейдите в раздел «Тарифы» и оформите платную заявку на сброс HWID за 139 рублей. После одобрения администратором привязка сбросится.</p>
             </div>
         </div>
     </div>
 
-    <!-- Страница: Задать вопрос -->
+    <!-- Страница: Задать вопрос (Создание тикета) -->
     <div id="page-support" class="page-section hidden">
         <div class="hero">
             <h1>Техническая поддержка</h1>
-            <p>Возникли вопросы или проблемы с запуском? Напишите нам.</p>
+            <p>Возникли проблемы или вопросы? Создайте тикет, и модераторы ответят вам в личном кабинете.</p>
         </div>
         <div style="max-width: 500px; margin: 0 auto;">
             <div class="card">
-                <div class="card-header">Форма обращения</div>
+                <div class="card-header">Новое обращение</div>
                 <div class="form-group">
-                    <label>Ваш ник / почта</label>
-                    <input type="text" class="form-input" placeholder="Введите имя...">
+                    <label>Тема обращения</label>
+                    <input type="text" id="ticketSubject" class="form-input" placeholder="Например: Ошибка при запуске...">
                 </div>
                 <div class="form-group">
-                    <label>Опишите проблему</label>
-                    <textarea class="form-textarea" placeholder="Детали ошибки..."></textarea>
+                    <label>Описание проблемы</label>
+                    <textarea id="ticketMessage" class="form-textarea" placeholder="Опишите детали ошибки подробно..."></textarea>
                 </div>
-                <button class="action-btn" onclick="showToast('Вопрос успешно отправлен!', 'success')">Отправить вопрос</button>
+                <button class="action-btn" onclick="submitTicket()">Отправить вопрос</button>
             </div>
         </div>
     </div>
 
-    <!-- Авторизация -->
+    <!-- Полноценная Авторизация -->
     <div id="page-auth" class="page-section hidden">
         <div class="auth-wrapper">
             <div class="auth-card">
                 <div class="auth-title">Apex<span>Client</span></div>
-                <div class="auth-subtitle">Авторизация в системе</div>
+                <div class="auth-subtitle">Вход в систему или Регистрация</div>
                 <div class="form-group">
-                    <label>Логин (owner или admin для прав)</label>
-                    <input type="text" id="authUsernameInput" class="form-input" placeholder="Никнейм">
+                    <label>Ваш логин (введите owner или admin для прав)</label>
+                    <input type="text" id="authUsernameInput" class="form-input" placeholder="Имя пользователя">
                 </div>
-                <button class="btn-submit action-btn" onclick="handleAuthSubmit()">Войти в кабинет</button>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="authPasswordInput" class="form-input" placeholder="Пароль">
+                </div>
+                <button class="btn-submit action-btn" onclick="handleAuthSubmit()">Войти / Зарегистрироваться</button>
             </div>
         </div>
     </div>
 
-    <!-- Кабинет -->
+    <!-- Личный Кабинет -->
     <div id="page-cabinet" class="page-section hidden">
         <div class="dash-container">
             <div class="sidebar">
@@ -369,22 +414,23 @@
                     <ul class="nav-menu">
                         <li class="nav-item active" onclick="switchCabinetTab('home', this)">🏠 Главная</li>
                         <li class="nav-item" onclick="switchCabinetTab('orders', this)">📦 Мои предзаказы</li>
+                        <li class="nav-item" onclick="switchCabinetTab('tickets', this)">💬 Мои тикеты (<span id="ticketCountBadge">0</span>)</li>
                         <li class="nav-item" onclick="switchCabinetTab('keys', this)">🔑 Активация ключей</li>
                         <li class="nav-item hidden" id="navItemPost" onclick="switchCabinetTab('post', this)">📝 Сделать пост</li>
                         <li class="nav-item" onclick="switchCabinetTab('downloads', this)">📥 Загрузки</li>
-                        <li class="nav-item hidden" id="navItemModeration" onclick="switchCabinetTab('moderation', this)">🛡️ Модерация</li>
+                        <li class="nav-item hidden" id="navItemModeration" onclick="switchCabinetTab('moderation', this)">🛡️ Модерация (<span id="modCountBadge">0</span>)</li>
                         <li class="nav-item hidden" id="navItemAdmin" onclick="switchCabinetTab('admin', this)">⚙️ Админ панель</li>
                     </ul>
                 </div>
                 <button class="btn-logout" onclick="logout()">Выйти</button>
             </div>
             <div class="content">
-                <!-- Вкладка: Главная (Кабинета) -->
+                <!-- Вкладка: Главная Кабинета -->
                 <div id="cab-home" class="cab-tab-content">
                     <div class="card">
                         <div class="card-header">Статус подписки</div>
                         <div class="sub-title" id="subStatusText">АКТИВНА</div>
-                        <div class="sub-desc">Доступ к Fabric 1.21.4 активен без ограничений.</div>
+                        <div class="sub-desc">Доступ к Fabric 1.21.4 клиенту работает без ограничений.</div>
                     </div>
                 </div>
 
@@ -398,28 +444,38 @@
                     </div>
                 </div>
 
+                <!-- Вкладка: Мои тикеты (Ответы поддержки) -->
+                <div id="cab-tickets" class="cab-tab-content hidden">
+                    <div class="card">
+                        <div class="card-header">История обращений в поддержку</div>
+                        <div id="userTicketsContainer">
+                            <p class="sub-desc">Вы еще не отправляли вопросы. Перейдите во вкладку «Задать вопрос», чтобы создать тикет.</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Вкладка: Активация ключей -->
                 <div id="cab-keys" class="cab-tab-content hidden">
                     <div class="card">
                         <div class="card-header">Активация промо / ключа</div>
                         <div class="form-group" style="margin-bottom: 12px;">
-                            <input type="text" class="form-input" placeholder="Введите ваш ключ активации...">
+                            <input type="text" class="form-input" placeholder="Введите ключ активации...">
                         </div>
                         <button class="action-btn green" onclick="showToast('Ключ успешно активирован!', 'success')">Активировать</button>
                     </div>
                 </div>
 
-                <!-- Вкладка: Сделать пост (Admin & Owner) -->
+                <!-- Вкладка: Создать пост -->
                 <div id="cab-post" class="cab-tab-content hidden">
                     <div class="card">
                         <div class="card-header">Создать публикацию</div>
                         <div class="form-group">
                             <label>Заголовок поста</label>
-                            <input type="text" class="form-input" placeholder="Введите заголовок обновления...">
+                            <input type="text" class="form-input" placeholder="Заголовок обновления...">
                         </div>
                         <div class="form-group">
                             <label>Текст сообщения</label>
-                            <textarea class="form-textarea" placeholder="Опишите суть обновления или новости..."></textarea>
+                            <textarea class="form-textarea" placeholder="Содержимое поста..."></textarea>
                         </div>
                         <button class="action-btn" onclick="showToast('Пост успешно опубликован!', 'success')">Опубликовать</button>
                     </div>
@@ -429,25 +485,33 @@
                 <div id="cab-downloads" class="cab-tab-content hidden">
                     <div class="card">
                         <div class="card-header">Загрузка лоадера</div>
-                        <p class="sub-desc" style="margin-bottom: 14px;">Последняя стабильная версия клиента под Fabric.</p>
+                        <p class="sub-desc" style="margin-bottom: 14px;">Последняя стабильная сборка клиента под Fabric.</p>
                         <button class="action-btn green" onclick="showToast('Загрузка ApexClient.exe...', 'success')">📥 Скачать ApexClient.exe</button>
                     </div>
                 </div>
 
-                <!-- Вкладка: Модерация (Только Admin & Owner) -->
+                <!-- Вкладка: Модерация (Заявки HWID и Тикеты поддержки) -->
                 <div id="cab-moderation" class="cab-tab-content hidden">
                     <div class="card">
-                        <div class="card-header">Панель модерации</div>
-                        <p class="sub-desc">Здесь отображаются запросы и жалобы пользователей на проверку.</p>
+                        <div class="card-header">Заявки на сброс HWID (139 ₽)</div>
+                        <div id="hwidRequestsContainer">
+                            <p class="sub-desc">Нет активных заявок на сброс HWID.</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">Тикеты пользователей</div>
+                        <div id="adminTicketsContainer">
+                            <p class="sub-desc">Нет активных вопросов от пользователей.</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Вкладка: Админ панель (Только Owner) -->
+                <!-- Вкладка: Админ панель -->
                 <div id="cab-admin" class="cab-tab-content hidden">
                     <div class="card">
-                        <div class="card-header">Управление платформой</div>
-                        <p class="sub-desc" style="margin-bottom: 12px;">Генерация ключей и управление ролями пользователей.</p>
-                        <button class="action-btn" onclick="showToast('Ключ сгенерирован в консоль!', 'success')">➕ Сгенерировать ключ доступа</button>
+                        <div class="card-header">Панель Владельца</div>
+                        <p class="sub-desc" style="margin-bottom: 12px;">Генерация ключей доступа и полный контроль над системой.</p>
+                        <button class="action-btn" onclick="showToast('Ключ сгенерирован!', 'success')">➕ Сгенерировать ключ подписки</button>
                     </div>
                 </div>
             </div>
@@ -457,6 +521,8 @@
     <script>
         let currentUser = null;
         let userOrders = [];
+        let hwidRequests = []; // Заявки на сброс HWID
+        let supportTickets = []; // Тикеты поддержки
 
         function navigateTo(pageId) {
             if (pageId === 'cabinet' && !currentUser) {
@@ -488,7 +554,7 @@
         function handleAuthSubmit() {
             const username = document.getElementById('authUsernameInput').value.trim();
             if (!username) {
-                showToast('Введите никнейм!', 'error');
+                showToast('Введите логин!', 'error');
                 return;
             }
             const lowerName = username.toLowerCase();
@@ -544,7 +610,7 @@
         function buyTariff(tariffName) {
             userOrders.push(tariffName);
             updateOrdersUI();
-            showToast('Предзаказ оформлен: ' + tariffName, 'success');
+            showToast('Оформлен тариф: ' + tariffName, 'success');
         }
 
         function updateOrdersUI() {
@@ -554,15 +620,179 @@
             } else {
                 container.innerHTML = userOrders.map((order, idx) => `
                     <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 13px; font-weight: 700; color: #fff;">📦 Предзаказ #${idx + 1}: ${order}</span>
-                        <span style="font-size: 11px; color: var(--accent-green); font-weight: 800;">ОПЛАЧЕНО</span>
+                        <span style="font-size: 13px; font-weight: 700; color: #fff;">📦 Подписка #${idx + 1}: ${order}</span>
+                        <span style="font-size: 11px; color: var(--accent-green); font-weight: 800;">АКТИВНА</span>
                     </div>
                 `).join('');
             }
         }
 
-        function resetHWID() {
-            showToast('HWID успешно сброшен!', 'success');
+        // Платный сброс HWID (139р)
+        function requestHWIDReset() {
+            if (!currentUser) {
+                showToast('Сначала войдите в личный кабинет!', 'error');
+                navigateTo('auth');
+                return;
+            }
+            const reqId = Date.now();
+            hwidRequests.push({ id: reqId, username: currentUser.username, status: 'pending' });
+            updateHWIDRequestsUI();
+            showToast('Заявка на сброс HWID (139 ₽) отправлена модераторам!', 'success');
+        }
+
+        function updateHWIDRequestsUI() {
+            const container = document.getElementById('hwidRequestsContainer');
+            const badge = document.getElementById('modCountBadge');
+            const pendingReqs = hwidRequests.filter(r => r.status === 'pending');
+            
+            badge.innerText = pendingReqs.length + supportTickets.filter(t => !t.answer).length;
+
+            if (hwidRequests.length === 0) {
+                container.innerHTML = `<p class="sub-desc">Нет активных заявок на сброс HWID.</p>`;
+                return;
+            }
+
+            container.innerHTML = hwidRequests.map(req => `
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-size: 13px; font-weight: 700; color: #fff;">👤 ${req.username} — Сброс HWID (139 ₽)</div>
+                        <div style="font-size: 11px; color: ${req.status === 'pending' ? '#ffbc00' : req.status === 'approved' ? 'var(--accent-green)' : 'var(--accent-red)'}; font-weight: 800; margin-top: 2px;">
+                            Статус: ${req.status === 'pending' ? 'ОЖИДАЕТ' : req.status === 'approved' ? 'ОДОБРЕНО' : 'ОТКЛОНЕНО'}
+                        </div>
+                    </div>
+                    ${req.status === 'pending' ? `
+                        <div style="display: flex; gap: 6px;">
+                            <button onclick="resolveHWID(${req.id}, 'approved')" style="background: var(--accent-green); border:none; padding: 6px 10px; border-radius: 8px; font-weight:800; font-size:11px; cursor:pointer;">Принять</button>
+                            <button onclick="resolveHWID(${req.id}, 'rejected')" style="background: var(--accent-red); color:#fff; border:none; padding: 6px 10px; border-radius: 8px; font-weight:800; font-size:11px; cursor:pointer;">Отклонить</button>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function resolveHWID(id, status) {
+            const req = hwidRequests.find(r => r.id === id);
+            if (req) {
+                req.status = status;
+                updateHWIDRequestsUI();
+                showToast(`Заявка HWID ${status === 'approved' ? 'одобрена' : 'отклонена'}`, status === 'approved' ? 'success' : 'error');
+            }
+        }
+
+        // Тикеты поддержки
+        function submitTicket() {
+            if (!currentUser) {
+                showToast('Сначала войдите в кабинет!', 'error');
+                navigateTo('auth');
+                return;
+            }
+            const subject = document.getElementById('ticketSubject').value.trim();
+            const message = document.getElementById('ticketMessage').value.trim();
+
+            if (!subject || !message) {
+                showToast('Заполните все поля тикета!', 'error');
+                return;
+            }
+
+            const ticketId = Date.now();
+            supportTickets.push({ id: ticketId, username: currentUser.username, subject, message, answer: null });
+            
+            document.getElementById('ticketSubject').value = '';
+            document.getElementById('ticketMessage').value = '';
+
+            updateTicketsUI();
+            showToast('Тикет успешно отправлен поддержке!', 'success');
+            navigateTo('cabinet');
+            switchCabinetTab('tickets', document.querySelectorAll('.sidebar .nav-item')[2]);
+        }
+
+        function updateTicketsUI() {
+            const userContainer = document.getElementById('userTicketsContainer');
+            const adminContainer = document.getElementById('adminTicketsContainer');
+            
+            if (!currentUser) return;
+
+            // Для обычного юзера
+            const myTickets = supportTickets.filter(t => t.username === currentUser.username);
+            if (myTickets.length === 0) {
+                userContainer.innerHTML = `<p class="sub-desc">Вы еще не отправляли вопросы. Перейдите во вкладку «Задать вопрос», чтобы создать тикет.</p>`;
+            } else {
+                userContainer.innerHTML = myTickets.map(t => `
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-bottom: 10px;">
+                        <div style="font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 4px;">📌 ${t.subject}</div>
+                        <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 8px;">${t.message}</div>
+                        <div style="font-size: 12px; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color);">
+                            <strong>Ответ модератора:</strong> <span style="color: ${t.answer ? 'var(--accent-green)' : '#ffbc00'};">${t.answer || 'Ожидает ответа...'}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Для админа/модератора
+            if (supportTickets.length === 0) {
+                adminContainer.innerHTML = `<p class="sub-desc">Нет активных вопросов от пользователей.</p>`;
+            } else {
+                adminContainer.innerHTML = supportTickets.map(t => `
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-bottom: 10px;">
+                        <div style="font-size: 12px; color: var(--accent-red); font-weight: 800;">От: ${t.username}</div>
+                        <div style="font-size: 13px; font-weight: 800; color: #fff; margin: 4px 0;">${t.subject}</div>
+                        <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 10px;">${t.message}</div>
+                        ${t.answer ? `
+                            <div style="font-size: 12px; color: var(--accent-green);">Ответ отправлен: ${t.answer}</div>
+                        ` : `
+                            <div style="display: flex; gap: 8px;">
+                                <input type="text" id="ansInput_${t.id}" class="form-input" placeholder="Введите ответ..." style="font-size:11px; padding:8px;">
+                                <button onclick="answerTicket(${t.id})" class="action-btn green" style="width: auto; padding: 8px 14px; font-size:11px;">Ответить</button>
+                            </div>
+                        `}
+                    </div>
+                `).join('');
+            }
+        }
+
+        function answerTicket(id) {
+            const input = document.getElementById(`ansInput_${id}`);
+            const ansText = input.value.trim();
+            if (!ansText) {
+                showToast('Введите текст ответа!', 'error');
+                return;
+            }
+            const ticket = supportTickets.find(t => t.id === id);
+            if (ticket) {
+                ticket.answer = ansText;
+                updateTicketsUI();
+                showToast('Ответ успешно отправлен пользователю!', 'success');
+            }
+        }
+
+        // Добавление отзывов
+        function addNewReview() {
+            const author = document.getElementById('reviewAuthorInput').value.trim();
+            const rating = parseInt(document.getElementById('reviewRatingInput').value);
+            const text = document.getElementById('reviewTextInput').value.trim();
+
+            if (!author || !text) {
+                showToast('Заполните имя и текст отзыва!', 'error');
+                return;
+            }
+
+            const container = document.getElementById('reviewsListContainer');
+            const starsStr = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+
+            const reviewHTML = `
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="review-author">${author}</span>
+                        <span class="review-stars">${starsStr}</span>
+                    </div>
+                    <p class="review-text">${text}</p>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('afterbegin', reviewHTML);
+            document.getElementById('reviewAuthorInput').value = '';
+            document.getElementById('reviewTextInput').value = '';
+            showToast('Ваш отзыв успешно опубликован!', 'success');
         }
     </script>
 </body>
