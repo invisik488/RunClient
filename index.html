@@ -175,6 +175,7 @@
             position: relative; overflow: hidden;
         }
         .server-card:hover { transform: translateY(-4px); border-color: var(--accent-red); box-shadow: 0 10px 30px var(--accent-red-glow); }
+        .server-avatar { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border-color); z-index: 2; }
         .server-name { font-size: 16px; font-weight: 800; color: #fff; z-index: 2; }
         
         .server-card.animated-server { border-color: rgba(255, 51, 68, 0.3); }
@@ -195,12 +196,14 @@
         }
         .tariff-card:hover { transform: translateY(-6px); border-color: var(--accent-red); }
         .tariff-card.popular { border-color: var(--accent-red); background: linear-gradient(180deg, rgba(255, 51, 68, 0.08) 0%, var(--bg-card) 100%); }
+        .tariff-card.special { border-color: var(--accent-blue); background: linear-gradient(180deg, rgba(0, 136, 255, 0.08) 0%, var(--bg-card) 100%); }
         .tariff-badge {
             position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
             background: var(--accent-red); color: #fff; font-size: 10px; font-weight: 800;
             padding: 4px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;
             box-shadow: 0 4px 15px var(--accent-red-glow);
         }
+        .tariff-badge.blue { background: var(--accent-blue); box-shadow: 0 4px 15px var(--accent-blue-glow); }
         .tariff-name { font-size: 16px; font-weight: 700; color: var(--text-sub); margin-bottom: 12px; }
         .tariff-price { font-size: 36px; font-weight: 900; color: #fff; margin-bottom: 20px; }
         .tariff-price span { font-size: 16px; color: var(--text-sub); font-weight: 600; }
@@ -211,6 +214,8 @@
             box-shadow: 0 4px 15px var(--accent-red-glow);
         }
         .btn-buy:hover { background: #e62e3d; transform: scale(1.02); }
+        .btn-buy.blue { background: var(--accent-blue); box-shadow: 0 4px 15px var(--accent-blue-glow); }
+        .btn-buy.blue:hover { background: #0077e6; }
 
         /* FAQ */
         .faq-section-title { text-align: center; font-size: 28px; font-weight: 900; margin-bottom: 10px; color: #fff; }
@@ -238,6 +243,8 @@
         .review-author { font-size: 14px; font-weight: 800; color: #fff; display: flex; justify-content: space-between; align-items: center; }
         .review-stars { color: #ffb703; font-size: 14px; margin: 6px 0; }
         .review-text { font-size: 13px; color: var(--text-sub); line-height: 1.5; }
+        .star-rating { display: flex; gap: 6px; font-size: 20px; cursor: pointer; color: #444; margin-bottom: 12px; }
+        .star-rating .star.active { color: #ffb703; }
 
         /* Auth Screen */
         .auth-wrapper { display: flex; align-items: center; justify-content: center; min-height: 65vh; }
@@ -259,6 +266,7 @@
             width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color);
             padding: 12px 14px; border-radius: 12px; color: #fff; font-size: 13px; outline: none; transition: 0.2s;
         }
+        .form-textarea { resize: vertical; min-height: 100px; }
         .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent-red); }
         .btn-submit { width: 100%; background: var(--accent-red); color: #fff; border: none; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.2s; margin-top: 8px; box-shadow: 0 4px 15px var(--accent-red-glow); }
 
@@ -287,10 +295,25 @@
         .sub-title { font-size: 20px; font-weight: 800; color: var(--accent-green); margin-bottom: 4px; }
         .sub-desc { font-size: 13px; color: var(--text-sub); }
 
+        .grid-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 14px; }
+        .info-item { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); }
+        .info-item label { font-size: 10px; color: var(--text-sub); display: block; margin-bottom: 2px; text-transform: uppercase; font-weight: 700; }
+        .info-item val { font-size: 13px; font-weight: 700; }
+
         .action-btn { background: var(--accent-red); color: #fff; border: none; padding: 10px 16px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
         .action-btn:hover { background: #e62e3d; }
         .action-btn.green { background: var(--accent-green); color: #000; }
         .action-btn.green:hover { background: #00c853; }
+        .action-btn.blue { background: var(--accent-blue); }
+        .action-btn.blue:hover { background: #0077e6; }
+
+        .admin-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 12px; }
+        
+        .list-box { background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-bottom: 10px; font-size: 13px; }
+        .list-box-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 800; color: var(--accent-red); }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+        .badge.pending { background: rgba(255,170,0,0.15); color: #ffaa00; }
+        .badge.done { background: rgba(0,230,118,0.15); color: var(--accent-green); }
     </style>
 </head>
 <body>
@@ -313,6 +336,7 @@
                     <li><a class="nav-link" id="nav-tariffs" onclick="navigateTo('tariffs')">Тарифы</a></li>
                     <li><a class="nav-link" id="nav-reviews" onclick="navigateTo('reviews')">Отзывы</a></li>
                     <li><a class="nav-link" id="nav-help" onclick="navigateTo('help')">Помощь</a></li>
+                    <li><a class="nav-link" id="nav-ask" onclick="navigateTo('ask')">Задать вопрос</a></li>
                 </ul>
             </div>
             
@@ -323,7 +347,7 @@
                 </div>
 
                 <button class="btn-cabinet" onclick="navigateTo('cabinet')">
-                    👤 <span id="navCabinetText">Кабинет</span>
+                    👤 <span>Кабинет</span>
                 </button>
             </div>
         </nav>
@@ -362,14 +386,51 @@
             </div>
         </div>
 
+        <div class="promo-banner">
+            <h2>🎨 Красивый визуал, который точно дополнит вашу игру!</h2>
+            <p>Превратите игру в эстетическое удовольствие с гибко настраиваемыми модулями внешней кастомизации:</p>
+            <div class="tags-grid">
+                <div class="tag-item">SkyShader</div>
+                <div class="tag-item">Custom Hand</div>
+                <div class="tag-item">3D Wings</div>
+                <div class="tag-item">Swemming Animation</div>
+                <div class="tag-item">Кастомный ClickGUI & HUD</div>
+                <div class="tag-item">И много другого!</div>
+            </div>
+        </div>
+
+        <div class="promo-banner">
+            <h2>⚔️ Мощный PvP и PvE функционал</h2>
+            <p>В клиенте присутствуют передовые алгоритмы для превосходства над любым соперником. Будьте всегда на шаг впереди в любой битве:</p>
+            <div class="tags-grid">
+                <div class="tag-item">KillAura</div>
+                <div class="tag-item">TriggerBot</div>
+                <div class="tag-item">AirStuck</div>
+                <div class="tag-item">AutoSwap</div>
+                <div class="tag-item">TargetStrafe</div>
+                <div class="tag-item">И многое другое!</div>
+            </div>
+        </div>
+
         <div class="servers-section">
             <div class="servers-title">Поддержка популярных проектов</div>
             <div class="servers-subtitle">Полная адаптация и обходы под самые жесткие античиты</div>
 
             <div class="servers-grid">
-                <div class="server-card animated-server"><div class="server-name">FunTime</div></div>
-                <div class="server-card animated-server"><div class="server-name">SpookyTime</div></div>
-                <div class="server-card"><div class="server-name">ReallyWorld</div></div>
+                <div class="server-card animated-server">
+                    <img src="funTime.webp" alt="FunTime" class="server-avatar" onerror="this.src='https://via.placeholder.com/44'">
+                    <div class="server-name">FunTime</div>
+                </div>
+
+                <div class="server-card animated-server">
+                    <img src="spookyTime.webp" alt="SpookyTime" class="server-avatar" onerror="this.src='https://via.placeholder.com/44'">
+                    <div class="server-name">SpookyTime</div>
+                </div>
+
+                <div class="server-card">
+                    <img src="image_bae6a1.png" alt="ReallyWorld" class="server-avatar" onerror="this.src='https://via.placeholder.com/44'">
+                    <div class="server-name">ReallyWorld</div>
+                </div>
             </div>
         </div>
     </div>
@@ -414,20 +475,84 @@
                 </div>
                 <button class="btn-buy" onclick="buyTariff('Навсегда')">Приобрести</button>
             </div>
+
+            <div class="tariff-card special">
+                <div class="tariff-badge blue">УСЛУГА</div>
+                <div>
+                    <div class="tariff-name">Сброс HWID</div>
+                    <div class="tariff-price">49 <span>₽</span></div>
+                </div>
+                <button class="btn-buy blue" onclick="resetHWID()">Сбросить</button>
+            </div>
+
+            <div class="tariff-card special">
+                <div class="tariff-badge blue">PRE-ORDER</div>
+                <div>
+                    <div class="tariff-name">Предзаказ (1 Месяц)</div>
+                    <div class="tariff-price">149 <span>₽</span></div>
+                </div>
+                <button class="btn-buy blue" onclick="makePreorder('1 Месяц (149 ₽)')">Оформить</button>
+            </div>
+
+            <div class="tariff-card special">
+                <div class="tariff-badge blue">PRE-ORDER</div>
+                <div>
+                    <div class="tariff-name">Предзаказ (3 Месяца)</div>
+                    <div class="tariff-price">239 <span>₽</span></div>
+                </div>
+                <button class="btn-buy blue" onclick="makePreorder('3 Месяца (239 ₽)')">Оформить</button>
+            </div>
+
+            <div class="tariff-card special">
+                <div class="tariff-badge blue">PRE-ORDER</div>
+                <div>
+                    <div class="tariff-name">Предзаказ (Навсегда)</div>
+                    <div class="tariff-price">449 <span>₽</span></div>
+                </div>
+                <button class="btn-buy blue" onclick="makePreorder('Навсегда (449 ₽)')">Оформить</button>
+            </div>
         </div>
     </div>
 
-    <!-- ОТЗЫВЫ -->
+    <!-- СТРАНИЦА: ОТЗЫВЫ -->
     <div id="page-reviews" class="page-section hidden">
         <div class="hero">
             <h1>Отзывы пользователей</h1>
             <p>Мнения наших клиентов о качестве ApexClient и его обходах.</p>
         </div>
-        <div class="reviews-grid">
+
+        <div class="promo-banner" style="max-width: 650px; margin: 0 auto 30px;">
+            <h2>Оставить отзыв</h2>
+            <p>Только пользователи с активной подпиской могут публиковать отзывы.</p>
+            
+            <div class="form-group">
+                <label>Ваша оценка</label>
+                <div class="star-rating" id="starRating">
+                    <span class="star active" onclick="setRating(1)">★</span>
+                    <span class="star active" onclick="setRating(2)">★</span>
+                    <span class="star active" onclick="setRating(3)">★</span>
+                    <span class="star active" onclick="setRating(4)">★</span>
+                    <span class="star active" onclick="setRating(5)">★</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Ваш отзыв</label>
+                <textarea id="reviewTextInput" class="form-textarea" placeholder="Напишите впечатление от использования..."></textarea>
+            </div>
+            <button class="action-btn" style="width:100%;" onclick="submitReview()">Опубликовать отзыв</button>
+        </div>
+
+        <div class="reviews-grid" id="reviewsContainer">
             <div class="review-card">
                 <div class="review-author"><span>DarkKnight</span> <span>5/5</span></div>
                 <div class="review-stars">★★★★★</div>
                 <div class="review-text">Софт огонь! Обходы на FunTime работают стабильно, ФПС не проседает вообще.</div>
+            </div>
+            <div class="review-card">
+                <div class="review-author"><span>PvP_King</span> <span>5/5</span></div>
+                <div class="review-stars">★★★★★</div>
+                <div class="review-text">Визуалы очень сочные, киллаура бьет плавно. Лучший клиент за свои деньги!</div>
             </div>
         </div>
     </div>
@@ -436,6 +561,7 @@
     <div id="page-help" class="page-section hidden">
         <div class="faq-section-title">Часто задаваемые вопросы</div>
         <div class="faq-divider"></div>
+
         <div class="faq-card">
             <div class="faq-header" onclick="toggleFaq(this)">Как установить ApexClient? <span>▼</span></div>
             <div class="faq-body">
@@ -446,183 +572,373 @@
                 </ol>
             </div>
         </div>
-    </div>
 
-    <!-- АВТОРИЗАЦИЯ -->
-    <div id="page-auth" class="page-section hidden">
-        <div class="auth-wrapper">
-            <div class="auth-card">
-                <div class="auth-title">Apex<span>Client</span></div>
-                <div class="auth-subtitle">Авторизация в системе</div>
-                <div class="tabs">
-                    <button class="tab-btn active" id="tabLoginBtn" onclick="switchAuthMode('login')">Вход</button>
-                    <button class="tab-btn" id="tabRegisterBtn" onclick="switchAuthMode('register')">Регистрация</button>
-                </div>
-                <div id="authErrorMsg" style="color: var(--accent-red); font-size: 12px; margin-bottom: 12px; text-align: center; font-weight: 700;"></div>
-                <div class="form-group">
-                    <label>Логин</label>
-                    <input type="text" id="authUsernameInput" class="form-input" placeholder="Введите никнейм">
-                </div>
-                <div class="form-group">
-                    <label>Пароль</label>
-                    <input type="password" id="authPasswordInput" class="form-input" placeholder="••••••••">
-                </div>
-                <button class="btn-submit" id="authSubmitBtn" onclick="handleAuthSubmit()">Войти</button>
+        <div class="faq-card">
+            <div class="faq-header" onclick="toggleFaq(this)">Что делать, если привязан другой HWID? <span>▼</span></div>
+            <div class="faq-body">
+                <p>Вы можете запросить сброс HWID в вашем личном кабинете или приобрести услугу мгновенного сброса на странице тарифов.</p>
             </div>
         </div>
     </div>
 
-    <!-- КАБИНЕТ -->
+    <!-- ЗАДАТЬ ВОПРОС -->
+    <div id="page-ask" class="page-section hidden">
+        <div class="auth-wrapper">
+            <div class="auth-card" style="max-width: 500px;">
+                <div class="auth-title">Служба <span>поддержки</span></div>
+                <div class="auth-subtitle">Задайте любой вопрос или сообщите о проблеме</div>
+                <div class="form-group">
+                    <label>Ваш никнейм</label>
+                    <input type="text" id="askUser" class="form-input" placeholder="Введите ваш ник">
+                </div>
+                <div class="form-group">
+                    <label>Тема обращения</label>
+                    <input type="text" id="askSubject" class="form-input" placeholder="Пример: Проблема с HWID">
+                </div>
+                <div class="form-group">
+                    <label>Сообщение</label>
+                    <textarea id="askText" class="form-textarea" placeholder="Опишите вашу проблему максимально подробно..."></textarea>
+                </div>
+                <button class="btn-submit" onclick="sendSupportQuestion()">Отправить запрос</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- КАБИНЕТ / АВТОРИЗАЦИЯ -->
     <div id="page-cabinet" class="page-section hidden">
-        <div class="dash-container">
+        <!-- Окно входа / регистрации -->
+        <div id="authSection" class="auth-wrapper">
+            <div class="auth-card">
+                <div class="auth-title">Apex<span>Client</span></div>
+                <div class="auth-subtitle">Войдите в систему для доступа к личному кабинету</div>
+                <div class="tabs">
+                    <button class="tab-btn active" id="tabLoginBtn" onclick="switchAuthTab('login')">Вход</button>
+                    <button class="tab-btn" id="tabRegBtn" onclick="switchAuthTab('register')">Регистрация</button>
+                </div>
+                <form id="authForm" onsubmit="handleAuthSubmit(event)">
+                    <div class="form-group">
+                        <label>Никнейм</label>
+                        <input type="text" id="authUsername" class="form-input" required placeholder="Введите ваш ник">
+                    </div>
+                    <div class="form-group">
+                        <label>Пароль</label>
+                        <input type="password" id="authPassword" class="form-input" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn-submit" id="authSubmitBtn">Войти в аккаунт</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Панель личного кабинета -->
+        <div id="dashSection" class="dash-container hidden">
             <div class="sidebar">
                 <div>
                     <div class="user-card-side">
-                        <div class="avatar" id="sidebarAvatar">A</div>
+                        <div class="avatar" id="dashAvatar">U</div>
                         <div class="user-details">
-                            <div class="uname" id="sidebarUsername">User</div>
-                            <div class="urole" id="sidebarRole">CLIENT</div>
+                            <div class="uname" id="dashUsername">User</div>
+                            <div class="urole" id="dashRole">OWNER</div>
                         </div>
                     </div>
+                    
+                    <!-- ВСЕ ВЫПРАВЛЕННЫЕ И ВОЗВРАЩЕННЫЕ ВКЛАДКИ СИДЕБАРА -->
                     <ul class="nav-menu">
-                        <li class="nav-item active" onclick="switchCabinetTab('sub', this)">🔑 Подписка</li>
-                        <li class="nav-item" onclick="switchCabinetTab('settings', this)">⚙️ Настройки</li>
-                        <li class="nav-item" id="navItemAdmin" onclick="switchCabinetTab('admin', this)">🛡️ Админка</li>
+                        <li class="nav-item active" onclick="switchDashTab('main', this)">📌 Главная</li>
+                        <li class="nav-item" onclick="switchDashTab('preorder', this)">🎁 Мой предзаказ</li>
+                        <li class="nav-item" onclick="switchDashTab('downloads', this)">📥 Загрузки</li>
+                        <li class="nav-item" onclick="switchDashTab('key', this)">🔑 Активация ключа</li>
+                        <li class="nav-item" onclick="switchDashTab('admin', this)">👑 Админ панель</li>
+                        <li class="nav-item" onclick="switchDashTab('moderation', this)">🛡️ Модерация</li>
                     </ul>
                 </div>
                 <button class="btn-logout" onclick="logout()">Выйти</button>
             </div>
+
             <div class="content">
-                <!-- Подписка -->
-                <div id="cab-sub" class="cab-tab-content">
+                <!-- ВКЛАДКА: ГЛАВНАЯ -->
+                <div id="dashTab-main">
                     <div class="card">
                         <div class="card-header">Статус подписки</div>
-                        <div class="sub-title" id="subStatusText">АКТИВНА</div>
-                        <div class="sub-desc" id="subDateText">Доступ к Fabric 1.21.4 открыт</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">Загрузка лоадера</div>
-                        <button class="action-btn green" onclick="downloadLoader()">📥 Скачать ApexClient.exe</button>
-                    </div>
-                </div>
-                <!-- Настройки -->
-                <div id="cab-settings" class="cab-tab-content hidden">
-                    <div class="card">
-                        <div class="card-header">Управление HWID</div>
-                        <p class="sub-desc" style="margin-bottom: 12px;">Сброс привязки оборудования к аккаунту.</p>
-                        <button class="action-btn" onclick="resetHWID()">Сбросить HWID</button>
+                        <div class="sub-title" id="subStatus">Активна (Навсегда)</div>
+                        <div class="sub-desc">У вас есть полный доступ ко всем функциям и обновлениям ApexClient.</div>
+                        <div class="grid-info">
+                            <div class="info-item">
+                                <label>Привязанный HWID</label>
+                                <val id="hwidVal">REGISTERED</val>
+                            </div>
+                            <div class="info-item">
+                                <label>Версия клиента</label>
+                                <val>v1.2.4 Fabric</val>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <!-- Админка -->
-                <div id="cab-admin" class="cab-tab-content hidden">
+
+                <!-- ВКЛАДКА: МОЙ ПРЕДЗАКАЗ -->
+                <div id="dashTab-preorder" class="hidden">
                     <div class="card">
-                        <div class="card-header">Панель управления ключами</div>
-                        <button class="action-btn" onclick="generateKeyAdmin()">➕ Сгенерировать ключ</button>
+                        <div class="card-header">Мои предзаказы</div>
+                        <p class="sub-desc" style="margin-bottom: 14px;">Здесь отображается текущий статус вашего предзаказа перед официальным релизом версии.</p>
+                        <div class="list-box">
+                            <div class="list-box-header">
+                                <span>Предзаказ: ApexClient Forever</span>
+                                <span class="badge done">АКТИВЕН</span>
+                            </div>
+                            <div style="color: var(--text-sub); font-size: 12px;">Вы получите ранний доступ к следующей версии Fabric 1.21.4 в первой волне.</div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- ВКЛАДКА: ЗАГРУЗКИ -->
+                <div id="dashTab-downloads" class="hidden">
+                    <div class="card">
+                        <div class="card-header">Скачать лаунчер</div>
+                        <p class="sub-desc" style="margin-bottom: 14px;">Загрузите официальный лаунчер для автоматической установки и запуска клиента.</p>
+                        <button class="action-btn green" onclick="showToast('Загрузка лаунчера началась...', 'success')">💻 Скачать для Windows (.exe)</button>
+                    </div>
+                </div>
+
+                <!-- ВКЛАДКА: АКТИВАЦИЯ КЛЮЧА -->
+                <div id="dashTab-key" class="hidden">
+                    <div class="card">
+                        <div class="card-header">Активировать лицензионный ключ</div>
+                        <div class="form-group">
+                            <input type="text" id="licenseKeyInput" class="form-input" placeholder="APEX-XXXX-XXXX-XXXX">
+                        </div>
+                        <button class="action-btn red" onclick="activateKey()">Активировать</button>
+                    </div>
+                </div>
+
+                <!-- ВКЛАДКА: АДМИН ПАНЕЛЬ -->
+                <div id="dashTab-admin" class="hidden">
+                    <div class="card">
+                        <div class="card-header">Панель Администратора</div>
+                        <p class="sub-desc" style="margin-bottom: 14px;">Управление пользователями, подписками и генерацией ключей.</p>
+                        
+                        <div class="admin-form-grid">
+                            <div class="form-group">
+                                <label>Ник пользователя</label>
+                                <input type="text" id="adminUserTarget" class="form-input" placeholder="UserNickname">
+                            </div>
+                            <div class="form-group">
+                                <label>Срок подписки</label>
+                                <select id="adminSubTime" class="form-select">
+                                    <option value="7">7 Дней</option>
+                                    <option value="30">30 Дней</option>
+                                    <option value="90">90 Дней</option>
+                                    <option value="3650">Навсегда</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="action-btn green" onclick="adminGrantSub()">Выдать подписку</button>
+                            <button class="action-btn blue" onclick="adminResetHwid()">Сбросить HWID</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ВКЛАДКА: МОДЕРАЦИЯ -->
+                <div id="dashTab-moderation" class="hidden">
+                    <div class="card">
+                        <div class="card-header">Центр Модерации & Вопросов</div>
+                        <p class="sub-desc" style="margin-bottom: 14px;">Ответы на вопросы и тикеты от пользователей сайта.</p>
+                        
+                        <div id="moderationTicketList">
+                            <div class="list-box">
+                                <div class="list-box-header">
+                                    <span>Тикет #1024 от PvP_Master</span>
+                                    <span class="badge pending">ОЖИДАЕТ ОТВЕТА</span>
+                                </div>
+                                <div style="color: #fff; margin-bottom: 10px;">Вопрос: "Не могу зайти на FunTime, пишет HWID Mismatch"</div>
+                                <div class="form-group">
+                                    <input type="text" class="form-input" placeholder="Напишите ответ..." style="margin-bottom: 8px;">
+                                    <button class="action-btn blue" onclick="replyTicket(this)">Отправить ответ</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 
+    <!-- JS LOGIC -->
     <script>
+        let currentAuthMode = 'login';
         let currentUser = null;
-        let authMode = 'login';
+        let selectedRating = 5;
 
-        function navigateTo(pageId) {
-            if (pageId === 'cabinet' && !currentUser) {
-                pageId = 'auth';
-            }
-            document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
-            const target = document.getElementById('page-' + pageId);
-            if (target) target.classList.remove('hidden');
-
-            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
-            const nav = document.getElementById('nav-' + pageId);
-            if (nav) nav.classList.add('active');
-            window.scrollTo(0, 0);
-        }
-
-        function toggleFaq(header) {
-            header.nextElementSibling.classList.toggle('open');
-        }
-
-        function setLanguage(lang) {
-            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('btn-' + lang).classList.add('active');
-            showToast('Язык изменен на ' + lang.toUpperCase(), 'success');
-        }
-
-        function showToast(text, type = 'success') {
+        function showToast(msg, type = 'info') {
             const container = document.getElementById('toast-container');
-            if (!container) return;
             const toast = document.createElement('div');
-            toast.className = 'toast ' + type;
-            toast.innerHTML = `<span>${type === 'success' ? '✔' : '✖'}</span> ${text}`;
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span>${type === 'success' ? '✓' : 'ℹ'}</span> <span>${msg}</span>`;
             container.appendChild(toast);
             setTimeout(() => {
                 toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.transition = '0.3s ease';
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
 
+        function navigateTo(pageId) {
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
+            const targetPage = document.getElementById(`page-${pageId}`);
+            if (targetPage) targetPage.classList.remove('hidden');
+
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            const activeNav = document.getElementById(`nav-${pageId}`);
+            if (activeNav) activeNav.classList.add('active');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function setLanguage(lang) {
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${lang}`).classList.add('active');
+            showToast(lang === 'ru' ? 'Язык изменен на Русский' : 'Language set to English', 'success');
+        }
+
+        function toggleFaq(header) {
+            const body = header.nextElementSibling;
+            body.classList.toggle('open');
+        }
+
         function buyTariff(tariffName) {
-            showToast('Переход к оплате тарифа: ' + tariffName, 'success');
+            showToast(`Выбран тариф: ${tariffName}. Перенаправление на оплату...`, 'success');
         }
 
-        function switchAuthMode(mode) {
-            authMode = mode;
-            document.getElementById('tabLoginBtn').classList.toggle('active', mode === 'login');
-            document.getElementById('tabRegisterBtn').classList.toggle('active', mode === 'register');
-            document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'Войти' : 'Зарегистрироваться';
+        function resetHWID() {
+            showToast('Запрос на сброс HWID отправлен', 'success');
         }
 
-        function handleAuthSubmit() {
-            const username = document.getElementById('authUsernameInput').value.trim();
-            if (!username) {
-                showToast('Введите никнейм!', 'error');
+        function makePreorder(plan) {
+            showToast(`Предзаказ [${plan}] оформлен!`, 'success');
+        }
+
+        function setRating(rating) {
+            selectedRating = rating;
+            const stars = document.querySelectorAll('#starRating .star');
+            stars.forEach((star, idx) => {
+                if (idx < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        function submitReview() {
+            const text = document.getElementById('reviewTextInput').value.trim();
+            if (!text) {
+                showToast('Введите текст отзыва!', 'error');
                 return;
             }
-            currentUser = { username: username, role: username.toLowerCase() === 'owner' ? 'OWNER' : 'CLIENT' };
-            
-            document.getElementById('sidebarUsername').innerText = currentUser.username;
-            document.getElementById('sidebarAvatar').innerText = currentUser.username.charAt(0).toUpperCase();
-            document.getElementById('sidebarRole').innerText = currentUser.role;
-            document.getElementById('navCabinetText').innerText = currentUser.username;
-            
-            if(currentUser.role === 'OWNER') {
-                document.getElementById('navItemAdmin').style.display = 'flex';
-            } else {
-                document.getElementById('navItemAdmin').style.display = 'none';
-            }
+            const container = document.getElementById('reviewsContainer');
+            const card = document.createElement('div');
+            card.className = 'review-card';
+            const user = currentUser ? currentUser : 'Пользователь';
+            card.innerHTML = `
+                <div class="review-author"><span>${user}</span> <span>${selectedRating}/5</span></div>
+                <div class="review-stars">${'★'.repeat(selectedRating)}${'☆'.repeat(5 - selectedRating)}</div>
+                <div class="review-text">${text}</div>
+            `;
+            container.prepend(card);
+            document.getElementById('reviewTextInput').value = '';
+            showToast('Спасибо! Ваш отзыв опубликован.', 'success');
+        }
 
-            showToast('Успешный вход в аккаунт!', 'success');
-            navigateTo('cabinet');
+        function sendSupportQuestion() {
+            const user = document.getElementById('askUser').value.trim();
+            const text = document.getElementById('askText').value.trim();
+            if (!user || !text) {
+                showToast('Заполните обязательные поля!', 'error');
+                return;
+            }
+            showToast('Ваше сообщение отправлено в техническую поддержку!', 'success');
+            document.getElementById('askUser').value = '';
+            document.getElementById('askSubject').value = '';
+            document.getElementById('askText').value = '';
+        }
+
+        function switchAuthTab(mode) {
+            currentAuthMode = mode;
+            document.getElementById('tabLoginBtn').classList.toggle('active', mode === 'login');
+            document.getElementById('tabRegBtn').classList.toggle('active', mode === 'register');
+            document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'Войти в аккаунт' : 'Зарегистрироваться';
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const username = document.getElementById('authUsername').value.trim();
+            if (!username) return;
+
+            currentUser = username;
+            document.getElementById('dashUsername').innerText = username;
+            document.getElementById('dashAvatar').innerText = username.charAt(0).toUpperCase();
+
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('dashSection').classList.remove('hidden');
+
+            showToast(currentAuthMode === 'login' ? `С возвращением, ${username}!` : 'Аккаунт успешно создан!', 'success');
         }
 
         function logout() {
             currentUser = null;
-            document.getElementById('navCabinetText').innerText = 'Кабинет';
-            navigateTo('home');
-            showToast('Вы вышли из аккаунта', 'success');
+            document.getElementById('dashSection').classList.add('hidden');
+            document.getElementById('authSection').classList.remove('hidden');
+            showToast('Вы вышли из аккаунта');
         }
 
-        function switchCabinetTab(tabName, element) {
-            document.querySelectorAll('.cab-tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById('cab-' + tabName).classList.remove('hidden');
-            document.querySelectorAll('.sidebar .nav-item').forEach(el => el.classList.remove('active'));
-            element.classList.add('active');
+        function switchDashTab(tabName, element) {
+            // Прячем все вкладки в контенте
+            const tabs = ['main', 'preorder', 'downloads', 'key', 'admin', 'moderation'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`dashTab-${t}`);
+                if(el) el.classList.add('hidden');
+            });
+            
+            // Показываем нужную
+            const activeTab = document.getElementById(`dashTab-${tabName}`);
+            if(activeTab) activeTab.classList.remove('hidden');
+            
+            // Подсвечиваем пункт в боковом меню
+            document.querySelectorAll('.nav-menu .nav-item').forEach(item => item.classList.remove('active'));
+            if(element) element.classList.add('active');
         }
 
-        function resetHWID() {
-            showToast('HWID успешно сброшен!', 'success');
+        function activateKey() {
+            const key = document.getElementById('licenseKeyInput').value.trim();
+            if (!key) {
+                showToast('Введите ключ активации!', 'error');
+                return;
+            }
+            showToast('Ключ успешно активирован!', 'success');
+            document.getElementById('licenseKeyInput').value = '';
         }
 
-        function downloadLoader() {
-            showToast('Загрузка ApexClient.exe...', 'success');
+        /* Админ действия */
+        function adminGrantSub() {
+            const user = document.getElementById('adminUserTarget').value.trim();
+            if(!user) { showToast('Укажите ник!', 'error'); return; }
+            showToast(`Подписка выдана пользователю ${user}!`, 'success');
         }
 
-        function generateKeyAdmin() {
-            showToast('Ключ успешно сгенерирован!', 'success');
+        function adminResetHwid() {
+            const user = document.getElementById('adminUserTarget').value.trim();
+            if(!user) { showToast('Укажите ник!', 'error'); return; }
+            showToast(`HWID сброшен для ${user}!`, 'success');
+        }
+
+        /* Модерация действия */
+        function replyTicket(btn) {
+            const box = btn.closest('.list-box');
+            const badge = box.querySelector('.badge');
+            badge.className = 'badge done';
+            badge.innerText = 'ОТВЕЧЕНО';
+            showToast('Ответ отправлен пользователю!', 'success');
         }
     </script>
 </body>
