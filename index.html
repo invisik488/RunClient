@@ -207,7 +207,12 @@
         }
         .auth-title { font-size: 28px; font-weight: 900; text-align: center; margin-bottom: 4px; }
         .auth-title span { color: var(--accent-red); }
-        .auth-subtitle { font-size: 12.5px; color: var(--text-sub); text-align: center; margin-bottom: 28px; font-weight: 600; }
+        .auth-subtitle { font-size: 12.5px; color: var(--text-sub); text-align: center; margin-bottom: 24px; font-weight: 600; }
+        
+        .auth-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: rgba(0,0,0,0.4); padding: 5px; border-radius: 14px; margin-bottom: 24px; border: 1px solid var(--border-color); }
+        .auth-tab-btn { background: none; border: none; padding: 10px; border-radius: 10px; font-size: 12.5px; font-weight: 700; color: var(--text-sub); cursor: pointer; transition: 0.2s; }
+        .auth-tab-btn.active { background: var(--accent-red); color: #fff; box-shadow: 0 4px 15px var(--accent-red-glow); }
+
         .form-group { margin-bottom: 18px; }
         .form-group label { display: block; font-size: 11.5px; color: var(--text-sub); margin-bottom: 6px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
         .form-input, .form-textarea, .form-select {
@@ -239,7 +244,7 @@
         .content { padding: 10px; display: flex; flex-direction: column; gap: 18px; overflow-y: auto; max-height: 560px; }
         .card { padding: 22px; margin-bottom: 12px; }
         .card-header { font-size: 11.5px; color: var(--text-sub); font-weight: 800; text-transform: uppercase; margin-bottom: 16px; letter-spacing: 0.5px; }
-        .sub-title { font-size: 22px; font-weight: 900; color: var(--accent-green); margin-bottom: 6px; }
+        .sub-title { font-size: 22px; font-weight: 900; color: var(--accent-red); margin-bottom: 6px; }
         .sub-desc { font-size: 13.5px; color: var(--text-sub); line-height: 1.6; }
 
         .review-card { padding: 22px; margin-bottom: 14px; }
@@ -323,7 +328,7 @@
             <div class="feature-card">
                 <span class="feature-icon">🚀</span>
                 <h3>Максимальная оптимизация</h3>
-                <p>Стабильный высокий фреймрейт без просадок даже в самых жарких PvP-баталиях на серверах с большим онлайном.</p>
+                <p>Стабильный высокий фреймрейт без просадок даже в самых жарких PvP-батадиях на серверах с большим онлайном.</p>
             </div>
             <div class="feature-card">
                 <span class="feature-icon">🛡️</span>
@@ -381,20 +386,20 @@
                 <div class="tariffs-grid">
                     <div class="tariff-card">
                         <div><div class="tariff-name">7 Дней</div><div class="tariff-price">69 <span>₽</span></div></div>
-                        <button class="btn-buy" onclick="buyTariff('7 дней (69 ₽)')">Купить</button>
+                        <button class="btn-buy" onclick="buyTariff('7 дней')">Купить</button>
                     </div>
                     <div class="tariff-card">
                         <div><div class="tariff-name">1 Месяц</div><div class="tariff-price">149 <span>₽</span></div></div>
-                        <button class="btn-buy" onclick="buyTariff('1 месяц (149 ₽)')">Купить</button>
+                        <button class="btn-buy" onclick="buyTariff('30 дней')">Купить</button>
                     </div>
                     <div class="tariff-card popular">
                         <div class="tariff-badge">ХИТ</div>
                         <div><div class="tariff-name">3 Месяца</div><div class="tariff-price">239 <span>₽</span></div></div>
-                        <button class="btn-buy" onclick="buyTariff('3 месяца (239 ₽)')">Купить</button>
+                        <button class="btn-buy" onclick="buyTariff('90 дней')">Купить</button>
                     </div>
                     <div class="tariff-card">
                         <div><div class="tariff-name">Навсегда</div><div class="tariff-price">449 <span>₽</span></div></div>
-                        <button class="btn-buy" onclick="buyTariff('Навсегда (449 ₽)')">Купить</button>
+                        <button class="btn-buy" onclick="buyTariff('Навсегда')">Купить</button>
                     </div>
                 </div>
             </div>
@@ -405,7 +410,7 @@
                     <div class="tariff-card popular">
                         <div class="tariff-badge">NEW</div>
                         <div><div class="tariff-name">Предзаказ DLC</div><div class="tariff-price">299 <span>₽</span></div></div>
-                        <button class="btn-buy" onclick="buyTariff('Предзаказ DLC (299 ₽)')">Оформить предзаказ</button>
+                        <button class="btn-buy" onclick="buyTariff('Предзаказ DLC')">Оформить предзаказ</button>
                     </div>
                     <div class="tariff-card">
                         <div><div class="tariff-name">Сброс HWID</div><div class="tariff-price">139 <span>₽</span></div></div>
@@ -502,20 +507,43 @@
         </div>
     </div>
 
+    <!-- Страница Авторизации и Регистрации с двумя вкладками -->
     <div id="page-auth" class="page-section hidden">
         <div class="auth-wrapper">
             <div class="auth-card">
                 <div class="auth-title">Verse<span>DLC</span></div>
-                <div class="auth-subtitle">Вход в систему или Регистрация</div>
-                <div class="form-group">
-                    <label>Ваш логин (invisik — для прав owner)</label>
-                    <input type="text" id="authUsernameInput" class="form-input" placeholder="Имя пользователя">
+                <div class="auth-subtitle">Системный доступ</div>
+                
+                <div class="auth-tabs">
+                    <button class="auth-tab-btn active" id="tabBtnLogin" onclick="switchAuthTab('login')">Вход</button>
+                    <button class="auth-tab-btn" id="tabBtnRegister" onclick="switchAuthTab('register')">Регистрация</button>
                 </div>
-                <div class="form-group">
-                    <label>Пароль</label>
-                    <input type="password" id="authPasswordInput" class="form-input" placeholder="Пароль">
+
+                <!-- Форма Входа -->
+                <div id="authFormLogin">
+                    <div class="form-group">
+                        <label>Никнейм</label>
+                        <input type="text" id="loginUsernameInput" class="form-input" placeholder="Введите ник...">
+                    </div>
+                    <div class="form-group">
+                        <label>Пароль</label>
+                        <input type="password" id="loginPasswordInput" class="form-input" placeholder="Введите пароль...">
+                    </div>
+                    <button class="action-btn" onclick="handleLogin()">Войти в систему</button>
                 </div>
-                <button class="btn-submit action-btn" onclick="handleAuthSubmit()">Войти / Зарегистрироваться</button>
+
+                <!-- Форма Регистрации -->
+                <div id="authFormRegister" class="hidden">
+                    <div class="form-group">
+                        <label>Придумайте никнейм</label>
+                        <input type="text" id="regUsernameInput" class="form-input" placeholder="Ваш ник...">
+                    </div>
+                    <div class="form-group">
+                        <label>Придумайте пароль</label>
+                        <input type="password" id="regPasswordInput" class="form-input" placeholder="Надежный пароль...">
+                    </div>
+                    <button class="action-btn green" onclick="handleRegister()">Зарегистрироваться</button>
+                </div>
             </div>
         </div>
     </div>
@@ -549,8 +577,8 @@
                 <div id="cab-home" class="cab-tab-content">
                     <div class="card">
                         <div class="card-header">Статус подписки</div>
-                        <div class="sub-title" id="subStatusText">АКТИВНА</div>
-                        <div class="sub-desc">Доступ к Fabric 1.21.4 клиенту работает без ограничений.</div>
+                        <div class="sub-title" id="subStatusText" style="color: var(--accent-red);">НЕТ АКТИВНОЙ ПОДПИСКИ</div>
+                        <div class="sub-desc" id="subStatusDesc">Приобретите подписку в разделе «Тарифы» или активируйте ключ, чтобы получить доступ к клиенту.</div>
                     </div>
                 </div>
 
@@ -654,9 +682,9 @@
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label>Тип подписки для генерации</label>
                                 <select id="genSubDuration" class="form-select">
-                                    <option value="7 Дней">7 Дней</option>
-                                    <option value="1 Месяц">1 Месяц</option>
-                                    <option value="3 Месяца">3 Месяца</option>
+                                    <option value="7д">7д</option>
+                                    <option value="30д">30д</option>
+                                    <option value="90д">90д</option>
                                     <option value="Навсегда">Навсегда</option>
                                 </select>
                             </div>
@@ -678,12 +706,11 @@
         let currentUser = localStorage.getItem('apex_user') || null;
 
         let registeredUsers = JSON.parse(localStorage.getItem('apex_db_users')) || {
-            "invisik": { role: "OWNER", sub: "Навсегда", banned: false, banReason: "", banDuration: "" },
-            "sextazyst": { role: "USER", sub: "1 Месяц", banned: false, banReason: "", banDuration: "" },
-            "veselchak": { role: "USER", sub: "3 Месяца", banned: false, banReason: "", banDuration: "" }
+            "invisik": { password: "123", role: "OWNER", sub: "Навсегда", banned: false, banReason: "", banDuration: "" },
+            "sextazyst": { password: "123", role: "USER", sub: "30д", banned: false, banReason: "", banDuration: "" },
+            "veselchak": { password: "123", role: "USER", sub: "90д", banned: false, banReason: "", banDuration: "" }
         };
 
-        // Хранилище заявок и тикетов
         let appRequests = JSON.parse(localStorage.getItem('apex_requests')) || {
             hwid: [],
             subs: [],
@@ -724,6 +751,25 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        function switchAuthTab(tab) {
+            const btnLogin = document.getElementById('tabBtnLogin');
+            const btnRegister = document.getElementById('tabBtnRegister');
+            const formLogin = document.getElementById('authFormLogin');
+            const formRegister = document.getElementById('authFormRegister');
+
+            if (tab === 'login') {
+                btnLogin.classList.add('active');
+                btnRegister.classList.remove('active');
+                formLogin.classList.remove('hidden');
+                formRegister.classList.add('hidden');
+            } else {
+                btnRegister.classList.add('active');
+                btnLogin.classList.remove('active');
+                formRegister.classList.remove('hidden');
+                formLogin.classList.add('hidden');
+            }
+        }
+
         function switchCabinetTab(tabName, element) {
             document.querySelectorAll('.cab-tab-content').forEach(tab => tab.classList.add('hidden'));
             const targetTab = document.getElementById(`cab-${tabName}`);
@@ -748,17 +794,27 @@
             document.getElementById('navItemAdmin').classList.add('hidden');
 
             const lower = username.toLowerCase();
-            if (!registeredUsers[lower]) {
-                registeredUsers[lower] = { role: lower === 'invisik' ? 'OWNER' : 'USER', sub: 'Нет', banned: false, banReason: '', banDuration: '' };
-                saveDB();
-            }
+            if (!registeredUsers[lower]) return;
 
             const userData = registeredUsers[lower];
+            
+            // Отображение статуса подписки с краткой записью срока
+            const subTextEl = document.getElementById('subStatusText');
+            const subDescEl = document.getElementById('subStatusDesc');
+            
             if (userData.banned) {
                 document.getElementById('sidebarRole').innerText = 'BANNED';
-                document.getElementById('subStatusText').innerText = 'ЗАБАНЕН (' + userData.banReason + ')';
-                document.getElementById('subStatusText').style.color = 'var(--accent-red)';
-                return;
+                subTextEl.innerText = 'ЗАБАНЕН (' + userData.banReason + ')';
+                subTextEl.style.color = 'var(--accent-red)';
+                subDescEl.innerText = 'Учетная запись заблокирована администратором.';
+            } else if (!userData.sub || userData.sub === 'Нет' || userData.sub === 'нет') {
+                subTextEl.innerText = 'НЕТ АКТИВНОЙ ПОДПИСКИ';
+                subTextEl.style.color = 'var(--accent-red)';
+                subDescEl.innerText = 'Приобретите подписку в разделе «Тарифы» или активируйте ключ, чтобы получить доступ к клиенту.';
+            } else {
+                subTextEl.innerText = 'ПОДПИСКА АКТИВНА (' + userData.sub + ')';
+                subTextEl.style.color = 'var(--accent-green)';
+                subDescEl.innerText = 'Доступ к Fabric 1.21.4 клиенту работает без ограничений.';
             }
 
             if (userData.role === 'OWNER' || lower === 'invisik') {
@@ -770,25 +826,19 @@
             }
         }
 
-        function handleAuthSubmit() {
-            const usernameInput = document.getElementById('authUsernameInput').value.trim();
-            if (!usernameInput) {
-                showToast('Введите имя пользователя!', 'error');
+        function handleLogin() {
+            const username = document.getElementById('loginUsernameInput').value.trim();
+            const password = document.getElementById('loginPasswordInput').value.trim();
+
+            if (!username || !password) {
+                showToast('Заполните все поля для входа!', 'error');
                 return;
             }
 
-            const lower = usernameInput.toLowerCase();
-            
-            // Если аккаунта нет в базе, автоматически регистрируем его
-            if (!registeredUsers[lower]) {
-                registeredUsers[lower] = {
-                    role: lower === 'invisik' ? 'OWNER' : 'USER',
-                    sub: 'Нет',
-                    banned: false,
-                    banReason: '',
-                    banDuration: ''
-                };
-                saveDB();
+            const lower = username.toLowerCase();
+            if (!registeredUsers[lower] || registeredUsers[lower].password !== password) {
+                showToast('Неверный никнейм или пароль!', 'error');
+                return;
             }
 
             if (registeredUsers[lower].banned) {
@@ -796,7 +846,7 @@
                 return;
             }
 
-            currentUser = usernameInput;
+            currentUser = username;
             localStorage.setItem('apex_user', currentUser);
             
             document.getElementById('sidebarUsername').innerText = currentUser;
@@ -805,6 +855,44 @@
             applyUserRole(currentUser);
 
             showToast(`Успешный вход как ${currentUser}!`, 'success');
+            navigateTo('cabinet');
+        }
+
+        function handleRegister() {
+            const username = document.getElementById('regUsernameInput').value.trim();
+            const password = document.getElementById('regPasswordInput').value.trim();
+
+            if (!username || !password) {
+                showToast('Заполните все поля для регистрации!', 'error');
+                return;
+            }
+
+            const lower = username.toLowerCase();
+            if (registeredUsers[lower]) {
+                showToast('Такой пользователь уже существует!', 'error');
+                return;
+            }
+
+            // Новая регистрация: подписки СРАЗУ НЕТ, статус "Нет"
+            registeredUsers[lower] = {
+                password: password,
+                role: lower === 'invisik' ? 'OWNER' : 'USER',
+                sub: 'Нет',
+                banned: false,
+                banReason: '',
+                banDuration: ''
+            };
+            saveDB();
+
+            currentUser = username;
+            localStorage.setItem('apex_user', currentUser);
+
+            document.getElementById('sidebarUsername').innerText = currentUser;
+            document.getElementById('navCabinetText').innerText = currentUser;
+
+            applyUserRole(currentUser);
+
+            showToast(`Аккаунт ${currentUser} успешно создан!`, 'success');
             navigateTo('cabinet');
         }
 
@@ -932,8 +1020,9 @@
                 showToast('Введите ключ подписки!', 'error');
                 return;
             }
-            registeredUsers[currentUser.toLowerCase()].sub = 'Активна (Ключ)';
+            registeredUsers[currentUser.toLowerCase()].sub = '30д';
             saveDB();
+            applyUserRole(currentUser);
             showToast('Ключ подписки успешно активирован!', 'success');
             document.getElementById('subKeyInput').value = '';
         }
@@ -949,7 +1038,6 @@
             document.getElementById('hwidKeyInput').value = '';
         }
 
-        // Отрисовка модерации заявок
         function renderModerationData() {
             const subContainer = document.getElementById('purchaseRequestsContainer');
             const hwidContainer = document.getElementById('hwidRequestsContainer');
@@ -957,7 +1045,6 @@
 
             document.getElementById('modCountBadge').innerText = appRequests.hwid.length + appRequests.subs.length + appRequests.tickets.length;
 
-            // Запросы на подписки
             if (appRequests.subs.length === 0) {
                 subContainer.innerHTML = `<p class="sub-desc">Нет активных запросов на покупку.</p>`;
             } else {
@@ -970,7 +1057,6 @@
                 `).join('');
             }
 
-            // Запросы на HWID
             if (appRequests.hwid.length === 0) {
                 hwidContainer.innerHTML = `<p class="sub-desc">Нет активных заявок на сброс HWID.</p>`;
             } else {
@@ -983,7 +1069,6 @@
                 `).join('');
             }
 
-            // Тикеты
             if (appRequests.tickets.length === 0) {
                 ticketContainer.innerHTML = `<p class="sub-desc">Нет активных вопросов.</p>`;
             } else {
@@ -999,9 +1084,20 @@
 
         function approveSub(index) {
             const req = appRequests.subs[index];
-            if (registeredUsers[req.username.toLowerCase()]) {
-                registeredUsers[req.username.toLowerCase()].sub = req.tariff;
+            const lower = req.username.toLowerCase();
+            if (registeredUsers[lower]) {
+                // Конвертируем название тарифа в компактный срок (например, "7 дней" -> "7д")
+                let term = "30д";
+                if (req.tariff.toLowerCase().includes('7')) term = "7д";
+                else if (req.tariff.toLowerCase().includes('30') || req.tariff.toLowerCase().includes('1 месяц')) term = "30д";
+                else if (req.tariff.toLowerCase().includes('90') || req.tariff.toLowerCase().includes('3 месяца')) term = "90д";
+                else if (req.tariff.toLowerCase().includes('навсегда')) term = "Навсегда";
+                
+                registeredUsers[lower].sub = term;
                 saveDB();
+                if (currentUser && currentUser.toLowerCase() === lower) {
+                    applyUserRole(currentUser);
+                }
             }
             appRequests.subs.splice(index, 1);
             saveDB();
@@ -1044,7 +1140,6 @@
             `).join('');
         }
 
-        // Исправленный поиск пользователя в настройке возможностей (ищет по базе данных с учетом регистра и пробелов)
         function searchUserCapabilities() {
             const rawQuery = document.getElementById('capSearchInput').value;
             const container = document.getElementById('capSearchResultContainer');
@@ -1093,9 +1188,9 @@
         }
 
         function adminGiveSub(username) {
-            registeredUsers[username].sub = 'Навсегда';
+            registeredUsers[username].sub = '30д';
             saveDB();
-            showToast(`Игроку ${username} выдана подписка!`);
+            showToast(`Игроку ${username} выдана подписка (30д)!`);
             searchUserCapabilities();
         }
 
