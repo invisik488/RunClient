@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApexClient — Official Platform</title>
+    <title>ApexClient — Ultimate Minecraft 1.21.4 Fabric Client</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #06070a;
-            --bg-card: rgba(18, 20, 29, 0.7);
-            --bg-card-hover: rgba(26, 30, 44, 0.9);
+            --bg-main: #040508;
+            --bg-card: rgba(14, 16, 24, 0.75);
+            --bg-card-hover: rgba(22, 26, 38, 0.9);
             --border-color: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 51, 68, 0.4);
             --accent-red: #ff3344;
             --accent-red-glow: rgba(255, 51, 68, 0.35);
             --accent-blue: #0088ff;
@@ -20,7 +21,7 @@
             --text-sub: #949aab;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
 
         body {
             background-color: var(--bg-main);
@@ -30,41 +31,49 @@
             overflow-x: hidden;
         }
 
+        /* Анимированные фоновые элементы */
         .bg-glow-1 {
-            position: fixed; top: -150px; left: 50%; transform: translateX(-50%);
-            width: 700px; height: 400px; background: radial-gradient(circle, rgba(255, 51, 68, 0.15) 0%, rgba(0,0,0,0) 70%);
-            z-index: -1; pointer-events: none; filter: blur(60px);
+            position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+            width: 800px; height: 500px; background: radial-gradient(circle, rgba(255, 51, 68, 0.18) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1; pointer-events: none; filter: blur(80px);
+            animation: pulseGlow 8s ease-in-out infinite alternate;
         }
         .bg-glow-2 {
-            position: fixed; bottom: -100px; right: -100px;
-            width: 500px; height: 500px; background: radial-gradient(circle, rgba(0, 136, 255, 0.08) 0%, rgba(0,0,0,0) 70%);
-            z-index: -1; pointer-events: none; filter: blur(80px);
+            position: fixed; bottom: -150px; right: -150px;
+            width: 600px; height: 600px; background: radial-gradient(circle, rgba(0, 136, 255, 0.1) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1; pointer-events: none; filter: blur(100px);
+        }
+        @keyframes pulseGlow {
+            0% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+            100% { transform: translateX(-50%) scale(1.15); opacity: 1; }
         }
 
         .hidden { display: none !important; }
 
-        .card, .stat-card, .feature-card, .server-card, .tariff-card, .review-card {
+        .card, .stat-card, .feature-card, .server-card, .tariff-card, .review-card, .detail-box {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 20px;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
+            backdrop-filter: blur(12px);
         }
-        .card:hover, .stat-card:hover, .feature-card:hover, .server-card:hover, .tariff-card:hover, .review-card:hover {
+        .card:hover, .stat-card:hover, .feature-card:hover, .server-card:hover, .tariff-card:hover, .review-card:hover, .detail-box:hover {
             transform: translateY(-5px);
             background: var(--bg-card-hover);
-            border-color: var(--accent-red);
-            box-shadow: 0 12px 30px var(--accent-red-glow);
+            border-color: var(--border-hover);
+            box-shadow: 0 15px 35px var(--accent-red-glow);
         }
 
+        /* Уведомления Toast */
         #toast-container {
             position: fixed; bottom: 24px; right: 24px; z-index: 9999;
             display: flex; flex-direction: column-reverse; gap: 12px;
         }
         .toast {
-            background: rgba(15, 17, 23, 0.95); backdrop-filter: blur(12px);
+            background: rgba(12, 14, 20, 0.95); backdrop-filter: blur(16px);
             border: 1px solid var(--border-color); border-left: 4px solid var(--accent-red);
-            padding: 14px 20px; border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.8);
+            padding: 14px 22px; border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.8);
             display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600;
             animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -75,15 +84,16 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
+        /* Навигация */
         .navbar-container {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            z-index: 1000; width: 92%; max-width: 1050px;
+            z-index: 1000; width: 92%; max-width: 1100px;
         }
         .navbar {
-            background: rgba(12, 14, 20, 0.8); backdrop-filter: blur(20px);
+            background: rgba(10, 12, 18, 0.85); backdrop-filter: blur(20px);
             border: 1px solid var(--border-color); border-radius: 24px; padding: 8px 18px;
             display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
         }
         .nav-left { display: flex; align-items: center; gap: 20px; }
         .nav-brand {
@@ -95,7 +105,7 @@
             border-radius: 10px; display: flex; align-items: center; justify-content: center;
             font-weight: 900; font-size: 15px; color: #fff; box-shadow: 0 0 15px var(--accent-red-glow);
         }
-        .nav-links { display: flex; align-items: center; gap: 6px; list-style: none; }
+        .nav-links { display: flex; align-items: center; gap: 4px; list-style: none; }
         .nav-link {
             color: var(--text-sub); font-size: 12px; font-weight: 600; cursor: pointer;
             padding: 8px 12px; border-radius: 12px; transition: all 0.2s; text-decoration: none;
@@ -106,107 +116,154 @@
             background: linear-gradient(135deg, #ff3344 0%, #d61b2c 100%);
             color: #fff; border: none; padding: 8px 16px; border-radius: 14px;
             font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;
-            box-shadow: 0 4px 20px var(--accent-red-glow);
+            box-shadow: 0 4px 20px var(--accent-red-glow); transition: 0.2s;
         }
+        .btn-cabinet:hover { transform: scale(1.05); }
 
-        .page-section { padding-top: 120px; padding-bottom: 80px; max-width: 1050px; margin: 0 auto; width: 90%; }
+        .page-section { padding-top: 130px; padding-bottom: 80px; max-width: 1100px; margin: 0 auto; width: 92%; }
 
-        .hero { text-align: center; margin-bottom: 40px; }
+        /* Главная страница (Hero и расширенные блоки) */
+        .hero { text-align: center; margin-bottom: 50px; }
         .hero-badge {
             display: inline-flex; align-items: center; gap: 6px;
             background: rgba(255, 51, 68, 0.1); border: 1px solid rgba(255, 51, 68, 0.25);
-            color: #ff6675; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px; margin-bottom: 16px;
+            color: #ff6675; font-size: 12px; font-weight: 700; padding: 6px 16px; border-radius: 20px; margin-bottom: 18px;
+            animation: floatBadge 3s ease-in-out infinite alternate;
         }
-        .hero h1 { font-size: 46px; font-weight: 900; margin-bottom: 14px; color: #fff; letter-spacing: -1px; }
-        .hero p { color: var(--text-sub); font-size: 15px; max-width: 600px; margin: 0 auto; line-height: 1.6; }
-
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 30px; }
-        .stat-card { padding: 20px; text-align: center; }
-        .stat-val { font-size: 28px; font-weight: 900; color: #fff; }
-        .stat-lbl { font-size: 11px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; }
-
-        .features-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 30px; }
-        .feature-card { padding: 22px 26px; }
-        .feature-card h3 { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 6px; }
-        .feature-card p { font-size: 13px; color: var(--text-sub); line-height: 1.5; }
-
-        .servers-section { text-align: center; margin-top: 30px; }
-        .servers-title { font-size: 18px; font-weight: 800; margin-bottom: 6px; color: #fff; }
-        .servers-subtitle { font-size: 13px; color: var(--text-sub); margin-bottom: 16px; }
-        .servers-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-        .server-card { padding: 16px; font-weight: 800; color: #fff; font-size: 14px; text-align: center; }
-
-        .tariffs-container { display: flex; flex-direction: column; gap: 24px; }
-        .tariffs-row-title { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        @keyframes floatBadge {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-4px); }
+        }
+        .hero h1 { font-size: 52px; font-weight: 900; margin-bottom: 16px; color: #fff; letter-spacing: -1.5px; line-height: 1.1; }
+        .hero h1 span { background: linear-gradient(135deg, #ff3344 0%, #ff8899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { color: var(--text-sub); font-size: 16px; max-width: 650px; margin: 0 auto 28px; line-height: 1.6; }
         
-        .tariffs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
+        .hero-buttons { display: flex; gap: 12px; justify-content: center; margin-bottom: 40px; }
+        .btn-main-action {
+            background: var(--accent-red); color: #fff; border: none; padding: 12px 24px; border-radius: 14px;
+            font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 6px 25px var(--accent-red-glow); transition: 0.2s;
+        }
+        .btn-main-action:hover { transform: translateY(-2px); }
+        .btn-secondary-action {
+            background: rgba(255,255,255,0.06); color: #fff; border: 1px solid var(--border-color); padding: 12px 24px; border-radius: 14px;
+            font-size: 14px; font-weight: 800; cursor: pointer; transition: 0.2s;
+        }
+        .btn-secondary-action:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 40px; }
+        .stat-card { padding: 24px; text-align: center; }
+        .stat-val { font-size: 32px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+        .stat-lbl { font-size: 12px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .section-title-block { text-align: center; margin-bottom: 30px; }
+        .section-title-block h2 { font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+        .section-title-block p { font-size: 14px; color: var(--text-sub); }
+
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 50px; }
+        .feature-card { padding: 28px; }
+        .feature-icon { font-size: 26px; margin-bottom: 14px; display: inline-block; }
+        .feature-card h3 { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+        .feature-card p { font-size: 13.5px; color: var(--text-sub); line-height: 1.6; }
+
+        .details-showcase { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 50px; align-items: center; }
+        .detail-box { padding: 32px; }
+        .detail-box h3 { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 12px; }
+        .detail-box p { font-size: 14px; color: var(--text-sub); line-height: 1.6; margin-bottom: 16px; }
+        .detail-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+        .detail-list li { font-size: 13px; color: #fff; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .detail-list li::before { content: '✔'; color: var(--accent-green); font-weight: 900; }
+
+        .servers-section { text-align: center; margin-top: 40px; margin-bottom: 40px; }
+        .servers-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .server-card { padding: 20px; font-weight: 800; color: #fff; font-size: 15px; text-align: center; }
+        .server-card span { display: block; font-size: 11px; color: var(--accent-green); font-weight: 600; margin-top: 4px; }
+
+        /* Тарифы */
+        .tariffs-container { display: flex; flex-direction: column; gap: 30px; }
+        .tariffs-row-title { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        .tariffs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
         .tariff-card {
-            padding: 24px 18px; text-align: center; position: relative;
+            padding: 28px 20px; text-align: center; position: relative;
             display: flex; flex-direction: column; justify-content: space-between;
         }
-        .tariff-card.popular { border-color: var(--accent-red); background: linear-gradient(180deg, rgba(255, 51, 68, 0.08) 0%, var(--bg-card) 100%); }
+        .tariff-card.popular { border-color: var(--accent-red); background: linear-gradient(180deg, rgba(255, 51, 68, 0.1) 0%, var(--bg-card) 100%); }
         .tariff-badge {
             position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-            background: var(--accent-red); color: #fff; font-size: 10px; font-weight: 800; padding: 4px 14px; border-radius: 20px;
+            background: var(--accent-red); color: #fff; font-size: 10px; font-weight: 800; padding: 4px 14px; border-radius: 20px; letter-spacing: 0.5px;
         }
-        .tariff-name { font-size: 14px; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; }
-        .tariff-price { font-size: 30px; font-weight: 900; color: #fff; margin-bottom: 16px; }
-        .tariff-price span { font-size: 14px; color: var(--text-sub); }
+        .tariff-name { font-size: 15px; font-weight: 700; color: var(--text-sub); margin-bottom: 10px; }
+        .tariff-price { font-size: 32px; font-weight: 900; color: #fff; margin-bottom: 20px; }
+        .tariff-price span { font-size: 15px; color: var(--text-sub); }
 
         .btn-buy, .action-btn {
-            width: 100%; background: var(--accent-red); color: #fff; border: none; padding: 11px;
-            border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.2s;
+            width: 100%; background: var(--accent-red); color: #fff; border: none; padding: 12px;
+            border-radius: 12px; font-size: 13.5px; font-weight: 800; cursor: pointer; transition: 0.2s;
             box-shadow: 0 4px 15px var(--accent-red-glow); display: inline-flex; align-items: center; justify-content: center; gap: 6px;
         }
+        .btn-buy:hover, .action-btn:hover { transform: translateY(-2px); }
         .action-btn.green { background: var(--accent-green); color: #000; box-shadow: 0 4px 15px rgba(0,230,118,0.3); }
         .action-btn.dark { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid var(--border-color); box-shadow: none; }
+        .action-btn.yellow { background: #ffbc00; color: #000; box-shadow: 0 4px 15px rgba(255,188,0,0.3); }
 
-        .auth-wrapper { display: flex; align-items: center; justify-content: center; min-height: 55vh; }
+        /* Авторизация */
+        .auth-wrapper { display: flex; align-items: center; justify-content: center; min-height: 60vh; }
         .auth-card {
-            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 28px; padding: 36px;
-            width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 28px; padding: 40px;
+            width: 100%; max-width: 420px; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7); backdrop-filter: blur(20px);
         }
-        .auth-title { font-size: 26px; font-weight: 900; text-align: center; margin-bottom: 4px; }
+        .auth-title { font-size: 28px; font-weight: 900; text-align: center; margin-bottom: 4px; }
         .auth-title span { color: var(--accent-red); }
-        .auth-subtitle { font-size: 12px; color: var(--text-sub); text-align: center; margin-bottom: 24px; font-weight: 600; }
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; font-size: 11px; color: var(--text-sub); margin-bottom: 6px; text-transform: uppercase; font-weight: 700; }
+        .auth-subtitle { font-size: 12.5px; color: var(--text-sub); text-align: center; margin-bottom: 28px; font-weight: 600; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 11.5px; color: var(--text-sub); margin-bottom: 6px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
         .form-input, .form-textarea, .form-select {
-            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color);
-            padding: 12px 14px; border-radius: 12px; color: #fff; font-size: 13px; outline: none;
+            width: 100%; background: rgba(0,0,0,0.35); border: 1px solid var(--border-color);
+            padding: 13px 16px; border-radius: 14px; color: #fff; font-size: 13.5px; outline: none; transition: 0.2s;
         }
-        .form-input:focus, .form-textarea:focus { border-color: var(--accent-red); }
-        .form-textarea { resize: vertical; min-height: 90px; }
+        .form-input:focus, .form-textarea:focus, .form-select:focus { border-color: var(--accent-red); box-shadow: 0 0 15px var(--accent-red-glow); }
+        .form-textarea { resize: vertical; min-height: 100px; }
 
+        /* Кабинет и панель */
         .dash-container {
-            display: grid; grid-template-columns: 240px 1fr; gap: 20px;
-            background: var(--bg-card); backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color); border-radius: 28px; padding: 20px; min-height: 560px;
+            display: grid; grid-template-columns: 260px 1fr; gap: 24px;
+            background: var(--bg-card); backdrop-filter: blur(24px);
+            border: 1px solid var(--border-color); border-radius: 28px; padding: 24px; min-height: 600px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
-        .sidebar { border-right: 1px solid var(--border-color); padding-right: 18px; display: flex; flex-direction: column; justify-content: space-between; }
-        .user-card-side { display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(0,0,0,0.25); border-radius: 14px; margin-bottom: 20px; border: 1px solid var(--border-color); }
-        .avatar { width: 40px; height: 40px; background: rgba(255, 51, 68, 0.15); border: 1px solid var(--accent-red); color: var(--accent-red); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; }
-        .user-details .uname { font-size: 14px; font-weight: 800; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .user-details .urole { font-size: 10px; color: var(--accent-red); font-weight: 800; }
+        .sidebar { border-right: 1px solid var(--border-color); padding-right: 20px; display: flex; flex-direction: column; justify-content: space-between; }
+        .user-card-side { display: flex; align-items: center; gap: 12px; padding: 14px; background: rgba(0,0,0,0.3); border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--border-color); }
+        .avatar { width: 42px; height: 42px; background: rgba(255, 51, 68, 0.15); border: 1px solid var(--accent-red); color: var(--accent-red); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; }
+        .user-details .uname { font-size: 14.5px; font-weight: 800; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .user-details .urole { font-size: 10.5px; color: var(--accent-red); font-weight: 800; letter-spacing: 0.5px; }
         
-        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 4px; max-height: 380px; overflow-y: auto; padding-right: 4px; }
-        .nav-item { padding: 9px 12px; border-radius: 10px; color: var(--text-sub); font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
-        .nav-item:hover, .nav-item.active { background: rgba(255, 51, 68, 0.1); color: var(--accent-red); }
+        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; max-height: 400px; overflow-y: auto; padding-right: 4px; }
+        .nav-item { padding: 10px 14px; border-radius: 12px; color: var(--text-sub); font-size: 12.5px; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
+        .nav-item:hover, .nav-item.active { background: rgba(255, 51, 68, 0.12); color: var(--accent-red); }
         
-        .btn-logout { background: none; border: 1px solid var(--border-color); color: var(--text-sub); padding: 10px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 12px; width: 100%; margin-top: 10px; }
-        .btn-logout:hover { border-color: var(--accent-red); color: var(--accent-red); }
+        .btn-logout { background: none; border: 1px solid var(--border-color); color: var(--text-sub); padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 12.5px; width: 100%; margin-top: 10px; transition: 0.2s; }
+        .btn-logout:hover { border-color: var(--accent-red); color: var(--accent-red); background: rgba(255, 51, 68, 0.05); }
 
-        .content { padding: 10px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; max-height: 530px; }
-        .card { padding: 20px; margin-bottom: 12px; }
-        .card-header { font-size: 11px; color: var(--text-sub); font-weight: 800; text-transform: uppercase; margin-bottom: 14px; }
-        .sub-title { font-size: 20px; font-weight: 800; color: var(--accent-green); margin-bottom: 4px; }
-        .sub-desc { font-size: 13px; color: var(--text-sub); line-height: 1.5; }
+        .content { padding: 10px; display: flex; flex-direction: column; gap: 18px; overflow-y: auto; max-height: 560px; }
+        .card { padding: 22px; margin-bottom: 12px; }
+        .card-header { font-size: 11.5px; color: var(--text-sub); font-weight: 800; text-transform: uppercase; margin-bottom: 16px; letter-spacing: 0.5px; }
+        .sub-title { font-size: 22px; font-weight: 900; color: var(--accent-green); margin-bottom: 6px; }
+        .sub-desc { font-size: 13.5px; color: var(--text-sub); line-height: 1.6; }
 
-        .review-card { padding: 20px; margin-bottom: 14px; }
-        .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .review-author { font-weight: 800; font-size: 14px; color: #fff; }
+        .review-card { padding: 22px; margin-bottom: 14px; }
+        .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .review-author { font-weight: 800; font-size: 14.5px; color: #fff; }
         .review-stars { color: #ffbc00; font-size: 13px; letter-spacing: 2px; }
-        .review-text { font-size: 13px; color: var(--text-sub); line-height: 1.5; }
+        .review-text { font-size: 13.5px; color: var(--text-sub); line-height: 1.6; }
+        
+        .search-result-box {
+            background: rgba(0,0,0,0.45); border: 1px solid var(--border-color); border-radius: 16px; padding: 18px; margin-top: 16px;
+        }
+
+        @media(max-width: 850px) {
+            .details-showcase { grid-template-columns: 1fr; }
+            .dash-container { grid-template-columns: 1fr; }
+            .servers-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -238,41 +295,102 @@
         </nav>
     </div>
 
+    <!-- Главная страница -->
     <div id="page-home" class="page-section">
         <div class="hero">
-            <div class="hero-badge">⚡ Fabric 1.21.4 Client</div>
-            <h1>Абсолютное Доминирование</h1>
-            <p>Премиальный софт с идеальным обходом античитов, кастомными визуальными модулями и максимальным FPS для комфортной игры.</p>
+            <div class="hero-badge">⚡ Fabric 1.21.4 Client Ecosystem</div>
+            <h1>Абсолютное Доминирование <br><span>В Каждом Сражении</span></h1>
+            <p>Передовой игровой клиент с надежным обходом античитов, гибкой настройкой визуальных модулей, кастомными 3D-моделями и абсолютной оптимизацией для максимального FPS.</p>
+            <div class="hero-buttons">
+                <button class="btn-main-action" onclick="navigateTo('tariffs')">Выбрать подписку</button>
+                <button class="btn-secondary-action" onclick="navigateTo('cabinet')">Личный кабинет</button>
+            </div>
         </div>
+
         <div class="stats-grid">
-            <div class="stat-card"><div class="stat-val">420+</div><div class="stat-lbl">Онлайн</div></div>
-            <div class="stat-card"><div class="stat-val">1,480+</div><div class="stat-lbl">Подписок</div></div>
+            <div class="stat-card">
+                <div class="stat-val">480+</div>
+                <div class="stat-lbl">Онлайн игроков</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val">1,620+</div>
+                <div class="stat-lbl">Активных подписок</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val">99.8%</div>
+                <div class="stat-lbl">Обход защиты</div>
+            </div>
         </div>
-        <div class="features-list">
+
+        <div class="section-title-block">
+            <h2>Превосходные Возможности</h2>
+            <p>Всё необходимое для победы в соревновательном Minecraft</p>
+        </div>
+
+        <div class="features-grid">
             <div class="feature-card">
-                <h3>🚀 Быстрый запуск и оптимизация</h3>
-                <p>Стабильный фреймрейт на любых серверах без просадок, быстрая загрузка модулей и мгновенный инжект.</p>
+                <span class="feature-icon">🚀</span>
+                <h3>Максимальная оптимизация</h3>
+                <p>Стабильный высокий фреймрейт без просадок даже в самых жарких PvP-баталиях на серверах с большим онлайном.</p>
             </div>
             <div class="feature-card">
-                <h3>🛡️ Надежный обход античитов</h3>
-                <p>Продвинутая система маскировки защищает ваш игровой процесс на крупнейших проектах Minecraft.</p>
+                <span class="feature-icon">🛡️</span>
+                <h3>Обход античитов нового поколения</h3>
+                <p>Инновационные алгоритмы маскировки памяти и трафика гарантируют полную безопасность вашей учетной записи.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">✨</span>
+                <h3>Кастомные визуальные модули</h3>
+                <p>Настраиваемый ClickGUI, индивидуальные хитбоксы, частицы ударов, кастомный туман и система плащей с крыльями.</p>
             </div>
         </div>
+
+        <div class="details-showcase">
+            <div class="detail-box">
+                <h3>Интерфейс и Управление HUD</h3>
+                <p>ApexClient разработан с учетом потребностей лучших игроков. Удобное расположение модулей, быстрые бинды и мгновенный доступ к функциям прямо во время игры.</p>
+                <ul class="detail-list">
+                    <li>Модульная система ClickGUI в стиле Modern Dark</li>
+                    <li>Автоматический свитч предметов (AutoSwap)</li>
+                    <li>Продвинутая система подсветки и рендеринга</li>
+                </ul>
+            </div>
+            <div class="detail-box">
+                <h3>Безопасность и Защита HWID</h3>
+                <p>Мы используем надежную привязку оборудования, исключающую несанкционированный доступ к вашему аккаунту и купленному софту.</p>
+                <ul class="detail-list">
+                    <li>Мгновенная активация ключей через сайт</li>
+                    <li>Удобный сброс HWID в личном кабинете</li>
+                    <li>Круглосуточная поддержка пользователей</li>
+                </ul>
+            </div>
+        </div>
+
         <div class="servers-section">
-            <div class="servers-title">Поддерживаемые серверы</div>
-            <div class="servers-subtitle">Полная совместимость и оптимизация под современные античиты</div>
+            <div class="servers-title" style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 6px;">Поддерживаемые Серверы</div>
+            <div class="servers-subtitle" style="color: var(--text-sub); font-size: 14px;">Полная оптимизация и проверенная стабильность работы</div>
             <div class="servers-grid">
-                <div class="server-card">FunTime</div>
-                <div class="server-card">HolyWorld</div>
-                <div class="server-card">ReallyWorld</div>
+                <div class="server-card">
+                    FunTime
+                    <span>Стабильный обход</span>
+                </div>
+                <div class="server-card">
+                    HolyWorld
+                    <span>Полная совместимость</span>
+                </div>
+                <div class="server-card">
+                    ReallyWorld
+                    <span>Максимальный FPS</span>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Тарифы -->
     <div id="page-tariffs" class="page-section hidden">
         <div class="hero">
             <h1>Тарифные планы и Услуги</h1>
-            <p>Выберите подходящий срок доступа, оформите предзаказ или запросите сброс устройства.</p>
+            <p>Выберите подходящий срок доступа, оформите предзаказ на новые функции или запросите сброс устройства.</p>
         </div>
         
         <div class="tariffs-container">
@@ -316,10 +434,11 @@
         </div>
     </div>
 
+    <!-- Отзывы -->
     <div id="page-reviews" class="page-section hidden">
         <div class="hero">
             <h1>Отзывы пользователей</h1>
-            <p>Поделитесь вашим впечатлением или посмотрите мнения других игроков.</p>
+            <p>Поделитесь вашим впечатлением или посмотрите мнения других игроков о клиенте.</p>
         </div>
         <div style="max-width: 650px; margin: 0 auto;">
             <div class="card" style="margin-bottom: 30px;">
@@ -364,23 +483,25 @@
         </div>
     </div>
 
+    <!-- Помощь -->
     <div id="page-help" class="page-section hidden">
         <div class="hero">
             <h1>Центр помощи</h1>
-            <p>Часто задаваемые вопросы и руководства по использованию.</p>
+            <p>Часто задаваемые вопросы и руководства по использованию клиента.</p>
         </div>
-        <div style="max-width: 650px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px;">
+        <div style="max-width: 650px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px;">
             <div class="card">
                 <div class="card-header">Как запустить клиент?</div>
-                <p class="sub-desc">Скачайте лоадер в личном кабинете, запустите его и войдите под своей учетной записью с активной подпиской.</p>
+                <p class="sub-desc">Скачайте лоадер в личном кабинете, запустите его и войдите под своей учетной записью с активной подпиской или активируйте ключ.</p>
             </div>
             <div class="card">
                 <div class="card-header">Что делать при смене ПК (HWID ошибка)?</div>
-                <p class="sub-desc">Перейдите в раздел «Тарифы» во второй ряд и оформите платную заявку на сброс HWID за 139 рублей или активируйте ключ сброса.</p>
+                <p class="sub-desc">Перейдите в раздел «Тарифы» и оформите платную заявку на сброс HWID за 139 рублей или активируйте специальный ключ сброса.</p>
             </div>
         </div>
     </div>
 
+    <!-- Поддержка -->
     <div id="page-support" class="page-section hidden">
         <div class="hero">
             <h1>Техническая поддержка</h1>
@@ -402,6 +523,7 @@
         </div>
     </div>
 
+    <!-- Авторизация -->
     <div id="page-auth" class="page-section hidden">
         <div class="auth-wrapper">
             <div class="auth-card">
@@ -420,6 +542,7 @@
         </div>
     </div>
 
+    <!-- Личный кабинет -->
     <div id="page-cabinet" class="page-section hidden">
         <div class="dash-container">
             <div class="sidebar">
@@ -543,13 +666,31 @@
                                 <button class="action-btn" style="width: 140px;" onclick="searchUserCapabilities()">Найти</button>
                             </div>
                         </div>
+                        <div id="capSearchResultContainer"></div>
                     </div>
                 </div>
 
                 <div id="cab-admin" class="cab-tab-content hidden">
                     <div class="card">
-                        <div class="card-header">⚙️ Панель Владельца</div>
-                        <p class="sub-desc">Управление системой и правами доступа.</p>
+                        <div class="card-header">⚙️ Панель Владельца — Управление системой и правами доступа</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>Тип подписки для генерации</label>
+                                <select id="genSubDuration" class="form-select">
+                                    <option value="7 Дней">7 Дней</option>
+                                    <option value="1 Месяц">1 Месяц</option>
+                                    <option value="3 Месяца">3 Месяца</option>
+                                    <option value="Навсегда">Навсегда</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; align-items: flex-end;">
+                                <button class="action-btn green" onclick="generateSubKey()">Сгенерировать ключ подписки</button>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <button class="action-btn yellow" onclick="generateHWIDKey()">Сгенерировать ключ сброса HWID</button>
+                        </div>
+                        <div id="generatedKeyOutput" style="margin-top: 12px;"></div>
                     </div>
                 </div>
             </div>
@@ -558,6 +699,17 @@
 
     <script>
         let currentUser = localStorage.getItem('apex_user') || null;
+
+        // База данных пользователей
+        let registeredUsers = JSON.parse(localStorage.getItem('apex_db_users')) || {
+            "invisik": { role: "OWNER", sub: "Навсегда", banned: false, banReason: "", banDuration: "" },
+            "sextazyst": { role: "USER", sub: "1 Месяц", banned: false, banReason: "", banDuration: "" },
+            "veselchak": { role: "USER", sub: "3 Месяца", banned: false, banReason: "", banDuration: "" }
+        };
+
+        function saveDB() {
+            localStorage.setItem('apex_db_users', JSON.stringify(registeredUsers));
+        }
 
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
@@ -598,15 +750,27 @@
         }
 
         function applyUserRole(username) {
-            // Базовый сброс прав в USER
             document.getElementById('sidebarRole').innerText = 'USER';
             document.getElementById('navItemPost').classList.add('hidden');
             document.getElementById('navItemModeration').classList.add('hidden');
             document.getElementById('navItemCapabilities').classList.add('hidden');
             document.getElementById('navItemAdmin').classList.add('hidden');
 
-            // Выдаем Owner права ТОЛЬКО для конкретного ника
-            if (username && username.toLowerCase() === 'invisik') {
+            const lower = username.toLowerCase();
+            if (!registeredUsers[lower]) {
+                registeredUsers[lower] = { role: lower === 'invisik' ? 'OWNER' : 'USER', sub: 'Нет', banned: false, banReason: '', banDuration: '' };
+                saveDB();
+            }
+
+            const userData = registeredUsers[lower];
+            if (userData.banned) {
+                document.getElementById('sidebarRole').innerText = 'BANNED';
+                document.getElementById('subStatusText').innerText = 'ЗАБАНЕН (' + userData.banReason + ')';
+                document.getElementById('subStatusText').style.color = 'var(--accent-red)';
+                return;
+            }
+
+            if (userData.role === 'OWNER' || lower === 'invisik') {
                 document.getElementById('sidebarRole').innerText = 'OWNER';
                 document.getElementById('navItemPost').classList.remove('hidden');
                 document.getElementById('navItemModeration').classList.remove('hidden');
@@ -621,6 +785,13 @@
                 showToast('Введите имя пользователя!', 'error');
                 return;
             }
+
+            const lower = usernameInput.toLowerCase();
+            if (registeredUsers[lower] && registeredUsers[lower].banned) {
+                showToast('Этот аккаунт заблокирован!', 'error');
+                return;
+            }
+
             currentUser = usernameInput;
             localStorage.setItem('apex_user', currentUser);
             
@@ -641,12 +812,23 @@
             showToast('Вы вышли из аккаунта', 'success');
         }
 
+        function checkUserBanAction() {
+            if (!currentUser) return false;
+            const userData = registeredUsers[currentUser.toLowerCase()];
+            if (userData && userData.banned) {
+                showToast('Ваш аккаунт заблокирован! Подписка и возможности заморожены.', 'error');
+                return true;
+            }
+            return false;
+        }
+
         function buyTariff(tariffName) {
             if (!currentUser) {
                 showToast('Сначала войдите в личный кабинет!', 'error');
                 navigateTo('cabinet');
                 return;
             }
+            if (checkUserBanAction()) return;
             showToast(`Заявка на покупку "${tariffName}" создана!`, 'success');
         }
 
@@ -656,10 +838,12 @@
                 navigateTo('cabinet');
                 return;
             }
+            if (checkUserBanAction()) return;
             showToast('Заявка на сброс HWID отправлена модераторам.', 'success');
         }
 
         function addNewReview() {
+            if (checkUserBanAction()) return;
             const author = document.getElementById('reviewAuthorInput').value.trim();
             const text = document.getElementById('reviewTextInput').value.trim();
             const rating = document.getElementById('reviewRatingInput').value;
@@ -694,6 +878,7 @@
                 navigateTo('cabinet');
                 return;
             }
+            if (checkUserBanAction()) return;
             const subject = document.getElementById('ticketSubject').value.trim();
             const message = document.getElementById('ticketMessage').value.trim();
             if (!subject || !message) {
@@ -706,26 +891,134 @@
         }
 
         function activateSubKey() {
+            if (checkUserBanAction()) return;
             const key = document.getElementById('subKeyInput').value.trim();
             if (!key) {
                 showToast('Введите ключ подписки!', 'error');
                 return;
             }
-            showToast('Ключ успешно активирован!', 'success');
+            showToast('Ключ подписки успешно активирован!', 'success');
             document.getElementById('subKeyInput').value = '';
         }
 
         function activateHWIDKey() {
+            if (checkUserBanAction()) return;
             const key = document.getElementById('hwidKeyInput').value.trim();
             if (!key) {
                 showToast('Введите ключ сброса HWID!', 'error');
                 return;
             }
-            showToast('HWID успешно сброшен!', 'success');
+            showToast('HWID успешно сброшен ключом!', 'success');
             document.getElementById('hwidKeyInput').value = '';
         }
 
-        // Авто-логин при перезагрузке страницы
+        // Поиск пользователя в настройке возможностей (с выводом точной ошибки)
+        function searchUserCapabilities() {
+            const query = document.getElementById('capSearchInput').value.trim().toLowerCase();
+            const container = document.getElementById('capSearchResultContainer');
+            container.innerHTML = '';
+
+            if (!query || !registeredUsers[query]) {
+                container.innerHTML = `<div class="search-result-box" style="color: var(--accent-red); font-weight: 700; text-align: center;">данный игрок не найден или не правильные дынные</div>`;
+                return;
+            }
+
+            const u = registeredUsers[query];
+            container.innerHTML = `
+                <div class="search-result-box">
+                    <div style="font-weight: 800; font-size: 15px; margin-bottom: 10px; color: #fff;">Пользователь: ${query}</div>
+                    <div style="font-size: 13px; color: var(--text-sub); margin-bottom: 12px;">Роль: <b>${u.role}</b> | Подписка: <b>${u.sub}</b> | Статус: <b>${u.banned ? 'ЗАБАНЕН (заморожен)' : 'Активен'}</b></div>
+                    
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
+                        <button class="action-btn green" style="flex:1;" onclick="adminToggleRole('${query}')">Изменить роль (USER/OWNER)</button>
+                        <button class="action-btn yellow" style="flex:1;" onclick="adminResetHWID('${query}')">Сбросить HWID</button>
+                    </div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="action-btn dark" style="flex:1;" onclick="adminGiveSub('${query}')">Выдать/Продлить подписку</button>
+                        <button class="action-btn" style="flex:1; background: var(--accent-red);" onclick="adminPromptBan('${query}')">${u.banned ? 'Разбанить' : 'Забанить'}</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function adminToggleRole(username) {
+            const u = registeredUsers[username];
+            u.role = u.role === 'OWNER' ? 'USER' : 'OWNER';
+            saveDB();
+            showToast(`Роль игрока ${username} изменена на ${u.role}`);
+            searchUserCapabilities();
+        }
+
+        function adminResetHWID(username) {
+            showToast(`HWID игрока ${username} успешно сброшен!`);
+        }
+
+        function adminGiveSub(username) {
+            registeredUsers[username].sub = 'Навсегда';
+            saveDB();
+            showToast(`Игроку ${username} выдана подписка!`);
+            searchUserCapabilities();
+        }
+
+        // Система бана с вводом срока, причины и двойным подтверждением
+        function adminPromptBan(username) {
+            const u = registeredUsers[username];
+            if (u.banned) {
+                u.banned = false;
+                u.banReason = '';
+                u.banDuration = '';
+                saveDB();
+                showToast(`Игрок ${username} разбанен! Подписка разморожена.`);
+                searchUserCapabilities();
+                return;
+            }
+
+            const duration = prompt(`Введите срок бана для игрока ${username} (например, 7 дней, навсегда):`);
+            if (!duration) return;
+
+            const reason = prompt(`Введите причину бана для игрока ${username}:`);
+            if (!reason) return;
+
+            const confirm1 = confirm(`ВНИМАНИЕ! Вы точно хотите забанить игрока ${username}?\nСрок: ${duration}\nПричина: ${reason}\nПодписка будет заморожена, игрок не сможет приобретать товары, писать тикеты и отзывы.`);
+            if (!confirm1) return;
+
+            const confirm2 = confirm(`ПОДТВЕРДИТЕ ЕЩЕ РАЗ: Заблокировать пользователя ${username}? Действие вступит в силу немедленно.`);
+            if (!confirm2) return;
+
+            u.banned = true;
+            u.banDuration = duration;
+            u.banReason = reason;
+            saveDB();
+
+            showToast(`Игрок ${username} заблокирован, подписка заморожена!`, 'error');
+            searchUserCapabilities();
+        }
+
+        // Генерация ключей в панели владельца
+        function generateSubKey() {
+            const duration = document.getElementById('genSubDuration').value;
+            const randomKey = 'APEX-SUB-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            document.getElementById('generatedKeyOutput').innerHTML = `
+                <div class="search-result-box" style="background: rgba(0,230,118,0.05); border-color: var(--accent-green);">
+                    <div style="font-size: 11px; color: var(--accent-green); font-weight: 800; margin-bottom: 4px;">СГЕНЕРИРОВАН КЛЮЧ ПОДПИСКИ (${duration}):</div>
+                    <div style="font-size: 15px; font-weight: 900; color: #fff; letter-spacing: 1px;">${randomKey}</div>
+                </div>
+            `;
+            showToast('Ключ подписки успешно сгенерирован!');
+        }
+
+        function generateHWIDKey() {
+            const randomKey = 'APEX-HWID-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            document.getElementById('generatedKeyOutput').innerHTML = `
+                <div class="search-result-box" style="background: rgba(255,188,0,0.05); border-color: #ffbc00;">
+                    <div style="font-size: 11px; color: #ffbc00; font-weight: 800; margin-bottom: 4px;">СГЕНЕРИРОВАН КЛЮЧ СБРОСА HWID:</div>
+                    <div style="font-size: 15px; font-weight: 900; color: #fff; letter-spacing: 1px;">${randomKey}</div>
+                </div>
+            `;
+            showToast('Ключ сброса HWID успешно сгенерирован!');
+        }
+
+        // Авто-логин при загрузке
         window.addEventListener('DOMContentLoaded', () => {
             if (currentUser) {
                 document.getElementById('sidebarUsername').innerText = currentUser;
