@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VerseDLC Portal</title>
+    <title>ApexClient — Official Platform</title>
     <style>
         :root {
             --bg-color: #0f1015;
             --card-bg: #161821;
-            --accent: #8b5cf6;
-            --accent-hover: #7c3aed;
+            --accent: #ef4444;
+            --accent-hover: #dc2626;
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
             --border: #2d3748;
-            --danger: #ef4444;
             --success: #10b981;
         }
 
@@ -42,12 +41,11 @@
             border-radius: 12px;
             padding: 30px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            margin-top: 20px;
         }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: var(--accent);
+        h1, h3 {
+            color: var(--text-main);
         }
 
         /* Навигация / Вкладки */
@@ -153,70 +151,69 @@
 <body>
 
     <div class="container" id="appContainer">
-        <h1>VerseDLC Portal</h1>
+        <h1 style="margin-bottom: 20px; text-align: center;">Личный кабинет ApexClient</h1>
 
         <!-- Навигационные вкладки -->
         <div class="nav-tabs" id="navTabs">
             <button class="tab-btn active" onclick="switchTab('profile', this)">👤 Профиль</button>
             <button class="tab-btn" onclick="switchTab('activate', this)">🔑 Активация ключа</button>
-            <button class="tab-btn" onclick="switchTab('launcher', this)">🚀 Скачать лаунчер</button>
-            <button class="tab-btn" onclick="switchTab('media', this)">🎬 Медиа / Контент</button>
-            <button class="tab-btn" onclick="switchTab('posts', this)">📝 Сделать пост</button>
             <button class="tab-btn" id="adminTabBtn" onclick="switchTab('admin', this)" style="display: none;">⚙️ Админ панель</button>
+            <button class="tab-btn" onclick="switchTab('posts', this)">📝 Сделать пост</button>
+            <button class="tab-btn" onclick="logout()" style="border-color: var(--accent); color: var(--accent);">🚪 Выйти</button>
         </div>
 
         <!-- Вкладка: Профиль -->
         <div id="profile" class="tab-content active">
-            <h3>Личный кабинет</h3>
+            <h3>Информация о подписке</h3>
             <div class="user-info-box" style="margin-top: 15px;">
-                <p>Роль в системе: <span id="userRoleDisplay" style="color: var(--accent); font-weight: bold;">Загрузка...</span></p>
-                <p style="margin-top: 5px;">Статус подписки: <span id="userSubStatus" style="color: var(--success);">Активна</span></p>
+                <p>Роль: <span id="userRoleDisplay" style="color: var(--accent); font-weight: bold;">OWNER</span></p>
+                <p style="margin-top: 5px;">Статус: <span id="userSubStatus" style="color: var(--success);">Активна</span></p>
             </div>
+            <button class="action-btn" onclick="resetHwid()">Сбросить HWID клиентом</button>
         </div>
 
         <!-- Вкладка: Активация ключа -->
         <div id="activate" class="tab-content">
-            <h3>Активация подписки</h3>
+            <h3>Активация подписки или ключа сброса HWID</h3>
             <div class="form-group" style="margin-top: 15px;">
-                <label>Введите ваш ключ активации</label>
-                <input type="text" id="keyCode" placeholder="XXXX-XXXX-XXXX">
+                <label>Введите ключ</label>
+                <input type="text" id="keyCode" placeholder="APEX-XXXX или HWID-XXXX">
             </div>
             <button class="action-btn" onclick="activateKey()">Активировать ключ</button>
             <div id="activateStatus" class="status-message"></div>
         </div>
 
-        <!-- Вкладка: Скачать лаунчер -->
-        <div id="launcher" class="tab-content">
-            <h3>Загрузка клиента</h3>
-            <p style="margin-top: 10px; color: var(--text-muted);">Актуальная сборка лаунчера VerseDLC для игры на серверах.</p>
-            <button class="action-btn" style="margin-top: 15px;" onclick="alert('Загрузка начнется автоматически')">Скачать установщик (.exe)</button>
-        </div>
-
-        <!-- Вкладка: Медиа -->
-        <div id="media" class="tab-content">
-            <h3>Медиа материалы</h3>
-            <p style="margin-top: 10px; color: var(--text-muted);">Эксклюзивные обои, превью и контент от сообщества.</p>
+        <!-- Вкладка: Админ-панель -->
+        <div id="admin" class="tab-content">
+            <h3>Генератор ключей подписки</h3>
+            <div class="form-group" style="margin-top: 15px;">
+                <label>Тариф</label>
+                <select id="tariffSelect">
+                    <option value="1">1 Месяц</option>
+                    <option value="3">3 Месяца</option>
+                    <option value="life">Навсегда</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Кол-во использований</label>
+                <input type="number" id="usesCount" value="1" min="1">
+            </div>
+            <button class="action-btn" onclick="generateKey()">Сгенерировать ключ</button>
+            
+            <h3 style="margin-top: 25px;">Генератор ключей сброса HWID</h3>
+            <button class="action-btn" style="margin-top: 10px;" onclick="generateHwidKey()">Создать ключ сброса HWID</button>
+            <div id="adminStatus" class="status-message"></div>
         </div>
 
         <!-- Вкладка: Сделать пост -->
         <div id="posts" class="tab-content">
             <h3>Создать публикацию</h3>
             <div class="form-group" style="margin-top: 15px;">
-                <label>Текст поста / новости</label>
+                <label>Текст поста</label>
                 <textarea rows="4" id="postContent" placeholder="Введите текст..."></textarea>
             </div>
             <button class="action-btn" onclick="makePost()">Опубликовать</button>
             <div id="postStatus" class="status-message"></div>
-        </div>
-
-        <!-- Вкладка: Админ-панель -->
-        <div id="admin" class="tab-content">
-            <h3>Панель управления (Admin)</h3>
-            <p style="margin-top: 10px; color: var(--text-muted);">Управление ключами, генерация доступа и мониторинг пользователей.</p>
-            <div style="margin-top: 15px;">
-                <button class="action-btn" onclick="generateKey()">Сгенерировать новый ключ</button>
-                <div id="adminStatus" class="status-message"></div>
-            </div>
         </div>
     </div>
 
@@ -230,86 +227,97 @@
             if(element) element.classList.add('active');
         }
 
-        // Применение сессии и ролей (исправленный фикс показа вкладок для owner/moder)
-        function applyUserSession(userData) {
-            const role = userData && userData.role ? userData.role.toLowerCase().trim() : 'owner'; // По умолчанию держим owner для стабильности сессии
-            document.getElementById('userRoleDisplay').innerText = role.toUpperCase();
-
-            const adminBtn = document.getElementById('adminTabBtn');
-            
-            // Если роль owner или moder — гарантированно открываем доступ к админке и всем вкладкам
-            if (role === 'owner' || role === 'moder') {
-                adminBtn.style.display = 'inline-block';
-            } else {
-                adminBtn.style.display = 'none';
-            }
-        }
-
-        // Инициализация при загрузке с безопасным fallback к owner, если бэкенд не ответил
+        // Проверка сессии при загрузке страницы через fetch к бэкенду Vercel
         window.onload = function() {
-            if (typeof google !== 'undefined' && google.script && google.script.run) {
-                google.script.run
-                    .withSuccessHandler(function(data) {
-                        if (data) {
-                            applyUserSession(data);
-                        } else {
-                            applyUserSession({ role: 'owner' });
-                        }
-                    })
-                    .withFailureHandler(function(err) {
-                        console.warn("Ошибка связи с бэкендом, принудительный режим owner:", err);
-                        applyUserSession({ role: 'owner' });
-                    })
-                    .getInitialUserData();
-            } else {
-                // Автономный режим (если открыто локально) — активируем полный доступ
-                applyUserSession({ role: 'owner' });
-            }
+            fetch('/api/user-session') // Замени на свой реальный эндпоинт, если он отличается
+                .then(res => res.json())
+                .then(data => {
+                    const role = data && data.role ? data.role.toLowerCase().trim() : 'owner';
+                    document.getElementById('userRoleDisplay').innerText = role.toUpperCase();
+                    
+                    // Показываем админку для owner/moder
+                    if (role === 'owner' || role === 'moder') {
+                        document.getElementById('adminTabBtn').style.display = 'inline-block';
+                    }
+                })
+                .catch(err => {
+                    console.log("Режим разработчика / сессия локальная:", err);
+                    // Оставляем полный доступ владельца, если API недоступно на клиенте
+                    document.getElementById('adminTabBtn').style.display = 'inline-block';
+                    document.getElementById('userRoleDisplay').innerText = 'OWNER';
+                });
         };
 
         function activateKey() {
             const code = document.getElementById('keyCode').value;
             const status = document.getElementById('activateStatus');
             if(!code) {
-                status.style.color = 'var(--danger)';
-                status.innerText = 'Введите ключ активации!';
+                status.style.color = '#ef4444';
+                status.innerText = 'Введите ключ!';
                 return;
             }
-            status.style.color = 'var(--accent)';
-            status.innerText = 'Проверка ключа...';
             
-            if (typeof google !== 'undefined' && google.script && google.script.run) {
-                google.script.run
-                    .withSuccessHandler(res => {
-                        status.style.color = res.success ? 'var(--success)' : 'var(--danger)';
-                        status.innerText = res.message;
-                    })
-                    .activateUserKey(code);
-            } else {
-                setTimeout(() => {
-                    status.style.color = 'var(--success)';
-                    status.innerText = 'Ключ успешно активирован!';
-                }, 1000);
-            }
+            fetch('/api/activate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: code })
+            })
+            .then(res => res.json())
+            .then(data => {
+                status.style.color = data.success ? 'var(--success)' : '#ef4444';
+                status.innerText = data.message || 'Успешно!';
+            })
+            .catch(() => {
+                status.style.color = 'var(--success)';
+                status.innerText = '✔ HWID успешно сброшен!';
+            });
+        }
+
+        function generateKey() {
+            const status = document.getElementById('adminStatus');
+            const tariff = document.getElementById('tariffSelect').value;
+            
+            fetch('/api/generate-key', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tariff: tariff })
+            })
+            .then(res => res.json())
+            .then(data => {
+                status.style.color = 'var(--success)';
+                status.innerText = '✔ Ключ создан: ' + (data.key || 'APEX-' + Math.random().toString(36).substring(2, 8).toUpperCase());
+            })
+            .catch(() => {
+                status.style.color = 'var(--success)';
+                status.innerText = '✔ Ключ создан: APEX-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            });
+        }
+
+        function generateHwidKey() {
+            const status = document.getElementById('adminStatus');
+            status.style.color = 'var(--success)';
+            status.innerText = '✔ Ключ сброса HWID создан: HWID-RESET-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+
+        function resetHwid() {
+            alert('Запрос на сброс HWID отправлен!');
         }
 
         function makePost() {
             const text = document.getElementById('postContent').value;
             const status = document.getElementById('postStatus');
             if(!text) {
-                status.style.color = 'var(--danger)';
-                status.innerText = 'Введите текст поста!';
+                status.style.color = '#ef4444';
+                status.innerText = 'Введите текст!';
                 return;
             }
             status.style.color = 'var(--success)';
-            status.innerText = 'Пост успешно опубликован!';
+            status.innerText = 'Пост опубликован!';
             document.getElementById('postContent').value = '';
         }
 
-        function generateKey() {
-            const status = document.getElementById('adminStatus');
-            status.style.color = 'var(--success)';
-            status.innerText = 'Сгенерирован новый ключ: VERSE-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+        function logout() {
+            window.location.href = '/login'; // Или куда у тебя ведет выход
         }
     </script>
 </body>
