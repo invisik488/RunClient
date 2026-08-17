@@ -30,7 +30,7 @@
             overflow-x: hidden;
         }
 
-        /* Ambient Background Glows */
+        /* Background Glows */
         .bg-glow-1 {
             position: fixed; top: -150px; left: 50%; transform: translateX(-50%);
             width: 700px; height: 400px; background: radial-gradient(circle, rgba(255, 51, 68, 0.15) 0%, rgba(0,0,0,0) 70%);
@@ -59,6 +59,7 @@
             gap: 12px; font-size: 13px; font-weight: 600; animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .toast.success { border-left-color: var(--accent-green); }
+        .toast.error { border-left-color: var(--accent-red); }
         @keyframes slideInRight {
             from { transform: translateX(120%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
@@ -233,7 +234,7 @@
         .faq-body ol { padding-left: 20px; margin-top: 10px; }
         .faq-body li { margin-bottom: 8px; }
 
-        /* Reviews Section */
+        /* Reviews */
         .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 30px; }
         .review-card {
             background: var(--bg-card); border: 1px solid var(--border-color);
@@ -636,19 +637,25 @@
                         <div class="avatar" id="dashAvatar">U</div>
                         <div class="user-details">
                             <div class="uname" id="dashUsername">User</div>
-                            <div class="urole" id="dashRole">USER</div>
+                            <div class="urole" id="dashRole">OWNER</div>
                         </div>
                     </div>
+                    
+                    <!-- ВСЕ ВЫПРАВЛЕННЫЕ И ВОЗВРАЩЕННЫЕ ВКЛАДКИ СИДЕБАРА -->
                     <ul class="nav-menu">
-                        <li class="nav-item active" onclick="switchDashTab('main')">📌 Обзор</li>
-                        <li class="nav-item" onclick="switchDashTab('downloads')">📥 Загрузки</li>
-                        <li class="nav-item" onclick="switchDashTab('key')">🔑 Активация ключа</li>
+                        <li class="nav-item active" onclick="switchDashTab('main', this)">📌 Главная</li>
+                        <li class="nav-item" onclick="switchDashTab('preorder', this)">🎁 Мой предзаказ</li>
+                        <li class="nav-item" onclick="switchDashTab('downloads', this)">📥 Загрузки</li>
+                        <li class="nav-item" onclick="switchDashTab('key', this)">🔑 Активация ключа</li>
+                        <li class="nav-item" onclick="switchDashTab('admin', this)">👑 Админ панель</li>
+                        <li class="nav-item" onclick="switchDashTab('moderation', this)">🛡️ Модерация</li>
                     </ul>
                 </div>
                 <button class="btn-logout" onclick="logout()">Выйти</button>
             </div>
 
             <div class="content">
+                <!-- ВКЛАДКА: ГЛАВНАЯ -->
                 <div id="dashTab-main">
                     <div class="card">
                         <div class="card-header">Статус подписки</div>
@@ -667,6 +674,22 @@
                     </div>
                 </div>
 
+                <!-- ВКЛАДКА: МОЙ ПРЕДЗАКАЗ -->
+                <div id="dashTab-preorder" class="hidden">
+                    <div class="card">
+                        <div class="card-header">Мои предзаказы</div>
+                        <p class="sub-desc" style="margin-bottom: 14px;">Здесь отображается текущий статус вашего предзаказа перед официальным релизом версии.</p>
+                        <div class="list-box">
+                            <div class="list-box-header">
+                                <span>Предзаказ: ApexClient Forever</span>
+                                <span class="badge done">АКТИВЕН</span>
+                            </div>
+                            <div style="color: var(--text-sub); font-size: 12px;">Вы получите ранний доступ к следующей версии Fabric 1.21.4 в первой волне.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ВКЛАДКА: ЗАГРУЗКИ -->
                 <div id="dashTab-downloads" class="hidden">
                     <div class="card">
                         <div class="card-header">Скачать лаунчер</div>
@@ -675,6 +698,7 @@
                     </div>
                 </div>
 
+                <!-- ВКЛАДКА: АКТИВАЦИЯ КЛЮЧА -->
                 <div id="dashTab-key" class="hidden">
                     <div class="card">
                         <div class="card-header">Активировать лицензионный ключ</div>
@@ -684,11 +708,62 @@
                         <button class="action-btn red" onclick="activateKey()">Активировать</button>
                     </div>
                 </div>
+
+                <!-- ВКЛАДКА: АДМИН ПАНЕЛЬ -->
+                <div id="dashTab-admin" class="hidden">
+                    <div class="card">
+                        <div class="card-header">Панель Администратора</div>
+                        <p class="sub-desc" style="margin-bottom: 14px;">Управление пользователями, подписками и генерацией ключей.</p>
+                        
+                        <div class="admin-form-grid">
+                            <div class="form-group">
+                                <label>Ник пользователя</label>
+                                <input type="text" id="adminUserTarget" class="form-input" placeholder="UserNickname">
+                            </div>
+                            <div class="form-group">
+                                <label>Срок подписки</label>
+                                <select id="adminSubTime" class="form-select">
+                                    <option value="7">7 Дней</option>
+                                    <option value="30">30 Дней</option>
+                                    <option value="90">90 Дней</option>
+                                    <option value="3650">Навсегда</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="action-btn green" onclick="adminGrantSub()">Выдать подписку</button>
+                            <button class="action-btn blue" onclick="adminResetHwid()">Сбросить HWID</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ВКЛАДКА: МОДЕРАЦИЯ -->
+                <div id="dashTab-moderation" class="hidden">
+                    <div class="card">
+                        <div class="card-header">Центр Модерации & Вопросов</div>
+                        <p class="sub-desc" style="margin-bottom: 14px;">Ответы на вопросы и тикеты от пользователей сайта.</p>
+                        
+                        <div id="moderationTicketList">
+                            <div class="list-box">
+                                <div class="list-box-header">
+                                    <span>Тикет #1024 от PvP_Master</span>
+                                    <span class="badge pending">ОЖИДАЕТ ОТВЕТА</span>
+                                </div>
+                                <div style="color: #fff; margin-bottom: 10px;">Вопрос: "Не могу зайти на FunTime, пишет HWID Mismatch"</div>
+                                <div class="form-group">
+                                    <input type="text" class="form-input" placeholder="Напишите ответ..." style="margin-bottom: 8px;">
+                                    <button class="action-btn blue" onclick="replyTicket(this)">Отправить ответ</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 
-    <!-- JS SCRIPT LOGIC -->
+    <!-- JS LOGIC -->
     <script>
         let currentAuthMode = 'login';
         let currentUser = null;
@@ -817,12 +892,21 @@
             showToast('Вы вышли из аккаунта');
         }
 
-        function switchDashTab(tabName) {
-            document.querySelectorAll('.content > div').forEach(div => div.classList.add('hidden'));
-            document.getElementById(`dashTab-${tabName}`).classList.remove('hidden');
+        function switchDashTab(tabName, element) {
+            // Прячем все вкладки в контенте
+            const tabs = ['main', 'preorder', 'downloads', 'key', 'admin', 'moderation'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`dashTab-${t}`);
+                if(el) el.classList.add('hidden');
+            });
             
+            // Показываем нужную
+            const activeTab = document.getElementById(`dashTab-${tabName}`);
+            if(activeTab) activeTab.classList.remove('hidden');
+            
+            // Подсвечиваем пункт в боковом меню
             document.querySelectorAll('.nav-menu .nav-item').forEach(item => item.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            if(element) element.classList.add('active');
         }
 
         function activateKey() {
@@ -833,6 +917,28 @@
             }
             showToast('Ключ успешно активирован!', 'success');
             document.getElementById('licenseKeyInput').value = '';
+        }
+
+        /* Админ действия */
+        function adminGrantSub() {
+            const user = document.getElementById('adminUserTarget').value.trim();
+            if(!user) { showToast('Укажите ник!', 'error'); return; }
+            showToast(`Подписка выдана пользователю ${user}!`, 'success');
+        }
+
+        function adminResetHwid() {
+            const user = document.getElementById('adminUserTarget').value.trim();
+            if(!user) { showToast('Укажите ник!', 'error'); return; }
+            showToast(`HWID сброшен для ${user}!`, 'success');
+        }
+
+        /* Модерация действия */
+        function replyTicket(btn) {
+            const box = btn.closest('.list-box');
+            const badge = box.querySelector('.badge');
+            badge.className = 'badge done';
+            badge.innerText = 'ОТВЕЧЕНО';
+            showToast('Ответ отправлен пользователю!', 'success');
         }
     </script>
 </body>
