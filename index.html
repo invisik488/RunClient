@@ -576,14 +576,11 @@
                 pageId = 'auth';
             }
 
-            // Скрываем все разделы
             document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
 
-            // Показываем нужный раздел
             const target = document.getElementById(`page-${pageId}`);
             if (target) target.classList.remove('hidden');
 
-            // Обновляем подсветку ссылок в шапке
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
             const activeLink = document.getElementById(`nav-${pageId}`);
             if (activeLink) activeLink.classList.add('active');
@@ -600,6 +597,24 @@
             if (element) element.classList.add('active');
         }
 
+        function applyUserRole(username) {
+            // Базовый сброс прав в USER
+            document.getElementById('sidebarRole').innerText = 'USER';
+            document.getElementById('navItemPost').classList.add('hidden');
+            document.getElementById('navItemModeration').classList.add('hidden');
+            document.getElementById('navItemCapabilities').classList.add('hidden');
+            document.getElementById('navItemAdmin').classList.add('hidden');
+
+            // Выдаем Owner права ТОЛЬКО для конкретного ника
+            if (username && username.toLowerCase() === 'invisik') {
+                document.getElementById('sidebarRole').innerText = 'OWNER';
+                document.getElementById('navItemPost').classList.remove('hidden');
+                document.getElementById('navItemModeration').classList.remove('hidden');
+                document.getElementById('navItemCapabilities').classList.remove('hidden');
+                document.getElementById('navItemAdmin').classList.remove('hidden');
+            }
+        }
+
         function handleAuthSubmit() {
             const usernameInput = document.getElementById('authUsernameInput').value.trim();
             if (!usernameInput) {
@@ -612,13 +627,7 @@
             document.getElementById('sidebarUsername').innerText = currentUser;
             document.getElementById('navCabinetText').innerText = currentUser;
             
-            if (currentUser.toLowerCase() === 'invisik') {
-                document.getElementById('sidebarRole').innerText = 'OWNER';
-                document.getElementById('navItemPost').classList.remove('hidden');
-                document.getElementById('navItemModeration').classList.remove('hidden');
-                document.getElementById('navItemCapabilities').classList.remove('hidden');
-                document.getElementById('navItemAdmin').classList.remove('hidden');
-            }
+            applyUserRole(currentUser);
 
             showToast(`Успешный вход как ${currentUser}!`, 'success');
             navigateTo('cabinet');
@@ -716,18 +725,12 @@
             document.getElementById('hwidKeyInput').value = '';
         }
 
-        // Авто-логин если юзер уже был сохранен
+        // Авто-логин при перезагрузке страницы
         window.addEventListener('DOMContentLoaded', () => {
             if (currentUser) {
                 document.getElementById('sidebarUsername').innerText = currentUser;
                 document.getElementById('navCabinetText').innerText = currentUser;
-                if (currentUser.toLowerCase() === 'invisik') {
-                    document.getElementById('sidebarRole').innerText = 'OWNER';
-                    document.getElementById('navItemPost').classList.remove('hidden');
-                    document.getElementById('navItemModeration').classList.remove('hidden');
-                    document.getElementById('navItemCapabilities').classList.remove('hidden');
-                    document.getElementById('navItemAdmin').classList.remove('hidden');
-                }
+                applyUserRole(currentUser);
             }
         });
     </script>
