@@ -43,6 +43,21 @@
 
         .hidden { display: none !important; }
 
+        /* Единый стиль премиальных карточек с эффектом при наведении */
+        .card, .stat-card, .feature-card, .server-card, .tariff-card, .review-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+        .card:hover, .stat-card:hover, .feature-card:hover, .server-card:hover, .tariff-card:hover, .review-card:hover {
+            transform: translateY(-5px);
+            background: var(--bg-card-hover);
+            border-color: var(--accent-red);
+            box-shadow: 0 12px 30px var(--accent-red-glow);
+        }
+
         #toast-container {
             position: fixed; bottom: 24px; right: 24px; z-index: 9999;
             display: flex; flex-direction: column-reverse; gap: 12px;
@@ -107,26 +122,27 @@
         .hero p { color: var(--text-sub); font-size: 15px; max-width: 600px; margin: 0 auto; line-height: 1.6; }
 
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 30px; }
-        .stat-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 20px; text-align: center; }
+        .stat-card { padding: 20px; text-align: center; }
         .stat-val { font-size: 28px; font-weight: 900; color: #fff; }
         .stat-lbl { font-size: 11px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; }
 
-        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 30px; }
-        .feature-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; }
-        .feature-card h3 { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+        /* Вертикальный список особенностей (1 и 2 друг под другом) */
+        .features-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 30px; }
+        .feature-card { padding: 22px 26px; }
+        .feature-card h3 { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 6px; }
         .feature-card p { font-size: 13px; color: var(--text-sub); line-height: 1.5; }
 
         .servers-section { text-align: center; margin-top: 30px; }
         .servers-title { font-size: 18px; font-weight: 800; margin-bottom: 6px; color: #fff; }
         .servers-subtitle { font-size: 13px; color: var(--text-sub); margin-bottom: 16px; }
-        .servers-grid { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
-        .server-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 12px 20px; font-weight: 800; color: #fff; font-size: 13px; }
+        .servers-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+        .server-card { padding: 16px; font-weight: 800; color: #fff; font-size: 14px; text-align: center; }
 
-        /* Tariffs Grid */
-        .tariffs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-top: 20px; }
+        /* Тарифы сетка */
+        .tariffs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-bottom: 20px; }
         .tariff-card {
-            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 24px; padding: 24px 18px;
-            text-align: center; position: relative; display: flex; flex-direction: column; justify-content: space-between;
+            padding: 24px 18px; text-align: center; position: relative;
+            display: flex; flex-direction: column; justify-content: space-between;
         }
         .tariff-card.popular { border-color: var(--accent-red); background: linear-gradient(180deg, rgba(255, 51, 68, 0.08) 0%, var(--bg-card) 100%); }
         .tariff-badge {
@@ -144,7 +160,7 @@
         }
         .action-btn.green { background: var(--accent-green); color: #000; box-shadow: 0 4px 15px rgba(0,230,118,0.3); }
 
-        /* Auth Screen */
+        /* Авторизация */
         .auth-wrapper { display: flex; align-items: center; justify-content: center; min-height: 55vh; }
         .auth-card {
             background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 28px; padding: 36px;
@@ -162,7 +178,7 @@
         .form-input:focus, .form-textarea:focus { border-color: var(--accent-red); }
         .form-textarea { resize: vertical; min-height: 90px; }
 
-        /* Cabinet Dashboard */
+        /* Кабинет */
         .dash-container {
             display: grid; grid-template-columns: 240px 1fr; gap: 20px;
             background: var(--bg-card); backdrop-filter: blur(20px);
@@ -182,19 +198,17 @@
         .btn-logout:hover { border-color: var(--accent-red); color: var(--accent-red); }
 
         .content { padding: 10px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; max-height: 530px; }
-        .card { background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); border-radius: 18px; padding: 20px; margin-bottom: 12px; }
+        .card { padding: 20px; margin-bottom: 12px; }
         .card-header { font-size: 11px; color: var(--text-sub); font-weight: 800; text-transform: uppercase; margin-bottom: 14px; }
         .sub-title { font-size: 20px; font-weight: 800; color: var(--accent-green); margin-bottom: 4px; }
         .sub-desc { font-size: 13px; color: var(--text-sub); line-height: 1.5; }
 
-        /* Reviews Custom Styles */
-        .review-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 20px; margin-bottom: 14px; }
+        /* Отзывы */
+        .review-card { padding: 20px; margin-bottom: 14px; }
         .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .review-author { font-weight: 800; font-size: 14px; color: #fff; }
         .review-stars { color: #ffbc00; font-size: 13px; letter-spacing: 2px; }
         .review-text { font-size: 13px; color: var(--text-sub); line-height: 1.5; }
-
-        .rating-select { display: flex; gap: 8px; cursor: pointer; font-size: 20px; }
     </style>
 </head>
 <body>
@@ -203,7 +217,7 @@
     <div class="bg-glow-2"></div>
     <div id="toast-container"></div>
 
-    <!-- Верхняя навигация -->
+    <!-- Навигация -->
     <div class="navbar-container">
         <nav class="navbar">
             <div class="nav-left">
@@ -227,7 +241,7 @@
         </nav>
     </div>
 
-    <!-- Главная страница (полная версия со всеми блоками) -->
+    <!-- Главная страница -->
     <div id="page-home" class="page-section">
         <div class="hero">
             <div class="hero-badge">⚡ Fabric 1.21.4 Client</div>
@@ -238,7 +252,7 @@
             <div class="stat-card"><div class="stat-val">420+</div><div class="stat-lbl">Онлайн</div></div>
             <div class="stat-card"><div class="stat-val">1,480+</div><div class="stat-lbl">Подписок</div></div>
         </div>
-        <div class="features-grid">
+        <div class="features-list">
             <div class="feature-card">
                 <h3>🚀 Быстрый запуск и оптимизация</h3>
                 <p>Стабильный фреймрейт на любых серверах без просадок, быстрая загрузка модулей и мгновенный инжект.</p>
@@ -259,12 +273,13 @@
         </div>
     </div>
 
-    <!-- Тарифы (С ценами и платным сбросом HWID) -->
+    <!-- Тарифы и Сброс HWID карточками -->
     <div id="page-tariffs" class="page-section hidden">
         <div class="hero">
-            <h1>Тарифные планы</h1>
-            <p>Выберите подходящий срок доступа к софту и оформите подписку.</p>
+            <h1>Тарифные планы и Услуги</h1>
+            <p>Выберите подходящий срок доступа или воспользуйтесь услугами привязки.</p>
         </div>
+        <!-- Первый ряд: Тарифы -->
         <div class="tariffs-grid">
             <div class="tariff-card">
                 <div><div class="tariff-name">7 Дней</div><div class="tariff-price">69 <span>₽</span></div></div>
@@ -284,14 +299,16 @@
                 <button class="btn-buy" onclick="buyTariff('Навсегда (449 ₽)')">Купить</button>
             </div>
         </div>
-        <div style="margin-top: 40px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; text-align: center; max-width: 500px; margin-left: auto; margin-right: auto;">
-            <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 8px; color: #fff;">Сброс HWID устройства</h3>
-            <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 16px;">Смена привязки ПК стоит 139 ₽. Заявка отправляется на проверку администраторам.</p>
-            <button class="action-btn" onclick="requestHWIDReset()">Запросить сброс HWID (139 ₽)</button>
+        <!-- Второй ряд: Карточка сброса HWID -->
+        <div class="tariff-card" style="max-width: 450px; margin: 20px auto 0 auto; text-align: center; padding: 26px;">
+            <div style="font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 6px;">Сброс HWID устройства</div>
+            <div style="font-size: 13px; color: var(--text-sub); margin-bottom: 16px;">Смена привязки железа ПК. Заявка отправляется модераторам на проверку.</div>
+            <div style="font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 16px;">139 <span>₽</span></div>
+            <button class="action-btn" onclick="requestHWIDReset()">Запросить сброс HWID</button>
         </div>
     </div>
 
-    <!-- Страница: Отзывы (с добавлением своих) -->
+    <!-- Страница: Отзывы -->
     <div id="page-reviews" class="page-section hidden">
         <div class="hero">
             <h1>Отзывы пользователей</h1>
@@ -340,7 +357,7 @@
         </div>
     </div>
 
-    <!-- Страница: Помощь / FAQ -->
+    <!-- Страница: Помощь -->
     <div id="page-help" class="page-section hidden">
         <div class="hero">
             <h1>Центр помощи</h1>
@@ -353,41 +370,41 @@
             </div>
             <div class="card">
                 <div class="card-header">Что делать при смене ПК (HWID ошибка)?</div>
-                <p class="sub-desc">Перейдите в раздел «Тарифы» и оформите платную заявку на сброс HWID за 139 рублей. После одобрения администратором привязка сбросится.</p>
+                <p class="sub-desc">Перейдите в раздел «Тарифы» и оформите платную заявку на сброс HWID за 139 рублей. После одобрения привязка ПК сбросится.</p>
             </div>
         </div>
     </div>
 
-    <!-- Страница: Задать вопрос (Создание тикета) -->
+    <!-- Страница: Задать вопрос -->
     <div id="page-support" class="page-section hidden">
         <div class="hero">
             <h1>Техническая поддержка</h1>
-            <p>Возникли проблемы или вопросы? Создайте тикет, и модераторы ответят вам в личном кабинете.</p>
+            <p>Возникли проблемы? Создайте тикет, ответы будут поступать в вашем личном кабинете.</p>
         </div>
         <div style="max-width: 500px; margin: 0 auto;">
             <div class="card">
                 <div class="card-header">Новое обращение</div>
                 <div class="form-group">
                     <label>Тема обращения</label>
-                    <input type="text" id="ticketSubject" class="form-input" placeholder="Например: Ошибка при запуске...">
+                    <input type="text" id="ticketSubject" class="form-input" placeholder="Например: Ошибка запуска...">
                 </div>
                 <div class="form-group">
                     <label>Описание проблемы</label>
-                    <textarea id="ticketMessage" class="form-textarea" placeholder="Опишите детали ошибки подробно..."></textarea>
+                    <textarea id="ticketMessage" class="form-textarea" placeholder="Опишите детали ошибки..."></textarea>
                 </div>
                 <button class="action-btn" onclick="submitTicket()">Отправить вопрос</button>
             </div>
         </div>
     </div>
 
-    <!-- Полноценная Авторизация -->
+    <!-- Авторизация -->
     <div id="page-auth" class="page-section hidden">
         <div class="auth-wrapper">
             <div class="auth-card">
                 <div class="auth-title">Apex<span>Client</span></div>
                 <div class="auth-subtitle">Вход в систему или Регистрация</div>
                 <div class="form-group">
-                    <label>Ваш логин (введите owner или admin для прав)</label>
+                    <label>Ваш логин (invisik — для прав owner)</label>
                     <input type="text" id="authUsernameInput" class="form-input" placeholder="Имя пользователя">
                 </div>
                 <div class="form-group">
@@ -399,7 +416,7 @@
         </div>
     </div>
 
-    <!-- Личный Кабинет -->
+    <!-- Кабинет -->
     <div id="page-cabinet" class="page-section hidden">
         <div class="dash-container">
             <div class="sidebar">
@@ -425,7 +442,6 @@
                 <button class="btn-logout" onclick="logout()">Выйти</button>
             </div>
             <div class="content">
-                <!-- Вкладка: Главная Кабинета -->
                 <div id="cab-home" class="cab-tab-content">
                     <div class="card">
                         <div class="card-header">Статус подписки</div>
@@ -434,27 +450,24 @@
                     </div>
                 </div>
 
-                <!-- Вкладка: Мои предзаказы -->
                 <div id="cab-orders" class="cab-tab-content hidden">
                     <div class="card">
-                        <div class="card-header">История и Предзаказы</div>
+                        <div class="card-header">История и Подписки</div>
                         <div id="ordersListContainer">
-                            <p class="sub-desc">У вас пока нет активных предзаказов. Вы можете оформить их на вкладке «Тарифы».</p>
+                            <p class="sub-desc">У вас пока нет активных подписок. Вы можете оформить их на вкладке «Тарифы».</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Вкладка: Мои тикеты (Ответы поддержки) -->
                 <div id="cab-tickets" class="cab-tab-content hidden">
                     <div class="card">
-                        <div class="card-header">История обращений в поддержку</div>
+                        <div class="card-header">Мои тикеты и ответы поддержки</div>
                         <div id="userTicketsContainer">
-                            <p class="sub-desc">Вы еще не отправляли вопросы. Перейдите во вкладку «Задать вопрос», чтобы создать тикет.</p>
+                            <p class="sub-desc">Вы еще не отправляли вопросы.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Вкладка: Активация ключей -->
                 <div id="cab-keys" class="cab-tab-content hidden">
                     <div class="card">
                         <div class="card-header">Активация промо / ключа</div>
@@ -465,7 +478,6 @@
                     </div>
                 </div>
 
-                <!-- Вкладка: Создать пост -->
                 <div id="cab-post" class="cab-tab-content hidden">
                     <div class="card">
                         <div class="card-header">Создать публикацию</div>
@@ -481,7 +493,6 @@
                     </div>
                 </div>
 
-                <!-- Вкладка: Загрузки -->
                 <div id="cab-downloads" class="cab-tab-content hidden">
                     <div class="card">
                         <div class="card-header">Загрузка лоадера</div>
@@ -490,7 +501,6 @@
                     </div>
                 </div>
 
-                <!-- Вкладка: Модерация (Заявки HWID и Тикеты поддержки) -->
                 <div id="cab-moderation" class="cab-tab-content hidden">
                     <div class="card">
                         <div class="card-header">Заявки на сброс HWID (139 ₽)</div>
@@ -501,16 +511,15 @@
                     <div class="card">
                         <div class="card-header">Тикеты пользователей</div>
                         <div id="adminTicketsContainer">
-                            <p class="sub-desc">Нет активных вопросов от пользователей.</p>
+                            <p class="sub-desc">Нет активных вопросов.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Вкладка: Админ панель -->
                 <div id="cab-admin" class="cab-tab-content hidden">
                     <div class="card">
                         <div class="card-header">Панель Владельца</div>
-                        <p class="sub-desc" style="margin-bottom: 12px;">Генерация ключей доступа и полный контроль над системой.</p>
+                        <p class="sub-desc" style="margin-bottom: 12px;">Управление ключами доступа и пользователями.</p>
                         <button class="action-btn" onclick="showToast('Ключ сгенерирован!', 'success')">➕ Сгенерировать ключ подписки</button>
                     </div>
                 </div>
@@ -521,8 +530,8 @@
     <script>
         let currentUser = null;
         let userOrders = [];
-        let hwidRequests = []; // Заявки на сброс HWID
-        let supportTickets = []; // Тикеты поддержки
+        let hwidRequests = [];
+        let supportTickets = [];
 
         function navigateTo(pageId) {
             if (pageId === 'cabinet' && !currentUser) {
@@ -559,7 +568,7 @@
             }
             const lowerName = username.toLowerCase();
             let role = 'USER';
-            if (lowerName === 'owner') role = 'OWNER';
+            if (lowerName === 'invisik' || lowerName === 'owner') role = 'OWNER';
             else if (lowerName === 'admin') role = 'ADMIN';
 
             currentUser = { username: username, role: role };
@@ -589,6 +598,8 @@
 
             showToast('Успешный вход!', 'success');
             navigateTo('cabinet');
+            updateHWIDRequestsUI();
+            updateTicketsUI();
         }
 
         function logout() {
@@ -616,7 +627,7 @@
         function updateOrdersUI() {
             const container = document.getElementById('ordersListContainer');
             if (userOrders.length === 0) {
-                container.innerHTML = `<p class="sub-desc">У вас пока нет активных предзаказов. Вы можете оформить их на вкладке «Тарифы».</p>`;
+                container.innerHTML = `<p class="sub-desc">У вас пока нет активных подписок. Вы можете оформить их на вкладке «Тарифы».</p>`;
             } else {
                 container.innerHTML = userOrders.map((order, idx) => `
                     <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
@@ -627,7 +638,6 @@
             }
         }
 
-        // Платный сброс HWID (139р)
         function requestHWIDReset() {
             if (!currentUser) {
                 showToast('Сначала войдите в личный кабинет!', 'error');
@@ -679,7 +689,6 @@
             }
         }
 
-        // Тикеты поддержки
         function submitTicket() {
             if (!currentUser) {
                 showToast('Сначала войдите в кабинет!', 'error');
@@ -712,10 +721,9 @@
             
             if (!currentUser) return;
 
-            // Для обычного юзера
             const myTickets = supportTickets.filter(t => t.username === currentUser.username);
             if (myTickets.length === 0) {
-                userContainer.innerHTML = `<p class="sub-desc">Вы еще не отправляли вопросы. Перейдите во вкладку «Задать вопрос», чтобы создать тикет.</p>`;
+                userContainer.innerHTML = `<p class="sub-desc">Вы еще не отправляли вопросы.</p>`;
             } else {
                 userContainer.innerHTML = myTickets.map(t => `
                     <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-bottom: 10px;">
@@ -728,7 +736,6 @@
                 `).join('');
             }
 
-            // Для админа/модератора
             if (supportTickets.length === 0) {
                 adminContainer.innerHTML = `<p class="sub-desc">Нет активных вопросов от пользователей.</p>`;
             } else {
@@ -761,11 +768,10 @@
             if (ticket) {
                 ticket.answer = ansText;
                 updateTicketsUI();
-                showToast('Ответ успешно отправлен пользователю!', 'success');
+                showToast('Ответ успешно отправлен!', 'success');
             }
         }
 
-        // Добавление отзывов
         function addNewReview() {
             const author = document.getElementById('reviewAuthorInput').value.trim();
             const rating = parseInt(document.getElementById('reviewRatingInput').value);
