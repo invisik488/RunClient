@@ -568,6 +568,7 @@
                         <li class="nav-item" onclick="switchCabinetTab('downloads', this)">📥 Загрузки</li>
                         <li class="nav-item hidden" id="navItemModeration" onclick="switchCabinetTab('moderation', this)">🛡️ Модерация (<span id="modCountBadge">0</span>)</li>
                         <li class="nav-item hidden" id="navItemCapabilities" onclick="switchCabinetTab('capabilities', this)">🛠️ Настройка возможностей</li>
+                        <li class="nav-item hidden" id="navItemRoles" onclick="switchCabinetTab('roles', this)">👑 Управление ролями</li>
                         <li class="nav-item hidden" id="navItemAdmin" onclick="switchCabinetTab('admin', this)">⚙️ Панель Владельца</li>
                     </ul>
                 </div>
@@ -663,7 +664,7 @@
 
                 <div id="cab-capabilities" class="cab-tab-content hidden">
                     <div class="card">
-                        <div class="card-header">🛠️ Настройка возможностей пользователя</div>
+                        <div class="card-header">🛠️ Настройка возможностей пользователя (Поиск по нику)</div>
                         <div class="form-group">
                             <label>Ник пользователя</label>
                             <div style="display: flex; gap: 8px;">
@@ -672,6 +673,18 @@
                             </div>
                         </div>
                         <div id="capSearchResultContainer"></div>
+                    </div>
+                </div>
+
+                <div id="cab-roles" class="cab-tab-content hidden">
+                    <div class="card">
+                        <div class="card-header">👑 Управление ролями и их возможностями</div>
+                        <p class="sub-desc" style="margin-bottom: 16px;">Создавайте кастомные роли и настраивайте доступы к функционалу.</p>
+                        <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+                            <input type="text" id="newRoleNameInput" class="form-input" placeholder="Название новой роли (например: Helper)...">
+                            <button class="action-btn green" style="width: 180px;" onclick="createNewRole()">Создать роль</button>
+                        </div>
+                        <div id="rolesListContainer"></div>
                     </div>
                 </div>
 
@@ -705,16 +718,23 @@
     <script>
         let currentUser = localStorage.getItem('apex_user') || null;
 
-        // Принудительно очищаем старый кэш браузера при запуске, чтобы база данных всегда создавалась заново с правильными аккаунтами
-        if (!localStorage.getItem('apex_db_users_v2')) {
+        if (!localStorage.getItem('apex_db_users_v3')) {
             localStorage.removeItem('apex_db_users');
-            localStorage.setItem('apex_db_users_v2', 'true');
+            localStorage.removeItem('apex_roles');
+            localStorage.setItem('apex_db_users_v3', 'true');
         }
 
         let registeredUsers = JSON.parse(localStorage.getItem('apex_db_users')) || {
             "invisik": { password: "123", role: "OWNER", sub: "Навсегда", banned: false, banReason: "", banDuration: "" },
-            "sextazyst": { password: "123", role: "USER", sub: "30д", banned: false, banReason: "", banDuration: "" },
-            "veselchak": { password: "123", role: "USER", sub: "90д", banned: false, banReason: "", banDuration: "" }
+            "sextazyst": { password: "123", role: "user", sub: "30д", banned: false, banReason: "", banDuration: "" },
+            "veselchak": { password: "123", role: "user", sub: "90д", banned: false, banReason: "", banDuration: "" }
+        };
+
+        let customRoles = JSON.parse(localStorage.getItem('apex_roles')) || {
+            "owner": { permissions: { canBan: true, canAccessAdmin: true, canEditRoles: true, canViewTickets: true } },
+            "admin": { permissions: { canBan: true, canAccessAdmin: true, canEditRoles: false, canViewTickets: true } },
+            "moder": { permissions: { canBan: false, canAccessAdmin: false, canEditRoles: false, canViewTickets: true } },
+            "user": { permissions: { canBan: false, canAccessAdmin: false, canEditRoles: false, canViewTickets: false } }
         };
 
         let appRequests = JSON.parse(localStorage.getItem('apex_requests')) || {
@@ -725,6 +745,7 @@
 
         function saveDB() {
             localStorage.setItem('apex_db_users', JSON.stringify(registeredUsers));
+            localStorage.setItem('apex_roles', JSON.stringify(customRoles));
             localStorage.setItem('apex_requests', JSON.stringify(appRequests));
         }
 
@@ -790,6 +811,9 @@
             if (tabName === 'tickets') {
                 renderUserTickets();
             }
+            if (tabName === 'roles') {
+                renderRolesManagement();
+            }
         }
 
         function applyUserRole(username) {
@@ -797,6 +821,7 @@
             document.getElementById('navItemPost').classList.add('hidden');
             document.getElementById('navItemModeration').classList.add('hidden');
             document.getElementById('navItemCapabilities').classList.add('hidden');
+            document.getElementById('navItemRoles').classList.add('hidden');
             document.getElementById('navItemAdmin').classList.add('hidden');
 
             if (!username) return;
@@ -804,7 +829,10 @@
             if (!registeredUsers[lower]) return;
 
             const userData = registeredUsers[lower];
+            const userRole = (userData.role || 'user').toLowerCase();
             
+            document.getElementById('sidebarRole').innerText = userRole.toUpperCase();
+
             const subTextEl = document.getElementById('subStatusText');
             const subDescEl = document.getElementById('subStatusDesc');
             
@@ -823,17 +851,21 @@
                 subDescEl.innerText = 'Доступ к Fabric 1.21.4 клиенту работает без ограничений.';
             }
 
-            if (userData.role === 'OWNER' || lower === 'invisik') {
-                document.getElementById('sidebarRole').innerText = 'OWNER';
+            // Права доступа на основе роли
+            if (userRole === 'owner' || userRole === 'admin' || lower === 'invisik') {
                 document.getElementById('navItemPost').classList.remove('hidden');
-                document.getElementById('navItemModeration').classList.remove('hidden');
                 document.getElementById('navItemCapabilities').classList.remove('hidden');
+                document.getElementById('navItemRoles').classList.remove('hidden');
+            }
+            if (userRole === 'owner' || userRole === 'admin' || userRole === 'moder') {
+                document.getElementById('navItemModeration').classList.remove('hidden');
+            }
+            if (userRole === 'owner' || lower === 'invisik') {
                 document.getElementById('navItemAdmin').classList.remove('hidden');
             }
         }
 
         function handleLogin() {
-            // УБИРАЕМ лишние пробелы по краям с помощью .trim(), чтобы случайные пробелы не ломали вход
             const usernameInput = document.getElementById('loginUsernameInput').value.trim();
             const password = document.getElementById('loginPasswordInput').value.trim();
 
@@ -844,11 +876,10 @@
 
             const lower = usernameInput.toLowerCase();
             
-            // ЕСЛИ пользователя нет в базе — АВТОМАТИЧЕСКИ регистрируем его прямо сейчас (чтобы вход никогда не выдавал ошибку из-за стертой базы)
             if (!registeredUsers[lower]) {
                 registeredUsers[lower] = {
                     password: password,
-                    role: lower === 'invisik' ? 'OWNER' : 'USER',
+                    role: lower === 'invisik' ? 'owner' : 'user',
                     sub: lower === 'invisik' ? 'Навсегда' : '30д',
                     banned: false,
                     banReason: '',
@@ -857,7 +888,6 @@
                 saveDB();
             }
 
-            // Сверяем пароль
             if (String(registeredUsers[lower].password) !== String(password)) {
                 showToast('Неверный никнейм или пароль!', 'error');
                 return;
@@ -893,7 +923,7 @@
             
             registeredUsers[lower] = {
                 password: password,
-                role: lower === 'invisik' ? 'OWNER' : 'USER',
+                role: lower === 'invisik' ? 'owner' : 'user',
                 sub: lower === 'invisik' ? 'Навсегда' : '30д',
                 banned: false,
                 banReason: '',
@@ -1174,28 +1204,42 @@
             }
 
             const u = registeredUsers[query];
+            const allRolesKeys = Object.keys(customRoles);
+
             container.innerHTML = `
                 <div class="search-result-box">
                     <div style="font-weight: 800; font-size: 15px; margin-bottom: 10px; color: #fff;">Пользователь: ${query}</div>
-                    <div style="font-size: 13px; color: var(--text-sub); margin-bottom: 12px;">Роль: <b>${u.role}</b> | Подписка: <b>${u.sub}</b> | Статус: <b>${u.banned ? 'ЗАБАНЕН (заморожен)' : 'Активен'}</b></div>
+                    <div style="font-size: 13px; color: var(--text-sub); margin-bottom: 12px;">Текущая роль: <b>${u.role}</b> | Подписка: <b>${u.sub}</b> | Статус: <b>${u.banned ? 'ЗАБАНЕН' : 'Активен'}</b></div>
                     
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label>Выбрать роль для игрока</label>
+                        <select id="selectRoleForUser_${query}" class="form-select">
+                            ${allRolesKeys.map(r => `<option value="${r}" ${u.role.toLowerCase() === r ? 'selected' : ''}>${r.toUpperCase()}</option>`).join('')}
+                        </select>
+                    </div>
+
                     <div style="display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
-                        <button class="action-btn green" style="flex:1;" onclick="adminToggleRole('${query}')">Изменить роль (USER/OWNER)</button>
+                        <button class="action-btn green" style="flex:1;" onclick="adminSaveUserRole('${query}')">Сохранить роль</button>
                         <button class="action-btn yellow" style="flex:1;" onclick="adminResetHWID('${query}')">Сбросить HWID</button>
                     </div>
                     <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                        <button class="action-btn dark" style="flex:1;" onclick="adminGiveSub('${query}')">Выдать/Продлить подписку</button>
+                        <button class="action-btn dark" style="flex:1;" onclick="adminGiveSub('${query}')">Продлить подписку</button>
                         <button class="action-btn" style="flex:1; background: var(--accent-red);" onclick="adminPromptBan('${query}')">${u.banned ? 'Разбанить' : 'Забанить'}</button>
                     </div>
                 </div>
             `;
         }
 
-        function adminToggleRole(username) {
-            const u = registeredUsers[username];
-            u.role = u.role === 'OWNER' ? 'USER' : 'OWNER';
+        function adminSaveUserRole(username) {
+            const selectEl = document.getElementById(`selectRoleForUser_${username}`);
+            if (!selectEl) return;
+            const newRole = selectEl.value;
+            registeredUsers[username].role = newRole;
             saveDB();
-            showToast(`Роль игрока ${username} изменена на ${u.role}`);
+            if (currentUser && currentUser.toLowerCase() === username) {
+                applyUserRole(currentUser);
+            }
+            showToast(`Роль игрока ${username} изменена на ${newRole.toUpperCase()}!`);
             searchUserCapabilities();
         }
 
@@ -1206,6 +1250,9 @@
         function adminGiveSub(username) {
             registeredUsers[username].sub = '30д';
             saveDB();
+            if (currentUser && currentUser.toLowerCase() === username) {
+                applyUserRole(currentUser);
+            }
             showToast(`Игроку ${username} выдана подписка (30д)!`);
             searchUserCapabilities();
         }
@@ -1217,6 +1264,9 @@
                 u.banReason = '';
                 u.banDuration = '';
                 saveDB();
+                if (currentUser && currentUser.toLowerCase() === username) {
+                    applyUserRole(currentUser);
+                }
                 showToast(`Игрок ${username} разбанен! Подписка разморожена.`);
                 searchUserCapabilities();
                 return;
@@ -1228,19 +1278,83 @@
             const reason = prompt(`Введите причину бана для игрока ${username}:`);
             if (!reason) return;
 
-            const confirm1 = confirm(`ВНИМАНИЕ! Вы точно хотите забанить игрока ${username}?\nСрок: ${duration}\nПричина: ${reason}\nПодписка будет заморожена, игрок не сможет приобретать товары, писать тикеты и отзывы.`);
-            if (!confirm1) return;
-
-            const confirm2 = confirm(`ПОДТВЕРДИТЕ ЕЩЕ РАЗ: Заблокировать пользователя ${username}? Действие вступит в силу немедленно.`);
-            if (!confirm2) return;
-
             u.banned = true;
             u.banDuration = duration;
             u.banReason = reason;
             saveDB();
+            if (currentUser && currentUser.toLowerCase() === username) {
+                applyUserRole(currentUser);
+            }
 
             showToast(`Игрок ${username} заблокирован, подписка заморожена!`, 'error');
             searchUserCapabilities();
+        }
+
+        function createNewRole() {
+            const roleInput = document.getElementById('newRoleNameInput');
+            const roleName = roleInput.value.trim().toLowerCase();
+            if (!roleName) {
+                showToast('Введите название роли!', 'error');
+                return;
+            }
+            if (customRoles[roleName]) {
+                showToast('Такая роль уже существует!', 'error');
+                return;
+            }
+
+            customRoles[roleName] = {
+                permissions: { canBan: false, canAccessAdmin: false, canEditRoles: false, canViewTickets: true }
+            };
+            saveDB();
+            roleInput.value = '';
+            showToast(`Роль "${roleName.toUpperCase()}" успешно создана!`);
+            renderRolesManagement();
+        }
+
+        function renderRolesManagement() {
+            const container = document.getElementById('rolesListContainer');
+            const rolesKeys = Object.keys(customRoles);
+
+            container.innerHTML = rolesKeys.map(roleKey => {
+                const p = customRoles[roleKey].permissions;
+                return `
+                    <div style="background: rgba(0,0,0,0.35); border: 1px solid var(--border-color); border-radius: 16px; padding: 18px; margin-bottom: 14px;">
+                        <div style="font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <span>👑 Роль: ${roleKey.toUpperCase()}</span>
+                            ${roleKey !== 'owner' && roleKey !== 'user' ? `<button class="action-btn" style="width: auto; padding: 4px 10px; font-size: 11px; background: var(--accent-red);" onclick="deleteRole('${roleKey}')">Удалить</button>` : ''}
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <label style="font-size: 12px; color: var(--text-sub); display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" ${p.canBan ? 'checked' : ''} onchange="togglePermission('${roleKey}', 'canBan', this.checked)"> Право банить пользователей
+                            </label>
+                            <label style="font-size: 12px; color: var(--text-sub); display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" ${p.canAccessAdmin ? 'checked' : ''} onchange="togglePermission('${roleKey}', 'canAccessAdmin', this.checked)"> Доступ к генерации ключей владельца
+                            </label>
+                            <label style="font-size: 12px; color: var(--text-sub); display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" ${p.canViewTickets ? 'checked' : ''} onchange="togglePermission('${roleKey}', 'canViewTickets', this.checked)"> Просмотр модерации и тикетов
+                            </label>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function togglePermission(roleKey, permName, value) {
+            if (!customRoles[roleKey]) return;
+            customRoles[roleKey].permissions[permName] = value;
+            saveDB();
+            showToast(`Права для роли ${roleKey.toUpperCase()} обновлены!`);
+        }
+
+        function deleteRole(roleKey) {
+            if (roleKey === 'owner' || roleKey === 'user' || roleKey === 'admin' || roleKey === 'moder') {
+                showToast('Нельзя удалить стандартные системные роли!', 'error');
+                return;
+            }
+            delete customRoles[roleKey];
+            saveDB();
+            showToast(`Роль ${roleKey.toUpperCase()} удалена.`);
+            renderRolesManagement();
         }
 
         function generateSubKey() {
@@ -1269,9 +1383,9 @@
         window.addEventListener('DOMContentLoaded', () => {
             if (!registeredUsers["invisik"]) {
                 registeredUsers = {
-                    "invisik": { password: "123", role: "OWNER", sub: "Навсегда", banned: false, banReason: "", banDuration: "" },
-                    "sextazyst": { password: "123", role: "USER", sub: "30д", banned: false, banReason: "", banDuration: "" },
-                    "veselchak": { password: "123", role: "USER", sub: "90д", banned: false, banReason: "", banDuration: "" }
+                    "invisik": { password: "123", role: "owner", sub: "Навсегда", banned: false, banReason: "", banDuration: "" },
+                    "sextazyst": { password: "123", role: "user", sub: "30д", banned: false, banReason: "", banDuration: "" },
+                    "veselchak": { password: "123", role: "user", sub: "90д", banned: false, banReason: "", banDuration: "" }
                 };
                 saveDB();
             }
