@@ -35,16 +35,11 @@
             position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
             width: 800px; height: 500px; background: radial-gradient(circle, rgba(255, 51, 68, 0.18) 0%, rgba(0,0,0,0) 70%);
             z-index: -1; pointer-events: none; filter: blur(80px);
-            animation: pulseGlow 8s ease-in-out infinite alternate;
         }
         .bg-glow-2 {
             position: fixed; bottom: -150px; right: -150px;
             width: 600px; height: 600px; background: radial-gradient(circle, rgba(0, 136, 255, 0.1) 0%, rgba(0,0,0,0) 70%);
             z-index: -1; pointer-events: none; filter: blur(100px);
-        }
-        @keyframes pulseGlow {
-            0% { transform: translateX(-50%) scale(1); opacity: 0.8; }
-            100% { transform: translateX(-50%) scale(1.15); opacity: 1; }
         }
 
         .hidden { display: none !important; }
@@ -124,11 +119,6 @@
             display: inline-flex; align-items: center; gap: 6px;
             background: rgba(255, 51, 68, 0.1); border: 1px solid rgba(255, 51, 68, 0.25);
             color: #ff6675; font-size: 12px; font-weight: 700; padding: 6px 16px; border-radius: 20px; margin-bottom: 18px;
-            animation: floatBadge 3s ease-in-out infinite alternate;
-        }
-        @keyframes floatBadge {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-4px); }
         }
         .hero h1 { font-size: 52px; font-weight: 900; margin-bottom: 16px; color: #fff; letter-spacing: -1.5px; line-height: 1.1; }
         .hero h1 span { background: linear-gradient(135deg, #ff3344 0%, #ff8899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -605,7 +595,7 @@
                     <div class="card">
                         <div class="card-header">Активация ключа подписки</div>
                         <div class="form-group" style="margin-bottom: 12px;">
-                            <input type="text" id="subKeyInput" class="form-input" placeholder="Введите ключ подписки (например, APEX-XXXX)...">
+                            <input type="text" id="subKeyInput" class="form-input" placeholder="Введите ключ подписки (например, APEX-SUB-XXXX)...">
                         </div>
                         <button class="action-btn green" onclick="activateSubKey()">Активировать подписку</button>
                     </div>
@@ -668,7 +658,7 @@
                         <div class="form-group">
                             <label>Ник пользователя</label>
                             <div style="display: flex; gap: 8px;">
-                                <input type="text" id="capSearchInput" class="form-input" placeholder="Введите точный ник...">
+                                <input type="text" id="capSearchInput" class="form-input" placeholder="Введите точный ник или часть ника...">
                                 <button class="action-btn" style="width: 140px;" onclick="searchUserCapabilities()">Найти</button>
                             </div>
                         </div>
@@ -718,14 +708,14 @@
     <script>
         let currentUser = localStorage.getItem('apex_user') || null;
 
-        if (!localStorage.getItem('apex_db_users_v3')) {
+        if (!localStorage.getItem('apex_db_users_v4')) {
             localStorage.removeItem('apex_db_users');
             localStorage.removeItem('apex_roles');
-            localStorage.setItem('apex_db_users_v3', 'true');
+            localStorage.setItem('apex_db_users_v4', 'true');
         }
 
         let registeredUsers = JSON.parse(localStorage.getItem('apex_db_users')) || {
-            "invisik": { password: "123", role: "OWNER", sub: "Навсегда", banned: false, banReason: "", banDuration: "" },
+            "invisik": { password: "123", role: "owner", sub: "Навсегда", banned: false, banReason: "", banDuration: "" },
             "sextazyst": { password: "123", role: "user", sub: "30д", banned: false, banReason: "", banDuration: "" },
             "veselchak": { password: "123", role: "user", sub: "90д", banned: false, banReason: "", banDuration: "" }
         };
@@ -743,10 +733,14 @@
             tickets: []
         };
 
+        // Хранилище сгенерированных ключей: { "APEX-SUB-XXXX": "90д" }
+        let activeKeysDB = JSON.parse(localStorage.getItem('apex_keys_db')) || {};
+
         function saveDB() {
             localStorage.setItem('apex_db_users', JSON.stringify(registeredUsers));
             localStorage.setItem('apex_roles', JSON.stringify(customRoles));
             localStorage.setItem('apex_requests', JSON.stringify(appRequests));
+            localStorage.setItem('apex_keys_db', JSON.stringify(activeKeysDB));
         }
 
         function showToast(message, type = 'success') {
@@ -851,7 +845,6 @@
                 subDescEl.innerText = 'Доступ к Fabric 1.21.4 клиенту работает без ограничений.';
             }
 
-            // Права доступа на основе роли
             if (userRole === 'owner' || userRole === 'admin' || lower === 'invisik') {
                 document.getElementById('navItemPost').classList.remove('hidden');
                 document.getElementById('navItemCapabilities').classList.remove('hidden');
@@ -1060,18 +1053,38 @@
             document.getElementById('ticketMessage').value = '';
         }
 
+        // --- ИСПРАВЛЕННАЯ АКТИВАЦИЯ КЛЮЧА ПОДПИСКИ ---
         function activateSubKey() {
+            if (!currentUser) {
+                showToast('Войдите в аккаунт!', 'error');
+                return;
+            }
             if (checkUserBanAction()) return;
-            const key = document.getElementById('subKeyInput').value.trim();
+
+            const key = document.getElementById('subKeyInput').value.trim().toUpperCase();
             if (!key) {
                 showToast('Введите ключ подписки!', 'error');
                 return;
             }
-            registeredUsers[currentUser.toLowerCase()].sub = '30д';
-            saveDB();
-            applyUserRole(currentUser);
-            showToast('Ключ подписки успешно активирован!', 'success');
-            document.getElementById('subKeyInput').value = '';
+
+            if (!activeKeysDB[key]) {
+                showToast('Неверный или уже использованный ключ!', 'error');
+                return;
+            }
+
+            const duration = activeKeysDB[key]; // Например, "90д", "7д", "Навсегда"
+            const lowerUser = currentUser.toLowerCase();
+
+            if (registeredUsers[lowerUser]) {
+                registeredUsers[lowerUser].sub = duration;
+                delete activeKeysDB[key]; // удаляем ключ, чтобы нельзя было активировать повторно
+                saveDB();
+                applyUserRole(currentUser);
+                showToast(`Ключ успешно активирован! Подписка обновлена на: ${duration}`, 'success');
+                document.getElementById('subKeyInput').value = '';
+            } else {
+                showToast('Ошибка аккаунта в базе данных', 'error');
+            }
         }
 
         function activateHWIDKey() {
@@ -1186,48 +1199,55 @@
             `).join('');
         }
 
+        // --- ИСПРАВЛЕННЫЙ ПОИСК И НАСТРОЙКА ИГРОКОВ ---
         function searchUserCapabilities() {
             const rawQuery = document.getElementById('capSearchInput').value;
             const container = document.getElementById('capSearchResultContainer');
             container.innerHTML = '';
 
             if (!rawQuery) {
-                container.innerHTML = `<div class="search-result-box" style="color: var(--accent-red); font-weight: 700; text-align: center;">данный игрок не найден или не правильные дынные</div>`;
+                container.innerHTML = `<div class="search-result-box" style="color: var(--accent-red); font-weight: 700; text-align: center;">Введите ник для поиска игрока</div>`;
                 return;
             }
 
             const query = rawQuery.trim().toLowerCase();
 
-            if (!registeredUsers[query]) {
-                container.innerHTML = `<div class="search-result-box" style="color: var(--accent-red); font-weight: 700; text-align: center;">данный игрок не найден или не правильные дынные</div>`;
+            // Ищем пользователя (точное совпадение или частичное совпадение по нику)
+            const matchedKeys = Object.keys(registeredUsers).filter(username => username.toLowerCase().includes(query));
+
+            if (matchedKeys.length === 0) {
+                container.innerHTML = `<div class="search-result-box" style="color: var(--accent-red); font-weight: 700; text-align: center;">данный игрок не найден или не правильные данные</div>`;
                 return;
             }
 
-            const u = registeredUsers[query];
-            const allRolesKeys = Object.keys(customRoles);
+            // Выводим всех найденных игроков
+            container.innerHTML = matchedKeys.map(username => {
+                const u = registeredUsers[username];
+                const allRolesKeys = Object.keys(customRoles);
 
-            container.innerHTML = `
-                <div class="search-result-box">
-                    <div style="font-weight: 800; font-size: 15px; margin-bottom: 10px; color: #fff;">Пользователь: ${query}</div>
-                    <div style="font-size: 13px; color: var(--text-sub); margin-bottom: 12px;">Текущая роль: <b>${u.role}</b> | Подписка: <b>${u.sub}</b> | Статус: <b>${u.banned ? 'ЗАБАНЕН' : 'Активен'}</b></div>
-                    
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label>Выбрать роль для игрока</label>
-                        <select id="selectRoleForUser_${query}" class="form-select">
-                            ${allRolesKeys.map(r => `<option value="${r}" ${u.role.toLowerCase() === r ? 'selected' : ''}>${r.toUpperCase()}</option>`).join('')}
-                        </select>
-                    </div>
+                return `
+                    <div class="search-result-box" style="margin-bottom: 14px;">
+                        <div style="font-weight: 800; font-size: 15px; margin-bottom: 10px; color: #fff;">Пользователь: ${username}</div>
+                        <div style="font-size: 13px; color: var(--text-sub); margin-bottom: 12px;">Текущая роль: <b>${u.role}</b> | Подписка: <b>${u.sub}</b> | Статус: <b>${u.banned ? 'ЗАБАНЕН' : 'Активен'}</b></div>
+                        
+                        <div class="form-group" style="margin-bottom: 12px;">
+                            <label>Выбрать роль для игрока</label>
+                            <select id="selectRoleForUser_${username}" class="form-select">
+                                ${allRolesKeys.map(r => `<option value="${r}" ${u.role.toLowerCase() === r ? 'selected' : ''}>${r.toUpperCase()}</option>`).join('')}
+                            </select>
+                        </div>
 
-                    <div style="display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
-                        <button class="action-btn green" style="flex:1;" onclick="adminSaveUserRole('${query}')">Сохранить роль</button>
-                        <button class="action-btn yellow" style="flex:1;" onclick="adminResetHWID('${query}')">Сбросить HWID</button>
+                        <div style="display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
+                            <button class="action-btn green" style="flex:1;" onclick="adminSaveUserRole('${username}')">Сохранить роль</button>
+                            <button class="action-btn yellow" style="flex:1;" onclick="adminResetHWID('${username}')">Сбросить HWID</button>
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button class="action-btn dark" style="flex:1;" onclick="adminGiveSub('${username}')">Продлить подписку</button>
+                            <button class="action-btn" style="flex:1; background: var(--accent-red);" onclick="adminPromptBan('${username}')">${u.banned ? 'Разбанить' : 'Забанить'}</button>
+                        </div>
                     </div>
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                        <button class="action-btn dark" style="flex:1;" onclick="adminGiveSub('${query}')">Продлить подписку</button>
-                        <button class="action-btn" style="flex:1; background: var(--accent-red);" onclick="adminPromptBan('${query}')">${u.banned ? 'Разбанить' : 'Забанить'}</button>
-                    </div>
-                </div>
-            `;
+                `;
+            }).join('');
         }
 
         function adminSaveUserRole(username) {
@@ -1236,7 +1256,7 @@
             const newRole = selectEl.value;
             registeredUsers[username].role = newRole;
             saveDB();
-            if (currentUser && currentUser.toLowerCase() === username) {
+            if (currentUser && currentUser.toLowerCase() === username.toLowerCase()) {
                 applyUserRole(currentUser);
             }
             showToast(`Роль игрока ${username} изменена на ${newRole.toUpperCase()}!`);
@@ -1250,7 +1270,7 @@
         function adminGiveSub(username) {
             registeredUsers[username].sub = '30д';
             saveDB();
-            if (currentUser && currentUser.toLowerCase() === username) {
+            if (currentUser && currentUser.toLowerCase() === username.toLowerCase()) {
                 applyUserRole(currentUser);
             }
             showToast(`Игроку ${username} выдана подписка (30д)!`);
@@ -1264,7 +1284,7 @@
                 u.banReason = '';
                 u.banDuration = '';
                 saveDB();
-                if (currentUser && currentUser.toLowerCase() === username) {
+                if (currentUser && currentUser.toLowerCase() === username.toLowerCase()) {
                     applyUserRole(currentUser);
                 }
                 showToast(`Игрок ${username} разбанен! Подписка разморожена.`);
@@ -1282,7 +1302,7 @@
             u.banDuration = duration;
             u.banReason = reason;
             saveDB();
-            if (currentUser && currentUser.toLowerCase() === username) {
+            if (currentUser && currentUser.toLowerCase() === username.toLowerCase()) {
                 applyUserRole(currentUser);
             }
 
@@ -1358,8 +1378,13 @@
         }
 
         function generateSubKey() {
-            const duration = document.getElementById('genSubDuration').value;
+            const duration = document.getElementById('genSubDuration').value; // "90д", "7д" и т.д.
             const randomKey = 'APEX-SUB-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            
+            // Сохраняем ключ в базу данных ключей со сроком
+            activeKeysDB[randomKey] = duration;
+            saveDB();
+
             document.getElementById('generatedKeyOutput').innerHTML = `
                 <div class="search-result-box" style="background: rgba(0,230,118,0.05); border-color: var(--accent-green);">
                     <div style="font-size: 11px; color: var(--accent-green); font-weight: 800; margin-bottom: 4px;">СГЕНЕРИРОВАН КЛЮЧ ПОДПИСКИ (${duration}):</div>
