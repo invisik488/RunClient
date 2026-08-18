@@ -2,22 +2,20 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-const PORT = process.env.PORT || 3000;
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname)));
 
-// База данных
+// База данных (пример)
 let users = [
-    { username: "Quesst" }
+    { username: "Quesst", role: "admin", subscription: "Lifetime" }
 ];
 
-// Поиск пользователя
+// API: Поиск пользователя
 app.post('/api/search', (req, res) => {
     const rawInput = req.body.username || req.body.nickname || "";
     const cleanSearch = String(rawInput).trim().toLowerCase();
-
+    
     if (!cleanSearch) {
         return res.status(400).json({ success: false, message: "Введите ник" });
     }
@@ -34,11 +32,21 @@ app.post('/api/search', (req, res) => {
     }
 });
 
-// Отдача твоей главной страницы index.html (совместимо с Node 24 / Express 5)
-app.use((req, res) => {
+// Маршруты страниц
+app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+app.get('/dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dashboard.html'));
+});
+
+// Catch-all для SPA (чтобы при обновлении страницы не было 404)
+app.use((req, res) => {
+    res.status(404).sendFile(path.join(__dirname, 'index.html'));
+});
+
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Сервер запущен на порту ${PORT}`);
+    console.log(`🚀 ApexClient Server running on port ${PORT}`);
 });
