@@ -3,318 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApexClient — Ultimate Minecraft 1.21.4</title>
+    <title>ApexClient — Minecraft 1.21.4</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
-        :root {
-            --primary: #6366f1;
-            --secondary: #a855f7;
-            --accent: #ec4899;
-            --bg-dark: #0f172a;
-            --glass: rgba(30, 41, 59, 0.6);
-            --border: rgba(255, 255, 255, 0.1);
-        }
-
+        :root { --primary: #6366f1; --secondary: #a855f7; --bg: #0f172a; --glass: rgba(30, 41, 59, 0.7); }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; scroll-behavior: smooth; }
-
-        body {
-            background-color: var(--bg-dark);
-            color: white;
-            overflow-x: hidden;
-        }
-
-        /* Анимированный фон */
-        .bg-orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(100px);
-            z-index: -1;
-            opacity: 0.4;
-            animation: float 10s infinite ease-in-out;
-        }
+        body { background-color: var(--bg); color: white; overflow-x: hidden; }
+        
+        /* Анимация фона */
+        .orb { position: fixed; border-radius: 50%; filter: blur(100px); z-index: -1; opacity: 0.3; animation: float 10s infinite ease-in-out; }
         .orb-1 { width: 400px; height: 400px; background: var(--primary); top: -100px; left: -100px; }
-        .orb-2 { width: 300px; height: 300px; background: var(--accent); bottom: -50px; right: -50px; animation-delay: -5s; }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(30px, 50px); }
-        }
+        .orb-2 { width: 300px; height: 300px; background: var(--secondary); bottom: -50px; right: -50px; }
+        @keyframes float { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(30px, 50px); } }
 
         /* Навигация */
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 5%;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 900;
-            background: linear-gradient(to right, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .nav-links a {
-            color: #94a3b8;
-            text-decoration: none;
-            margin-left: 25px;
-            font-weight: 500;
-            transition: 0.3s;
-        }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 5%; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .logo { font-size: 1.8rem; font-weight: 900; background: linear-gradient(to right, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links a { color: #94a3b8; text-decoration: none; margin-left: 25px; font-weight: 500; transition: 0.3s; }
         .nav-links a:hover { color: white; text-shadow: 0 0 10px var(--primary); }
+        .btn-cab { background: linear-gradient(45deg, var(--primary), var(--secondary)); padding: 10px 25px; border-radius: 30px; color: white !important; font-weight: 700; }
+
+        /* Hero */
+        .hero { min-height: 90vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 20px; }
+        .hero h1 { font-size: 4.5rem; font-weight: 900; line-height: 1.1; margin-bottom: 20px; }
+        .hero span { color: var(--primary); }
+        .hero p { font-size: 1.2rem; color: #94a3b8; max-width: 600px; margin-bottom: 40px; }
         
-        .btn-cabinet {
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            padding: 10px 25px;
-            border-radius: 30px;
-            color: white !important;
-            font-weight: 700;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-        }
+        .stats { display: flex; gap: 40px; margin-top: 50px; padding: 20px 40px; background: var(--glass); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .stat h3 { font-size: 2rem; color: var(--primary); }
+        .stat p { font-size: 0.9rem; color: #94a3b8; text-transform: uppercase; }
 
-        /* Hero Section */
-        .hero {
-            min-height: 90vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 0 20px;
-        }
-
-        .hero h1 {
-            font-size: 4.5rem;
-            line-height: 1.1;
-            margin-bottom: 20px;
-            font-weight: 900;
-        }
+        /* Тарифы */
+        .pricing { padding: 100px 5%; }
+        .section-title { text-align: center; font-size: 2.5rem; margin-bottom: 60px; }
+        .cards { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
         
-        .hero span {
-            background: linear-gradient(to right, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            color: #94a3b8;
-            max-width: 600px;
-            margin-bottom: 40px;
-        }
-
-        .stats-bar {
-            display: flex;
-            gap: 40px;
-            margin-top: 50px;
-            padding: 20px 40px;
-            background: var(--glass);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .stat-item h3 { font-size: 2rem; color: var(--primary); }
-        .stat-item p { font-size: 0.9rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* Pricing Cards */
-        .pricing-section {
-            padding: 100px 5%;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 60px;
-        }
-
-        .cards-container {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-
-        .card {
-            background: var(--glass);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 40px 30px;
-            width: 320px;
-            text-align: center;
-            transition: 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-            border-color: var(--primary);
-            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.2);
-        }
-
-        .card.popular {
-            border: 2px solid var(--secondary);
-            background: linear-gradient(180deg, rgba(168, 85, 247, 0.1) 0%, rgba(30, 41, 59, 0.6) 100%);
-            transform: scale(1.05);
-        }
-
-        .badge {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: var(--secondary);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 700;
-        }
-
-        .price {
-            font-size: 3rem;
-            font-weight: 900;
-            margin: 20px 0;
-            color: white;
-        }
+        .card { background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 40px 30px; width: 320px; text-align: center; transition: 0.3s; position: relative; }
+        .card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: 0 10px 40px rgba(99, 102, 241, 0.2); }
+        .card.popular { border: 2px solid var(--secondary); background: linear-gradient(180deg, rgba(168, 85, 247, 0.1) 0%, var(--glass) 100%); transform: scale(1.05); }
+        
+        .badge { position: absolute; top: 20px; right: 20px; background: var(--secondary); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
+        .price { font-size: 3rem; font-weight: 900; margin: 20px 0; }
         .price span { font-size: 1rem; color: #94a3b8; font-weight: 400; }
+        
+        .features { list-style: none; text-align: left; margin-bottom: 30px; color: #cbd5e1; }
+        .features li { margin-bottom: 10px; display: flex; align-items: center; }
+        .features li i { color: var(--primary); margin-right: 10px; }
+        
+        .btn-buy { width: 100%; padding: 15px; border-radius: 12px; border: none; background: rgba(255,255,255,0.1); color: white; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .card.popular .btn-buy { background: var(--primary); box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
+        .btn-buy:hover { background: var(--secondary); }
 
-        .features-list {
-            list-style: none;
-            text-align: left;
-            margin-bottom: 30px;
-            color: #cbd5e1;
-        }
-        .features-list li { margin-bottom: 10px; display: flex; align-items: center; }
-        .features-list li i { color: var(--primary); margin-right: 10px; }
-
-        .btn-buy {
-            width: 100%;
-            padding: 15px;
-            border-radius: 12px;
-            border: none;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .card.popular .btn-buy {
-            background: var(--primary);
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
-        }
-
-        .btn-buy:hover { background: var(--secondary); transform: scale(1.02); }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 40px;
-            border-top: 1px solid var(--border);
-            color: #64748b;
-        }
-
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2.5rem; }
-            .stats-bar { flex-direction: column; gap: 20px; }
-            .card.popular { transform: scale(1); }
-        }
+        footer { text-align: center; padding: 40px; border-top: 1px solid rgba(255,255,255,0.1); color: #64748b; }
     </style>
 </head>
 <body>
-
-    <div class="bg-orb orb-1"></div>
-    <div class="bg-orb orb-2"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
 
     <nav>
         <div class="logo"><i class="fa-solid fa-cube"></i> ApexClient</div>
         <div class="nav-links">
             <a href="#features">Возможности</a>
             <a href="#pricing">Тарифы</a>
-            <a href="/dashboard" class="btn-cabinet">👤 Кабинет</a>
+            <a href="/dashboard" class="btn-cab">👤 Кабинет</a>
         </div>
     </nav>
 
     <section class="hero">
-        <h1>Доминируй в <br><span style="color: var(--primary); -webkit-text-fill-color: var(--primary);">Minecraft 1.21.4</span></h1>
-        <p>Приватный клиент с идеальным обходом античитов HolyWorld, FunTime и ReallyWorld. Максимальный FPS и полная безопасность.</p>
-        
-        <div class="stats-bar">
-            <div class="stat-item">
-                <h3>480+</h3>
-                <p>Онлайн</p>
-            </div>
-            <div class="stat-item">
-                <h3>99.8%</h3>
-                <p>Undetected</p>
-            </div>
-            <div class="stat-item">
-                <h3>Fabric</h3>
-                <p>Версия</p>
-            </div>
+        <h1>Доминируй в <br><span>Minecraft 1.21.4</span></h1>
+        <p>Приватный клиент с идеальным обходом античитов HolyWorld, FunTime и ReallyWorld.</p>
+        <div class="stats">
+            <div class="stat"><h3>480+</h3><p>Онлайн</p></div>
+            <div class="stat"><h3>99.8%</h3><p>Undetected</p></div>
+            <div class="stat"><h3>Fabric</h3><p>Версия</p></div>
         </div>
     </section>
 
-    <section id="pricing" class="pricing-section">
-        <h2 class="section-title">Выберите свой план</h2>
-        <div class="cards-container">
-            
-            <!-- 1 Месяц -->
+    <section id="pricing" class="pricing">
+        <h2 class="section-title">Тарифы</h2>
+        <div class="cards">
             <div class="card">
                 <h3>Start</h3>
                 <div class="price">149₽<span>/мес</span></div>
-                <ul class="features-list">
-                    <li><i class="fa-solid fa-check"></i> Доступ ко всем модулям</li>
+                <ul class="features">
+                    <li><i class="fa-solid fa-check"></i> Все модули</li>
                     <li><i class="fa-solid fa-check"></i> Обход античитов</li>
-                    <li><i class="fa-solid fa-check"></i> Обновления клиента</li>
                 </ul>
-                <button class="btn-buy" onclick="alert('Переход к оплате...')">Купить</button>
+                <button class="btn-buy" onclick="alert('Оплата...')">Купить</button>
             </div>
 
-            <!-- 3 Месяца (Хит) -->
             <div class="card popular">
-                <div class="badge">ХИТ ПРОДАЖ</div>
+                <div class="badge">ХИТ</div>
                 <h3>Pro</h3>
                 <div class="price">239₽<span>/3 мес</span></div>
-                <ul class="features-list">
-                    <li><i class="fa-solid fa-check"></i> Всё из тарифа Start</li>
+                <ul class="features">
                     <li><i class="fa-solid fa-check"></i> Экономия 30%</li>
-                    <li><i class="fa-solid fa-check"></i> Приоритетная поддержка</li>
-                    <li><i class="fa-solid fa-check"></i> Доступ к Beta версиям</li>
+                    <li><i class="fa-solid fa-check"></i> Beta доступ</li>
                 </ul>
-                <button class="btn-buy" onclick="alert('Переход к оплате...')">Купить</button>
+                <button class="btn-buy" onclick="alert('Оплата...')">Купить</button>
             </div>
 
-            <!-- Навсегда -->
             <div class="card">
                 <h3>Legend</h3>
                 <div class="price">449₽<span>/навсегда</span></div>
-                <ul class="features-list">
+                <ul class="features">
                     <li><i class="fa-solid fa-check"></i> Вечный доступ</li>
-                    <li><i class="fa-solid fa-check"></i> Уникальная роль в Discord</li>
-                    <li><i class="fa-solid fa-check"></i> Бесплатный сброс HWID</li>
-                    <li><i class="fa-solid fa-check"></i> Ранний доступ к DLC</li>
+                    <li><i class="fa-solid fa-check"></i> Сброс HWID</li>
                 </ul>
-                <button class="btn-buy" onclick="alert('Переход к оплате...')">Купить</button>
+                <button class="btn-buy" onclick="alert('Оплата...')">Купить</button>
             </div>
-
         </div>
     </section>
 
     <footer>
         <p>&copy; 2026 ApexClient. All rights reserved.</p>
     </footer>
-
 </body>
 </html>

@@ -1,14 +1,15 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(__dirname));
 
 // База данных (пример)
 let users = [
-    { username: "Quesst", role: "admin", subscription: "Lifetime" }
+    { username: "Quesst", role: "admin", subscription: "Lifetime", hwid: "locked" }
 ];
 
 // API: Поиск пользователя
@@ -32,7 +33,7 @@ app.post('/api/search', (req, res) => {
     }
 });
 
-// Маршруты страниц
+// Маршруты
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
@@ -41,12 +42,11 @@ app.get('/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, 'dashboard.html'));
 });
 
-// Catch-all для SPA (чтобы при обновлении страницы не было 404)
+// Catch-all
 app.use((req, res) => {
     res.status(404).sendFile(path.join(__dirname, 'index.html'));
 });
 
-const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🚀 ApexClient Server running on port ${PORT}`);
 });
