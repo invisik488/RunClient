@@ -134,6 +134,7 @@
                     <li><a class="nav-link" id="nav-lottery" onclick="navigateTo('lottery')">Лотерея</a></li>
                     <li><a class="nav-link" id="nav-reviews" onclick="navigateTo('reviews')">Отзывы</a></li>
                     <li><a class="nav-link" id="nav-faq" onclick="navigateTo('faq')">FAQ</a></li>
+                    <li><a class="nav-link" id="nav-support" onclick="navigateTo('support')">Поддержка</a></li>
                 </ul>
             </div>
             <div class="nav-right">
@@ -142,7 +143,6 @@
         </nav>
     </div>
 
-    <!-- Главная -->
     <div id="page-home" class="page-section">
         <div class="hero">
             <h1>Абсолютное Доминирование <br><span>В Каждом Сражении</span></h1>
@@ -170,7 +170,6 @@
         </div>
     </div>
 
-    <!-- Тарифы -->
     <div id="page-tariffs" class="page-section hidden">
         <div class="hero"><h1>Тарифы <span>ApexClient</span></h1><p>Выберите срок доступа</p></div>
         <div class="tariffs-grid">
@@ -180,7 +179,6 @@
         </div>
     </div>
 
-    <!-- Лотерея -->
     <div id="page-lottery" class="page-section hidden">
         <div class="hero"><h1>🎰 Лотерейный центр <span>ApexClient</span></h1><p>Крути рулетку и выигрывай подписки!</p></div>
         <div class="lottery-grid">
@@ -197,7 +195,6 @@
         </div>
     </div>
 
-    <!-- Отзывы -->
     <div id="page-reviews" class="page-section hidden">
         <div class="hero"><h1>Отзывы пользователей</h1></div>
         <div style="max-width:650px;margin:0 auto">
@@ -213,7 +210,6 @@
         </div>
     </div>
 
-    <!-- FAQ -->
     <div id="page-faq" class="page-section hidden">
         <div class="hero"><h1>FAQ</h1></div>
         <div class="faq-grid">
@@ -224,7 +220,18 @@
         </div>
     </div>
 
-    <!-- Кабинет -->
+    <div id="page-support" class="page-section hidden">
+        <div class="hero"><h1>Техническая поддержка</h1></div>
+        <div style="max-width:500px;margin:0 auto">
+            <div class="card">
+                <div style="font-size:11.5px;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px">Новое обращение</div>
+                <div class="form-group"><label>Тема</label><input type="text" id="ticketSubject" class="form-input" placeholder="Тема обращения"></div>
+                <div class="form-group"><label>Описание</label><textarea id="ticketMessage" class="form-textarea" placeholder="Опишите проблему"></textarea></div>
+                <button class="action-btn" onclick="submitTicket()">Отправить</button>
+            </div>
+        </div>
+    </div>
+
     <div id="page-cabinet" class="page-section hidden">
         <div class="dash-container">
             <div class="sidebar">
@@ -245,6 +252,7 @@
                         <div class="nav-item active" onclick="switchCabinetTab('home',this)">🏠 Главная</div>
                         <div class="nav-item" onclick="switchCabinetTab('keys',this)">🔑 Ключи</div>
                         <div class="nav-item" onclick="switchCabinetTab('orders',this)">📦 Заказы</div>
+                        <div class="nav-item" onclick="switchCabinetTab('moderation',this)">🛡️ Модерация</div>
                     </div>
                 </div>
                 <button class="btn-logout" onclick="logout()">Выйти</button>
@@ -259,11 +267,13 @@
                 <div id="cab-orders" class="cab-tab-content hidden">
                     <div class="card"><div style="font-size:11.5px;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px">Мои заказы</div><div id="ordersList"><p style="color:#949aab;font-size:13.5px">Нет заказов</p></div></div>
                 </div>
+                <div id="cab-moderation" class="cab-tab-content hidden">
+                    <div class="card"><div style="font-size:11.5px;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px">Заявки на покупку</div><div id="moderationList"><p style="color:#949aab;font-size:13.5px">Нет заявок</p></div></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Авторизация -->
     <div id="page-auth" class="page-section hidden">
         <div class="auth-wrapper">
             <div class="auth-card">
@@ -274,41 +284,4 @@
                     <button class="auth-tab-btn" id="tabBtnRegister" onclick="switchAuthTab('register')">Регистрация</button>
                 </div>
                 <div id="authFormLogin">
-                    <div class="form-group"><label>Никнейм</label><input type="text" id="loginUsernameInput" class="form-input" placeholder="Введите ник..."></div>
-                    <div class="form-group"><label>Пароль</label><input type="password" id="loginPasswordInput" class="form-input" placeholder="Введите пароль..."></div>
-                    <button class="action-btn" onclick="handleLogin()">Войти</button>
-                </div>
-                <div id="authFormRegister" class="hidden">
-                    <div class="form-group"><label>Никнейм</label><input type="text" id="regUsernameInput" class="form-input" placeholder="Ваш ник..."></div>
-                    <div class="form-group"><label>Пароль</label><input type="password" id="regPasswordInput" class="form-input" placeholder="Надежный пароль..."></div>
-                    <button class="action-btn green" onclick="handleRegister()">Зарегистрироваться</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <footer class="apex-footer">
-        <span>© 2026 ApexClient · Minecraft 1.21.4 Fabric</span>
-        <span>Сделано с упором на стиль, удобство и производительность.</span>
-    </footer>
-
-    <script>
-        // ===== ДАННЫЕ =====
-        let currentUser = localStorage.getItem('apex_user') || null;
-        let registeredUsers = JSON.parse(localStorage.getItem('apex_db_users')) || {
-            "invisik": { password: "123", role: "owner", sub: "Навсегда", freeSpinUsed: false, freeCaseUsed: false, extraSpinAttempts: 0, extraCaseAttempts: 0 }
-        };
-        let appRequests = JSON.parse(localStorage.getItem('apex_requests')) || { subs: [] };
-        let activeKeysDB = JSON.parse(localStorage.getItem('apex_keys_db')) || {};
-
-        function saveDB() {
-            localStorage.setItem('apex_db_users', JSON.stringify(registeredUsers));
-            localStorage.setItem('apex_requests', JSON.stringify(appRequests));
-            localStorage.setItem('apex_keys_db', JSON.stringify(activeKeysDB));
-        }
-
-        function showToast(msg, type = 'success') {
-            const c = document.getElementById('toast-container');
-            const t = document.createElement('div');
-            t.className = `toast ${type}`;
-            t.innerHTML = `<span
+                    <div class="form-group"><label
