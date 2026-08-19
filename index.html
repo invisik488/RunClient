@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        /* ===== БАЗОВЫЕ ПЕРЕМЕННЫЕ ===== */
+        /* ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===== */
         :root {
             --bg-main: #040508;
             --bg-card: rgba(14, 16, 24, 0.75);
@@ -16,14 +16,10 @@
             --border-hover: rgba(255, 51, 68, 0.4);
             --accent-red: #ff3344;
             --accent-red-glow: rgba(255, 51, 68, 0.35);
-            --accent-blue: #0088ff;
-            --accent-blue-glow: rgba(0, 136, 255, 0.35);
             --accent-green: #00e676;
             --text-main: #ffffff;
             --text-sub: #949aab;
-            --violet: #8b5cf6;
-            --cyan: #38bdf8;
-            --theme-bg: #040508; /* динамический фон */
+            --theme-bg: #040508;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
         body {
@@ -34,10 +30,10 @@
             overflow-x: hidden;
             transition: background-color 0.3s ease;
         }
-        /* ===== ГЛОБАЛЬНЫЕ ЭФФЕКТЫ ===== */
         .bg-glow-1 { position: fixed; top: -200px; left: 50%; transform: translateX(-50%); width: 800px; height: 500px; background: radial-gradient(circle, rgba(255, 51, 68, 0.18) 0%, rgba(0,0,0,0) 70%); z-index: -1; pointer-events: none; filter: blur(80px); }
         .bg-glow-2 { position: fixed; bottom: -150px; right: -150px; width: 600px; height: 600px; background: radial-gradient(circle, rgba(0, 136, 255, 0.1) 0%, rgba(0,0,0,0) 70%); z-index: -1; pointer-events: none; filter: blur(100px); }
         .hidden { display: none !important; }
+
         /* ===== TOAST ===== */
         #toast-container {
             position: fixed; bottom: 24px; right: 24px; z-index: 9999;
@@ -56,6 +52,7 @@
             from { transform: translateX(120%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
+
         /* ===== НАВБАР ===== */
         .navbar-container {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
@@ -90,6 +87,7 @@
             box-shadow: 0 4px 20px var(--accent-red-glow); transition: 0.2s;
         }
         .btn-cabinet:hover { transform: scale(1.05); }
+
         /* ===== ОБЩИЕ СТИЛИ ===== */
         .page-section { padding-top: 130px; padding-bottom: 80px; max-width: 1100px; margin: 0 auto; width: 92%; }
         .hero { text-align: center; margin-bottom: 50px; }
@@ -120,7 +118,8 @@
         .section-title-block { text-align: center; margin-bottom: 30px; }
         .section-title-block h2 { font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 8px; }
         .section-title-block p { font-size: 14px; color: var(--text-sub); }
-        /* ===== КАРТОЧКИ С ЭФФЕКТАМИ ===== */
+
+        /* ===== КАРТОЧКИ С ЭФФЕКТАМИ ПОДНЯТИЯ И СВЕЧЕНИЯ ===== */
         .card, .stat-card, .feature-card, .server-card, .tariff-card, .review-card, .detail-box, .lottery-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -135,7 +134,8 @@
             border-color: var(--border-hover);
             box-shadow: 0 15px 35px var(--accent-red-glow);
         }
-        /* ===== ФОРМЫ / ПОЛЯ ВВОДА ===== */
+
+        /* ===== ФОРМЫ В СТИЛЕ САЙТА ===== */
         .form-input, .form-textarea, .form-select {
             width: 100%;
             background: rgba(0, 0, 0, 0.45);
@@ -167,6 +167,7 @@
             font-weight: 700;
             letter-spacing: 0.5px;
         }
+
         /* ===== КНОПКИ ===== */
         .btn-buy, .action-btn, .lottery-btn {
             background: var(--accent-red);
@@ -191,6 +192,7 @@
         .action-btn.dark { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid var(--border-color); box-shadow: none; }
         .action-btn.yellow { background: #ffbc00; color: #000; box-shadow: 0 4px 15px rgba(255,188,0,0.3); }
         .lottery-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
         /* ===== ГЛАВНАЯ СТРАНИЦА ===== */
         .hero-pills {
             display: flex; justify-content: center; gap: 9px; flex-wrap: wrap; margin-bottom: 38px;
@@ -258,6 +260,7 @@
         .servers-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 20px; }
         .server-card { padding: 20px; font-weight: 800; color: #fff; font-size: 15px; text-align: center; }
         .server-card span { display: block; font-size: 11px; color: var(--accent-green); font-weight: 600; margin-top: 4px; }
+
         /* ===== ТАРИФЫ ===== */
         .tariffs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
         .tariff-card { padding: 28px 20px; text-align: center; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
@@ -278,19 +281,12 @@
             color: #d9dbea; font-size: 12px; line-height: 1.5;
         }
         .tariffs-row-title { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+
         /* ===== ЛОТЕРЕЯ ===== */
-        .lottery-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-top: 30px;
-        }
+        .lottery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px; }
         .lottery-card { padding: 28px; }
         .lottery-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
         }
         .lottery-header h3 { font-size: 20px; font-weight: 800; color: #fff; }
         .lottery-header .badge {
@@ -303,25 +299,14 @@
             border: 1px solid rgba(255, 51, 68, 0.2);
         }
         .lottery-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: var(--text-sub);
-            margin-top: 10px;
+            display: flex; justify-content: space-between; font-size: 12px; color: var(--text-sub); margin-top: 10px;
         }
-        .lottery-info .attempts {
-            color: #fff;
-            font-weight: 700;
-        }
-        /* рулетка */
+        .lottery-info .attempts { color: #fff; font-weight: 700; }
+        /* Рулетка */
         .roulette-scene {
-            position: relative;
-            height: 110px;
-            border-radius: 10px;
-            overflow: hidden;
+            position: relative; height: 110px; border-radius: 10px; overflow: hidden;
             background: radial-gradient(ellipse at 50% 40%, #12162a 0%, #090b12 75%);
-            border: 1px solid #1b2032;
-            margin-bottom: 15px;
+            border: 1px solid #1b2032; margin-bottom: 15px;
         }
         .pointer-top, .pointer-bottom {
             width: 0; height: 0;
@@ -332,134 +317,67 @@
         .pointer-top { border-top: 11px solid #e8b34b; filter: drop-shadow(0 0 6px rgba(232,179,75,0.8)); margin: 0 auto; }
         .pointer-bottom { border-bottom: 11px solid #e8b34b; filter: drop-shadow(0 0 6px rgba(232,179,75,0.8)); margin: 0 auto; }
         .roulette-window {
-            position: relative;
-            width: 100%;
-            height: 68px;
-            overflow: hidden;
+            position: relative; width: 100%; height: 68px; overflow: hidden;
             background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent 20%, transparent 80%, rgba(255,255,255,0.03));
         }
         .center-slot {
-            position: absolute;
-            left: 50%; top: 0; bottom: 0;
-            width: 80px;
-            transform: translateX(-50%);
+            position: absolute; left: 50%; top: 0; bottom: 0; width: 80px; transform: translateX(-50%);
             border-left: 1px solid rgba(232,179,75,0.35);
             border-right: 1px solid rgba(232,179,75,0.35);
             background: linear-gradient(180deg, rgba(232,179,75,0.08), transparent 30%, transparent 70%, rgba(232,179,75,0.08));
-            z-index: 1;
-            pointer-events: none;
+            z-index: 1; pointer-events: none;
         }
         .roulette-track {
-            position: absolute;
-            top: 0; left: 0;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 0 10px;
+            position: absolute; top: 0; left: 0; height: 100%;
+            display: flex; align-items: center; gap: 10px; padding: 0 10px;
             will-change: transform;
         }
         .roll-item {
-            flex: 0 0 auto;
-            width: 64px;
-            height: 56px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Teko', sans-serif;
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: 0.02em;
-            color: #fff;
-            position: relative;
-            overflow: hidden;
+            flex: 0 0 auto; width: 64px; height: 56px; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Teko', sans-serif; font-size: 20px; font-weight: 700;
+            color: #fff; position: relative; overflow: hidden;
         }
         .roll-item.tier-mil { background: linear-gradient(155deg, #4b69ff 0%, #2c3b8f 100%); }
         .roll-item.tier-res { background: linear-gradient(155deg, #8c4bff 0%, #5a2fb0 100%); }
         .roll-item.tier-leg { background: linear-gradient(155deg, #e8b34b 0%, #7a5417 100%); color: #231604; }
-        .fade-edge {
-            position: absolute; top: 0; bottom: 0; width: 40px; z-index: 2; pointer-events: none;
-        }
+        .fade-edge { position: absolute; top: 0; bottom: 0; width: 40px; z-index: 2; pointer-events: none; }
         .fade-left { left: 0; background: linear-gradient(90deg, #0c0f18 5%, transparent); }
         .fade-right { right: 0; background: linear-gradient(-90deg, #0c0f18 5%, transparent); }
-        /* бокс */
+        /* Бокс */
         .case-scene {
-            position: relative;
-            height: 180px;
-            border-radius: 10px;
-            overflow: hidden;
+            position: relative; height: 180px; border-radius: 10px; overflow: hidden;
             background: radial-gradient(ellipse at 50% 40%, #12162a 0%, #090b12 75%);
-            border: 1px solid #1b2032;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border: 1px solid #1b2032; margin-bottom: 15px;
+            display: flex; align-items: center; justify-content: center;
         }
         .case-box {
-            position: relative;
-            width: 100px;
-            height: 100px;
-            cursor: pointer;
+            position: relative; width: 100px; height: 100px; cursor: pointer;
         }
         .case-front {
-            position: absolute; inset: 0;
-            border-radius: 8px;
+            position: absolute; inset: 0; border-radius: 8px;
             background: linear-gradient(155deg, #2a3252 0%, #171b2c 55%, #0d0f1a 100%);
             border: 1px solid #333c5e;
             box-shadow: 0 18px 40px -14px rgba(75,105,255,0.35), inset 0 0 0 1px rgba(255,255,255,0.03);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            overflow: hidden; display: flex; flex-direction: column;
         }
-        .case-hazard {
-            height: 7px;
-            background: repeating-linear-gradient(135deg, #e8b34b 0 8px, #14161f 8px 16px);
-            opacity: .9;
-        }
-        .case-seal {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            font-weight: 900;
-            color: #8fa3ff;
-        }
+        .case-hazard { height: 7px; background: repeating-linear-gradient(135deg, #e8b34b 0 8px, #14161f 8px 16px); opacity: .9; }
+        .case-seal { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 900; color: #8fa3ff; }
         .case-lid {
-            position: absolute;
-            left: 0; right: 0; top: 0;
-            height: 38%;
+            position: absolute; left: 0; right: 0; top: 0; height: 38%;
             background: linear-gradient(155deg, #333c5e, #1a1f34);
-            border: 1px solid #3c4568;
-            border-bottom: none;
-            border-radius: 8px 8px 0 0;
+            border: 1px solid #3c4568; border-bottom: none; border-radius: 8px 8px 0 0;
             transform-origin: top center;
             transition: transform 3s cubic-bezier(.5,-0.2,.4,1.4), opacity 3s ease;
         }
-        .case-box.opening .case-lid {
-            transform: rotateX(-115deg) translateY(-10px);
-            opacity: 0;
-        }
-        .case-box.opening .case-front {
-            transition: transform 3s ease .05s, opacity 3s ease .15s;
-            transform: scale(0.8);
-            opacity: 0;
-        }
+        .case-box.opening .case-lid { transform: rotateX(-115deg) translateY(-10px); opacity: 0; }
+        .case-box.opening .case-front { transition: transform 3s ease .05s, opacity 3s ease .15s; transform: scale(0.8); opacity: 0; }
         .burst {
-            position: absolute;
-            width: 60px; height: 60px;
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0;
+            position: absolute; width: 60px; height: 60px; border-radius: 50%; pointer-events: none; opacity: 0;
             background: radial-gradient(circle, #fff8e6 0%, rgba(255,248,230,0.9) 12%, rgba(75,105,255,0.55) 35%, transparent 70%);
         }
-        .burst.flash {
-            animation: burstPop 3s cubic-bezier(.15,.7,.3,1) forwards;
-        }
-        .burst-gold {
-            background: radial-gradient(circle, #fff8e6 0%, rgba(255,248,230,0.95) 10%, rgba(232,179,75,0.6) 38%, transparent 72%);
-        }
+        .burst.flash { animation: burstPop 3s cubic-bezier(.15,.7,.3,1) forwards; }
+        .burst-gold { background: radial-gradient(circle, #fff8e6 0%, rgba(255,248,230,0.95) 10%, rgba(232,179,75,0.6) 38%, transparent 72%); }
         @keyframes burstPop {
             0%{ transform:scale(0.3); opacity:0; }
             18%{ transform:scale(1.1); opacity:1; }
@@ -467,25 +385,16 @@
             100%{ transform:scale(4.4); opacity:0; }
         }
         .result-card {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 140px;
-            padding: 16px 12px;
-            border-radius: 10px;
-            text-align: center;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 140px; padding: 16px 12px; border-radius: 10px; text-align: center;
             background: linear-gradient(155deg, rgba(232,179,75,0.16), rgba(20,16,6,0.6));
             border: 1px solid rgba(232,179,75,0.5);
             box-shadow: 0 0 0 1px rgba(232,179,75,0.15), 0 20px 50px -16px rgba(232,179,75,0.45);
-            opacity: 0;
-            filter: blur(14px);
+            opacity: 0; filter: blur(14px);
             transform: translate(-50%, -50%) scale(1.5) rotateY(540deg);
-            pointer-events: none;
-            z-index: 5;
+            pointer-events: none; z-index: 5;
         }
-        .result-card.materialize {
-            animation: materialize 3s cubic-bezier(.2,.7,.25,1) forwards;
-        }
+        .result-card.materialize { animation: materialize 3s cubic-bezier(.2,.7,.25,1) forwards; }
         @keyframes materialize {
             0%{ opacity:0; filter:blur(14px); transform: translate(-50%, -50%) scale(1.6) rotateY(540deg); }
             55%{ opacity:1; }
@@ -494,114 +403,57 @@
         .result-tier { font-size: 12px; letter-spacing: 0.2em; color: #e8b34b; text-transform: uppercase; }
         .result-duration { font-family: 'Teko', sans-serif; font-size: 36px; font-weight: 700; line-height: 1; color: #fff8e6; text-shadow: 0 0 18px rgba(232,179,75,0.75); }
         .result-sub { font-size: 11px; letter-spacing: 0.1em; color: #8b93ac; text-transform: uppercase; margin-top: 4px; }
-        .gold-rush-badge {
-            background: rgba(232,179,75,0.15);
-            border: 1px solid #e8b34b;
-            color: #e8b34b;
-            border-radius: 20px;
-            padding: 4px 12px;
-            font-size: 11px;
-            font-weight: 700;
-        }
+
         /* ===== ЛИЧНЫЙ КАБИНЕТ (ТОЧЬ-В-ТОЧЬ КАК НА ФОТО) ===== */
         .dash-container-new {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 24px;
+            display: grid; grid-template-columns: 280px 1fr; gap: 24px;
             background: linear-gradient(145deg, rgba(50, 12, 18, 0.92), rgba(25, 6, 10, 0.96));
             backdrop-filter: blur(24px);
             border: 1px solid rgba(255, 51, 68, 0.2);
-            border-radius: 28px;
-            padding: 24px;
-            min-height: 600px;
+            border-radius: 28px; padding: 24px; min-height: 600px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.7), 0 0 0 1px rgba(255, 51, 68, 0.05) inset;
-            position: relative;
-            overflow: hidden;
+            position: relative; overflow: hidden;
         }
         .dash-container-new::before {
-            content: '';
-            position: absolute;
-            inset: 0;
+            content: ''; position: absolute; inset: 0;
             background: radial-gradient(circle at 30% 20%, rgba(255, 51, 68, 0.12) 0%, transparent 60%);
             pointer-events: none;
         }
         .sidebar-new {
             border-right: 1px solid rgba(255, 51, 68, 0.15);
             padding-right: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            z-index: 1;
+            display: flex; flex-direction: column; justify-content: space-between;
+            position: relative; z-index: 1;
         }
-        /* Профиль */
         .profile-card {
-            background: rgba(0,0,0,0.3);
-            border-radius: 16px;
-            padding: 18px;
-            border: 1px solid rgba(255, 51, 68, 0.1);
-            margin-bottom: 20px;
+            background: rgba(0,0,0,0.3); border-radius: 16px; padding: 18px;
+            border: 1px solid rgba(255, 51, 68, 0.1); margin-bottom: 20px;
         }
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
+        .profile-header { display: flex; align-items: center; gap: 14px; }
         .avatar-new {
-            width: 56px;
-            height: 56px;
+            width: 56px; height: 56px;
             background: linear-gradient(135deg, #ff3344, #990022);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            font-size: 22px;
-            color: #fff;
-            box-shadow: 0 0 20px rgba(255, 51, 68, 0.3);
-            flex-shrink: 0;
+            border-radius: 14px; display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 22px; color: #fff;
+            box-shadow: 0 0 20px rgba(255, 51, 68, 0.3); flex-shrink: 0;
         }
-        .profile-info {
-            flex: 1;
-        }
-        .profile-info .name {
-            font-size: 18px;
-            font-weight: 800;
-            color: #fff;
-        }
-        .profile-info .role-uid {
-            font-size: 13px;
-            color: var(--text-sub);
-            font-weight: 600;
-            display: flex;
-            gap: 12px;
-            margin-top: 2px;
-        }
+        .profile-info { flex: 1; }
+        .profile-info .name { font-size: 18px; font-weight: 800; color: #fff; }
+        .profile-info .role-uid { font-size: 13px; color: var(--text-sub); font-weight: 600; display: flex; gap: 12px; margin-top: 2px; }
         .profile-info .role-uid .role { color: var(--accent-red); }
         .profile-info .role-uid .uid { color: #8b93ac; }
         /* Блок "Аккаунт" */
         .account-block {
-            background: rgba(0,0,0,0.25);
-            border-radius: 14px;
-            padding: 14px 16px;
-            margin-bottom: 16px;
-            border: 1px solid rgba(255,255,255,0.05);
+            background: rgba(0,0,0,0.25); border-radius: 14px; padding: 14px 16px;
+            margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.05);
         }
         .account-block .block-title {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-sub);
-            margin-bottom: 10px;
+            font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+            color: var(--text-sub); margin-bottom: 10px;
         }
         .account-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 4px 0;
-            font-size: 14px;
-            color: #fff;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
+            display: flex; justify-content: space-between; padding: 4px 0;
+            font-size: 14px; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.04);
         }
         .account-item:last-child { border-bottom: none; }
         .account-item .label { color: var(--text-sub); font-weight: 500; }
@@ -609,220 +461,95 @@
         .account-item .value.green { color: var(--accent-green); }
         .account-item .value.red { color: var(--accent-red); }
         /* Блок "Действия" */
-        .actions-block {
-            margin-top: 4px;
-        }
+        .actions-block { margin-top: 4px; }
         .actions-block .block-title {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-sub);
-            margin-bottom: 10px;
+            font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+            color: var(--text-sub); margin-bottom: 10px;
         }
         .btn-download-new {
             display: block;
             background: linear-gradient(135deg, #ff3344, #b3001a);
-            color: #fff;
-            border: none;
-            padding: 12px;
-            border-radius: 14px;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
+            color: #fff; border: none; padding: 12px; border-radius: 14px;
+            font-weight: 700; font-size: 14px; cursor: pointer;
             box-shadow: 0 4px 20px rgba(255, 51, 68, 0.4);
-            transition: 0.2s;
-            text-align: center;
-            width: 100%;
+            transition: 0.2s; text-align: center; width: 100%;
         }
         .btn-download-new:hover { transform: scale(1.02); }
         /* Меню вкладок */
         .nav-menu-new {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: 4px;
-            margin-top: 16px;
+            list-style: none; display: flex; flex-direction: column; gap: 4px;
+            max-height: 400px; overflow-y: auto; padding-right: 4px; margin-top: 16px;
         }
         .nav-item-new {
-            padding: 10px 14px;
-            border-radius: 12px;
-            color: var(--text-sub);
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            padding: 10px 14px; border-radius: 12px; color: var(--text-sub);
+            font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; gap: 10px;
         }
         .nav-item-new:hover, .nav-item-new.active {
-            background: rgba(255, 51, 68, 0.12);
-            color: var(--accent-red);
+            background: rgba(255, 51, 68, 0.12); color: var(--accent-red);
         }
         .btn-logout-new {
-            background: none;
-            border: 1px solid var(--border-color);
-            color: var(--text-sub);
-            padding: 12px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 12.5px;
-            width: 100%;
-            margin-top: 10px;
-            transition: 0.2s;
+            background: none; border: 1px solid var(--border-color); color: var(--text-sub);
+            padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 12.5px;
+            width: 100%; margin-top: 10px; transition: 0.2s;
         }
-        .btn-logout-new:hover {
-            border-color: var(--accent-red);
-            color: var(--accent-red);
-            background: rgba(255, 51, 68, 0.05);
-        }
+        .btn-logout-new:hover { border-color: var(--accent-red); color: var(--accent-red); background: rgba(255, 51, 68, 0.05); }
         .content-new {
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-            overflow-y: auto;
-            max-height: 560px;
-            position: relative;
-            z-index: 1;
+            padding: 10px; display: flex; flex-direction: column; gap: 18px;
+            overflow-y: auto; max-height: 560px; position: relative; z-index: 1;
         }
+        /* Вкладки в кабинете */
+        .cab-tab-content { display: block; }
+        .cab-tab-content.hidden { display: none; }
+
         /* ===== ЗОЛОТАЯ ЛИХОРАДКА ===== */
         .gold-rush-panel {
-            background: rgba(232,179,75,0.05);
-            border: 1px solid rgba(232,179,75,0.2);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
+            background: rgba(232,179,75,0.05); border: 1px solid rgba(232,179,75,0.2);
+            border-radius: 16px; padding: 20px; margin-bottom: 16px;
         }
-        .gold-rush-panel h4 {
-            color: #e8b34b;
-            font-weight: 800;
-            margin-bottom: 12px;
-        }
-        .gold-rush-controls {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .gold-rush-status {
-            display: flex;
-            gap: 20px;
-            margin-top: 12px;
-            font-weight: 600;
-            color: var(--text-sub);
-        }
+        .gold-rush-panel h4 { color: #e8b34b; font-weight: 800; margin-bottom: 12px; }
+        .gold-rush-controls { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+        .gold-rush-controls .form-group { flex: 1; min-width: 100px; }
+        .gold-rush-status { display: flex; gap: 20px; margin-top: 12px; font-weight: 600; color: var(--text-sub); }
         .gold-rush-status .active { color: var(--accent-green); }
         .gold-rush-status .count { color: #fff; }
+
         /* ===== ТЕМЫ (themes) ===== */
         .theme-toggle {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 999;
-            width: 48px;
-            height: 48px;
-            background: rgba(20, 22, 32, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 800;
-            color: #fff;
-            cursor: pointer;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-            transition: 0.2s;
-            user-select: none;
+            position: fixed; bottom: 24px; right: 24px; z-index: 999;
+            width: 48px; height: 48px;
+            background: rgba(20, 22, 32, 0.85); backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color); border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 800; color: #fff; cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5); transition: 0.2s; user-select: none;
         }
-        .theme-toggle:hover {
-            transform: scale(1.05);
-            border-color: var(--border-hover);
-        }
+        .theme-toggle:hover { transform: scale(1.05); border-color: var(--border-hover); }
         .theme-panel {
-            position: fixed;
-            bottom: 80px;
-            right: 24px;
-            z-index: 998;
-            background: rgba(12, 14, 20, 0.92);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 20px;
-            width: 220px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
-            display: none;
-            flex-direction: column;
-            gap: 14px;
-            transition: all 0.3s ease;
+            position: fixed; bottom: 80px; right: 24px; z-index: 998;
+            background: rgba(12, 14, 20, 0.92); backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color); border-radius: 20px;
+            padding: 20px; width: 220px; box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+            display: none; flex-direction: column; gap: 14px; transition: all 0.3s ease;
         }
-        .theme-panel.open {
-            display: flex;
-        }
-        .theme-panel .title {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-sub);
-            text-align: center;
-        }
-        .theme-presets {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
+        .theme-panel.open { display: flex; }
+        .theme-panel .title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-sub); text-align: center; }
+        .theme-presets { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
         .theme-preset {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.1);
-            cursor: pointer;
-            transition: 0.2s;
+            width: 32px; height: 32px; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.2s;
         }
-        .theme-preset:hover {
-            transform: scale(1.15);
-            border-color: #fff;
-        }
-        .theme-preset.active {
-            border-color: var(--accent-red);
-            box-shadow: 0 0 15px var(--accent-red-glow);
-        }
-        .color-picker-wrap {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            justify-content: center;
-        }
+        .theme-preset:hover { transform: scale(1.15); border-color: #fff; }
+        .theme-preset.active { border-color: var(--accent-red); box-shadow: 0 0 15px var(--accent-red-glow); }
+        .color-picker-wrap { display: flex; align-items: center; gap: 12px; justify-content: center; }
         .color-picker-wrap input[type="color"] {
-            width: 40px;
-            height: 40px;
-            border: 2px solid var(--border-color);
-            border-radius: 50%;
-            padding: 2px;
-            cursor: pointer;
-            background: transparent;
+            width: 40px; height: 40px; border: 2px solid var(--border-color); border-radius: 50%;
+            padding: 2px; cursor: pointer; background: transparent;
         }
-        .color-picker-wrap input[type="color"]::-webkit-color-swatch-wrapper {
-            padding: 0;
-        }
-        .color-picker-wrap input[type="color"]::-webkit-color-swatch {
-            border: none;
-            border-radius: 50%;
-        }
-        .color-hex {
-            font-size: 12px;
-            color: var(--text-sub);
-            font-weight: 600;
-        }
+        .color-picker-wrap input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        .color-picker-wrap input[type="color"]::-webkit-color-swatch { border: none; border-radius: 50%; }
+        .color-hex { font-size: 12px; color: var(--text-sub); font-weight: 600; }
+
         /* ===== АДАПТАЦИЯ ===== */
         @media(max-width: 850px) {
             .lottery-grid { grid-template-columns: 1fr; }
@@ -839,6 +566,7 @@
             .theme-toggle { width: 40px; height: 40px; bottom: 16px; right: 16px; }
             .theme-panel { right: 16px; bottom: 70px; width: 190px; }
         }
+
         /* ===== ОБЩИЕ ВИЗУАЛЬНЫЕ ЭФФЕКТЫ ===== */
         body{
             background:
@@ -858,8 +586,7 @@
             position:fixed; left:0; top:0; width:260px; height:260px; border-radius:50%;
             pointer-events:none; z-index:0; transform:translate(-50%,-50%);
             background:radial-gradient(circle,rgba(255,51,68,.10),transparent 68%);
-            mix-blend-mode:screen;
-            transition: opacity 0.15s;
+            mix-blend-mode:screen; transition: opacity 0.15s;
         }
         .reveal{ opacity:0; transform:translateY(18px); transition:opacity .7s ease,transform .7s cubic-bezier(.16,1,.3,1); }
         .reveal.visible{ opacity:1; transform:none; }
@@ -871,14 +598,14 @@
     </style>
 </head>
 <body>
+    <!-- Фоновые эффекты -->
     <canvas id="apex-particles"></canvas>
     <div class="cursor-glow" id="cursorGlow"></div>
-
     <div class="bg-glow-1"></div>
     <div class="bg-glow-2"></div>
     <div id="toast-container"></div>
 
-    <!-- ===== НАВБАР ===== -->
+    <!-- НАВБАР -->
     <div class="navbar-container">
         <nav class="navbar">
             <div class="nav-left">
@@ -1163,7 +890,6 @@
         <div class="dash-container-new">
             <div class="sidebar-new">
                 <div>
-                    <!-- Профиль -->
                     <div class="profile-card">
                         <div class="profile-header">
                             <div class="avatar-new" id="sidebarAvatarNew">A</div>
@@ -1176,7 +902,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Аккаунт -->
                     <div class="account-block">
                         <div class="block-title">Аккаунт</div>
                         <div class="account-item"><span class="label">Подписка</span><span class="value" id="dashSubValue">Нет</span></div>
@@ -1184,54 +909,63 @@
                         <div class="account-item"><span class="label">Доступ</span><span class="value green" id="dashAccessValue">Активен</span></div>
                         <div class="account-item"><span class="label">UID</span><span class="value" id="dashUidValue">--</span></div>
                     </div>
-                    <!-- Действия -->
                     <div class="actions-block">
                         <div class="block-title">Действия</div>
                         <button class="btn-download-new" onclick="showToast('Загрузка ApexClient.exe...', 'success')">📥 Скачать ApexClient</button>
                     </div>
-                    <!-- Меню -->
                     <ul class="nav-menu-new">
-                        <li class="nav-item-new active" onclick="switchCabinetTabNew('home', this)">🏠 Главная</li>
-                        <li class="nav-item-new" onclick="switchCabinetTabNew('orders', this)">📦 Мои предзаказы</li>
-                        <li class="nav-item-new" onclick="switchCabinetTabNew('tickets', this)">💬 Мои тикеты (<span id="ticketCountBadgeNew">0</span>)</li>
-                        <li class="nav-item-new" onclick="switchCabinetTabNew('keys', this)">🔑 Активация ключей</li>
-                        <li class="nav-item-new hidden" id="navItemPostNew" onclick="switchCabinetTabNew('post', this)">📝 Сделать пост</li>
-                        <li class="nav-item-new" onclick="switchCabinetTabNew('downloads', this)">📥 Загрузки</li>
-                        <li class="nav-item-new hidden" id="navItemModerationNew" onclick="switchCabinetTabNew('moderation', this)">🛡️ Модерация (<span id="modCountBadgeNew">0</span>)</li>
-                        <li class="nav-item-new hidden" id="navItemCapabilitiesNew" onclick="switchCabinetTabNew('capabilities', this)">🛠️ Настройка возможностей</li>
-                        <li class="nav-item-new hidden" id="navItemRolesNew" onclick="switchCabinetTabNew('roles', this)">👑 Управление ролями</li>
-                        <li class="nav-item-new hidden" id="navItemGoldRush" onclick="switchCabinetTabNew('goldrush', this)">🔥 Золотая лихорадка</li>
-                        <li class="nav-item-new hidden" id="navItemAdminNew" onclick="switchCabinetTabNew('admin', this)">⚙️ Панель Владельца</li>
+                        <li class="nav-item-new active" onclick="switchCabinetTab('home', this)">🏠 Главная</li>
+                        <li class="nav-item-new" onclick="switchCabinetTab('orders', this)">📦 Мои предзаказы</li>
+                        <li class="nav-item-new" onclick="switchCabinetTab('tickets', this)">💬 Мои тикеты (<span id="ticketCountBadgeNew">0</span>)</li>
+                        <li class="nav-item-new" onclick="switchCabinetTab('keys', this)">🔑 Активация ключей</li>
+                        <li class="nav-item-new hidden" id="navItemPostNew" onclick="switchCabinetTab('post', this)">📝 Сделать пост</li>
+                        <li class="nav-item-new" onclick="switchCabinetTab('downloads', this)">📥 Загрузки</li>
+                        <li class="nav-item-new hidden" id="navItemModerationNew" onclick="switchCabinetTab('moderation', this)">🛡️ Модерация (<span id="modCountBadgeNew">0</span>)</li>
+                        <li class="nav-item-new hidden" id="navItemCapabilitiesNew" onclick="switchCabinetTab('capabilities', this)">🛠️ Настройка возможностей</li>
+                        <li class="nav-item-new hidden" id="navItemRolesNew" onclick="switchCabinetTab('roles', this)">👑 Управление ролями</li>
+                        <li class="nav-item-new hidden" id="navItemGoldRush" onclick="switchCabinetTab('goldrush', this)">🔥 Золотая лихорадка</li>
+                        <li class="nav-item-new hidden" id="navItemAdminNew" onclick="switchCabinetTab('admin', this)">⚙️ Панель Владельца</li>
                     </ul>
                 </div>
                 <button class="btn-logout-new" onclick="logout()">Выйти</button>
             </div>
             <div class="content-new">
+                <!-- Главная -->
                 <div id="cab-home" class="cab-tab-content">
                     <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Статус подписки</div><div class="sub-title" id="subStatusTextNew" style="color:var(--accent-red); font-size:22px; font-weight:900; margin-bottom:6px;">НЕТ АКТИВНОЙ ПОДПИСКИ</div><div class="sub-desc" id="subStatusDescNew" style="font-size:13.5px; color:var(--text-sub); line-height:1.6;">Приобретите подписку в разделе «Тарифы» или активируйте ключ.</div></div>
                 </div>
+                <!-- Заказы -->
                 <div id="cab-orders" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">История и Подписки / Заявки</div><div id="ordersListContainer"><p class="sub-desc">У вас пока нет активных подписок.</p></div></div></div>
+                <!-- Тикеты -->
                 <div id="cab-tickets" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Мои тикеты и ответы поддержки</div><div id="userTicketsContainer"><p class="sub-desc">Вы еще не отправляли вопросы.</p></div></div></div>
+                <!-- Ключи -->
                 <div id="cab-keys" class="cab-tab-content hidden">
                     <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Активация ключа подписки</div><div class="form-group" style="margin-bottom:12px;"><input type="text" id="subKeyInput" class="form-input" placeholder="Введите ключ подписки (например, APEX-SUB-XXXX)..."></div><button class="action-btn green" onclick="activateSubKey()">Активировать подписку</button></div>
                     <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Активация ключа сброса HWID</div><div class="form-group" style="margin-bottom:12px;"><input type="text" id="hwidKeyInput" class="form-input" placeholder="Введите ключ сброса HWID..."></div><button class="action-btn green" onclick="activateHWIDKey()">Сбросить HWID ключом</button></div>
                 </div>
+                <!-- Пост -->
                 <div id="cab-post" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Создать публикацию</div><div class="form-group"><label>Заголовок поста</label><input type="text" class="form-input" placeholder="Заголовок обновления..."></div><div class="form-group"><label>Текст сообщения</label><textarea class="form-textarea" placeholder="Содержимое поста..."></textarea></div><button class="action-btn" onclick="showToast('Пост успешно опубликован!', 'success')">Опубликовать</button></div></div>
+                <!-- Загрузки -->
                 <div id="cab-downloads" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Загрузка лоадера</div><p class="sub-desc" style="margin-bottom:14px;">Последняя стабильная сборка клиента под Fabric.</p><button class="action-btn green" onclick="showToast('Загрузка ApexClient.exe...', 'success')">📥 Скачать ApexClient.exe</button></div></div>
+                <!-- Модерация -->
                 <div id="cab-moderation" class="cab-tab-content hidden">
                     <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Запросы на покупку подписок / тарифов</div><div id="purchaseRequestsContainer"><p class="sub-desc">Нет активных запросов.</p></div></div>
                     <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Заявки на сброс HWID (139 ₽)</div><div id="hwidRequestsContainer"><p class="sub-desc">Нет активных заявок.</p></div></div>
                     <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Тикеты пользователей</div><div id="adminTicketsContainer"><p class="sub-desc">Нет активных вопросов.</p></div></div>
                 </div>
+                <!-- Настройка возможностей -->
                 <div id="cab-capabilities" class="cab-tab-content hidden">
                     <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">🛠️ Настройка возможностей пользователя (Поиск по нику)</div><div class="form-group"><label>Ник пользователя</label><div style="display:flex; gap:8px;"><input type="text" id="capSearchInput" class="form-input" placeholder="Введите точный ник или часть ника..."><button class="action-btn" style="width:140px;" onclick="searchUserCapabilities()">Найти</button></div></div><div id="capSearchResultContainer"></div></div>
                 </div>
+                <!-- Управление ролями -->
                 <div id="cab-roles" class="cab-tab-content hidden">
                     <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">👑 Управление ролями и их возможностями</div><p class="sub-desc" style="margin-bottom:16px;">Создавайте кастомные роли и настраивайте доступы.</p><div style="display:flex; gap:8px; margin-bottom:16px;"><input type="text" id="newRoleNameInput" class="form-input" placeholder="Название новой роли (например: Helper)..."><button class="action-btn green" style="width:180px;" onclick="createNewRole()">Создать роль</button></div><div id="rolesListContainer"></div></div>
                 </div>
+                <!-- Золотая лихорадка -->
                 <div id="cab-goldrush" class="cab-tab-content hidden">
                     <div class="card gold-rush-panel"><h4>🔥 Золотая лихорадка</h4><p style="color:var(--text-sub); font-size:13px; margin-bottom:12px;">Настройка временного события, в течение которого пользователи могут открыть кейс бесплатно 1 раз.</p><div class="gold-rush-controls"><div class="form-group"><label>Длительность (минуты)</label><input type="number" id="grDuration" class="form-input" value="1" min="1" style="width:80px;"></div><div class="form-group"><label>Количество человек</label><input type="number" id="grLimit" class="form-input" value="3" min="1" style="width:80px;"></div><button class="action-btn" id="grStartBtn" onclick="startGoldRush()">Начать золотую лихорадку</button></div><div id="grStatus" class="gold-rush-status"><span>Статус: <span id="grStatusText">Не активна</span></span><span>Осталось: <span id="grTimeLeft">--</span></span><span>Использовали: <span id="grUsedCount">0</span></span></div></div>
                 </div>
+                <!-- Панель владельца -->
                 <div id="cab-admin" class="cab-tab-content hidden">
                     <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">⚙️ Панель Владельца — Управление системой и правами доступа</div><div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;"><div class="form-group" style="margin-bottom:0;"><label>Тип подписки для генерации</label><select id="genSubDuration" class="form-select"><option value="7д">7д</option><option value="30д">30д</option><option value="90д">90д</option><option value="Навсегда">Навсегда</option></select></div><div style="display:flex; align-items:flex-end;"><button class="action-btn green" onclick="generateSubKey()">Сгенерировать ключ</button></div></div><div class="form-group" style="margin-bottom:0;"><button class="action-btn yellow" onclick="generateHWIDKey()">Сгенерировать ключ сброса HWID</button></div><div id="generatedKeyOutput" style="margin-top:12px;"></div></div>
                 </div>
@@ -1239,7 +973,6 @@
         </div>
     </div>
 
-    <!-- ===== ФУТЕР ===== -->
     <footer class="apex-footer">
         <span>© 2026 ApexClient · Minecraft 1.21.4 Fabric</span>
         <span>Сделано с упором на стиль, удобство и производительность.</span>
@@ -1265,7 +998,7 @@
 
     <script>
         // ========================================================================
-        // БАЗОВЫЕ ДАННЫЕ
+        // БАЗОВЫЕ ДАННЫЕ И ФУНКЦИИ
         // ========================================================================
         let currentUser = localStorage.getItem('apex_user') || null;
 
@@ -1328,6 +1061,9 @@
             }, 3000);
         }
 
+        // ========================================================================
+        // НАВИГАЦИЯ (исправлена)
+        // ========================================================================
         function navigateTo(pageId) {
             if (pageId === 'cabinet' && !currentUser) {
                 pageId = 'auth';
@@ -1447,7 +1183,7 @@
         }
 
         // ========================================================================
-        // ОБНОВЛЕНИЕ КАБИНЕТА
+        // КАБИНЕТ
         // ========================================================================
         function updateCabinetUI() {
             if (!currentUser) return;
@@ -1510,7 +1246,7 @@
             updateGoldRushUI();
         }
 
-        function switchCabinetTabNew(tabName, element) {
+        function switchCabinetTab(tabName, element) {
             document.querySelectorAll('.cab-tab-content').forEach(tab => tab.classList.add('hidden'));
             const targetTab = document.getElementById(`cab-${tabName}`);
             if (targetTab) targetTab.classList.remove('hidden');
@@ -1541,7 +1277,7 @@
                 container.innerHTML = '<p class="sub-desc">У вас пока нет активных подписок.</p>';
                 return;
             }
-            container.innerHTML = userOrders.map((o, i) => `
+            container.innerHTML = userOrders.map(o => `
                 <div style="background:rgba(0,0,0,0.3); padding:12px; border-radius:12px; margin-bottom:8px; border:1px solid var(--border-color);">
                     <div style="font-weight:800; color:#fff;">${o.tariff}</div>
                     <div style="font-size:11px; color:var(--text-sub);">Дата: ${o.date}</div>
@@ -1632,7 +1368,7 @@
         }
 
         // ========================================================================
-        // МОДЕРАЦИЯ (без изменений)
+        // МОДЕРАЦИЯ
         // ========================================================================
         function renderModerationData() {
             const subContainer = document.getElementById('purchaseRequestsContainer');
@@ -1711,7 +1447,7 @@
         }
 
         // ========================================================================
-        // УПРАВЛЕНИЕ РОЛЯМИ (без изменений)
+        // УПРАВЛЕНИЕ РОЛЯМИ
         // ========================================================================
         function searchUserCapabilities() {
             const rawQuery = document.getElementById('capSearchInput').value;
@@ -1903,7 +1639,7 @@
         }
 
         // ========================================================================
-        // ЛОТЕРЕЯ: РУЛЕТКА И БОКС
+        // ЛОТЕРЕЯ: РУЛЕТКА И БОКС (с отдельными счётчиками)
         // ========================================================================
         const PRIZES = [
             { key: '7д', label: '7 дней', tier: 'ОБЫЧНАЯ', tierClass: 'tier-mil', weight: 15 },
@@ -1925,14 +1661,6 @@
             }
         })();
 
-        function resetRouletteTrack() {
-            const track = document.getElementById('rouletteTrack');
-            if (track) {
-                track.style.transition = 'none';
-                track.style.transform = 'translateX(0px)';
-            }
-        }
-
         function updateLotteryUI() {
             if (!currentUser) {
                 document.getElementById('spinAttempts').innerText = '0';
@@ -1947,8 +1675,6 @@
             document.getElementById('caseAttempts').innerText = caseLeft;
             document.getElementById('spinBadge').innerText = spinLeft > 0 ? 'бесплатно' : 'платно';
             document.getElementById('caseBadge').innerText = caseLeft > 0 ? 'бесплатно' : 'платно';
-            document.getElementById('caseFreeInfo').innerText = caseLeft > 0 ? 'Бесплатно: 1 раз' : 'Бесплатно: использовано';
-            document.getElementById('freeSpinInfo').innerText = spinLeft > 0 ? 'Бесплатно: 1 раз' : 'Бесплатно: использовано';
         }
 
         function spinRoulette() {
@@ -1968,7 +1694,6 @@
                 return;
             }
 
-            // Выбор приза
             const totalWeight = PRIZES.reduce((sum, p) => sum + p.weight, 0);
             let rand = Math.random() * totalWeight;
             let selected = PRIZES[0];
@@ -2006,7 +1731,6 @@
             setTimeout(() => {
                 btn.disabled = false;
                 document.getElementById('rouletteStatus').innerText = `🎉 Выиграл: ${selected.label}`;
-                // Начисляем подписку
                 user.sub = selected.key;
                 user.freeSpinUsed = true;
                 saveDB();
@@ -2032,4 +1756,168 @@
             const gr = lotteryState.goldRush;
             if (gr.active) {
                 if (gr.used < gr.limit) {
-                    if (!lotteryState.goldRush.usedUsers) lotteryState.goldR
+                    if (!lotteryState.goldRush.usedUsers) lotteryState.goldRush.usedUsers = [];
+                    if (!lotteryState.goldRush.usedUsers.includes(lower)) {
+                        freeCase = true;
+                        lotteryState.goldRush.usedUsers.push(lower);
+                        gr.used++;
+                        saveDB();
+                        showToast('🔥 Бесплатное открытие по золотой лихорадке!', 'success');
+                        updateGoldRushUI();
+                    } else {
+                        showToast('Вы уже использовали бесплатную попытку в этой лихорадке.', 'error');
+                        return;
+                    }
+                } else {
+                    showToast('Лимит бесплатных открытий исчерпан.', 'error');
+                    return;
+                }
+            }
+
+            if (!freeCase) {
+                if (user.freeCaseUsed) {
+                    showToast('У вас нет бесплатных открытий. Купите бокс в разделе «Тарифы».', 'error');
+                    return;
+                }
+                // Бесплатное открытие (первое)
+                freeCase = true;
+                // но мы не используем goldRush, а просто даём бесплатно
+                // Проверим, не использовал ли уже
+                if (user.freeCaseUsed) {
+                    showToast('У вас нет бесплатных открытий.', 'error');
+                    return;
+                }
+                // используем
+                user.freeCaseUsed = true;
+                saveDB();
+                showToast('🔥 Бесплатное открытие активировано!', 'success');
+            }
+
+            // Выбор приза
+            const totalWeight = PRIZES.reduce((sum, p) => sum + p.weight, 0);
+            let rand = Math.random() * totalWeight;
+            let selected = PRIZES[0];
+            for (let p of PRIZES) {
+                rand -= p.weight;
+                if (rand <= 0) { selected = p; break; }
+            }
+
+            const caseBox = document.getElementById('caseBox');
+            const burst = document.getElementById('caseBurst');
+            const resultCard = document.getElementById('caseResult');
+            const resultTier = document.getElementById('caseResultTier');
+            const resultDuration = document.getElementById('caseResultDuration');
+
+            caseBox.classList.add('opening');
+            burst.classList.add('flash');
+
+            setTimeout(() => {
+                resultTier.innerText = selected.tier;
+                resultDuration.innerText = selected.key;
+                resultCard.style.opacity = '1';
+                resultCard.classList.add('materialize');
+                user.sub = selected.key;
+                saveDB();
+                updateCabinetUI();
+                updateLotteryUI();
+                showToast(`Поздравляем! Вы выиграли подписку на ${selected.label}!`, 'success');
+                document.getElementById('caseStatus').innerText = `🎉 Выиграл: ${selected.label}`;
+            }, 3000);
+
+            setTimeout(() => {
+                caseBox.classList.remove('opening');
+                burst.classList.remove('flash');
+                resultCard.classList.remove('materialize');
+                resultCard.style.opacity = '0';
+                document.getElementById('caseStatus').innerText = 'Готов к открытию';
+            }, 6000);
+        }
+
+        // ========================================================================
+        // ЗОЛОТАЯ ЛИХОРАДКА
+        // ========================================================================
+        function startGoldRush() {
+            const durationInput = document.getElementById('grDuration');
+            const limitInput = document.getElementById('grLimit');
+            const duration = parseInt(durationInput.value) || 1;
+            const limit = parseInt(limitInput.value) || 3;
+            if (duration < 1 || limit < 1) {
+                showToast('Введите корректные значения (мин >=1, кол-во >=1)', 'error');
+                return;
+            }
+
+            const gr = lotteryState.goldRush;
+            if (gr.active) {
+                showToast('Золотая лихорадка уже активна!', 'error');
+                return;
+            }
+
+            gr.active = true;
+            gr.duration = duration;
+            gr.limit = limit;
+            gr.used = 0;
+            gr.startTime = Date.now();
+            gr.usedUsers = [];
+            saveDB();
+
+            showToast(`🔥 Золотая лихорадка запущена на ${duration} мин, ${limit} человек!`, 'success');
+            updateGoldRushUI();
+            if (gr.timerInterval) clearInterval(gr.timerInterval);
+            gr.timerInterval = setInterval(() => {
+                updateGoldRushTimer();
+            }, 1000);
+            document.getElementById('goldRushIndicator').classList.remove('hidden');
+            updateGoldRushTimer();
+        }
+
+        function updateGoldRushTimer() {
+            const gr = lotteryState.goldRush;
+            if (!gr.active) {
+                document.getElementById('goldRushIndicator').classList.add('hidden');
+                return;
+            }
+            const elapsed = (Date.now() - gr.startTime) / 1000;
+            const remaining = Math.max(0, gr.duration * 60 - elapsed);
+            const mins = Math.floor(remaining / 60);
+            const secs = Math.floor(remaining % 60);
+            document.getElementById('goldRushTimer').innerText = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+            document.getElementById('goldRushCount').innerText = gr.used;
+            document.getElementById('grStatusText').innerText = gr.active ? 'Активна' : 'Не активна';
+            document.getElementById('grTimeLeft').innerText = gr.active ? `${mins}м ${secs}с` : '--';
+            document.getElementById('grUsedCount').innerText = gr.used;
+
+            if (remaining <= 0) {
+                stopGoldRush();
+            }
+        }
+
+        function stopGoldRush() {
+            const gr = lotteryState.goldRush;
+            gr.active = false;
+            if (gr.timerInterval) {
+                clearInterval(gr.timerInterval);
+                gr.timerInterval = null;
+            }
+            saveDB();
+            document.getElementById('goldRushIndicator').classList.add('hidden');
+            updateGoldRushUI();
+            showToast('Золотая лихорадка завершена.', 'success');
+        }
+
+        function updateGoldRushUI() {
+            const gr = lotteryState.goldRush;
+            document.getElementById('grStatusText').innerText = gr.active ? 'Активна' : 'Не активна';
+            document.getElementById('grTimeLeft').innerText = gr.active ? '--' : '--';
+            document.getElementById('grUsedCount').innerText = gr.used;
+            if (gr.active) {
+                document.getElementById('goldRushIndicator').classList.remove('hidden');
+                updateGoldRushTimer();
+            } else {
+                document.getElementById('goldRushIndicator').classList.add('hidden');
+                if (gr.timerInterval) {
+                    clearInterval(gr.timerInterval);
+                    gr.timerInterval = null;
+                }
+            }
+            const startBtn = document.getElementById('grStartBtn');
+            startBtn.innerText = gr.active ? 'Остановить лихорадку' : 'Начать золотую лихорад
