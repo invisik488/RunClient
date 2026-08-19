@@ -1,294 +1,328 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApexClient</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif}
-        body{background:#040508;color:#fff;min-height:100vh}
-        .navbar-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:1000;width:92%;max-width:1100px}
-        .navbar{background:rgba(10,12,18,.85);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:8px 18px;display:flex;align-items:center;justify-content:space-between}
-        .nav-left{display:flex;align-items:center;gap:20px}
-        .nav-brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:17px;color:#fff;cursor:pointer}
-        .brand-icon{width:32px;height:32px;background:linear-gradient(135deg,#ff3344,#cc0022);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;color:#fff;box-shadow:0 0 15px rgba(255,51,68,.35)}
-        .nav-links{display:flex;align-items:center;gap:4px;list-style:none;flex-wrap:wrap}
-        .nav-link{color:#949aab;font-size:12px;font-weight:600;cursor:pointer;padding:8px 12px;border-radius:12px;text-decoration:none}
-        .nav-link:hover,.nav-link.active{color:#fff;background:rgba(255,255,255,.05)}
-        .btn-cabinet{background:linear-gradient(135deg,#ff3344,#d61b2c);color:#fff;border:none;padding:8px 16px;border-radius:14px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 20px rgba(255,51,68,.35)}
-        .btn-cabinet:hover{transform:scale(1.05)}
-        .page-section{padding-top:130px;padding-bottom:80px;max-width:1100px;margin:0 auto;width:92%}
-        .hero{text-align:center;margin-bottom:50px}
-        .hero h1{font-size:52px;font-weight:900;margin-bottom:16px;color:#fff}
-        .hero h1 span{background:linear-gradient(135deg,#ff3344,#ff8899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-        .hero p{color:#949aab;font-size:16px;max-width:650px;margin:0 auto 28px;line-height:1.6}
-        .hero-buttons{display:flex;gap:12px;justify-content:center;margin-bottom:40px}
-        .btn-main-action{background:#ff3344;color:#fff;border:none;padding:12px 24px;border-radius:14px;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 6px 25px rgba(255,51,68,.35)}
-        .btn-secondary-action{background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(255,255,255,.08);padding:12px 24px;border-radius:14px;font-size:14px;font-weight:800;cursor:pointer}
-        .hidden{display:none!important}
-        .card{background:rgba(14,16,24,.75);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;transition:all .35s}
-        .card:hover{transform:translateY(-6px);background:rgba(22,26,38,.9);border-color:rgba(255,51,68,.4);box-shadow:0 15px 35px rgba(255,51,68,.35)}
-        .form-input,.form-textarea{width:100%;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.08);padding:13px 16px;border-radius:14px;color:#fff;font-size:13.5px;outline:none}
-        .form-input:focus,.form-textarea:focus{border-color:#ff3344;box-shadow:0 0 15px rgba(255,51,68,.35)}
-        .form-group{margin-bottom:18px}
-        .form-group label{display:block;font-size:11.5px;color:#949aab;margin-bottom:6px;text-transform:uppercase;font-weight:700}
-        .action-btn{background:#ff3344;color:#fff;border:none;padding:12px 18px;border-radius:14px;font-size:13.5px;font-weight:800;cursor:pointer;box-shadow:0 4px 15px rgba(255,51,68,.35);width:100%}
-        .action-btn:hover{transform:translateY(-2px)}
-        .action-btn.green{background:#00e676;color:#000;box-shadow:0 4px 15px rgba(0,230,118,.3)}
-        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:55px}
-        .stat-card{background:rgba(14,16,24,.75);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;text-align:center;transition:all .35s}
-        .stat-card:hover{transform:translateY(-6px);background:rgba(22,26,38,.9);border-color:rgba(255,51,68,.4);box-shadow:0 15px 35px rgba(255,51,68,.35)}
-        .stat-val{font-size:32px;font-weight:900;color:#fff;margin-bottom:4px}
-        .stat-lbl{font-size:12px;color:#949aab;font-weight:700;text-transform:uppercase}
-        .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-bottom:50px}
-        .feature-card{background:rgba(14,16,24,.75);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:28px;transition:all .35s}
-        .feature-card:hover{transform:translateY(-6px);background:rgba(22,26,38,.9);border-color:rgba(255,51,68,.4);box-shadow:0 15px 35px rgba(255,51,68,.35)}
-        .feature-icon{font-size:26px;margin-bottom:14px;display:inline-block}
-        .feature-card h3{font-size:18px;font-weight:800;color:#fff;margin-bottom:8px}
-        .feature-card p{font-size:13.5px;color:#949aab;line-height:1.6}
-        #toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column-reverse;gap:12px}
-        .toast{background:rgba(12,14,20,.95);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08);border-left:4px solid #ff3344;padding:14px 22px;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.8);display:flex;align-items:center;gap:12px;font-size:13px;font-weight:600;animation:slideInRight .3s}
-        .toast.success{border-left-color:#00e676}
-        @keyframes slideInRight{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
-        footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;color:#666d7e;font-size:11px}
-        .tariffs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
-        .tariff-card{background:rgba(14,16,24,.75);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:28px 20px;text-align:center;transition:all .35s}
-        .tariff-card:hover{transform:translateY(-6px);background:rgba(22,26,38,.9);border-color:rgba(255,51,68,.4);box-shadow:0 15px 35px rgba(255,51,68,.35)}
-        .tariff-price{font-size:32px;font-weight:900;color:#fff;margin-bottom:20px}
-        .tariff-price span{font-size:15px;color:#949aab}
-        .tariff-name{font-size:15px;font-weight:700;color:#949aab;margin-bottom:10px}
-        .btn-buy{background:#ff3344;color:#fff;border:none;padding:12px;border-radius:14px;font-size:13.5px;font-weight:800;cursor:pointer;box-shadow:0 4px 15px rgba(255,51,68,.35);width:100%}
-        .btn-buy:hover{transform:translateY(-2px)}
-        .tariff-badge{display:inline-block;background:#ff3344;color:#fff;font-size:10px;font-weight:800;padding:4px 14px;border-radius:20px;margin-bottom:10px}
-        .lottery-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:30px}
-        .lottery-card{background:rgba(14,16,24,.75);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:28px;transition:all .35s}
-        .lottery-card:hover{transform:translateY(-6px);background:rgba(22,26,38,.9);border-color:rgba(255,51,68,.4);box-shadow:0 15px 35px rgba(255,51,68,.35)}
-        .lottery-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-        .lottery-header h3{font-size:20px;font-weight:800;color:#fff}
-        .lottery-header .badge{background:rgba(255,51,68,.15);color:#ff3344;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;border:1px solid rgba(255,51,68,.2)}
-        .lottery-btn{background:#ff3344;color:#fff;border:none;padding:10px 18px;border-radius:14px;font-size:13.5px;font-weight:800;cursor:pointer;box-shadow:0 4px 15px rgba(255,51,68,.35)}
-        .lottery-btn:hover{transform:translateY(-2px)}
-        .lottery-info{display:flex;justify-content:space-between;font-size:12px;color:#949aab;margin-top:10px}
-        .lottery-info .attempts{color:#fff;font-weight:700}
-        .review-card{background:rgba(14,16,24,.75);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px;margin-bottom:14px;transition:all .35s}
-        .review-card:hover{transform:translateY(-6px);background:rgba(22,26,38,.9);border-color:rgba(255,51,68,.4);box-shadow:0 15px 35px rgba(255,51,68,.35)}
-        .review-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-        .review-author{font-weight:800;font-size:14.5px;color:#fff}
-        .review-stars{color:#ffbc00;font-size:13px}
-        .review-text{font-size:13.5px;color:#949aab;line-height:1.6}
-        .faq-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:50px}
-        .faq-item{padding:20px;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:rgba(255,255,255,.025)}
-        .faq-item b{display:block;margin-bottom:7px;font-size:13px;color:#fff}
-        .faq-item p{color:#949aab;font-size:12px;line-height:1.55}
-        .dash-container{display:grid;grid-template-columns:280px 1fr;gap:24px;background:linear-gradient(145deg,rgba(50,12,18,.92),rgba(25,6,10,.96));backdrop-filter:blur(24px);border:1px solid rgba(255,51,68,.2);border-radius:28px;padding:24px;min-height:600px}
-        .sidebar{border-right:1px solid rgba(255,51,68,.15);padding-right:20px}
-        .profile-card{background:rgba(0,0,0,.3);border-radius:16px;padding:18px;border:1px solid rgba(255,51,68,.1);margin-bottom:20px}
-        .profile-header{display:flex;align-items:center;gap:14px}
-        .avatar{width:56px;height:56px;background:linear-gradient(135deg,#ff3344,#990022);border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;color:#fff;box-shadow:0 0 20px rgba(255,51,68,.3);flex-shrink:0}
-        .profile-name{font-size:18px;font-weight:800;color:#fff}
-        .profile-role{font-size:13px;color:#ff3344;font-weight:600}
-        .account-block{background:rgba(0,0,0,.25);border-radius:14px;padding:14px 16px;margin-bottom:16px;border:1px solid rgba(255,255,255,.05)}
-        .block-title{font-size:12px;font-weight:700;text-transform:uppercase;color:#949aab;margin-bottom:10px}
-        .account-item{display:flex;justify-content:space-between;padding:4px 0;font-size:14px;color:#fff;border-bottom:1px solid rgba(255,255,255,.04)}
-        .account-item:last-child{border-bottom:none}
-        .account-item .label{color:#949aab;font-weight:500}
-        .account-item .value{font-weight:700}
-        .account-item .value.green{color:#00e676}
-        .btn-download{display:block;background:linear-gradient(135deg,#ff3344,#b3001a);color:#fff;border:none;padding:12px;border-radius:14px;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 20px rgba(255,51,68,.4);text-align:center;width:100%}
-        .btn-download:hover{transform:scale(1.02)}
-        .nav-menu{list-style:none;display:flex;flex-direction:column;gap:4px;margin-top:16px}
-        .nav-item{padding:10px 14px;border-radius:12px;color:#949aab;font-size:13px;font-weight:700;cursor:pointer;transition:.2s}
-        .nav-item:hover,.nav-item.active{background:rgba(255,51,68,.12);color:#ff3344}
-        .btn-logout{background:none;border:1px solid rgba(255,255,255,.08);color:#949aab;padding:12px;border-radius:12px;cursor:pointer;font-weight:700;font-size:12.5px;width:100%;margin-top:10px}
-        .btn-logout:hover{border-color:#ff3344;color:#ff3344}
-        .content{padding:10px;display:flex;flex-direction:column;gap:18px;overflow-y:auto;max-height:560px}
-        .cab-tab-content{display:block}
-        .cab-tab-content.hidden{display:none}
-        .auth-wrapper{display:flex;align-items:center;justify-content:center;min-height:60vh}
-        .auth-card{background:rgba(14,16,24,.75);border:1px solid rgba(255,255,255,.08);border-radius:28px;padding:40px;width:100%;max-width:420px;box-shadow:0 25px 60px rgba(0,0,0,.7)}
-        .auth-title{font-size:28px;font-weight:900;text-align:center;margin-bottom:4px}
-        .auth-title span{color:#ff3344}
-        .auth-subtitle{font-size:12.5px;color:#949aab;text-align:center;margin-bottom:24px;font-weight:600}
-        .auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:rgba(0,0,0,.4);padding:5px;border-radius:14px;margin-bottom:24px;border:1px solid rgba(255,255,255,.08)}
-        .auth-tab-btn{background:none;border:none;padding:10px;border-radius:10px;font-size:12.5px;font-weight:700;color:#949aab;cursor:pointer}
-        .auth-tab-btn.active{background:#ff3344;color:#fff;box-shadow:0 4px 15px rgba(255,51,68,.35)}
-        .hero-pills{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-bottom:38px}
-        .hero-pill{padding:8px 13px;border:1px solid rgba(255,255,255,.08);border-radius:999px;background:rgba(255,255,255,.035);color:#cbd0df;font-size:11px;font-weight:800;backdrop-filter:blur(10px)}
-        @media(max-width:850px){.dash-container{grid-template-columns:1fr}.sidebar{border-right:none;padding-right:0}.lottery-grid{grid-template-columns:1fr}.faq-grid{grid-template-columns:1fr}}
-        @media(max-width:560px){.navbar-container{top:10px}.navbar{padding:7px 10px}.nav-links{display:none}.hero h1{font-size:39px}.page-section{padding-top:105px}footer.apex-footer{flex-direction:column}}
-    </style>
+<meta charset="UTF-8">
+<title>ApexClient</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#040508;color:#fff}
+.navbar{background:rgba(10,12,18,.85);padding:15px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.1)}
+.nav-links a{color:#949aab;text-decoration:none;margin:0 10px;font-size:14px}
+.nav-links a:hover{color:#fff}
+.btn{background:#ff3344;color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer}
+.btn:hover{transform:scale(1.05)}
+.page{padding:80px 20px 40px;max-width:1100px;margin:0 auto}
+.hidden{display:none}
+.hero{text-align:center;padding:40px 0}
+.hero h1{font-size:48px;margin-bottom:20px}
+.hero h1 span{color:#ff3344}
+.hero p{color:#949aab;font-size:18px;max-width:600px;margin:0 auto 30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin:30px 0}
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:24px;text-align:center}
+.card:hover{transform:translateY(-5px);border-color:#ff3344;box-shadow:0 10px 30px rgba(255,51,68,.2)}
+.card h3{color:#fff;margin-bottom:10px}
+.card p{color:#949aab;font-size:14px}
+input,textarea{width:100%;padding:12px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;margin:8px 0}
+input:focus,textarea:focus{border-color:#ff3344;outline:none}
+.btn-full{width:100%;padding:12px;background:#ff3344;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700}
+.btn-full:hover{transform:scale(1.02)}
+.btn-green{background:#00e676;color:#000}
+.dash{display:grid;grid-template-columns:260px 1fr;gap:24px;background:rgba(255,255,255,.05);border-radius:16px;padding:24px;min-height:500px}
+.sidebar{border-right:1px solid rgba(255,255,255,.1);padding-right:20px}
+.avatar{width:56px;height:56px;background:linear-gradient(135deg,#ff3344,#990022);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;margin-bottom:12px}
+.menu-item{padding:10px;border-radius:8px;cursor:pointer;color:#949aab;margin:4px 0}
+.menu-item:hover,.menu-item.active{background:rgba(255,51,68,.15);color:#ff3344}
+.tab-content{display:block}
+.tab-content.hidden{display:none}
+.auth-card{max-width:400px;margin:40px auto;background:rgba(255,255,255,.05);padding:40px;border-radius:16px}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.auth-tab{padding:10px;background:rgba(255,255,255,.05);border:none;border-radius:8px;color:#949aab;cursor:pointer}
+.auth-tab.active{background:#ff3344;color:#fff}
+.toast{position:fixed;bottom:20px;right:20px;background:rgba(0,0,0,.9);padding:15px 25px;border-radius:8px;border-left:4px solid #00e676;z-index:9999;display:none}
+.toast.error{border-left-color:#ff3344}
+@media(max-width:768px){.dash{grid-template-columns:1fr}.sidebar{border-right:none;padding-right:0}}
+</style>
 </head>
 <body>
-    <div id="toast-container"></div>
-    <div class="navbar-container">
-        <nav class="navbar">
-            <div class="nav-left">
-                <div class="nav-brand" onclick="navigateTo('home')">
-                    <div class="brand-icon">A</div>
-                    <span>ApexClient</span>
-                </div>
-                <ul class="nav-links">
-                    <li><a class="nav-link active" id="nav-home" onclick="navigateTo('home')">Главная</a></li>
-                    <li><a class="nav-link" id="nav-tariffs" onclick="navigateTo('tariffs')">Тарифы</a></li>
-                    <li><a class="nav-link" id="nav-lottery" onclick="navigateTo('lottery')">Лотерея</a></li>
-                    <li><a class="nav-link" id="nav-reviews" onclick="navigateTo('reviews')">Отзывы</a></li>
-                    <li><a class="nav-link" id="nav-faq" onclick="navigateTo('faq')">FAQ</a></li>
-                    <li><a class="nav-link" id="nav-support" onclick="navigateTo('support')">Поддержка</a></li>
-                </ul>
-            </div>
-            <div class="nav-right">
-                <button class="btn-cabinet" onclick="navigateTo('cabinet')">👤 <span id="navCabinetText">Кабинет</span></button>
-            </div>
-        </nav>
-    </div>
 
-    <div id="page-home" class="page-section">
-        <div class="hero">
-            <h1>Абсолютное Доминирование <br><span>В Каждом Сражении</span></h1>
-            <p>Передовой игровой клиент с надежным обходом античитов, гибкой настройкой визуальных модулей и абсолютной оптимизацией для максимального FPS.</p>
-            <div class="hero-buttons">
-                <button class="btn-main-action" onclick="navigateTo('tariffs')">Выбрать подписку</button>
-                <button class="btn-secondary-action" onclick="navigateTo('cabinet')">Личный кабинет</button>
-            </div>
-            <div class="hero-pills">
-                <span class="hero-pill">⚡ Fabric 1.21.4</span>
-                <span class="hero-pill">🎯 PvP / Visual</span>
-                <span class="hero-pill">🧩 Модульная система</span>
-                <span class="hero-pill">🚀 FPS Focus</span>
-            </div>
-        </div>
-        <div class="stats-grid">
-            <div class="stat-card"><div class="stat-val">480+</div><div class="stat-lbl">Онлайн игроков</div></div>
-            <div class="stat-card"><div class="stat-val">1,620+</div><div class="stat-lbl">Активных подписок</div></div>
-            <div class="stat-card"><div class="stat-val">99.8%</div><div class="stat-lbl">Обход защиты</div></div>
-        </div>
-        <div class="features-grid">
-            <div class="feature-card"><span class="feature-icon">🚀</span><h3>Максимальная оптимизация</h3><p>Стабильный высокий фреймрейт без просадок</p></div>
-            <div class="feature-card"><span class="feature-icon">🛡️</span><h3>Обход античитов</h3><p>Инновационные алгоритмы маскировки памяти</p></div>
-            <div class="feature-card"><span class="feature-icon">✨</span><h3>Кастомные модули</h3><p>Настраиваемый ClickGUI и уникальные хитбоксы</p></div>
-        </div>
-    </div>
+<div id="toast" class="toast"></div>
 
-    <div id="page-tariffs" class="page-section hidden">
-        <div class="hero"><h1>Тарифы <span>ApexClient</span></h1><p>Выберите срок доступа</p></div>
-        <div class="tariffs-grid">
-            <div class="tariff-card"><div class="tariff-name">1 месяц</div><div class="tariff-price">149 <span>₽</span></div><button class="btn-buy" onclick="buyTariff('1 месяц')">Оформить</button></div>
-            <div class="tariff-card"><div class="tariff-badge">ВЫГОДНО</div><div class="tariff-name">3 месяца</div><div class="tariff-price">239 <span>₽</span></div><button class="btn-buy" onclick="buyTariff('3 месяца')">Оформить</button></div>
-            <div class="tariff-card"><div class="tariff-name">Навсегда</div><div class="tariff-price">449 <span>₽</span></div><button class="btn-buy" onclick="buyTariff('Навсегда')">Оформить</button></div>
-        </div>
+<div class="navbar">
+    <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:32px;height:32px;background:linear-gradient(135deg,#ff3344,#cc0022);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff">A</div>
+        <span style="font-weight:700;font-size:18px;color:#fff">ApexClient</span>
     </div>
-
-    <div id="page-lottery" class="page-section hidden">
-        <div class="hero"><h1>🎰 Лотерейный центр <span>ApexClient</span></h1><p>Крути рулетку и выигрывай подписки!</p></div>
-        <div class="lottery-grid">
-            <div class="lottery-card">
-                <div class="lottery-header"><h3>🎡 Рулетка</h3><span class="badge" id="spinBadge">бесплатно</span></div>
-                <button class="lottery-btn" onclick="spinRoulette()">🎲 Крутить</button>
-                <div class="lottery-info"><span>Шансы: 7д 15% · 30д 2% · 90д 0.5%</span><span class="attempts">Попыток: <span id="spinAttempts">1</span></span></div>
-            </div>
-            <div class="lottery-card">
-                <div class="lottery-header"><h3>📦 Бокс</h3><span class="badge" id="caseBadge">бесплатно</span></div>
-                <button class="lottery-btn" onclick="openCase()">📦 Открыть</button>
-                <div class="lottery-info"><span>Шансы: 7д 15% · 30д 2% · 90д 0.5%</span><span class="attempts">Попыток: <span id="caseAttempts">1</span></span></div>
-            </div>
-        </div>
+    <div class="nav-links">
+        <a href="#" onclick="navigateTo('home')" id="nav-home" class="active">Главная</a>
+        <a href="#" onclick="navigateTo('tariffs')" id="nav-tariffs">Тарифы</a>
+        <a href="#" onclick="navigateTo('lottery')" id="nav-lottery">Лотерея</a>
+        <a href="#" onclick="navigateTo('cabinet')" id="nav-cabinet">Кабинет</a>
+        <a href="#" onclick="navigateTo('auth')" id="nav-auth">Вход</a>
     </div>
+</div>
 
-    <div id="page-reviews" class="page-section hidden">
-        <div class="hero"><h1>Отзывы пользователей</h1></div>
-        <div style="max-width:650px;margin:0 auto">
-            <div class="card" style="margin-bottom:30px">
-                <div style="font-size:11.5px;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px">Оставить отзыв</div>
-                <div class="form-group"><label>Ваш ник</label><input type="text" id="reviewAuthorInput" class="form-input" placeholder="Ваш ник"></div>
-                <div class="form-group"><label>Текст отзыва</label><textarea id="reviewTextInput" class="form-textarea" placeholder="Напишите..."></textarea></div>
-                <button class="action-btn" onclick="addNewReview()">Опубликовать</button>
-            </div>
-            <div id="reviewsListContainer">
-                <div class="review-card"><div class="review-header"><span class="review-author">Sextazyst</span><span class="review-stars">★★★★★</span></div><p class="review-text">Лучший клиент!</p></div>
-            </div>
+<!-- ГЛАВНАЯ -->
+<div id="page-home" class="page">
+    <div class="hero">
+        <h1>Абсолютное Доминирование<br><span>В Каждом Сражении</span></h1>
+        <p>Передовой игровой клиент с надежным обходом античитов и максимальной оптимизацией</p>
+        <button class="btn" onclick="navigateTo('tariffs')" style="padding:12px 30px;font-size:16px">Выбрать подписку</button>
+    </div>
+    <div class="grid">
+        <div class="card"><div style="font-size:36px;font-weight:900;color:#fff">480+</div><p>Онлайн игроков</p></div>
+        <div class="card"><div style="font-size:36px;font-weight:900;color:#fff">1,620+</div><p>Активных подписок</p></div>
+        <div class="card"><div style="font-size:36px;font-weight:900;color:#fff">99.8%</div><p>Обход защиты</p></div>
+    </div>
+    <div class="grid">
+        <div class="card"><span style="font-size:32px">🚀</span><h3>Максимальная оптимизация</h3><p>Стабильный высокий FPS без просадок</p></div>
+        <div class="card"><span style="font-size:32px">🛡️</span><h3>Обход античитов</h3><p>Инновационные алгоритмы маскировки</p></div>
+        <div class="card"><span style="font-size:32px">✨</span><h3>Кастомные модули</h3><p>Настраиваемый ClickGUI и хитбоксы</p></div>
+    </div>
+</div>
+
+<!-- ТАРИФЫ -->
+<div id="page-tariffs" class="page hidden">
+    <div class="hero"><h1>Тарифы <span>ApexClient</span></h1><p>Выберите срок доступа</p></div>
+    <div class="grid">
+        <div class="card"><h3>1 месяц</h3><div style="font-size:32px;font-weight:900;color:#fff">149 ₽</div><button class="btn-full" style="margin-top:15px" onclick="buyTariff('1 месяц')">Оформить</button></div>
+        <div class="card" style="border-color:#ff3344"><div style="background:#ff3344;color:#fff;padding:4px 12px;border-radius:20px;display:inline-block;font-size:12px;font-weight:700;margin-bottom:10px">ВЫГОДНО</div><h3>3 месяца</h3><div style="font-size:32px;font-weight:900;color:#fff">239 ₽</div><button class="btn-full" style="margin-top:15px" onclick="buyTariff('3 месяца')">Оформить</button></div>
+        <div class="card"><h3>Навсегда</h3><div style="font-size:32px;font-weight:900;color:#fff">449 ₽</div><button class="btn-full" style="margin-top:15px" onclick="buyTariff('Навсегда')">Оформить</button></div>
+    </div>
+</div>
+
+<!-- ЛОТЕРЕЯ -->
+<div id="page-lottery" class="page hidden">
+    <div class="hero"><h1>🎰 Лотерейный центр <span>ApexClient</span></h1><p>Крути рулетку и выигрывай подписки!</p></div>
+    <div class="grid">
+        <div class="card"><h3>🎡 Рулетка</h3><p style="font-size:12px;color:#949aab;margin:10px 0">7д 15% · 30д 2% · 90д 0.5%</p><button class="btn-full" onclick="spinRoulette()">🎲 Крутить</button><p style="margin-top:10px;font-size:13px;color:#949aab">Попыток: <span id="spinAttempts">1</span></p></div>
+        <div class="card"><h3>📦 Бокс</h3><p style="font-size:12px;color:#949aab;margin:10px 0">7д 15% · 30д 2% · 90д 0.5%</p><button class="btn-full" onclick="openCase()">📦 Открыть</button><p style="margin-top:10px;font-size:13px;color:#949aab">Попыток: <span id="caseAttempts">1</span></p></div>
+    </div>
+</div>
+
+<!-- КАБИНЕТ -->
+<div id="page-cabinet" class="page hidden">
+    <div class="dash">
+        <div class="sidebar">
+            <div class="avatar" id="avatar">A</div>
+            <div style="font-size:18px;font-weight:700" id="username">User</div>
+            <div style="color:#ff3344;font-size:13px;font-weight:600" id="role">USER</div>
+            <hr style="border-color:rgba(255,255,255,.1);margin:16px 0">
+            <div class="menu-item active" onclick="switchTab('home',this)">🏠 Главная</div>
+            <div class="menu-item" onclick="switchTab('keys',this)">🔑 Ключи</div>
+            <div class="menu-item" onclick="switchTab('orders',this)">📦 Заказы</div>
+            <button class="btn" style="width:100%;margin-top:20px" onclick="logout()">Выйти</button>
+        </div>
+        <div>
+            <div id="tab-home" class="tab-content"><div class="card"><h3>Статус подписки</h3><div id="subStatus" style="color:#ff3344;font-size:22px;font-weight:700">НЕТ ПОДПИСКИ</div></div></div>
+            <div id="tab-keys" class="tab-content hidden"><div class="card"><h3>Активация ключа</h3><input type="text" id="keyInput" placeholder="Введите ключ..."><button class="btn-full btn-green" onclick="activateKey()">Активировать</button></div></div>
+            <div id="tab-orders" class="tab-content hidden"><div class="card"><h3>Мои заказы</h3><div id="ordersList" style="color:#949aab">Нет заказов</div></div></div>
         </div>
     </div>
+</div>
 
-    <div id="page-faq" class="page-section hidden">
-        <div class="hero"><h1>FAQ</h1></div>
-        <div class="faq-grid">
-            <div class="faq-item"><b>Какая версия?</b><p>Minecraft 1.21.4 Fabric</p></div>
-            <div class="faq-item"><b>Как активировать?</b><p>Через личный кабинет</p></div>
-            <div class="faq-item"><b>Есть ли поддержка?</b><p>Круглосуточная поддержка</p></div>
-            <div class="faq-item"><b>Как сбросить HWID?</b><p>В разделе тарифов</p></div>
+<!-- АВТОРИЗАЦИЯ -->
+<div id="page-auth" class="page hidden">
+    <div class="auth-card">
+        <div style="font-size:28px;font-weight:900;text-align:center;margin-bottom:4px">Apex<span style="color:#ff3344">Client</span></div>
+        <div style="color:#949aab;text-align:center;margin-bottom:20px">Системный доступ</div>
+        <div class="auth-tabs">
+            <button class="auth-tab active" id="loginTab" onclick="switchAuth('login')">Вход</button>
+            <button class="auth-tab" id="registerTab" onclick="switchAuth('register')">Регистрация</button>
+        </div>
+        <div id="loginForm">
+            <input type="text" id="loginUser" placeholder="Никнейм">
+            <input type="password" id="loginPass" placeholder="Пароль">
+            <button class="btn-full" onclick="handleLogin()">Войти</button>
+        </div>
+        <div id="registerForm" class="hidden">
+            <input type="text" id="regUser" placeholder="Никнейм">
+            <input type="password" id="regPass" placeholder="Пароль">
+            <button class="btn-full btn-green" onclick="handleRegister()">Зарегистрироваться</button>
         </div>
     </div>
+</div>
 
-    <div id="page-support" class="page-section hidden">
-        <div class="hero"><h1>Техническая поддержка</h1></div>
-        <div style="max-width:500px;margin:0 auto">
-            <div class="card">
-                <div style="font-size:11.5px;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px">Новое обращение</div>
-                <div class="form-group"><label>Тема</label><input type="text" id="ticketSubject" class="form-input" placeholder="Тема обращения"></div>
-                <div class="form-group"><label>Описание</label><textarea id="ticketMessage" class="form-textarea" placeholder="Опишите проблему"></textarea></div>
-                <button class="action-btn" onclick="submitTicket()">Отправить</button>
-            </div>
-        </div>
-    </div>
+<script>
+// ===== ДАННЫЕ =====
+let currentUser = localStorage.getItem('apex_user') || null;
+let users = JSON.parse(localStorage.getItem('apex_users')) || {
+    "invisik": { password: "123", role: "owner", sub: "Навсегда", freeSpin: false, freeCase: false, extraSpin: 0, extraCase: 0 }
+};
+let requests = JSON.parse(localStorage.getItem('apex_requests')) || { subs: [] };
+let keysDB = JSON.parse(localStorage.getItem('apex_keys')) || {};
 
-    <div id="page-cabinet" class="page-section hidden">
-        <div class="dash-container">
-            <div class="sidebar">
-                <div>
-                    <div class="profile-card">
-                        <div class="profile-header">
-                            <div class="avatar" id="sidebarAvatar">A</div>
-                            <div><div class="profile-name" id="sidebarUsername">User</div><div class="profile-role" id="sidebarRole">USER</div></div>
-                        </div>
-                    </div>
-                    <div class="account-block">
-                        <div class="block-title">Аккаунт</div>
-                        <div class="account-item"><span class="label">Подписка</span><span class="value" id="dashSubValue">Нет</span></div>
-                        <div class="account-item"><span class="label">Доступ</span><span class="value green" id="dashAccessValue">Активен</span></div>
-                    </div>
-                    <button class="btn-download" onclick="showToast('Загрузка...','success')">📥 Скачать ApexClient</button>
-                    <div class="nav-menu">
-                        <div class="nav-item active" onclick="switchCabinetTab('home',this)">🏠 Главная</div>
-                        <div class="nav-item" onclick="switchCabinetTab('keys',this)">🔑 Ключи</div>
-                        <div class="nav-item" onclick="switchCabinetTab('orders',this)">📦 Заказы</div>
-                        <div class="nav-item" onclick="switchCabinetTab('moderation',this)">🛡️ Модерация</div>
-                    </div>
-                </div>
-                <button class="btn-logout" onclick="logout()">Выйти</button>
-            </div>
-            <div class="content">
-                <div id="cab-home" class="cab-tab-content">
-                    <div class="card"><div style="font-size:11.5px;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px">Статус подписки</div><div style="color:#ff3344;font-size:22px;font-weight:900" id="subStatusText">НЕТ ПОДПИСКИ</div></div>
-                </div>
-                <div id="cab-keys" class="cab-tab-content hidden">
-                    <div class="card"><div style="font-size:11.5px;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px">Активация ключа</div><div class="form-group"><input type="text" id="subKeyInput" class="form-input" placeholder="Введите ключ..."></div><button class="action-btn green" onclick="activateSubKey()">Активировать</button></div>
-                </div>
-                <div id="cab-orders" class="cab-tab-content hidden">
-                    <div class="card"><div style="font-size:11.5px;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px">Мои заказы</div><div id="ordersList"><p style="color:#949aab;font-size:13.5px">Нет заказов</p></div></div>
-                </div>
-                <div id="cab-moderation" class="cab-tab-content hidden">
-                    <div class="card"><div style="font-size:11.5px;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px">Заявки на покупку</div><div id="moderationList"><p style="color:#949aab;font-size:13.5px">Нет заявок</p></div></div>
-                </div>
-            </div>
-        </div>
-    </div>
+function save() {
+    localStorage.setItem('apex_users', JSON.stringify(users));
+    localStorage.setItem('apex_requests', JSON.stringify(requests));
+    localStorage.setItem('apex_keys', JSON.stringify(keysDB));
+}
 
-    <div id="page-auth" class="page-section hidden">
-        <div class="auth-wrapper">
-            <div class="auth-card">
-                <div class="auth-title">Apex<span>Client</span></div>
-                <div class="auth-subtitle">Системный доступ</div>
-                <div class="auth-tabs">
-                    <button class="auth-tab-btn active" id="tabBtnLogin" onclick="switchAuthTab('login')">Вход</button>
-                    <button class="auth-tab-btn" id="tabBtnRegister" onclick="switchAuthTab('register')">Регистрация</button>
-                </div>
-                <div id="authFormLogin">
-                    <div class="form-group"><label>Никнейм</label><input type="text" id="loginUsernameInput" class="form-input" placeholder="Введите ник..."></div>
-                    <div class="form-group"><label>Пароль</label><input type="password" id="loginPasswordInput" class="form-input" placeholder="Введите пароль..."></div>
-                    <button class="action-btn" onclick="handleLogin()">Войти</button>
-                </div>
-                <div id="authFormRegister" class="hidden">
-                    <div class="form-group"><label>Никнейм</label><input type="text" id="regUsernameInput" class="form-input" placeholder="Ваш ник..."></div>
-                    <div class="form-group"><label>Пароль</label><input type="password" id="regPasswordInput" class="form-input" placeholder="Надежный пароль..."></div>
-                    <button class="
+function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + type;
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 3000);
+}
+
+// ===== НАВИГАЦИЯ =====
+function navigateTo(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+    document.getElementById('page-' + page).classList.remove('hidden');
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    const link = document.getElementById('nav-' + page);
+    if (link) link.classList.add('active');
+    if (page === 'cabinet' && !currentUser) navigateTo('auth');
+    updateUI();
+}
+
+// ===== АВТОРИЗАЦИЯ =====
+function switchAuth(tab) {
+    document.getElementById('loginForm').classList.toggle('hidden', tab !== 'login');
+    document.getElementById('registerForm').classList.toggle('hidden', tab !== 'register');
+    document.getElementById('loginTab').classList.toggle('active', tab === 'login');
+    document.getElementById('registerTab').classList.toggle('active', tab === 'register');
+}
+
+function handleLogin() {
+    const user = document.getElementById('loginUser').value.trim();
+    const pass = document.getElementById('loginPass').value.trim();
+    if (!user || !pass) { showToast('Заполните все поля!', 'error'); return; }
+    const lower = user.toLowerCase();
+    if (!users[lower]) { showToast('Пользователь не найден!', 'error'); return; }
+    if (users[lower].password !== pass) { showToast('Неверный пароль!', 'error'); return; }
+    currentUser = user;
+    localStorage.setItem('apex_user', currentUser);
+    showToast('Добро пожаловать, ' + currentUser + '!');
+    navigateTo('cabinet');
+}
+
+function handleRegister() {
+    const user = document.getElementById('regUser').value.trim();
+    const pass = document.getElementById('regPass').value.trim();
+    if (!user || !pass) { showToast('Заполните все поля!', 'error'); return; }
+    const lower = user.toLowerCase();
+    if (users[lower]) { showToast('Пользователь уже существует!', 'error'); return; }
+    users[lower] = { password: pass, role: 'user', sub: 'Нет', freeSpin: false, freeCase: false, extraSpin: 0, extraCase: 0 };
+    save();
+    currentUser = user;
+    localStorage.setItem('apex_user', currentUser);
+    showToast('Аккаунт создан!');
+    navigateTo('cabinet');
+}
+
+function logout() {
+    localStorage.removeItem('apex_user');
+    currentUser = null;
+    navigateTo('home');
+    showToast('Вы вышли');
+}
+
+// ===== КАБИНЕТ =====
+function updateUI() {
+    if (!currentUser) return;
+    const data = users[currentUser.toLowerCase()];
+    if (!data) return;
+    document.getElementById('avatar').textContent = currentUser.charAt(0).toUpperCase();
+    document.getElementById('username').textContent = currentUser;
+    document.getElementById('role').textContent = data.role.toUpperCase();
+    document.getElementById('subStatus').textContent = data.sub && data.sub !== 'Нет' ? 'ПОДПИСКА АКТИВНА (' + data.sub + ')' : 'НЕТ ПОДПИСКИ';
+    document.getElementById('subStatus').style.color = data.sub && data.sub !== 'Нет' ? '#00e676' : '#ff3344';
+}
+
+function switchTab(tab, el) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+    document.getElementById('tab-' + tab).classList.remove('hidden');
+    document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+    if (el) el.classList.add('active');
+}
+
+// ===== ТАРИФЫ =====
+function buyTariff(name) {
+    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); navigateTo('auth'); return; }
+    requests.subs.push({ user: currentUser, tariff: name, date: new Date().toLocaleDateString() });
+    save();
+    showToast('Заявка на "' + name + '" отправлена!');
+}
+
+// ===== ЛОТЕРЕЯ =====
+const PRIZES = [{ key: '7д', label: '7 дней', weight: 15 }, { key: '30д', label: '30 дней', weight: 2 }, { key: '90д', label: '90 дней', weight: 0.5 }];
+
+function getPrize() {
+    const total = PRIZES.reduce((s, p) => s + p.weight, 0);
+    let r = Math.random() * total;
+    for (let p of PRIZES) {
+        r -= p.weight;
+        if (r <= 0) return p;
+    }
+    return PRIZES[0];
+}
+
+function spinRoulette() {
+    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+    const data = users[currentUser.toLowerCase()];
+    if (!data) return;
+    if (!data.freeSpin && data.extraSpin <= 0) { showToast('Нет попыток! Купите в разделе "Тарифы"', 'error'); return; }
+    if (data.freeSpin) data.freeSpin = false;
+    else data.extraSpin--;
+    const prize = getPrize();
+    data.sub = prize.key;
+    save();
+    updateUI();
+    showToast('🎉 Вы выиграли подписку на ' + prize.label + '!');
+    updateLotteryUI();
+}
+
+function openCase() {
+    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+    const data = users[currentUser.toLowerCase()];
+    if (!data) return;
+    if (!data.freeCase && data.extraCase <= 0) { showToast('Нет попыток! Купите в разделе "Тарифы"', 'error'); return; }
+    if (data.freeCase) data.freeCase = false;
+    else data.extraCase--;
+    const prize = getPrize();
+    data.sub = prize.key;
+    save();
+    updateUI();
+    showToast('🎉 Вы выиграли подписку на ' + prize.label + '!');
+    updateLotteryUI();
+}
+
+function updateLotteryUI() {
+    if (!currentUser) return;
+    const data = users[currentUser.toLowerCase()];
+    if (!data) return;
+    document.getElementById('spinAttempts').textContent = (data.freeSpin ? 1 : 0) + data.extraSpin;
+    document.getElementById('caseAttempts').textContent = (data.freeCase ? 1 : 0) + data.extraCase;
+}
+
+// ===== КЛЮЧИ =====
+function activateKey() {
+    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+    const key = document.getElementById('keyInput').value.trim().toUpperCase();
+    if (!key) { showToast('Введите ключ!', 'error'); return; }
+    if (!keysDB[key]) { showToast('Неверный ключ!', 'error'); return; }
+    const data = users[currentUser.toLowerCase()];
+    if (!data) return;
+    data.sub = keysDB[key];
+    delete keysDB[key];
+    save();
+    updateUI();
+    showToast('Подписка активирована: ' + data.sub);
+    document.getElementById('keyInput').value = '';
+}
+
+// ===== ИНИЦИАЛИЗАЦИЯ =====
+window.onload = function() {
+    if (currentUser && users[currentUser.toLowerCase()]) {
+        updateUI();
+        navigateTo('cabinet');
+    } else {
+        navigateTo('home');
+    }
+    updateLotteryUI();
+};
+</script>
+
+</body>
+</html>
