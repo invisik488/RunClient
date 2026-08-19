@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&display=swap" rel="stylesheet">
     <style>
+        /* ===== БАЗОВЫЕ ПЕРЕМЕННЫЕ ===== */
         :root {
             --bg-main: #040508;
             --bg-card: rgba(14, 16, 24, 0.75);
@@ -22,18 +23,22 @@
             --text-sub: #949aab;
             --violet: #8b5cf6;
             --cyan: #38bdf8;
+            --theme-bg: #040508; /* динамический фон */
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
         body {
-            background-color: var(--bg-main);
+            background-color: var(--theme-bg);
             color: var(--text-main);
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
+            transition: background-color 0.3s ease;
         }
+        /* ===== ГЛОБАЛЬНЫЕ ЭФФЕКТЫ ===== */
         .bg-glow-1 { position: fixed; top: -200px; left: 50%; transform: translateX(-50%); width: 800px; height: 500px; background: radial-gradient(circle, rgba(255, 51, 68, 0.18) 0%, rgba(0,0,0,0) 70%); z-index: -1; pointer-events: none; filter: blur(80px); }
         .bg-glow-2 { position: fixed; bottom: -150px; right: -150px; width: 600px; height: 600px; background: radial-gradient(circle, rgba(0, 136, 255, 0.1) 0%, rgba(0,0,0,0) 70%); z-index: -1; pointer-events: none; filter: blur(100px); }
         .hidden { display: none !important; }
+        /* ===== TOAST ===== */
         #toast-container {
             position: fixed; bottom: 24px; right: 24px; z-index: 9999;
             display: flex; flex-direction: column-reverse; gap: 12px;
@@ -51,6 +56,7 @@
             from { transform: translateX(120%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
+        /* ===== НАВБАР ===== */
         .navbar-container {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             z-index: 1000; width: 92%; max-width: 1100px;
@@ -84,6 +90,7 @@
             box-shadow: 0 4px 20px var(--accent-red-glow); transition: 0.2s;
         }
         .btn-cabinet:hover { transform: scale(1.05); }
+        /* ===== ОБЩИЕ СТИЛИ ===== */
         .page-section { padding-top: 130px; padding-bottom: 80px; max-width: 1100px; margin: 0 auto; width: 92%; }
         .hero { text-align: center; margin-bottom: 50px; }
         .hero-badge {
@@ -105,26 +112,86 @@
             font-size: 14px; font-weight: 800; cursor: pointer; transition: 0.2s;
         }
         .btn-secondary-action:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
-        .section-title-block { text-align: center; margin-bottom: 30px; }
-        .section-title-block h2 { font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 8px; }
-        .section-title-block p { font-size: 14px; color: var(--text-sub); }
-        .btn-buy, .action-btn {
-            width: 100%; background: var(--accent-red); color: #fff; border: none; padding: 12px;
-            border-radius: 12px; font-size: 13.5px; font-weight: 800; cursor: pointer; transition: 0.2s;
-            box-shadow: 0 4px 15px var(--accent-red-glow); display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-        }
-        .btn-buy:hover, .action-btn:hover { transform: translateY(-2px); }
-        .action-btn.green { background: var(--accent-green); color: #000; box-shadow: 0 4px 15px rgba(0,230,118,0.3); }
-        .action-btn.dark { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid var(--border-color); box-shadow: none; }
-        .action-btn.yellow { background: #ffbc00; color: #000; box-shadow: 0 4px 15px rgba(255,188,0,0.3); }
         .section-kicker {
             display: inline-flex; padding: 6px 10px; border: 1px solid rgba(255,61,85,.25);
             color: #ff7280; border-radius: 999px; font-size: 10px; font-weight: 900; letter-spacing: .8px;
             text-transform: uppercase; background: rgba(255,61,85,.07); margin-bottom: 10px;
         }
-        /* ===== НОВЫЙ ДИЗАЙН ГЛАВНОЙ ===== */
-        .hero h1 { font-size: clamp(40px, 6vw, 64px); text-shadow: 0 0 60px rgba(255,51,68,0.15); }
-        .hero p { max-width: 760px; }
+        .section-title-block { text-align: center; margin-bottom: 30px; }
+        .section-title-block h2 { font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+        .section-title-block p { font-size: 14px; color: var(--text-sub); }
+        /* ===== КАРТОЧКИ С ЭФФЕКТАМИ ===== */
+        .card, .stat-card, .feature-card, .server-card, .tariff-card, .review-card, .detail-box, .lottery-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            backdrop-filter: blur(12px);
+        }
+        .card:hover, .stat-card:hover, .feature-card:hover, .server-card:hover, .tariff-card:hover, .review-card:hover, .detail-box:hover, .lottery-card:hover {
+            transform: translateY(-6px);
+            background: var(--bg-card-hover);
+            border-color: var(--border-hover);
+            box-shadow: 0 15px 35px var(--accent-red-glow);
+        }
+        /* ===== ФОРМЫ / ПОЛЯ ВВОДА ===== */
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid var(--border-color);
+            padding: 13px 16px;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 13.5px;
+            outline: none;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            border-color: var(--accent-red);
+            box-shadow: 0 0 15px var(--accent-red-glow);
+        }
+        .form-input::placeholder, .form-textarea::placeholder {
+            color: #6a728b;
+        }
+        .form-textarea { resize: vertical; min-height: 100px; }
+        .form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23949aab' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: block;
+            font-size: 11.5px;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        /* ===== КНОПКИ ===== */
+        .btn-buy, .action-btn, .lottery-btn {
+            background: var(--accent-red);
+            color: #fff;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 14px;
+            font-size: 13.5px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 15px var(--accent-red-glow);
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn-buy:hover, .action-btn:hover, .lottery-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+        .action-btn.green { background: var(--accent-green); color: #000; box-shadow: 0 4px 15px rgba(0,230,118,0.3); }
+        .action-btn.dark { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid var(--border-color); box-shadow: none; }
+        .action-btn.yellow { background: #ffbc00; color: #000; box-shadow: 0 4px 15px rgba(255,188,0,0.3); }
+        .lottery-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        /* ===== ГЛАВНАЯ СТРАНИЦА ===== */
         .hero-pills {
             display: flex; justify-content: center; gap: 9px; flex-wrap: wrap; margin-bottom: 38px;
         }
@@ -191,26 +258,34 @@
         .servers-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 20px; }
         .server-card { padding: 20px; font-weight: 800; color: #fff; font-size: 15px; text-align: center; }
         .server-card span { display: block; font-size: 11px; color: var(--accent-green); font-weight: 600; margin-top: 4px; }
-        /* ===== Лотерея ===== */
+        /* ===== ТАРИФЫ ===== */
+        .tariffs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+        .tariff-card { padding: 28px 20px; text-align: center; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
+        .tariff-card.popular { border-color: var(--accent-red); background: linear-gradient(180deg, rgba(255,51,68,0.1) 0%, var(--bg-card) 100%); }
+        .tariff-badge {
+            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            background: var(--accent-red); color: #fff; font-size: 10px; font-weight: 800; padding: 4px 14px; border-radius: 20px; letter-spacing: 0.5px;
+        }
+        .tariff-name { font-size: 15px; font-weight: 700; color: var(--text-sub); margin-bottom: 10px; }
+        .tariff-price { font-size: 32px; font-weight: 900; color: #fff; margin-bottom: 20px; }
+        .tariff-price span { font-size: 15px; color: var(--text-sub); }
+        .tariff-features { list-style: none; text-align: left; margin: 0 0 20px; display: flex; flex-direction: column; gap: 7px; }
+        .tariff-features li { font-size: 11px; color: #aeb5c7; }
+        .tariff-features li::before { content: "✓"; color: var(--accent-green); font-weight: 900; margin-right: 7px; }
+        .purchase-note {
+            margin: 20px 0 8px; padding: 14px 16px; border-radius: 15px;
+            border: 1px solid rgba(255,188,0,.18); background: rgba(255,188,0,.055);
+            color: #d9dbea; font-size: 12px; line-height: 1.5;
+        }
+        .tariffs-row-title { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        /* ===== ЛОТЕРЕЯ ===== */
         .lottery-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
             margin-top: 30px;
         }
-        .lottery-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 28px;
-            padding: 28px;
-            backdrop-filter: blur(12px);
-            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .lottery-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--border-hover);
-            box-shadow: 0 15px 35px var(--accent-red-glow);
-        }
+        .lottery-card { padding: 28px; }
         .lottery-header {
             display: flex;
             justify-content: space-between;
@@ -227,21 +302,18 @@
             border-radius: 20px;
             border: 1px solid rgba(255, 51, 68, 0.2);
         }
-        .lottery-btn {
-            background: var(--accent-red);
-            color: #fff;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 800;
-            cursor: pointer;
-            box-shadow: 0 4px 15px var(--accent-red-glow);
-            transition: 0.2s;
+        .lottery-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-top: 10px;
         }
-        .lottery-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .lottery-btn:hover:not(:disabled) { transform: translateY(-2px); }
-        /* Рулетка */
+        .lottery-info .attempts {
+            color: #fff;
+            font-weight: 700;
+        }
+        /* рулетка */
         .roulette-scene {
             position: relative;
             height: 110px;
@@ -257,16 +329,8 @@
             border-right: 9px solid transparent;
             z-index: 3;
         }
-        .pointer-top {
-            border-top: 11px solid #e8b34b;
-            filter: drop-shadow(0 0 6px rgba(232,179,75,0.8));
-            margin: 0 auto 0;
-        }
-        .pointer-bottom {
-            border-bottom: 11px solid #e8b34b;
-            filter: drop-shadow(0 0 6px rgba(232,179,75,0.8));
-            margin: 0 auto 0;
-        }
+        .pointer-top { border-top: 11px solid #e8b34b; filter: drop-shadow(0 0 6px rgba(232,179,75,0.8)); margin: 0 auto; }
+        .pointer-bottom { border-bottom: 11px solid #e8b34b; filter: drop-shadow(0 0 6px rgba(232,179,75,0.8)); margin: 0 auto; }
         .roulette-window {
             position: relative;
             width: 100%;
@@ -319,7 +383,7 @@
         }
         .fade-left { left: 0; background: linear-gradient(90deg, #0c0f18 5%, transparent); }
         .fade-right { right: 0; background: linear-gradient(-90deg, #0c0f18 5%, transparent); }
-        /* Бокс */
+        /* бокс */
         .case-scene {
             position: relative;
             height: 180px;
@@ -430,13 +494,6 @@
         .result-tier { font-size: 12px; letter-spacing: 0.2em; color: #e8b34b; text-transform: uppercase; }
         .result-duration { font-family: 'Teko', sans-serif; font-size: 36px; font-weight: 700; line-height: 1; color: #fff8e6; text-shadow: 0 0 18px rgba(232,179,75,0.75); }
         .result-sub { font-size: 11px; letter-spacing: 0.1em; color: #8b93ac; text-transform: uppercase; margin-top: 4px; }
-        .lottery-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: var(--text-sub);
-            margin-top: 10px;
-        }
         .gold-rush-badge {
             background: rgba(232,179,75,0.15);
             border: 1px solid #e8b34b;
@@ -446,7 +503,7 @@
             font-size: 11px;
             font-weight: 700;
         }
-        /* ===== КАБИНЕТ — ТОЧЬ-В-ТОЧЬ КАК НА ФОТО (БОРДОВЫЙ ФОН) ===== */
+        /* ===== ЛИЧНЫЙ КАБИНЕТ (ТОЧЬ-В-ТОЧЬ КАК НА ФОТО) ===== */
         .dash-container-new {
             display: grid;
             grid-template-columns: 280px 1fr;
@@ -477,6 +534,7 @@
             position: relative;
             z-index: 1;
         }
+        /* Профиль */
         .profile-card {
             background: rgba(0,0,0,0.3);
             border-radius: 16px;
@@ -633,32 +691,7 @@
             position: relative;
             z-index: 1;
         }
-        /* Поля ввода ключей — стильные, как в дизайне */
-        .form-input {
-            width: 100%;
-            background: rgba(0,0,0,0.35);
-            border: 1px solid var(--border-color);
-            padding: 13px 16px;
-            border-radius: 14px;
-            color: #fff;
-            font-size: 13.5px;
-            outline: none;
-            transition: 0.2s;
-        }
-        .form-input:focus {
-            border-color: var(--accent-red);
-            box-shadow: 0 0 15px var(--accent-red-glow);
-        }
-        .form-group label {
-            display: block;
-            font-size: 11.5px;
-            color: var(--text-sub);
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-        /* Золотая лихорадка */
+        /* ===== ЗОЛОТАЯ ЛИХОРАДКА ===== */
         .gold-rush-panel {
             background: rgba(232,179,75,0.05);
             border: 1px solid rgba(232,179,75,0.2);
@@ -677,10 +710,6 @@
             flex-wrap: wrap;
             align-items: center;
         }
-        .gold-rush-controls .form-group {
-            flex: 1;
-            min-width: 100px;
-        }
         .gold-rush-status {
             display: flex;
             gap: 20px;
@@ -690,7 +719,111 @@
         }
         .gold-rush-status .active { color: var(--accent-green); }
         .gold-rush-status .count { color: #fff; }
-        /* ===== Адаптация ===== */
+        /* ===== ТЕМЫ (themes) ===== */
+        .theme-toggle {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 999;
+            width: 48px;
+            height: 48px;
+            background: rgba(20, 22, 32, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 800;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            transition: 0.2s;
+            user-select: none;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            border-color: var(--border-hover);
+        }
+        .theme-panel {
+            position: fixed;
+            bottom: 80px;
+            right: 24px;
+            z-index: 998;
+            background: rgba(12, 14, 20, 0.92);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 20px;
+            width: 220px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+            display: none;
+            flex-direction: column;
+            gap: 14px;
+            transition: all 0.3s ease;
+        }
+        .theme-panel.open {
+            display: flex;
+        }
+        .theme-panel .title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-sub);
+            text-align: center;
+        }
+        .theme-presets {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .theme-preset {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .theme-preset:hover {
+            transform: scale(1.15);
+            border-color: #fff;
+        }
+        .theme-preset.active {
+            border-color: var(--accent-red);
+            box-shadow: 0 0 15px var(--accent-red-glow);
+        }
+        .color-picker-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+        }
+        .color-picker-wrap input[type="color"] {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            padding: 2px;
+            cursor: pointer;
+            background: transparent;
+        }
+        .color-picker-wrap input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        .color-picker-wrap input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 50%;
+        }
+        .color-hex {
+            font-size: 12px;
+            color: var(--text-sub);
+            font-weight: 600;
+        }
+        /* ===== АДАПТАЦИЯ ===== */
         @media(max-width: 850px) {
             .lottery-grid { grid-template-columns: 1fr; }
             .dash-container-new { grid-template-columns: 1fr; }
@@ -699,12 +832,19 @@
             .details-showcase { grid-template-columns: 1fr; }
             .servers-grid { grid-template-columns: 1fr; }
         }
-        /* ===== ApexClient визуальные улучшения ===== */
+        @media(max-width: 560px) {
+            .navbar-container{ top:10px; }.navbar{ padding:7px 10px; }.nav-links{ display:none; }
+            .hero h1{ font-size:39px; }.page-section{ padding-top:105px; }
+            footer.apex-footer{ flex-direction:column; }
+            .theme-toggle { width: 40px; height: 40px; bottom: 16px; right: 16px; }
+            .theme-panel { right: 16px; bottom: 70px; width: 190px; }
+        }
+        /* ===== ОБЩИЕ ВИЗУАЛЬНЫЕ ЭФФЕКТЫ ===== */
         body{
             background:
                 radial-gradient(circle at 50% -10%, rgba(255,61,85,.13), transparent 34%),
                 radial-gradient(circle at 5% 70%, rgba(139,92,246,.10), transparent 28%),
-                var(--bg-main);
+                var(--theme-bg);
         }
         body::before{
             content:""; position:fixed; inset:0; pointer-events:none; z-index:-1; opacity:.22;
@@ -728,11 +868,6 @@
         .faq-item b{ display:block; margin-bottom:7px; font-size:13px; }
         .faq-item p{ color:var(--text-sub); font-size:12px; line-height:1.55; }
         footer.apex-footer{ max-width:1100px; width:92%; margin:0 auto 30px; padding:24px 0; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; gap:20px; color:#666d7e; font-size:11px; }
-        @media(max-width:560px){
-            .navbar-container{ top:10px; }.navbar{ padding:7px 10px; }.nav-links{ display:none; }
-            .hero h1{ font-size:39px; }.page-section{ padding-top:105px; }
-            footer.apex-footer{ flex-direction:column; }
-        }
     </style>
 </head>
 <body>
@@ -743,6 +878,7 @@
     <div class="bg-glow-2"></div>
     <div id="toast-container"></div>
 
+    <!-- ===== НАВБАР ===== -->
     <div class="navbar-container">
         <nav class="navbar">
             <div class="nav-left">
@@ -769,6 +905,7 @@
     </div>
 
     <!-- ===== СТРАНИЦЫ ===== -->
+    <!-- ГЛАВНАЯ -->
     <div id="page-home" class="page-section">
         <div class="hero">
             <div class="hero-badge">⚡ Fabric 1.21.4 Client Ecosystem</div>
@@ -837,85 +974,40 @@
         </div>
     </div>
 
-    <!-- ===== СТРАНИЦА ТАРИФЫ ===== -->
+    <!-- ТАРИФЫ -->
     <div id="page-tariffs" class="page-section hidden">
         <div class="hero">
             <div class="section-kicker">PRE-ORDER STORE</div>
             <h1>Предзаказ <span>ApexClient</span></h1>
             <p>Выберите срок доступа к ApexClient 1.21.4. Все три варианта оформляются как предзаказ и отображаются в личном кабинете.</p>
         </div>
-        <div class="purchase-note">
-            💡 <b>Важно:</b> это именно карточки предзаказа. После оформления заявка появится в системе магазина. Никаких старых карточек DLC здесь больше нет.
-        </div>
+        <div class="purchase-note">💡 <b>Важно:</b> это именно карточки предзаказа. После оформления заявка появится в системе магазина.</div>
         <div class="tariffs-container">
             <div>
                 <div class="tariffs-row-title">🚀 Доступ к ApexClient 1.21.4</div>
                 <div class="tariffs-grid">
-                    <div class="tariff-card preorder-card reveal">
-                        <div>
-                            <div class="tariff-name">Предзаказ · 1 месяц</div>
-                            <div class="tariff-price">149 <span>₽</span></div>
-                            <ul class="tariff-features"><li>Доступ на 30 дней</li><li>Все основные модули клиента</li><li>Обновления в рамках тарифа</li></ul>
-                        </div>
-                        <button class="btn-buy" onclick="buyTariff('Предзаказ — 1 месяц — 149 ₽')">Оформить предзаказ</button>
-                    </div>
-                    <div class="tariff-card preorder-card popular reveal">
-                        <div class="tariff-badge">ВЫГОДНО</div>
-                        <div>
-                            <div class="tariff-name">Предзаказ · 3 месяца</div>
-                            <div class="tariff-price">239 <span>₽</span></div>
-                            <ul class="tariff-features"><li>Доступ на 90 дней</li><li>Все основные модули клиента</li><li>Обновления в рамках тарифа</li></ul>
-                        </div>
-                        <button class="btn-buy" onclick="buyTariff('Предзаказ — 3 месяца — 239 ₽')">Оформить предзаказ</button>
-                    </div>
-                    <div class="tariff-card preorder-card reveal">
-                        <div>
-                            <div class="tariff-name">Предзаказ · Навсегда</div>
-                            <div class="tariff-price">449 <span>₽</span></div>
-                            <ul class="tariff-features"><li>Постоянный доступ</li><li>Все основные модули клиента</li><li>Обновления в рамках тарифа</li></ul>
-                        </div>
-                        <button class="btn-buy" onclick="buyTariff('Предзаказ — Навсегда — 449 ₽')">Оформить предзаказ</button>
-                    </div>
+                    <div class="tariff-card preorder-card reveal"><div><div class="tariff-name">Предзаказ · 1 месяц</div><div class="tariff-price">149 <span>₽</span></div><ul class="tariff-features"><li>Доступ на 30 дней</li><li>Все основные модули</li><li>Обновления</li></ul></div><button class="btn-buy" onclick="buyTariff('Предзаказ — 1 месяц — 149 ₽')">Оформить</button></div>
+                    <div class="tariff-card preorder-card popular reveal"><div class="tariff-badge">ВЫГОДНО</div><div><div class="tariff-name">Предзаказ · 3 месяца</div><div class="tariff-price">239 <span>₽</span></div><ul class="tariff-features"><li>Доступ на 90 дней</li><li>Все основные модули</li><li>Обновления</li></ul></div><button class="btn-buy" onclick="buyTariff('Предзаказ — 3 месяца — 239 ₽')">Оформить</button></div>
+                    <div class="tariff-card preorder-card reveal"><div><div class="tariff-name">Предзаказ · Навсегда</div><div class="tariff-price">449 <span>₽</span></div><ul class="tariff-features"><li>Постоянный доступ</li><li>Все основные модули</li><li>Обновления</li></ul></div><button class="btn-buy" onclick="buyTariff('Предзаказ — Навсегда — 449 ₽')">Оформить</button></div>
                 </div>
             </div>
             <div>
                 <div class="tariffs-row-title">🛠 Дополнительная услуга</div>
                 <div class="tariffs-grid">
-                    <div class="tariff-card reveal">
-                        <div>
-                            <div class="tariff-name">Сброс HWID</div>
-                            <div class="tariff-price">139 <span>₽</span></div>
-                            <ul class="tariff-features"><li>Заявка через личный кабинет</li><li>Обработка модератором</li></ul>
-                        </div>
-                        <button class="action-btn" onclick="requestHWIDResetModal()">Запросить сброс HWID</button>
-                    </div>
+                    <div class="tariff-card reveal"><div><div class="tariff-name">Сброс HWID</div><div class="tariff-price">139 <span>₽</span></div><ul class="tariff-features"><li>Заявка через кабинет</li><li>Обработка модератором</li></ul></div><button class="action-btn" onclick="requestHWIDResetModal()">Запросить сброс</button></div>
                 </div>
             </div>
             <div>
                 <div class="tariffs-row-title">🎰 Лотерейные услуги</div>
                 <div class="tariffs-grid">
-                    <div class="tariff-card reveal">
-                        <div>
-                            <div class="tariff-name">🎲 Рулетка</div>
-                            <div class="tariff-price">49 <span>₽</span></div>
-                            <ul class="tariff-features"><li>Один спин в рулетке</li><li>Шансы: 7д-15%, 30д-2%, 90д-0.5%</li></ul>
-                        </div>
-                        <button class="btn-buy" onclick="buyTariff('Рулетка — 49 ₽')">Купить спин</button>
-                    </div>
-                    <div class="tariff-card reveal">
-                        <div>
-                            <div class="tariff-name">📦 Бокс</div>
-                            <div class="tariff-price">49 <span>₽</span></div>
-                            <ul class="tariff-features"><li>Открыть кейс</li><li>Шансы: 7д-15%, 30д-2%, 90д-0.5%</li></ul>
-                        </div>
-                        <button class="btn-buy" onclick="buyTariff('Бокс — 49 ₽')">Открыть кейс</button>
-                    </div>
+                    <div class="tariff-card reveal"><div><div class="tariff-name">🎲 Рулетка</div><div class="tariff-price">49 <span>₽</span></div><ul class="tariff-features"><li>Один спин</li><li>Шансы: 7д-15%, 30д-2%, 90д-0.5%</li></ul></div><button class="btn-buy" onclick="buyTariff('Рулетка — 49 ₽')">Купить спин</button></div>
+                    <div class="tariff-card reveal"><div><div class="tariff-name">📦 Бокс</div><div class="tariff-price">49 <span>₽</span></div><ul class="tariff-features"><li>Открыть кейс</li><li>Шансы: 7д-15%, 30д-2%, 90д-0.5%</li></ul></div><button class="btn-buy" onclick="buyTariff('Бокс — 49 ₽')">Открыть кейс</button></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ===== СТРАНИЦА ЛОТЕРЕЯ ===== -->
+    <!-- ЛОТЕРЕЯ -->
     <div id="page-lottery" class="page-section hidden">
         <div class="hero">
             <div class="section-kicker">🎰 Лотерейный центр</div>
@@ -932,7 +1024,7 @@
             <div class="lottery-card">
                 <div class="lottery-header">
                     <h3>🎡 Рулетка</h3>
-                    <span class="badge">бесплатный спин для новых</span>
+                    <span class="badge" id="spinBadge">бесплатно</span>
                 </div>
                 <div class="roulette-scene" id="rouletteScene">
                     <div class="pointer-top"></div>
@@ -952,14 +1044,14 @@
                 </div>
                 <div class="lottery-info">
                     <span>Шансы: 7д 15% · 30д 2% · 90д 0.5%</span>
-                    <span id="freeSpinInfo">Бесплатно: 1 раз</span>
+                    <span class="attempts">Попыток: <span id="spinAttempts">1</span></span>
                 </div>
             </div>
             <!-- БОКС -->
             <div class="lottery-card">
                 <div class="lottery-header">
                     <h3>📦 Бокс</h3>
-                    <span class="badge" id="caseBadge">открыть кейс</span>
+                    <span class="badge" id="caseBadge">бесплатно</span>
                 </div>
                 <div class="case-scene" id="caseScene">
                     <div class="case-box" id="caseBox">
@@ -985,55 +1077,56 @@
                 </div>
                 <div class="lottery-info">
                     <span>Шансы: 7д 15% · 30д 2% · 90д 0.5%</span>
-                    <span id="caseFreeInfo">Бесплатно: 0</span>
+                    <span class="attempts">Попыток: <span id="caseAttempts">1</span></span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ===== СТРАНИЦА ОТЗЫВЫ ===== -->
+    <!-- ОТЗЫВЫ -->
     <div id="page-reviews" class="page-section hidden">
-        <div class="hero"><h1>Отзывы пользователей</h1><p>Поделитесь вашим впечатлением или посмотрите мнения других игроков о клиенте.</p></div>
+        <div class="hero"><h1>Отзывы пользователей</h1><p>Поделитесь вашим впечатлением или посмотрите мнения других игроков.</p></div>
         <div style="max-width:650px; margin:0 auto;">
             <div class="card" style="margin-bottom:30px;">
-                <div class="card-header">Оставить отзыв</div>
-                <div class="form-group"><label>Ваш ник</label><input type="text" id="reviewAuthorInput" class="form-input" placeholder="Введите имя..."></div>
+                <div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Оставить отзыв</div>
+                <div class="form-group"><label>Ваш ник</label><input type="text" id="reviewAuthorInput" class="form-input" placeholder="invisik"></div>
                 <div class="form-group"><label>Оценка (звезды)</label><select id="reviewRatingInput" class="form-select"><option value="5">★★★★★ (5/5)</option><option value="4">★★★★☆ (4/5)</option><option value="3">★★★☆☆ (3/5)</option><option value="2">★★☆☆☆ (2/5)</option><option value="1">★☆☆☆☆ (1/5)</option></select></div>
                 <div class="form-group"><label>Текст отзыва</label><textarea id="reviewTextInput" class="form-textarea" placeholder="Напишите, что вам понравилось..."></textarea></div>
                 <button class="action-btn" onclick="addNewReview()">Опубликовать отзыв</button>
             </div>
             <div id="reviewsListContainer">
-                <div class="review-card"><div class="review-header"><span class="review-author">Sextazyst</span><span class="review-stars">★★★★★</span></div><p class="review-text">Лучший клиент под 1.21.4, функционал пушка, фпс держит стабильно на фантайме!</p></div>
-                <div class="review-card"><div class="review-header"><span class="review-author">Veselchak</span><span class="review-stars">★★★★★</span></div><p class="review-text">Очень удобный интерфейс, обход работает отлично. Рекомендую брать тариф навсегда.</p></div>
+                <div class="review-card"><div class="review-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><span class="review-author" style="font-weight:800; font-size:14.5px; color:#fff;">Sextazyst</span><span class="review-stars" style="color:#ffbc00; font-size:13px; letter-spacing:2px;">★★★★★</span></div><p class="review-text" style="font-size:13.5px; color:var(--text-sub); line-height:1.6;">Лучший клиент под 1.21.4, функционал пушка, фпс держит стабильно на фантайме!</p></div>
+                <div class="review-card"><div class="review-header"><span class="review-author" style="font-weight:800; font-size:14.5px; color:#fff;">Veselchak</span><span class="review-stars" style="color:#ffbc00; font-size:13px; letter-spacing:2px;">★★★★★</span></div><p class="review-text" style="font-size:13.5px; color:var(--text-sub); line-height:1.6;">Очень удобный интерфейс, обход работает отлично. Рекомендую брать тариф навсегда.</p></div>
             </div>
         </div>
     </div>
 
-    <!-- ===== СТРАНИЦА ПОМОЩЬ ===== -->
+    <!-- ПОМОЩЬ -->
     <div id="page-help" class="page-section hidden">
-        <div class="hero"><h1>Центр помощи</h1><p>Часто задаваемые вопросы и руководства по использованию клиента.</p></div>
+        <div class="hero"><h1>Центр помощи</h1><p>Часто задаваемые вопросы и руководства.</p></div>
         <div style="max-width:650px; margin:0 auto; display:flex; flex-direction:column; gap:14px;">
-            <div class="card"><div class="card-header">Как запустить клиент?</div><p class="sub-desc">Скачайте лоадер в личном кабинете, запустите его и войдите под своей учетной записью с активной подпиской или активируйте ключ.</p></div>
-            <div class="card"><div class="card-header">Что делать при смене ПК (HWID ошибка)?</div><p class="sub-desc">Перейдите в раздел «Тарифы» и оформите платную заявку на сброс HWID за 139 рублей или активируйте специальный ключ сброса.</p></div>
+            <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Как запустить клиент?</div><p class="sub-desc">Скачайте лоадер в личном кабинете, запустите и войдите под своей учетной записью с активной подпиской.</p></div>
+            <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Что делать при смене ПК (HWID ошибка)?</div><p class="sub-desc">Оформите заявку на сброс HWID за 139 рублей или активируйте специальный ключ.</p></div>
         </div>
     </div>
 
-    <!-- ===== СТРАНИЦА FAQ ===== -->
+    <!-- FAQ -->
     <div id="page-faq" class="page-section hidden">
-        <div class="hero"><div class="section-kicker">FAQ</div><h1>Частые вопросы</h1><p>Коротко о покупке, версии клиента и личном кабинете.</p></div>
+        <div class="hero"><div class="section-kicker">FAQ</div><h1>Частые вопросы</h1><p>Коротко о покупке, версии и кабинете.</p></div>
         <div class="faq-grid">
             <div class="faq-item"><b>Какая версия поддерживается?</b><p>ApexClient ориентирован на Minecraft 1.21.4 Fabric.</p></div>
-            <div class="faq-item"><b>Где появляется предзаказ?</b><p>После оформления заявка сохраняется и доступна в разделе «Мои предзаказы» личного кабинета.</p></div>
-            <div class="faq-item"><b>Можно ли оформить другой срок?</b><p>Сейчас доступны три варианта: 1 месяц, 3 месяца и навсегда.</p></div>
-            <div class="faq-item"><b>Что делать при проблеме с HWID?</b><p>Оформите заявку на сброс HWID в разделе покупок и укажите причину.</p></div>
+            <div class="faq-item"><b>Где появляется предзаказ?</b><p>После оформления заявка сохраняется в разделе «Мои предзаказы».</p></div>
+            <div class="faq-item"><b>Можно ли оформить другой срок?</b><p>Доступны три варианта: 1 месяц, 3 месяца и навсегда.</p></div>
+            <div class="faq-item"><b>Что делать при проблеме с HWID?</b><p>Оформите заявку на сброс HWID в разделе покупок.</p></div>
         </div>
     </div>
 
-    <!-- ===== СТРАНИЦА SUPPORT ===== -->
+    <!-- ЗАДАТЬ ВОПРОС (SUPPORT) -->
     <div id="page-support" class="page-section hidden">
-        <div class="hero"><h1>Техническая поддержка</h1><p>Возникли проблемы? Создайте тикет, ответы будут поступать в вашем личном кабинете.</p></div>
+        <div class="hero"><h1>Техническая поддержка</h1><p>Возникли проблемы? Создайте тикет, ответы придут в личный кабинет.</p></div>
         <div style="max-width:500px; margin:0 auto;">
-            <div class="card"><div class="card-header">Новое обращение</div>
+            <div class="card">
+                <div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Новое обращение</div>
                 <div class="form-group"><label>Тема обращения</label><input type="text" id="ticketSubject" class="form-input" placeholder="Например: Ошибка запуска..."></div>
                 <div class="form-group"><label>Описание проблемы</label><textarea id="ticketMessage" class="form-textarea" placeholder="Опишите детали ошибки..."></textarea></div>
                 <button class="action-btn" onclick="submitTicket()">Отправить вопрос</button>
@@ -1041,15 +1134,15 @@
         </div>
     </div>
 
-    <!-- ===== СТРАНИЦА АВТОРИЗАЦИИ ===== -->
+    <!-- АВТОРИЗАЦИЯ -->
     <div id="page-auth" class="page-section hidden">
-        <div class="auth-wrapper">
-            <div class="auth-card">
-                <div class="auth-title">Apex<span>Client</span></div>
-                <div class="auth-subtitle">Системный доступ</div>
-                <div class="auth-tabs">
-                    <button class="auth-tab-btn active" id="tabBtnLogin" onclick="switchAuthTab('login')">Вход</button>
-                    <button class="auth-tab-btn" id="tabBtnRegister" onclick="switchAuthTab('register')">Регистрация</button>
+        <div class="auth-wrapper" style="display:flex; align-items:center; justify-content:center; min-height:60vh;">
+            <div class="auth-card" style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:28px; padding:40px; width:100%; max-width:420px; box-shadow:0 25px 60px rgba(0,0,0,0.7); backdrop-filter:blur(20px);">
+                <div class="auth-title" style="font-size:28px; font-weight:900; text-align:center; margin-bottom:4px;">Apex<span style="color:var(--accent-red);">Client</span></div>
+                <div class="auth-subtitle" style="font-size:12.5px; color:var(--text-sub); text-align:center; margin-bottom:24px; font-weight:600;">Системный доступ</div>
+                <div class="auth-tabs" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; background:rgba(0,0,0,0.4); padding:5px; border-radius:14px; margin-bottom:24px; border:1px solid var(--border-color);">
+                    <button class="auth-tab-btn active" id="tabBtnLogin" onclick="switchAuthTab('login')" style="background:none; border:none; padding:10px; border-radius:10px; font-size:12.5px; font-weight:700; color:var(--text-sub); cursor:pointer; transition:0.2s;">Вход</button>
+                    <button class="auth-tab-btn" id="tabBtnRegister" onclick="switchAuthTab('register')" style="background:none; border:none; padding:10px; border-radius:10px; font-size:12.5px; font-weight:700; color:var(--text-sub); cursor:pointer; transition:0.2s;">Регистрация</button>
                 </div>
                 <div id="authFormLogin">
                     <div class="form-group"><label>Никнейм</label><input type="text" id="loginUsernameInput" class="form-input" placeholder="Введите ник..."></div>
@@ -1065,7 +1158,7 @@
         </div>
     </div>
 
-    <!-- ===== СТРАНИЦА КАБИНЕТ (НОВЫЙ ДИЗАЙН ТОЧЬ-В-ТОЧЬ КАК НА ФОТО) ===== -->
+    <!-- ЛИЧНЫЙ КАБИНЕТ -->
     <div id="page-cabinet" class="page-section hidden">
         <div class="dash-container-new">
             <div class="sidebar-new">
@@ -1083,7 +1176,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Блок "Аккаунт" -->
+                    <!-- Аккаунт -->
                     <div class="account-block">
                         <div class="block-title">Аккаунт</div>
                         <div class="account-item"><span class="label">Подписка</span><span class="value" id="dashSubValue">Нет</span></div>
@@ -1091,12 +1184,12 @@
                         <div class="account-item"><span class="label">Доступ</span><span class="value green" id="dashAccessValue">Активен</span></div>
                         <div class="account-item"><span class="label">UID</span><span class="value" id="dashUidValue">--</span></div>
                     </div>
-                    <!-- Блок "Действия" -->
+                    <!-- Действия -->
                     <div class="actions-block">
                         <div class="block-title">Действия</div>
                         <button class="btn-download-new" onclick="showToast('Загрузка ApexClient.exe...', 'success')">📥 Скачать ApexClient</button>
                     </div>
-                    <!-- Меню вкладок -->
+                    <!-- Меню -->
                     <ul class="nav-menu-new">
                         <li class="nav-item-new active" onclick="switchCabinetTabNew('home', this)">🏠 Главная</li>
                         <li class="nav-item-new" onclick="switchCabinetTabNew('orders', this)">📦 Мои предзаказы</li>
@@ -1114,126 +1207,65 @@
                 <button class="btn-logout-new" onclick="logout()">Выйти</button>
             </div>
             <div class="content-new">
-                <!-- Вкладка Главная -->
                 <div id="cab-home" class="cab-tab-content">
-                    <div class="card">
-                        <div class="card-header">Статус подписки</div>
-                        <div class="sub-title" id="subStatusTextNew" style="color:var(--accent-red);">НЕТ АКТИВНОЙ ПОДПИСКИ</div>
-                        <div class="sub-desc" id="subStatusDescNew">Приобретите подписку в разделе «Тарифы» или активируйте ключ, чтобы получить доступ к клиенту.</div>
-                    </div>
+                    <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Статус подписки</div><div class="sub-title" id="subStatusTextNew" style="color:var(--accent-red); font-size:22px; font-weight:900; margin-bottom:6px;">НЕТ АКТИВНОЙ ПОДПИСКИ</div><div class="sub-desc" id="subStatusDescNew" style="font-size:13.5px; color:var(--text-sub); line-height:1.6;">Приобретите подписку в разделе «Тарифы» или активируйте ключ.</div></div>
                 </div>
-                <!-- Вкладка Заказы -->
-                <div id="cab-orders" class="cab-tab-content hidden">
-                    <div class="card"><div class="card-header">История и Подписки / Заявки</div><div id="ordersListContainer"><p class="sub-desc">У вас пока нет активных подписок.</p></div></div>
-                </div>
-                <!-- Вкладка Тикеты -->
-                <div id="cab-tickets" class="cab-tab-content hidden">
-                    <div class="card"><div class="card-header">Мои тикеты и ответы поддержки</div><div id="userTicketsContainer"><p class="sub-desc">Вы еще не отправляли вопросы.</p></div></div>
-                </div>
-                <!-- Вкладка Ключи -->
+                <div id="cab-orders" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">История и Подписки / Заявки</div><div id="ordersListContainer"><p class="sub-desc">У вас пока нет активных подписок.</p></div></div></div>
+                <div id="cab-tickets" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Мои тикеты и ответы поддержки</div><div id="userTicketsContainer"><p class="sub-desc">Вы еще не отправляли вопросы.</p></div></div></div>
                 <div id="cab-keys" class="cab-tab-content hidden">
-                    <div class="card">
-                        <div class="card-header">Активация ключа подписки</div>
-                        <div class="form-group" style="margin-bottom:12px;">
-                            <input type="text" id="subKeyInput" class="form-input" placeholder="Введите ключ подписки (например, APEX-SUB-XXXX)...">
-                        </div>
-                        <button class="action-btn green" onclick="activateSubKey()">Активировать подписку</button>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">Активация ключа сброса HWID</div>
-                        <div class="form-group" style="margin-bottom:12px;">
-                            <input type="text" id="hwidKeyInput" class="form-input" placeholder="Введите ключ сброса HWID...">
-                        </div>
-                        <button class="action-btn green" onclick="activateHWIDKey()">Сбросить HWID ключом</button>
-                    </div>
+                    <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Активация ключа подписки</div><div class="form-group" style="margin-bottom:12px;"><input type="text" id="subKeyInput" class="form-input" placeholder="Введите ключ подписки (например, APEX-SUB-XXXX)..."></div><button class="action-btn green" onclick="activateSubKey()">Активировать подписку</button></div>
+                    <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Активация ключа сброса HWID</div><div class="form-group" style="margin-bottom:12px;"><input type="text" id="hwidKeyInput" class="form-input" placeholder="Введите ключ сброса HWID..."></div><button class="action-btn green" onclick="activateHWIDKey()">Сбросить HWID ключом</button></div>
                 </div>
-                <!-- Вкладка Пост -->
-                <div id="cab-post" class="cab-tab-content hidden">
-                    <div class="card">
-                        <div class="card-header">Создать публикацию</div>
-                        <div class="form-group"><label>Заголовок поста</label><input type="text" class="form-input" placeholder="Заголовок обновления..."></div>
-                        <div class="form-group"><label>Текст сообщения</label><textarea class="form-textarea" placeholder="Содержимое поста..."></textarea></div>
-                        <button class="action-btn" onclick="showToast('Пост успешно опубликован!', 'success')">Опубликовать</button>
-                    </div>
-                </div>
-                <!-- Вкладка Загрузки -->
-                <div id="cab-downloads" class="cab-tab-content hidden">
-                    <div class="card">
-                        <div class="card-header">Загрузка лоадера</div>
-                        <p class="sub-desc" style="margin-bottom:14px;">Последняя стабильная сборка клиента под Fabric.</p>
-                        <button class="action-btn green" onclick="showToast('Загрузка ApexClient.exe...', 'success')">📥 Скачать ApexClient.exe</button>
-                    </div>
-                </div>
-                <!-- Вкладка Модерация -->
+                <div id="cab-post" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Создать публикацию</div><div class="form-group"><label>Заголовок поста</label><input type="text" class="form-input" placeholder="Заголовок обновления..."></div><div class="form-group"><label>Текст сообщения</label><textarea class="form-textarea" placeholder="Содержимое поста..."></textarea></div><button class="action-btn" onclick="showToast('Пост успешно опубликован!', 'success')">Опубликовать</button></div></div>
+                <div id="cab-downloads" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Загрузка лоадера</div><p class="sub-desc" style="margin-bottom:14px;">Последняя стабильная сборка клиента под Fabric.</p><button class="action-btn green" onclick="showToast('Загрузка ApexClient.exe...', 'success')">📥 Скачать ApexClient.exe</button></div></div>
                 <div id="cab-moderation" class="cab-tab-content hidden">
-                    <div class="card"><div class="card-header">Запросы на покупку подписок / тарифов</div><div id="purchaseRequestsContainer"><p class="sub-desc">Нет активных запросов на покупку.</p></div></div>
-                    <div class="card"><div class="card-header">Заявки на сброс HWID (139 ₽)</div><div id="hwidRequestsContainer"><p class="sub-desc">Нет активных заявок на сброс HWID.</p></div></div>
-                    <div class="card"><div class="card-header">Тикеты пользователей</div><div id="adminTicketsContainer"><p class="sub-desc">Нет активных вопросов.</p></div></div>
+                    <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Запросы на покупку подписок / тарифов</div><div id="purchaseRequestsContainer"><p class="sub-desc">Нет активных запросов.</p></div></div>
+                    <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Заявки на сброс HWID (139 ₽)</div><div id="hwidRequestsContainer"><p class="sub-desc">Нет активных заявок.</p></div></div>
+                    <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Тикеты пользователей</div><div id="adminTicketsContainer"><p class="sub-desc">Нет активных вопросов.</p></div></div>
                 </div>
-                <!-- Вкладка Настройка возможностей -->
                 <div id="cab-capabilities" class="cab-tab-content hidden">
-                    <div class="card">
-                        <div class="card-header">🛠️ Настройка возможностей пользователя (Поиск по нику)</div>
-                        <div class="form-group"><label>Ник пользователя</label><div style="display:flex; gap:8px;"><input type="text" id="capSearchInput" class="form-input" placeholder="Введите точный ник или часть ника..."><button class="action-btn" style="width:140px;" onclick="searchUserCapabilities()">Найти</button></div></div>
-                        <div id="capSearchResultContainer"></div>
-                    </div>
+                    <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">🛠️ Настройка возможностей пользователя (Поиск по нику)</div><div class="form-group"><label>Ник пользователя</label><div style="display:flex; gap:8px;"><input type="text" id="capSearchInput" class="form-input" placeholder="Введите точный ник или часть ника..."><button class="action-btn" style="width:140px;" onclick="searchUserCapabilities()">Найти</button></div></div><div id="capSearchResultContainer"></div></div>
                 </div>
-                <!-- Вкладка Управление ролями -->
                 <div id="cab-roles" class="cab-tab-content hidden">
-                    <div class="card">
-                        <div class="card-header">👑 Управление ролями и их возможностями</div>
-                        <p class="sub-desc" style="margin-bottom:16px;">Создавайте кастомные роли и настраивайте доступы к функционалу.</p>
-                        <div style="display:flex; gap:8px; margin-bottom:16px;"><input type="text" id="newRoleNameInput" class="form-input" placeholder="Название новой роли (например: Helper)..."><button class="action-btn green" style="width:180px;" onclick="createNewRole()">Создать роль</button></div>
-                        <div id="rolesListContainer"></div>
-                    </div>
+                    <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">👑 Управление ролями и их возможностями</div><p class="sub-desc" style="margin-bottom:16px;">Создавайте кастомные роли и настраивайте доступы.</p><div style="display:flex; gap:8px; margin-bottom:16px;"><input type="text" id="newRoleNameInput" class="form-input" placeholder="Название новой роли (например: Helper)..."><button class="action-btn green" style="width:180px;" onclick="createNewRole()">Создать роль</button></div><div id="rolesListContainer"></div></div>
                 </div>
-                <!-- Вкладка Золотая лихорадка -->
                 <div id="cab-goldrush" class="cab-tab-content hidden">
-                    <div class="card gold-rush-panel">
-                        <h4>🔥 Золотая лихорадка</h4>
-                        <p style="color:var(--text-sub); font-size:13px; margin-bottom:12px;">Настройка временного события, в течение которого пользователи могут открыть кейс бесплатно 1 раз.</p>
-                        <div class="gold-rush-controls">
-                            <div class="form-group">
-                                <label>Длительность (минуты)</label>
-                                <input type="number" id="grDuration" class="form-input" value="1" min="1" style="width:80px;">
-                            </div>
-                            <div class="form-group">
-                                <label>Количество человек</label>
-                                <input type="number" id="grLimit" class="form-input" value="3" min="1" style="width:80px;">
-                            </div>
-                            <button class="action-btn" id="grStartBtn" onclick="startGoldRush()">Начать золотую лихорадку</button>
-                        </div>
-                        <div id="grStatus" class="gold-rush-status">
-                            <span>Статус: <span id="grStatusText">Не активна</span></span>
-                            <span>Осталось: <span id="grTimeLeft">--</span></span>
-                            <span>Использовали: <span id="grUsedCount">0</span></span>
-                        </div>
-                    </div>
+                    <div class="card gold-rush-panel"><h4>🔥 Золотая лихорадка</h4><p style="color:var(--text-sub); font-size:13px; margin-bottom:12px;">Настройка временного события, в течение которого пользователи могут открыть кейс бесплатно 1 раз.</p><div class="gold-rush-controls"><div class="form-group"><label>Длительность (минуты)</label><input type="number" id="grDuration" class="form-input" value="1" min="1" style="width:80px;"></div><div class="form-group"><label>Количество человек</label><input type="number" id="grLimit" class="form-input" value="3" min="1" style="width:80px;"></div><button class="action-btn" id="grStartBtn" onclick="startGoldRush()">Начать золотую лихорадку</button></div><div id="grStatus" class="gold-rush-status"><span>Статус: <span id="grStatusText">Не активна</span></span><span>Осталось: <span id="grTimeLeft">--</span></span><span>Использовали: <span id="grUsedCount">0</span></span></div></div>
                 </div>
-                <!-- Вкладка Панель владельца -->
                 <div id="cab-admin" class="cab-tab-content hidden">
-                    <div class="card">
-                        <div class="card-header">⚙️ Панель Владельца — Управление системой и правами доступа</div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
-                            <div class="form-group" style="margin-bottom:0;"><label>Тип подписки для генерации</label><select id="genSubDuration" class="form-select"><option value="7д">7д</option><option value="30д">30д</option><option value="90д">90д</option><option value="Навсегда">Навсегда</option></select></div>
-                            <div style="display:flex; align-items:flex-end;"><button class="action-btn green" onclick="generateSubKey()">Сгенерировать ключ подписки</button></div>
-                        </div>
-                        <div class="form-group" style="margin-bottom:0;"><button class="action-btn yellow" onclick="generateHWIDKey()">Сгенерировать ключ сброса HWID</button></div>
-                        <div id="generatedKeyOutput" style="margin-top:12px;"></div>
-                    </div>
+                    <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">⚙️ Панель Владельца — Управление системой и правами доступа</div><div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;"><div class="form-group" style="margin-bottom:0;"><label>Тип подписки для генерации</label><select id="genSubDuration" class="form-select"><option value="7д">7д</option><option value="30д">30д</option><option value="90д">90д</option><option value="Навсегда">Навсегда</option></select></div><div style="display:flex; align-items:flex-end;"><button class="action-btn green" onclick="generateSubKey()">Сгенерировать ключ</button></div></div><div class="form-group" style="margin-bottom:0;"><button class="action-btn yellow" onclick="generateHWIDKey()">Сгенерировать ключ сброса HWID</button></div><div id="generatedKeyOutput" style="margin-top:12px;"></div></div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- ===== ФУТЕР ===== -->
     <footer class="apex-footer">
         <span>© 2026 ApexClient · Minecraft 1.21.4 Fabric</span>
         <span>Сделано с упором на стиль, удобство и производительность.</span>
     </footer>
 
+    <!-- ===== КНОПКА THEMES ===== -->
+    <div class="theme-toggle" id="themeToggle" onclick="toggleThemePanel()">🎨</div>
+    <div class="theme-panel" id="themePanel">
+        <div class="title">Выбор темы</div>
+        <div class="theme-presets">
+            <div class="theme-preset active" style="background:#040508;" onclick="applyTheme('#040508', this)"></div>
+            <div class="theme-preset" style="background:#0a0e1a;" onclick="applyTheme('#0a0e1a', this)"></div>
+            <div class="theme-preset" style="background:#1a0a0a;" onclick="applyTheme('#1a0a0a', this)"></div>
+            <div class="theme-preset" style="background:#0a1a0a;" onclick="applyTheme('#0a1a0a', this)"></div>
+            <div class="theme-preset" style="background:#1a1a0a;" onclick="applyTheme('#1a1a0a', this)"></div>
+            <div class="theme-preset" style="background:#1a0a1a;" onclick="applyTheme('#1a0a1a', this)"></div>
+        </div>
+        <div class="color-picker-wrap">
+            <input type="color" id="customColorPicker" value="#040508" onchange="applyCustomColor(this.value)">
+            <span class="color-hex" id="currentColorHex">#040508</span>
+        </div>
+    </div>
+
     <script>
         // ========================================================================
-        // БАЗОВЫЕ ДАННЫЕ И ФУНКЦИИ (полностью сохранены из предыдущей версии)
+        // БАЗОВЫЕ ДАННЫЕ
         // ========================================================================
         let currentUser = localStorage.getItem('apex_user') || null;
 
@@ -1244,9 +1276,9 @@
         }
 
         let registeredUsers = JSON.parse(localStorage.getItem('apex_db_users')) || {
-            "invisik": { password: "123", role: "owner", sub: "Навсегда", banned: false, banReason: "", banDuration: "", regDate: "10.08.2026", uid: 1, freeSpinUsed: false },
-            "sextazyst": { password: "123", role: "user", sub: "30д", banned: false, banReason: "", banDuration: "", regDate: "12.08.2026", uid: 2, freeSpinUsed: false },
-            "veselchak": { password: "123", role: "user", sub: "90д", banned: false, banReason: "", banDuration: "", regDate: "15.08.2026", uid: 3, freeSpinUsed: false }
+            "invisik": { password: "123", role: "owner", sub: "Навсегда", banned: false, banReason: "", banDuration: "", regDate: "10.08.2026", uid: 1, freeSpinUsed: false, freeCaseUsed: false },
+            "sextazyst": { password: "123", role: "user", sub: "30д", banned: false, banReason: "", banDuration: "", regDate: "12.08.2026", uid: 2, freeSpinUsed: false, freeCaseUsed: false },
+            "veselchak": { password: "123", role: "user", sub: "90д", banned: false, banReason: "", banDuration: "", regDate: "15.08.2026", uid: 3, freeSpinUsed: false, freeCaseUsed: false }
         };
 
         let customRoles = JSON.parse(localStorage.getItem('apex_roles')) || {
@@ -1265,7 +1297,6 @@
         let activeKeysDB = JSON.parse(localStorage.getItem('apex_keys_db')) || {};
 
         let lotteryState = JSON.parse(localStorage.getItem('apex_lottery_state')) || {
-            freeSpinUsed: {},
             goldRush: {
                 active: false,
                 duration: 1,
@@ -1334,7 +1365,7 @@
         function handleLogin() {
             const usernameInput = document.getElementById('loginUsernameInput').value.trim();
             const password = document.getElementById('loginPasswordInput').value.trim();
-            if (!usernameInput || !password) { showToast('Заполните все поля для входа!', 'error'); return; }
+            if (!usernameInput || !password) { showToast('Заполните все поля!', 'error'); return; }
             const lower = usernameInput.toLowerCase();
             if (!registeredUsers[lower]) {
                 registeredUsers[lower] = {
@@ -1346,7 +1377,8 @@
                     banDuration: '',
                     regDate: new Date().toLocaleDateString(),
                     uid: Object.keys(registeredUsers).length + 1,
-                    freeSpinUsed: false
+                    freeSpinUsed: false,
+                    freeCaseUsed: false
                 };
                 saveDB();
             }
@@ -1361,6 +1393,7 @@
             currentUser = usernameInput;
             localStorage.setItem('apex_user', currentUser);
             updateCabinetUI();
+            updateLotteryUI();
             showToast(`Успешный вход как ${currentUser}!`, 'success');
             navigateTo('cabinet');
         }
@@ -1368,7 +1401,7 @@
         function handleRegister() {
             const usernameInput = document.getElementById('regUsernameInput').value.trim();
             const password = document.getElementById('regPasswordInput').value.trim();
-            if (!usernameInput || !password) { showToast('Заполните все поля для регистрации!', 'error'); return; }
+            if (!usernameInput || !password) { showToast('Заполните все поля!', 'error'); return; }
             const lower = usernameInput.toLowerCase();
             if (registeredUsers[lower]) {
                 showToast('Пользователь уже существует!', 'error');
@@ -1383,13 +1416,15 @@
                 banDuration: '',
                 regDate: new Date().toLocaleDateString(),
                 uid: Object.keys(registeredUsers).length + 1,
-                freeSpinUsed: false
+                freeSpinUsed: false,
+                freeCaseUsed: false
             };
             saveDB();
             currentUser = usernameInput;
             localStorage.setItem('apex_user', currentUser);
             updateCabinetUI();
-            showToast(`Аккаунт ${currentUser} успешно создан и выполнен вход!`, 'success');
+            updateLotteryUI();
+            showToast(`Аккаунт ${currentUser} успешно создан!`, 'success');
             navigateTo('cabinet');
         }
 
@@ -1405,7 +1440,7 @@
             if (!currentUser) return false;
             const userData = registeredUsers[currentUser.toLowerCase()];
             if (userData && userData.banned) {
-                showToast('Ваш аккаунт заблокирован! Подписка и возможности заморожены.', 'error');
+                showToast('Ваш аккаунт заблокирован!', 'error');
                 return true;
             }
             return false;
@@ -1440,7 +1475,7 @@
             } else if (!user.sub || user.sub === 'Нет' || user.sub === 'нет') {
                 subText.innerText = 'НЕТ АКТИВНОЙ ПОДПИСКИ';
                 subText.style.color = 'var(--accent-red)';
-                subDesc.innerText = 'Приобретите подписку в разделе «Тарифы» или активируйте ключ, чтобы получить доступ к клиенту.';
+                subDesc.innerText = 'Приобретите подписку в разделе «Тарифы» или активируйте ключ.';
             } else {
                 subText.innerText = 'ПОДПИСКА АКТИВНА (' + user.sub + ')';
                 subText.style.color = 'var(--accent-green)';
@@ -1503,7 +1538,7 @@
             if (!currentUser) { container.innerHTML = '<p class="sub-desc">Войдите, чтобы видеть заказы.</p>'; return; }
             const userOrders = appRequests.subs.filter(s => s.username.toLowerCase() === currentUser.toLowerCase());
             if (userOrders.length === 0) {
-                container.innerHTML = '<p class="sub-desc">У вас пока нет активных подписок. Вы можете оформить их на вкладке «Тарифы».</p>';
+                container.innerHTML = '<p class="sub-desc">У вас пока нет активных подписок.</p>';
                 return;
             }
             container.innerHTML = userOrders.map((o, i) => `
@@ -1556,7 +1591,7 @@
                 date: new Date().toLocaleDateString()
             });
             saveDB();
-            showToast('Заявка на сброс HWID успешно отправлена модераторам.', 'success');
+            showToast('Заявка на сброс HWID отправлена.', 'success');
         }
 
         function addNewReview() {
@@ -1564,7 +1599,7 @@
             const author = document.getElementById('reviewAuthorInput').value.trim();
             const text = document.getElementById('reviewTextInput').value.trim();
             const rating = document.getElementById('reviewRatingInput').value;
-            if (!author || !text) { showToast('Заполните все поля отзыва!', 'error'); return; }
+            if (!author || !text) { showToast('Заполните все поля!', 'error'); return; }
             const container = document.getElementById('reviewsListContainer');
             const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
             const card = document.createElement('div');
@@ -1573,15 +1608,15 @@
             container.prepend(card);
             document.getElementById('reviewAuthorInput').value = '';
             document.getElementById('reviewTextInput').value = '';
-            showToast('Отзыв успешно опубликован!', 'success');
+            showToast('Отзыв опубликован!', 'success');
         }
 
         function submitTicket() {
-            if (!currentUser) { showToast('Войдите в аккаунт, чтобы создать тикет', 'error'); navigateTo('cabinet'); return; }
+            if (!currentUser) { showToast('Войдите в аккаунт', 'error'); navigateTo('cabinet'); return; }
             if (checkUserBanAction()) return;
             const subject = document.getElementById('ticketSubject').value.trim();
             const message = document.getElementById('ticketMessage').value.trim();
-            if (!subject || !message) { showToast('Заполните тему и описание вопроса!', 'error'); return; }
+            if (!subject || !message) { showToast('Заполните все поля!', 'error'); return; }
             appRequests.tickets.push({
                 username: currentUser,
                 subject: subject,
@@ -1590,14 +1625,14 @@
                 date: new Date().toLocaleDateString()
             });
             saveDB();
-            showToast('Тикет успешно отправлен в поддержку!', 'success');
+            showToast('Тикет отправлен!', 'success');
             document.getElementById('ticketSubject').value = '';
             document.getElementById('ticketMessage').value = '';
             updateTicketBadge();
         }
 
         // ========================================================================
-        // МОДЕРАЦИЯ
+        // МОДЕРАЦИЯ (без изменений)
         // ========================================================================
         function renderModerationData() {
             const subContainer = document.getElementById('purchaseRequestsContainer');
@@ -1606,25 +1641,25 @@
             updateModBadge();
 
             if (appRequests.subs.length === 0) {
-                subContainer.innerHTML = `<p class="sub-desc">Нет активных запросов на покупку.</p>`;
+                subContainer.innerHTML = `<p class="sub-desc">Нет активных запросов.</p>`;
             } else {
                 subContainer.innerHTML = appRequests.subs.map((item, idx) => `
                     <div style="background:rgba(0,0,0,0.3); padding:12px; border-radius:12px; margin-bottom:8px; border:1px solid var(--border-color);">
                         <div style="font-size:13px; font-weight:800; color:#fff;">Игрок: ${item.username} | Тариф: ${item.tariff}</div>
                         <div style="font-size:11px; color:var(--text-sub); margin-bottom:8px;">Дата: ${item.date}</div>
-                        <button class="action-btn green" style="padding:6px 12px; font-size:12px;" onclick="approveSub(${idx})">Одобрить подписку</button>
+                        <button class="action-btn green" style="padding:6px 12px; font-size:12px;" onclick="approveSub(${idx})">Одобрить</button>
                     </div>
                 `).join('');
             }
 
             if (appRequests.hwid.length === 0) {
-                hwidContainer.innerHTML = `<p class="sub-desc">Нет активных заявок на сброс HWID.</p>`;
+                hwidContainer.innerHTML = `<p class="sub-desc">Нет активных заявок.</p>`;
             } else {
                 hwidContainer.innerHTML = appRequests.hwid.map((item, idx) => `
                     <div style="background:rgba(0,0,0,0.3); padding:12px; border-radius:12px; margin-bottom:8px; border:1px solid var(--border-color);">
                         <div style="font-size:13px; font-weight:800; color:#fff;">Игрок: ${item.username} | Причина: ${item.reason}</div>
                         <div style="font-size:11px; color:var(--text-sub); margin-bottom:8px;">HWID: ${item.hwid}</div>
-                        <button class="action-btn green" style="padding:6px 12px; font-size:12px;" onclick="approveHWID(${idx})">Сбросить HWID</button>
+                        <button class="action-btn green" style="padding:6px 12px; font-size:12px;" onclick="approveHWID(${idx})">Сбросить</button>
                     </div>
                 `).join('');
             }
@@ -1636,7 +1671,7 @@
                     <div style="background:rgba(0,0,0,0.3); padding:12px; border-radius:12px; margin-bottom:8px; border:1px solid var(--border-color);">
                         <div style="font-size:13px; font-weight:800; color:#fff;">От: ${item.username} | Тема: ${item.subject}</div>
                         <div style="font-size:12.5px; color:var(--text-sub); margin:6px 0;">${item.message}</div>
-                        <button class="action-btn dark" style="padding:6px 12px; font-size:12px;" onclick="closeTicket(${idx})">Закрыть тикет</button>
+                        <button class="action-btn dark" style="padding:6px 12px; font-size:12px;" onclick="closeTicket(${idx})">Закрыть</button>
                     </div>
                 `).join('');
             }
@@ -1657,14 +1692,14 @@
             }
             appRequests.subs.splice(index, 1);
             saveDB();
-            showToast('Подписка успешно одобрена и выдана!');
+            showToast('Подписка одобрена!');
             renderModerationData();
         }
 
         function approveHWID(index) {
             appRequests.hwid.splice(index, 1);
             saveDB();
-            showToast('HWID успешно сброшен по заявке!');
+            showToast('HWID сброшен!');
             renderModerationData();
         }
 
@@ -1676,25 +1711,25 @@
         }
 
         // ========================================================================
-        // УПРАВЛЕНИЕ РОЛЯМИ
+        // УПРАВЛЕНИЕ РОЛЯМИ (без изменений)
         // ========================================================================
         function searchUserCapabilities() {
             const rawQuery = document.getElementById('capSearchInput').value;
             const container = document.getElementById('capSearchResultContainer');
             container.innerHTML = '';
-            if (!rawQuery) { container.innerHTML = `<div class="search-result-box" style="color:var(--accent-red); font-weight:700; text-align:center;">Введите ник для поиска игрока</div>`; return; }
+            if (!rawQuery) { container.innerHTML = `<div class="search-result-box" style="color:var(--accent-red); font-weight:700; text-align:center;">Введите ник</div>`; return; }
             const query = rawQuery.trim().toLowerCase();
             const matchedKeys = Object.keys(registeredUsers).filter(username => username.toLowerCase().includes(query));
-            if (matchedKeys.length === 0) { container.innerHTML = `<div class="search-result-box" style="color:var(--accent-red); font-weight:700; text-align:center;">данный игрок не найден или не правильные данные</div>`; return; }
+            if (matchedKeys.length === 0) { container.innerHTML = `<div class="search-result-box" style="color:var(--accent-red); font-weight:700; text-align:center;">Игрок не найден</div>`; return; }
             container.innerHTML = matchedKeys.map(username => {
                 const u = registeredUsers[username];
                 const allRolesKeys = Object.keys(customRoles);
                 return `
-                    <div class="search-result-box" style="margin-bottom:14px;">
+                    <div class="search-result-box" style="margin-bottom:14px; background:rgba(0,0,0,0.45); border:1px solid var(--border-color); border-radius:16px; padding:18px;">
                         <div style="font-weight:800; font-size:15px; margin-bottom:10px; color:#fff;">Пользователь: ${username}</div>
                         <div style="font-size:13px; color:var(--text-sub); margin-bottom:12px;">Текущая роль: <b>${u.role}</b> | Подписка: <b>${u.sub}</b> | Статус: <b>${u.banned ? 'ЗАБАНЕН' : 'Активен'}</b></div>
                         <div class="form-group" style="margin-bottom:12px;">
-                            <label>Выбрать роль для игрока</label>
+                            <label>Выбрать роль</label>
                             <select id="selectRoleForUser_${username}" class="form-select">
                                 ${allRolesKeys.map(r => `<option value="${r}" ${u.role.toLowerCase() === r ? 'selected' : ''}>${r.toUpperCase()}</option>`).join('')}
                             </select>
@@ -1719,11 +1754,11 @@
             registeredUsers[username].role = newRole;
             saveDB();
             if (currentUser && currentUser.toLowerCase() === username.toLowerCase()) updateCabinetUI();
-            showToast(`Роль игрока ${username} изменена на ${newRole.toUpperCase()}!`);
+            showToast(`Роль ${username} изменена на ${newRole.toUpperCase()}!`);
             searchUserCapabilities();
         }
 
-        function adminResetHWID(username) { showToast(`HWID игрока ${username} успешно сброшен!`); }
+        function adminResetHWID(username) { showToast(`HWID ${username} сброшен!`); }
 
         function adminGiveSub(username) {
             registeredUsers[username].sub = '30д';
@@ -1739,18 +1774,18 @@
                 u.banned = false; u.banReason = ''; u.banDuration = '';
                 saveDB();
                 if (currentUser && currentUser.toLowerCase() === username.toLowerCase()) updateCabinetUI();
-                showToast(`Игрок ${username} разбанен! Подписка разморожена.`);
+                showToast(`Игрок ${username} разбанен!`);
                 searchUserCapabilities();
                 return;
             }
-            const duration = prompt(`Введите срок бана для игрока ${username} (например, 7 дней, навсегда):`);
+            const duration = prompt(`Срок бана для ${username}:`);
             if (!duration) return;
-            const reason = prompt(`Введите причину бана для игрока ${username}:`);
+            const reason = prompt(`Причина бана для ${username}:`);
             if (!reason) return;
             u.banned = true; u.banDuration = duration; u.banReason = reason;
             saveDB();
             if (currentUser && currentUser.toLowerCase() === username.toLowerCase()) updateCabinetUI();
-            showToast(`Игрок ${username} заблокирован, подписка заморожена!`, 'error');
+            showToast(`Игрок ${username} заблокирован!`, 'error');
             searchUserCapabilities();
         }
 
@@ -1762,7 +1797,7 @@
             customRoles[roleName] = { permissions: { canBan: false, canAccessAdmin: false, canEditRoles: false, canViewTickets: true } };
             saveDB();
             roleInput.value = '';
-            showToast(`Роль "${roleName.toUpperCase()}" успешно создана!`);
+            showToast(`Роль "${roleName.toUpperCase()}" создана!`);
             renderRolesManagement();
         }
 
@@ -1779,13 +1814,13 @@
                         </div>
                         <div style="display:flex; flex-direction:column; gap:8px;">
                             <label style="font-size:12px; color:var(--text-sub); display:flex; align-items:center; gap:8px; cursor:pointer;">
-                                <input type="checkbox" ${p.canBan ? 'checked' : ''} onchange="togglePermission('${roleKey}', 'canBan', this.checked)"> Право банить пользователей
+                                <input type="checkbox" ${p.canBan ? 'checked' : ''} onchange="togglePermission('${roleKey}', 'canBan', this.checked)"> Право банить
                             </label>
                             <label style="font-size:12px; color:var(--text-sub); display:flex; align-items:center; gap:8px; cursor:pointer;">
-                                <input type="checkbox" ${p.canAccessAdmin ? 'checked' : ''} onchange="togglePermission('${roleKey}', 'canAccessAdmin', this.checked)"> Доступ к генерации ключей владельца
+                                <input type="checkbox" ${p.canAccessAdmin ? 'checked' : ''} onchange="togglePermission('${roleKey}', 'canAccessAdmin', this.checked)"> Доступ к генерации ключей
                             </label>
                             <label style="font-size:12px; color:var(--text-sub); display:flex; align-items:center; gap:8px; cursor:pointer;">
-                                <input type="checkbox" ${p.canViewTickets ? 'checked' : ''} onchange="togglePermission('${roleKey}', 'canViewTickets', this.checked)"> Просмотр модерации и тикетов
+                                <input type="checkbox" ${p.canViewTickets ? 'checked' : ''} onchange="togglePermission('${roleKey}', 'canViewTickets', this.checked)"> Просмотр модерации
                             </label>
                         </div>
                     </div>
@@ -1797,12 +1832,12 @@
             if (!customRoles[roleKey]) return;
             customRoles[roleKey].permissions[permName] = value;
             saveDB();
-            showToast(`Права для роли ${roleKey.toUpperCase()} обновлены!`);
+            showToast(`Права для ${roleKey.toUpperCase()} обновлены!`);
         }
 
         function deleteRole(roleKey) {
             if (roleKey === 'owner' || roleKey === 'user' || roleKey === 'admin' || roleKey === 'moder') {
-                showToast('Нельзя удалить стандартные системные роли!', 'error');
+                showToast('Нельзя удалить системные роли!', 'error');
                 return;
             }
             delete customRoles[roleKey];
@@ -1820,31 +1855,31 @@
             activeKeysDB[randomKey] = duration;
             saveDB();
             document.getElementById('generatedKeyOutput').innerHTML = `
-                <div class="search-result-box" style="background:rgba(0,230,118,0.05); border-color:var(--accent-green);">
-                    <div style="font-size:11px; color:var(--accent-green); font-weight:800; margin-bottom:4px;">СГЕНЕРИРОВАН КЛЮЧ ПОДПИСКИ (${duration}):</div>
+                <div class="search-result-box" style="background:rgba(0,230,118,0.05); border-color:var(--accent-green); padding:12px; border-radius:12px; margin-top:8px;">
+                    <div style="font-size:11px; color:var(--accent-green); font-weight:800; margin-bottom:4px;">КЛЮЧ ПОДПИСКИ (${duration}):</div>
                     <div style="font-size:15px; font-weight:900; color:#fff; letter-spacing:1px;">${randomKey}</div>
                 </div>
             `;
-            showToast('Ключ подписки успешно сгенерирован!');
+            showToast('Ключ сгенерирован!');
         }
 
         function generateHWIDKey() {
             const randomKey = 'APEX-HWID-' + Math.random().toString(36).substring(2, 8).toUpperCase();
             document.getElementById('generatedKeyOutput').innerHTML = `
-                <div class="search-result-box" style="background:rgba(255,188,0,0.05); border-color:#ffbc00;">
-                    <div style="font-size:11px; color:#ffbc00; font-weight:800; margin-bottom:4px;">СГЕНЕРИРОВАН КЛЮЧ СБРОСА HWID:</div>
+                <div class="search-result-box" style="background:rgba(255,188,0,0.05); border-color:#ffbc00; padding:12px; border-radius:12px; margin-top:8px;">
+                    <div style="font-size:11px; color:#ffbc00; font-weight:800; margin-bottom:4px;">КЛЮЧ СБРОСА HWID:</div>
                     <div style="font-size:15px; font-weight:900; color:#fff; letter-spacing:1px;">${randomKey}</div>
                 </div>
             `;
-            showToast('Ключ сброса HWID успешно сгенерирован!');
+            showToast('Ключ сброса HWID сгенерирован!');
         }
 
         function activateSubKey() {
             if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
             if (checkUserBanAction()) return;
             const key = document.getElementById('subKeyInput').value.trim().toUpperCase();
-            if (!key) { showToast('Введите ключ подписки!', 'error'); return; }
-            if (!activeKeysDB[key]) { showToast('Неверный или уже использованный ключ!', 'error'); return; }
+            if (!key) { showToast('Введите ключ!', 'error'); return; }
+            if (!activeKeysDB[key]) { showToast('Неверный ключ!', 'error'); return; }
             const duration = activeKeysDB[key];
             const lowerUser = currentUser.toLowerCase();
             if (registeredUsers[lowerUser]) {
@@ -1852,23 +1887,23 @@
                 delete activeKeysDB[key];
                 saveDB();
                 updateCabinetUI();
-                showToast(`Ключ успешно активирован! Подписка обновлена на: ${duration}`, 'success');
+                showToast(`Подписка активирована: ${duration}`, 'success');
                 document.getElementById('subKeyInput').value = '';
             } else {
-                showToast('Ошибка аккаунта в базе данных', 'error');
+                showToast('Ошибка аккаунта', 'error');
             }
         }
 
         function activateHWIDKey() {
             if (checkUserBanAction()) return;
             const key = document.getElementById('hwidKeyInput').value.trim();
-            if (!key) { showToast('Введите ключ сброса HWID!', 'error'); return; }
-            showToast('HWID успешно сброшен ключом!', 'success');
+            if (!key) { showToast('Введите ключ!', 'error'); return; }
+            showToast('HWID сброшен!', 'success');
             document.getElementById('hwidKeyInput').value = '';
         }
 
         // ========================================================================
-        // ЛОТЕРЕЯ: РУЛЕТКА И БОКС (анимации по 3 секунды)
+        // ЛОТЕРЕЯ: РУЛЕТКА И БОКС
         // ========================================================================
         const PRIZES = [
             { key: '7д', label: '7 дней', tier: 'ОБЫЧНАЯ', tierClass: 'tier-mil', weight: 15 },
@@ -1898,6 +1933,24 @@
             }
         }
 
+        function updateLotteryUI() {
+            if (!currentUser) {
+                document.getElementById('spinAttempts').innerText = '0';
+                document.getElementById('caseAttempts').innerText = '0';
+                return;
+            }
+            const user = registeredUsers[currentUser.toLowerCase()];
+            if (!user) return;
+            const spinLeft = user.freeSpinUsed ? 0 : 1;
+            const caseLeft = user.freeCaseUsed ? 0 : 1;
+            document.getElementById('spinAttempts').innerText = spinLeft;
+            document.getElementById('caseAttempts').innerText = caseLeft;
+            document.getElementById('spinBadge').innerText = spinLeft > 0 ? 'бесплатно' : 'платно';
+            document.getElementById('caseBadge').innerText = caseLeft > 0 ? 'бесплатно' : 'платно';
+            document.getElementById('caseFreeInfo').innerText = caseLeft > 0 ? 'Бесплатно: 1 раз' : 'Бесплатно: использовано';
+            document.getElementById('freeSpinInfo').innerText = spinLeft > 0 ? 'Бесплатно: 1 раз' : 'Бесплатно: использовано';
+        }
+
         function spinRoulette() {
             if (!currentUser) {
                 showToast('Войдите, чтобы крутить рулетку!', 'error');
@@ -1910,17 +1963,12 @@
             const user = registeredUsers[lower];
             if (!user) { showToast('Ошибка пользователя', 'error'); return; }
 
-            let freeSpin = false;
-            if (!user.freeSpinUsed) {
-                freeSpin = true;
-                user.freeSpinUsed = true;
-                saveDB();
-                showToast('🔥 Бесплатный спин активирован!', 'success');
-            } else {
+            if (user.freeSpinUsed) {
                 showToast('У вас нет бесплатных спинов. Купите спин в разделе «Тарифы».', 'error');
                 return;
             }
 
+            // Выбор приза
             const totalWeight = PRIZES.reduce((sum, p) => sum + p.weight, 0);
             let rand = Math.random() * totalWeight;
             let selected = PRIZES[0];
@@ -1958,13 +2006,13 @@
             setTimeout(() => {
                 btn.disabled = false;
                 document.getElementById('rouletteStatus').innerText = `🎉 Выиграл: ${selected.label}`;
-                if (user) {
-                    user.sub = selected.key;
-                    saveDB();
-                    updateCabinetUI();
-                    showToast(`Поздравляем! Вы выиграли подписку на ${selected.label}!`, 'success');
-                }
-                document.getElementById('freeSpinInfo').innerText = 'Бесплатно: использовано';
+                // Начисляем подписку
+                user.sub = selected.key;
+                user.freeSpinUsed = true;
+                saveDB();
+                updateCabinetUI();
+                updateLotteryUI();
+                showToast(`Поздравляем! Вы выиграли подписку на ${selected.label}!`, 'success');
             }, 3200);
         }
 
@@ -1984,258 +2032,4 @@
             const gr = lotteryState.goldRush;
             if (gr.active) {
                 if (gr.used < gr.limit) {
-                    if (!lotteryState.goldRush.usedUsers) lotteryState.goldRush.usedUsers = [];
-                    if (!lotteryState.goldRush.usedUsers.includes(lower)) {
-                        freeCase = true;
-                        lotteryState.goldRush.usedUsers.push(lower);
-                        gr.used++;
-                        saveDB();
-                        showToast('🔥 Бесплатное открытие по золотой лихорадке!', 'success');
-                        updateGoldRushUI();
-                    } else {
-                        showToast('Вы уже использовали бесплатную попытку в этой лихорадке.', 'error');
-                        return;
-                    }
-                } else {
-                    showToast('Лимит бесплатных открытий исчерпан.', 'error');
-                    return;
-                }
-            }
-
-            if (!freeCase) {
-                showToast('У вас нет бесплатных открытий. Купите бокс в разделе «Тарифы».', 'error');
-                return;
-            }
-
-            const totalWeight = PRIZES.reduce((sum, p) => sum + p.weight, 0);
-            let rand = Math.random() * totalWeight;
-            let selected = PRIZES[0];
-            for (let p of PRIZES) {
-                rand -= p.weight;
-                if (rand <= 0) { selected = p; break; }
-            }
-
-            const caseBox = document.getElementById('caseBox');
-            const burst = document.getElementById('caseBurst');
-            const resultCard = document.getElementById('caseResult');
-            const resultTier = document.getElementById('caseResultTier');
-            const resultDuration = document.getElementById('caseResultDuration');
-
-            caseBox.classList.add('opening');
-            burst.classList.add('flash');
-
-            setTimeout(() => {
-                resultTier.innerText = selected.tier;
-                resultDuration.innerText = selected.key;
-                resultCard.style.opacity = '1';
-                resultCard.classList.add('materialize');
-                if (user) {
-                    user.sub = selected.key;
-                    saveDB();
-                    updateCabinetUI();
-                    showToast(`Поздравляем! Вы выиграли подписку на ${selected.label}!`, 'success');
-                }
-                document.getElementById('caseStatus').innerText = `🎉 Выиграл: ${selected.label}`;
-                document.getElementById('caseFreeInfo').innerText = 'Бесплатно: использовано';
-            }, 3000);
-
-            setTimeout(() => {
-                caseBox.classList.remove('opening');
-                burst.classList.remove('flash');
-                resultCard.classList.remove('materialize');
-                resultCard.style.opacity = '0';
-                document.getElementById('caseStatus').innerText = 'Готов к открытию';
-            }, 6000);
-        }
-
-        // ========================================================================
-        // ЗОЛОТАЯ ЛИХОРАДКА
-        // ========================================================================
-        function startGoldRush() {
-            const durationInput = document.getElementById('grDuration');
-            const limitInput = document.getElementById('grLimit');
-            const duration = parseInt(durationInput.value) || 1;
-            const limit = parseInt(limitInput.value) || 3;
-            if (duration < 1 || limit < 1) {
-                showToast('Введите корректные значения (мин >=1, кол-во >=1)', 'error');
-                return;
-            }
-
-            const gr = lotteryState.goldRush;
-            if (gr.active) {
-                showToast('Золотая лихорадка уже активна!', 'error');
-                return;
-            }
-
-            gr.active = true;
-            gr.duration = duration;
-            gr.limit = limit;
-            gr.used = 0;
-            gr.startTime = Date.now();
-            gr.usedUsers = [];
-            saveDB();
-
-            showToast(`🔥 Золотая лихорадка запущена на ${duration} мин, ${limit} человек!`, 'success');
-            updateGoldRushUI();
-            if (gr.timerInterval) clearInterval(gr.timerInterval);
-            gr.timerInterval = setInterval(() => {
-                updateGoldRushTimer();
-            }, 1000);
-            document.getElementById('goldRushIndicator').classList.remove('hidden');
-            updateGoldRushTimer();
-        }
-
-        function updateGoldRushTimer() {
-            const gr = lotteryState.goldRush;
-            if (!gr.active) {
-                document.getElementById('goldRushIndicator').classList.add('hidden');
-                return;
-            }
-            const elapsed = (Date.now() - gr.startTime) / 1000;
-            const remaining = Math.max(0, gr.duration * 60 - elapsed);
-            const mins = Math.floor(remaining / 60);
-            const secs = Math.floor(remaining % 60);
-            document.getElementById('goldRushTimer').innerText = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
-            document.getElementById('goldRushCount').innerText = gr.used;
-            document.getElementById('grStatusText').innerText = gr.active ? 'Активна' : 'Не активна';
-            document.getElementById('grTimeLeft').innerText = gr.active ? `${mins}м ${secs}с` : '--';
-            document.getElementById('grUsedCount').innerText = gr.used;
-
-            if (remaining <= 0) {
-                stopGoldRush();
-            }
-        }
-
-        function stopGoldRush() {
-            const gr = lotteryState.goldRush;
-            gr.active = false;
-            if (gr.timerInterval) {
-                clearInterval(gr.timerInterval);
-                gr.timerInterval = null;
-            }
-            saveDB();
-            document.getElementById('goldRushIndicator').classList.add('hidden');
-            updateGoldRushUI();
-            showToast('Золотая лихорадка завершена.', 'success');
-        }
-
-        function updateGoldRushUI() {
-            const gr = lotteryState.goldRush;
-            document.getElementById('grStatusText').innerText = gr.active ? 'Активна' : 'Не активна';
-            document.getElementById('grTimeLeft').innerText = gr.active ? '--' : '--';
-            document.getElementById('grUsedCount').innerText = gr.used;
-            if (gr.active) {
-                document.getElementById('goldRushIndicator').classList.remove('hidden');
-                updateGoldRushTimer();
-            } else {
-                document.getElementById('goldRushIndicator').classList.add('hidden');
-                if (gr.timerInterval) {
-                    clearInterval(gr.timerInterval);
-                    gr.timerInterval = null;
-                }
-            }
-            const startBtn = document.getElementById('grStartBtn');
-            startBtn.innerText = gr.active ? 'Остановить лихорадку' : 'Начать золотую лихорадку';
-            startBtn.onclick = gr.active ? stopGoldRush : startGoldRush;
-        }
-
-        // ========================================================================
-        // ИНИЦИАЛИЗАЦИЯ
-        // ========================================================================
-        window.addEventListener('DOMContentLoaded', () => {
-            if (!registeredUsers["invisik"]) {
-                registeredUsers = {
-                    "invisik": { password: "123", role: "owner", sub: "Навсегда", banned: false, banReason: "", banDuration: "", regDate: "10.08.2026", uid: 1, freeSpinUsed: false },
-                    "sextazyst": { password: "123", role: "user", sub: "30д", banned: false, banReason: "", banDuration: "", regDate: "12.08.2026", uid: 2, freeSpinUsed: false },
-                    "veselchak": { password: "123", role: "user", sub: "90д", banned: false, banReason: "", banDuration: "", regDate: "15.08.2026", uid: 3, freeSpinUsed: false }
-                };
-                saveDB();
-            }
-
-            if (currentUser) {
-                if (!registeredUsers[currentUser.toLowerCase()]) {
-                    logout();
-                } else {
-                    updateCabinetUI();
-                }
-            }
-
-            const gr = lotteryState.goldRush;
-            if (gr.active) {
-                const elapsed = (Date.now() - gr.startTime) / 1000;
-                if (elapsed >= gr.duration * 60) {
-                    stopGoldRush();
-                } else {
-                    updateGoldRushUI();
-                    if (gr.timerInterval) clearInterval(gr.timerInterval);
-                    gr.timerInterval = setInterval(() => {
-                        updateGoldRushTimer();
-                    }, 1000);
-                    updateGoldRushTimer();
-                }
-            } else {
-                document.getElementById('goldRushIndicator').classList.add('hidden');
-            }
-
-            if (currentUser) {
-                const lower = currentUser.toLowerCase();
-                const user = registeredUsers[lower];
-                if (user) {
-                    if (user.freeSpinUsed) {
-                        document.getElementById('freeSpinInfo').innerText = 'Бесплатно: использовано';
-                    } else {
-                        document.getElementById('freeSpinInfo').innerText = 'Бесплатно: 1 раз';
-                    }
-                }
-            }
-        });
-
-        // ========================================================================
-        // ВИЗУАЛЬНЫЕ ЭФФЕКТЫ
-        // ========================================================================
-        (() => {
-            const canvas = document.getElementById('apex-particles');
-            const ctx = canvas.getContext('2d');
-            const glow = document.getElementById('cursorGlow');
-            let dots = [];
-
-            function resize(){
-                canvas.width = window.innerWidth * devicePixelRatio;
-                canvas.height = window.innerHeight * devicePixelRatio;
-                canvas.style.width = window.innerWidth + 'px';
-                canvas.style.height = window.innerHeight + 'px';
-                ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
-                dots = Array.from({length: Math.min(70, Math.floor(window.innerWidth/18))}, () => ({
-                    x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight,
-                    vx:(Math.random()-.5)*.22, vy:(Math.random()-.5)*.22,
-                    r:Math.random()*1.5+.4, a:Math.random()*.45+.12
-                }));
-            }
-            function draw(){
-                ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
-                for(const d of dots){
-                    d.x+=d.vx; d.y+=d.vy;
-                    if(d.x<0||d.x>window.innerWidth)d.vx*=-1;
-                    if(d.y<0||d.y>window.innerHeight)d.vy*=-1;
-                    ctx.beginPath(); ctx.arc(d.x,d.y,d.r,0,Math.PI*2);
-                    ctx.fillStyle=`rgba(255,80,100,${d.a})`; ctx.fill();
-                }
-                requestAnimationFrame(draw);
-            }
-            window.addEventListener('resize',resize);
-            resize(); draw();
-
-            window.addEventListener('mousemove',e=>{
-                glow.style.left=e.clientX+'px'; glow.style.top=e.clientY+'px';
-            });
-
-            const observer = new IntersectionObserver(entries=>{
-                entries.forEach(e=>{ if(e.isIntersecting)e.target.classList.add('visible'); });
-            },{threshold:.08});
-            const observe=()=>document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
-            window.addEventListener('DOMContentLoaded',observe);
-            setTimeout(observe,100);
-        })();
-    </script>
-</body>
-</html>
+                    if (!lotteryState.goldRush.usedUsers) lotteryState.goldR
