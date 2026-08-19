@@ -196,7 +196,7 @@
         .action-btn.yellow { background: #ffbc00; color: #000; box-shadow: 0 4px 15px rgba(255,188,0,0.3); }
         .lottery-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* ===== ГЛАВНАЯ СТРАНИЦА (убрана залысина) ===== */
+        /* ===== ГЛАВНАЯ СТРАНИЦА ===== */
         .hero-pills {
             display: flex; justify-content: center; gap: 9px; flex-wrap: wrap; margin-bottom: 38px;
         }
@@ -1782,7 +1782,6 @@
                     showToast('У вас нет бесплатных открытий. Купите бокс в разделе «Тарифы».', 'error');
                     return;
                 }
-                // Первое бесплатное открытие (не в золотой лихорадке)
                 freeCase = true;
                 user.freeCaseUsed = true;
                 saveDB();
@@ -1865,4 +1864,82 @@
             updateGoldRushTimer();
         }
 
-        function updateGoldRushTimer()
+        function updateGoldRushTimer() {
+            const gr = lotteryState.goldRush;
+            if (!gr.active) {
+                document.getElementById('goldRushIndicator').classList.add('hidden');
+                return;
+            }
+            const elapsed = (Date.now() - gr.startTime) / 1000;
+            const remaining = Math.max(0, gr.duration * 60 - elapsed);
+            const mins = Math.floor(remaining / 60);
+            const secs = Math.floor(remaining % 60);
+            document.getElementById('goldRushTimer').innerText = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+            document.getElementById('goldRushCount').innerText = gr.used;
+            document.getElementById('grStatusText').innerText = gr.active ? 'Активна' : 'Не активна';
+            document.getElementById('grTimeLeft').innerText = gr.active ? `${mins}м ${secs}с` : '--';
+            document.getElementById('grUsedCount').innerText = gr.used;
+
+            if (remaining <= 0) {
+                stopGoldRush();
+            }
+        }
+
+        function stopGoldRush() {
+            const gr = lotteryState.goldRush;
+            gr.active = false;
+            if (gr.timerInterval) {
+                clearInterval(gr.timerInterval);
+                gr.timerInterval = null;
+            }
+            saveDB();
+            document.getElementById('goldRushIndicator').classList.add('hidden');
+            updateGoldRushUI();
+            showToast('Золотая лихорадка завершена.', 'success');
+        }
+
+        function updateGoldRushUI() {
+            const gr = lotteryState.goldRush;
+            document.getElementById('grStatusText').innerText = gr.active ? 'Активна' : 'Не активна';
+            document.getElementById('grTimeLeft').innerText = gr.active ? '--' : '--';
+            document.getElementById('grUsedCount').innerText = gr.used;
+            if (gr.active) {
+                document.getElementById('goldRushIndicator').classList.remove('hidden');
+                updateGoldRushTimer();
+            } else {
+                document.getElementById('goldRushIndicator').classList.add('hidden');
+                if (gr.timerInterval) {
+                    clearInterval(gr.timerInterval);
+                    gr.timerInterval = null;
+                }
+            }
+            const startBtn = document.getElementById('grStartBtn');
+            startBtn.innerText = gr.active ? 'Остановить лихорадку' : 'Начать золотую лихорадку';
+            startBtn.onclick = gr.active ? stopGoldRush : startGoldRush;
+        }
+
+        // ========================================================================
+        // ТЕМЫ
+        // ========================================================================
+        function toggleThemePanel() {
+            const panel = document.getElementById('themePanel');
+            panel.classList.toggle('open');
+        }
+
+        function applyTheme(color, element) {
+            document.documentElement.style.setProperty('--theme-bg', color);
+            document.body.style.backgroundColor = color;
+            document.querySelectorAll('.theme-preset').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById('currentColorHex').innerText = color;
+            document.getElementById('customColorPicker').value = color;
+            localStorage.setItem('apex_theme', color);
+            // закрываем панель
+            document.getElementById('themePanel').classList.remove('open');
+        }
+
+        function applyCustomColor(color) {
+            document.documentElement.style.setProperty('--theme-bg', color);
+            document.body.style.backgroundColor = color;
+            document.getElementById('currentColorHex').innerText = color;
+            document.querySelectorAll('.theme-pres
