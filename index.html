@@ -10,587 +10,244 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        /* ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===== */
+        /* ===== БАЗОВЫЕ СТИЛИ ===== */
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Plus Jakarta Sans',sans-serif; scroll-behavior:smooth; }
         :root {
-            --bg-main: #040508;
-            --bg-card: rgba(14, 16, 24, 0.75);
-            --bg-card-hover: rgba(22, 26, 38, 0.9);
-            --border-color: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(255, 51, 68, 0.4);
-            --accent-red: #ff3344;
-            --accent-red-glow: rgba(255, 51, 68, 0.35);
-            --accent-green: #00e676;
-            --text-main: #ffffff;
-            --text-sub: #949aab;
-            --theme-bg: #040508;
+            --bg-main:#040508; --bg-card:rgba(14,16,24,0.75); --bg-card-hover:rgba(22,26,38,0.9);
+            --border-color:rgba(255,255,255,0.08); --border-hover:rgba(255,51,68,0.4);
+            --accent-red:#ff3344; --accent-red-glow:rgba(255,51,68,0.35); --accent-green:#00e676;
+            --text-main:#ffffff; --text-sub:#949aab; --theme-bg:#040508;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
-        body {
-            background-color: var(--theme-bg);
-            color: var(--text-main);
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-            transition: background-color 0.3s ease;
-        }
-        .bg-glow-1 { position: fixed; top: -200px; left: 50%; transform: translateX(-50%); width: 800px; height: 500px; background: radial-gradient(circle, rgba(255, 51, 68, 0.18) 0%, rgba(0,0,0,0) 70%); z-index: -1; pointer-events: none; filter: blur(80px); }
-        .bg-glow-2 { position: fixed; bottom: -150px; right: -150px; width: 600px; height: 600px; background: radial-gradient(circle, rgba(0, 136, 255, 0.1) 0%, rgba(0,0,0,0) 70%); z-index: -1; pointer-events: none; filter: blur(100px); }
-        .hidden { display: none !important; }
-
-        /* ===== TOAST ===== */
-        #toast-container {
-            position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-            display: flex; flex-direction: column-reverse; gap: 12px;
-        }
-        .toast {
-            background: rgba(12, 14, 20, 0.95); backdrop-filter: blur(16px);
-            border: 1px solid var(--border-color); border-left: 4px solid var(--accent-red);
-            padding: 14px 22px; border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.8);
-            display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600;
-            animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .toast.success { border-left-color: var(--accent-green); }
-        .toast.error { border-left-color: var(--accent-red); }
-        @keyframes slideInRight {
-            from { transform: translateX(120%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
+        body { background-color:var(--theme-bg); color:var(--text-main); min-height:100vh; transition:background .3s; overflow-x:hidden; }
+        .bg-glow-1, .bg-glow-2 { position:fixed; z-index:-1; pointer-events:none; filter:blur(80px); }
+        .bg-glow-1 { top:-200px; left:50%; transform:translateX(-50%); width:800px; height:500px; background:radial-gradient(circle,rgba(255,51,68,0.18),transparent 70%); }
+        .bg-glow-2 { bottom:-150px; right:-150px; width:600px; height:600px; background:radial-gradient(circle,rgba(0,136,255,0.1),transparent 70%); filter:blur(100px); }
+        .hidden { display:none !important; }
+        #toast-container { position:fixed; bottom:24px; right:24px; z-index:9999; display:flex; flex-direction:column-reverse; gap:12px; }
+        .toast { background:rgba(12,14,20,0.95); backdrop-filter:blur(16px); border:1px solid var(--border-color); border-left:4px solid var(--accent-red); padding:14px 22px; border-radius:12px; box-shadow:0 12px 40px rgba(0,0,0,0.8); display:flex; align-items:center; gap:12px; font-size:13px; font-weight:600; animation:slideInRight .3s cubic-bezier(.16,1,.3,1); }
+        .toast.success { border-left-color:var(--accent-green); }
+        .toast.error { border-left-color:var(--accent-red); }
+        @keyframes slideInRight { from { transform:translateX(120%); opacity:0; } to { transform:translateX(0); opacity:1; } }
 
         /* ===== НАВБАР ===== */
-        .navbar-container {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            z-index: 1000; width: 92%; max-width: 1100px;
-        }
-        .navbar {
-            background: rgba(10, 12, 18, 0.85); backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color); border-radius: 24px; padding: 8px 18px;
-            display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-        }
-        .nav-left { display: flex; align-items: center; gap: 20px; }
-        .nav-brand {
-            display: flex; align-items: center; gap: 10px; font-weight: 900;
-            font-size: 17px; color: #fff; cursor: pointer; text-decoration: none;
-        }
-        .brand-icon {
-            width: 32px; height: 32px; background: linear-gradient(135deg, #ff3344 0%, #cc0022 100%);
-            border-radius: 10px; display: flex; align-items: center; justify-content: center;
-            font-weight: 900; font-size: 15px; color: #fff; box-shadow: 0 0 15px var(--accent-red-glow);
-        }
-        .nav-links { display: flex; align-items: center; gap: 4px; list-style: none; flex-wrap: wrap; }
-        .nav-link {
-            color: var(--text-sub); font-size: 12px; font-weight: 600; cursor: pointer;
-            padding: 8px 12px; border-radius: 12px; transition: all 0.2s; text-decoration: none;
-        }
-        .nav-link:hover, .nav-link.active { color: #fff; background: rgba(255, 255, 255, 0.05); }
-        .btn-cabinet {
-            background: linear-gradient(135deg, #ff3344 0%, #d61b2c 100%);
-            color: #fff; border: none; padding: 8px 16px; border-radius: 14px;
-            font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;
-            box-shadow: 0 4px 20px var(--accent-red-glow); transition: 0.2s;
-        }
-        .btn-cabinet:hover { transform: scale(1.05); }
+        .navbar-container { position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:1000; width:92%; max-width:1100px; }
+        .navbar { background:rgba(10,12,18,0.85); backdrop-filter:blur(20px); border:1px solid var(--border-color); border-radius:24px; padding:8px 18px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 10px 30px rgba(0,0,0,0.6); }
+        .nav-left { display:flex; align-items:center; gap:20px; }
+        .nav-brand { display:flex; align-items:center; gap:10px; font-weight:900; font-size:17px; color:#fff; cursor:pointer; }
+        .brand-icon { width:32px; height:32px; background:linear-gradient(135deg,#ff3344,#cc0022); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:15px; color:#fff; box-shadow:0 0 15px var(--accent-red-glow); }
+        .nav-links { display:flex; align-items:center; gap:4px; list-style:none; flex-wrap:wrap; }
+        .nav-link { color:var(--text-sub); font-size:12px; font-weight:600; cursor:pointer; padding:8px 12px; border-radius:12px; transition:.2s; text-decoration:none; }
+        .nav-link:hover, .nav-link.active { color:#fff; background:rgba(255,255,255,0.05); }
+        .btn-cabinet { background:linear-gradient(135deg,#ff3344,#d61b2c); color:#fff; border:none; padding:8px 16px; border-radius:14px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 4px 20px var(--accent-red-glow); transition:.2s; }
+        .btn-cabinet:hover { transform:scale(1.05); }
 
-        /* ===== ОБЩИЕ СТИЛИ ===== */
-        .page-section { padding-top: 130px; padding-bottom: 80px; max-width: 1100px; margin: 0 auto; width: 92%; }
-        .hero { text-align: center; margin-bottom: 50px; }
-        .hero-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(255, 51, 68, 0.1); border: 1px solid rgba(255, 51, 68, 0.25);
-            color: #ff6675; font-size: 12px; font-weight: 700; padding: 6px 16px; border-radius: 20px; margin-bottom: 18px;
-        }
-        .hero h1 { font-size: 52px; font-weight: 900; margin-bottom: 16px; color: #fff; letter-spacing: -1.5px; line-height: 1.1; }
-        .hero h1 span { background: linear-gradient(135deg, #ff3344 0%, #ff8899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero p { color: var(--text-sub); font-size: 16px; max-width: 650px; margin: 0 auto 28px; line-height: 1.6; }
-        .hero-buttons { display: flex; gap: 12px; justify-content: center; margin-bottom: 40px; }
-        .btn-main-action {
-            background: var(--accent-red); color: #fff; border: none; padding: 12px 24px; border-radius: 14px;
-            font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 6px 25px var(--accent-red-glow); transition: 0.2s;
-        }
-        .btn-main-action:hover { transform: translateY(-2px); }
-        .btn-secondary-action {
-            background: rgba(255,255,255,0.06); color: #fff; border: 1px solid var(--border-color); padding: 12px 24px; border-radius: 14px;
-            font-size: 14px; font-weight: 800; cursor: pointer; transition: 0.2s;
-        }
-        .btn-secondary-action:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
-        .section-kicker {
-            display: inline-flex; padding: 6px 10px; border: 1px solid rgba(255,61,85,.25);
-            color: #ff7280; border-radius: 999px; font-size: 10px; font-weight: 900; letter-spacing: .8px;
-            text-transform: uppercase; background: rgba(255,61,85,.07); margin-bottom: 10px;
-        }
-        .section-title-block { text-align: center; margin-bottom: 30px; }
-        .section-title-block h2 { font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 8px; }
-        .section-title-block p { font-size: 14px; color: var(--text-sub); }
+        /* ===== ОБЩИЕ СТИЛИ СТРАНИЦ ===== */
+        .page-section { padding-top:130px; padding-bottom:80px; max-width:1100px; margin:0 auto; width:92%; }
+        .hero { text-align:center; margin-bottom:50px; }
+        .hero-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(255,51,68,0.1); border:1px solid rgba(255,51,68,0.25); color:#ff6675; font-size:12px; font-weight:700; padding:6px 16px; border-radius:20px; margin-bottom:18px; }
+        .hero h1 { font-size:52px; font-weight:900; margin-bottom:16px; color:#fff; letter-spacing:-1.5px; line-height:1.1; }
+        .hero h1 span { background:linear-gradient(135deg,#ff3344,#ff8899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .hero p { color:var(--text-sub); font-size:16px; max-width:650px; margin:0 auto 28px; line-height:1.6; }
+        .hero-buttons { display:flex; gap:12px; justify-content:center; margin-bottom:40px; }
+        .btn-main-action { background:var(--accent-red); color:#fff; border:none; padding:12px 24px; border-radius:14px; font-size:14px; font-weight:800; cursor:pointer; box-shadow:0 6px 25px var(--accent-red-glow); transition:.2s; }
+        .btn-main-action:hover { transform:translateY(-2px); }
+        .btn-secondary-action { background:rgba(255,255,255,0.06); color:#fff; border:1px solid var(--border-color); padding:12px 24px; border-radius:14px; font-size:14px; font-weight:800; cursor:pointer; transition:.2s; }
+        .btn-secondary-action:hover { background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); }
+        .section-kicker { display:inline-flex; padding:6px 10px; border:1px solid rgba(255,61,85,.25); color:#ff7280; border-radius:999px; font-size:10px; font-weight:900; letter-spacing:.8px; text-transform:uppercase; background:rgba(255,61,85,.07); margin-bottom:10px; }
+        .section-title-block { text-align:center; margin-bottom:30px; }
+        .section-title-block h2 { font-size:28px; font-weight:900; color:#fff; margin-bottom:8px; }
+        .section-title-block p { font-size:14px; color:var(--text-sub); }
 
-        /* ===== КАРТОЧКИ С ЭФФЕКТАМИ ПОДНЯТИЯ И СВЕЧЕНИЯ ===== */
+        /* ===== КАРТОЧКИ С ЭФФЕКТАМИ ===== */
         .card, .stat-card, .feature-card, .server-card, .tariff-card, .review-card, .detail-box, .lottery-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            backdrop-filter: blur(12px);
+            background:var(--bg-card); border:1px solid var(--border-color); border-radius:20px;
+            transition:all .35s cubic-bezier(.16,1,.3,1); position:relative; backdrop-filter:blur(12px);
         }
         .card:hover, .stat-card:hover, .feature-card:hover, .server-card:hover, .tariff-card:hover, .review-card:hover, .detail-box:hover, .lottery-card:hover {
-            transform: translateY(-6px);
-            background: var(--bg-card-hover);
-            border-color: var(--border-hover);
-            box-shadow: 0 15px 35px var(--accent-red-glow);
+            transform:translateY(-6px); background:var(--bg-card-hover); border-color:var(--border-hover); box-shadow:0 15px 35px var(--accent-red-glow);
         }
 
-        /* ===== ФОРМЫ В ТЁМНОМ СТИЛЕ ===== */
+        /* ===== ФОРМЫ ===== */
         .form-input, .form-textarea, .form-select {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.45);
-            border: 1px solid var(--border-color);
-            padding: 13px 16px;
-            border-radius: 14px;
-            color: #fff;
-            font-size: 13.5px;
-            outline: none;
-            transition: 0.2s;
-            font-weight: 500;
+            width:100%; background:rgba(0,0,0,0.45); border:1px solid var(--border-color); padding:13px 16px; border-radius:14px; color:#fff; font-size:13.5px; outline:none; transition:.2s; font-weight:500;
         }
-        .form-input:focus, .form-textarea:focus, .form-select:focus {
-            border-color: var(--accent-red);
-            box-shadow: 0 0 15px var(--accent-red-glow);
-        }
-        .form-input::placeholder, .form-textarea::placeholder {
-            color: #6a728b;
-        }
-        .form-textarea { resize: vertical; min-height: 100px; }
-        .form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23949aab' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
-        .form-group { margin-bottom: 18px; }
-        .form-group label {
-            display: block;
-            font-size: 11.5px;
-            color: var(--text-sub);
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
+        .form-input:focus, .form-textarea:focus, .form-select:focus { border-color:var(--accent-red); box-shadow:0 0 15px var(--accent-red-glow); }
+        .form-input::placeholder, .form-textarea::placeholder { color:#6a728b; }
+        .form-textarea { resize:vertical; min-height:100px; }
+        .form-select { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23949aab' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 16px center; padding-right:40px; }
+        .form-group { margin-bottom:18px; }
+        .form-group label { display:block; font-size:11.5px; color:var(--text-sub); margin-bottom:6px; text-transform:uppercase; font-weight:700; letter-spacing:.5px; }
 
         /* ===== КНОПКИ ===== */
         .btn-buy, .action-btn, .lottery-btn {
-            background: var(--accent-red);
-            color: #fff;
-            border: none;
-            padding: 12px 18px;
-            border-radius: 14px;
-            font-size: 13.5px;
-            font-weight: 800;
-            cursor: pointer;
-            box-shadow: 0 4px 15px var(--accent-red-glow);
-            transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+            background:var(--accent-red); color:#fff; border:none; padding:12px 18px; border-radius:14px; font-size:13.5px; font-weight:800; cursor:pointer; box-shadow:0 4px 15px var(--accent-red-glow); transition:.2s; display:inline-flex; align-items:center; justify-content:center; gap:6px;
         }
-        .btn-buy:hover, .action-btn:hover, .lottery-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-        }
-        .action-btn.green { background: var(--accent-green); color: #000; box-shadow: 0 4px 15px rgba(0,230,118,0.3); }
-        .action-btn.dark { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid var(--border-color); box-shadow: none; }
-        .action-btn.yellow { background: #ffbc00; color: #000; box-shadow: 0 4px 15px rgba(255,188,0,0.3); }
-        .lottery-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-buy:hover, .action-btn:hover, .lottery-btn:hover:not(:disabled) { transform:translateY(-2px); }
+        .action-btn.green { background:var(--accent-green); color:#000; box-shadow:0 4px 15px rgba(0,230,118,0.3); }
+        .action-btn.dark { background:rgba(255,255,255,0.08); color:#fff; border:1px solid var(--border-color); box-shadow:none; }
+        .action-btn.yellow { background:#ffbc00; color:#000; box-shadow:0 4px 15px rgba(255,188,0,0.3); }
+        .lottery-btn:disabled { opacity:0.5; cursor:not-allowed; }
 
-        /* ===== ГЛАВНАЯ СТРАНИЦА ===== */
-        .hero-pills {
-            display: flex; justify-content: center; gap: 9px; flex-wrap: wrap; margin-bottom: 38px;
-        }
-        .hero-pill {
-            padding: 8px 13px; border: 1px solid rgba(255,255,255,0.08); border-radius: 999px;
-            background: rgba(255,255,255,0.035); color: #cbd0df; font-size: 11px; font-weight: 800;
-            backdrop-filter: blur(10px);
-        }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 55px; }
-        .stat-card { padding: 24px; text-align: center; overflow: hidden; position: relative; }
-        .stat-card::before {
-            content: ''; position: absolute; inset: -2px;
-            background: radial-gradient(circle at 50% 0, rgba(255,51,68,0.16), transparent 55%);
-            pointer-events: none;
-        }
-        .stat-val { font-size: 32px; font-weight: 900; color: #fff; margin-bottom: 4px; }
-        .stat-lbl { font-size: 12px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        .info-strip {
-            display: grid; grid-template-columns: 1.2fr .8fr; gap: 18px; margin: 0 0 52px;
-        }
-        .info-panel {
-            padding: 26px; border: 1px solid var(--border-color); border-radius: 22px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015));
-            backdrop-filter: blur(14px); position: relative; overflow: hidden;
-        }
-        .info-panel h3 { font-size: 19px; margin-bottom: 8px; color: #fff; }
-        .info-panel p { color: var(--text-sub); line-height: 1.65; font-size: 13px; }
-        .module-cloud { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 15px; }
-        .module-chip {
-            font-size: 10px; font-weight: 800; color: #d9dbea; border: 1px solid rgba(255,255,255,0.08);
-            padding: 7px 9px; border-radius: 9px; background: rgba(255,255,255,0.035);
-        }
-        .mini-metrics {
-            display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 16px;
-        }
-        .mini-metric {
-            padding: 13px; border: 1px solid var(--border-color); border-radius: 15px;
-            background: rgba(0,0,0,0.18); text-align: center;
-        }
-        .mini-metric b { display: block; font-size: 18px; margin-bottom: 2px; color: #fff; }
-        .mini-metric span { font-size: 10px; color: var(--text-sub); font-weight: 700; }
-        .features-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 50px;
-        }
-        .feature-card { padding: 28px; position: relative; overflow: hidden; }
-        .feature-card::after {
-            content: ''; position: absolute; width: 130px; height: 130px; right: -65px; top: -65px;
-            background: radial-gradient(circle, rgba(255,51,68,0.10), transparent 68%);
-            pointer-events: none;
-        }
-        .feature-icon { font-size: 26px; margin-bottom: 14px; display: inline-block; }
-        .feature-card h3 { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 8px; }
-        .feature-card p { font-size: 13.5px; color: var(--text-sub); line-height: 1.6; }
-        .details-showcase {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 50px;
-        }
-        .detail-box { padding: 32px; position: relative; overflow: hidden; }
-        .detail-box h3 { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 12px; }
-        .detail-box p { font-size: 14px; color: var(--text-sub); line-height: 1.6; margin-bottom: 16px; }
-        .detail-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-        .detail-list li { font-size: 13px; color: #fff; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .detail-list li::before { content: '✔'; color: var(--accent-green); font-weight: 900; }
-        .servers-section { text-align: center; margin-top: 40px; margin-bottom: 40px; }
-        .servers-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 20px; }
-        .server-card { padding: 20px; font-weight: 800; color: #fff; font-size: 15px; text-align: center; }
-        .server-card span { display: block; font-size: 11px; color: var(--accent-green); font-weight: 600; margin-top: 4px; }
+        /* ===== ГЛАВНАЯ ===== */
+        .hero-pills { display:flex; justify-content:center; gap:9px; flex-wrap:wrap; margin-bottom:38px; }
+        .hero-pill { padding:8px 13px; border:1px solid rgba(255,255,255,0.08); border-radius:999px; background:rgba(255,255,255,0.035); color:#cbd0df; font-size:11px; font-weight:800; backdrop-filter:blur(10px); }
+        .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin-bottom:55px; }
+        .stat-card { padding:24px; text-align:center; overflow:hidden; position:relative; }
+        .stat-card::before { content:''; position:absolute; inset:-2px; background:radial-gradient(circle at 50% 0,rgba(255,51,68,0.16),transparent 55%); pointer-events:none; }
+        .stat-val { font-size:32px; font-weight:900; color:#fff; margin-bottom:4px; }
+        .stat-lbl { font-size:12px; color:var(--text-sub); font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
+        .info-strip { display:grid; grid-template-columns:1.2fr .8fr; gap:18px; margin:0 0 52px; }
+        .info-panel { padding:26px; border:1px solid var(--border-color); border-radius:22px; background:linear-gradient(135deg,rgba(255,255,255,0.045),rgba(255,255,255,0.015)); backdrop-filter:blur(14px); position:relative; overflow:hidden; }
+        .info-panel h3 { font-size:19px; margin-bottom:8px; color:#fff; }
+        .info-panel p { color:var(--text-sub); line-height:1.65; font-size:13px; }
+        .module-cloud { display:flex; gap:8px; flex-wrap:wrap; margin-top:15px; }
+        .module-chip { font-size:10px; font-weight:800; color:#d9dbea; border:1px solid rgba(255,255,255,0.08); padding:7px 9px; border-radius:9px; background:rgba(255,255,255,0.035); }
+        .mini-metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:16px; }
+        .mini-metric { padding:13px; border:1px solid var(--border-color); border-radius:15px; background:rgba(0,0,0,0.18); text-align:center; }
+        .mini-metric b { display:block; font-size:18px; margin-bottom:2px; color:#fff; }
+        .mini-metric span { font-size:10px; color:var(--text-sub); font-weight:700; }
+        .features-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px; margin-bottom:50px; }
+        .feature-card { padding:28px; position:relative; overflow:hidden; }
+        .feature-card::after { content:''; position:absolute; width:130px; height:130px; right:-65px; top:-65px; background:radial-gradient(circle,rgba(255,51,68,0.10),transparent 68%); pointer-events:none; }
+        .feature-icon { font-size:26px; margin-bottom:14px; display:inline-block; }
+        .feature-card h3 { font-size:18px; font-weight:800; color:#fff; margin-bottom:8px; }
+        .feature-card p { font-size:13.5px; color:var(--text-sub); line-height:1.6; }
+        .details-showcase { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:50px; }
+        .detail-box { padding:32px; position:relative; overflow:hidden; }
+        .detail-box h3 { font-size:22px; font-weight:800; color:#fff; margin-bottom:12px; }
+        .detail-box p { font-size:14px; color:var(--text-sub); line-height:1.6; margin-bottom:16px; }
+        .detail-list { list-style:none; display:flex; flex-direction:column; gap:8px; }
+        .detail-list li { font-size:13px; color:#fff; font-weight:600; display:flex; align-items:center; gap:8px; }
+        .detail-list li::before { content:'✔'; color:var(--accent-green); font-weight:900; }
+        .servers-section { text-align:center; margin-top:40px; margin-bottom:40px; }
+        .servers-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:20px; }
+        .server-card { padding:20px; font-weight:800; color:#fff; font-size:15px; text-align:center; }
+        .server-card span { display:block; font-size:11px; color:var(--accent-green); font-weight:600; margin-top:4px; }
 
         /* ===== ТАРИФЫ ===== */
-        .tariffs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
-        .tariff-card { padding: 28px 20px; text-align: center; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
-        .tariff-card.popular { border-color: var(--accent-red); background: linear-gradient(180deg, rgba(255,51,68,0.1) 0%, var(--bg-card) 100%); }
-        .tariff-badge {
-            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-            background: var(--accent-red); color: #fff; font-size: 10px; font-weight: 800; padding: 4px 14px; border-radius: 20px; letter-spacing: 0.5px;
-        }
-        .tariff-name { font-size: 15px; font-weight: 700; color: var(--text-sub); margin-bottom: 10px; }
-        .tariff-price { font-size: 32px; font-weight: 900; color: #fff; margin-bottom: 20px; }
-        .tariff-price span { font-size: 15px; color: var(--text-sub); }
-        .tariff-features { list-style: none; text-align: left; margin: 0 0 20px; display: flex; flex-direction: column; gap: 7px; }
-        .tariff-features li { font-size: 11px; color: #aeb5c7; }
-        .tariff-features li::before { content: "✓"; color: var(--accent-green); font-weight: 900; margin-right: 7px; }
-        .purchase-note {
-            margin: 20px 0 8px; padding: 14px 16px; border-radius: 15px;
-            border: 1px solid rgba(255,188,0,.18); background: rgba(255,188,0,.055);
-            color: #d9dbea; font-size: 12px; line-height: 1.5;
-        }
-        .tariffs-row-title { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        .tariffs-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; }
+        .tariff-card { padding:28px 20px; text-align:center; position:relative; display:flex; flex-direction:column; justify-content:space-between; }
+        .tariff-card.popular { border-color:var(--accent-red); background:linear-gradient(180deg,rgba(255,51,68,0.1),var(--bg-card)); }
+        .tariff-badge { position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:var(--accent-red); color:#fff; font-size:10px; font-weight:800; padding:4px 14px; border-radius:20px; letter-spacing:.5px; }
+        .tariff-name { font-size:15px; font-weight:700; color:var(--text-sub); margin-bottom:10px; }
+        .tariff-price { font-size:32px; font-weight:900; color:#fff; margin-bottom:20px; }
+        .tariff-price span { font-size:15px; color:var(--text-sub); }
+        .tariff-features { list-style:none; text-align:left; margin:0 0 20px; display:flex; flex-direction:column; gap:7px; }
+        .tariff-features li { font-size:11px; color:#aeb5c7; }
+        .tariff-features li::before { content:"✓"; color:var(--accent-green); font-weight:900; margin-right:7px; }
+        .purchase-note { margin:20px 0 8px; padding:14px 16px; border-radius:15px; border:1px solid rgba(255,188,0,.18); background:rgba(255,188,0,.055); color:#d9dbea; font-size:12px; line-height:1.5; }
+        .tariffs-row-title { font-size:18px; font-weight:800; color:#fff; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
 
         /* ===== ЛОТЕРЕЯ ===== */
-        .lottery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px; }
-        .lottery-card { padding: 28px; }
-        .lottery-header {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
-        }
-        .lottery-header h3 { font-size: 20px; font-weight: 800; color: #fff; }
-        .lottery-header .badge {
-            background: rgba(255, 51, 68, 0.15);
-            color: var(--accent-red);
-            font-size: 11px;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 51, 68, 0.2);
-        }
-        .lottery-info {
-            display: flex; justify-content: space-between; font-size: 12px; color: var(--text-sub); margin-top: 10px;
-        }
-        .lottery-info .attempts { color: #fff; font-weight: 700; }
-        /* Рулетка */
-        .roulette-scene {
-            position: relative; height: 110px; border-radius: 10px; overflow: hidden;
-            background: radial-gradient(ellipse at 50% 40%, #12162a 0%, #090b12 75%);
-            border: 1px solid #1b2032; margin-bottom: 15px;
-        }
-        .pointer-top, .pointer-bottom {
-            width: 0; height: 0;
-            border-left: 9px solid transparent;
-            border-right: 9px solid transparent;
-            z-index: 3;
-        }
-        .pointer-top { border-top: 11px solid #e8b34b; filter: drop-shadow(0 0 6px rgba(232,179,75,0.8)); margin: 0 auto; }
-        .pointer-bottom { border-bottom: 11px solid #e8b34b; filter: drop-shadow(0 0 6px rgba(232,179,75,0.8)); margin: 0 auto; }
-        .roulette-window {
-            position: relative; width: 100%; height: 68px; overflow: hidden;
-            background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent 20%, transparent 80%, rgba(255,255,255,0.03));
-        }
-        .center-slot {
-            position: absolute; left: 50%; top: 0; bottom: 0; width: 80px; transform: translateX(-50%);
-            border-left: 1px solid rgba(232,179,75,0.35);
-            border-right: 1px solid rgba(232,179,75,0.35);
-            background: linear-gradient(180deg, rgba(232,179,75,0.08), transparent 30%, transparent 70%, rgba(232,179,75,0.08));
-            z-index: 1; pointer-events: none;
-        }
-        .roulette-track {
-            position: absolute; top: 0; left: 0; height: 100%;
-            display: flex; align-items: center; gap: 10px; padding: 0 10px;
-            will-change: transform;
-        }
-        .roll-item {
-            flex: 0 0 auto; width: 64px; height: 56px; border-radius: 6px;
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'Teko', sans-serif; font-size: 20px; font-weight: 700;
-            color: #fff; position: relative; overflow: hidden;
-        }
-        .roll-item.tier-mil { background: linear-gradient(155deg, #4b69ff 0%, #2c3b8f 100%); }
-        .roll-item.tier-res { background: linear-gradient(155deg, #8c4bff 0%, #5a2fb0 100%); }
-        .roll-item.tier-leg { background: linear-gradient(155deg, #e8b34b 0%, #7a5417 100%); color: #231604; }
-        .fade-edge { position: absolute; top: 0; bottom: 0; width: 40px; z-index: 2; pointer-events: none; }
-        .fade-left { left: 0; background: linear-gradient(90deg, #0c0f18 5%, transparent); }
-        .fade-right { right: 0; background: linear-gradient(-90deg, #0c0f18 5%, transparent); }
-        /* Бокс */
-        .case-scene {
-            position: relative; height: 180px; border-radius: 10px; overflow: hidden;
-            background: radial-gradient(ellipse at 50% 40%, #12162a 0%, #090b12 75%);
-            border: 1px solid #1b2032; margin-bottom: 15px;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .case-box {
-            position: relative; width: 100px; height: 100px; cursor: pointer;
-        }
-        .case-front {
-            position: absolute; inset: 0; border-radius: 8px;
-            background: linear-gradient(155deg, #2a3252 0%, #171b2c 55%, #0d0f1a 100%);
-            border: 1px solid #333c5e;
-            box-shadow: 0 18px 40px -14px rgba(75,105,255,0.35), inset 0 0 0 1px rgba(255,255,255,0.03);
-            overflow: hidden; display: flex; flex-direction: column;
-        }
-        .case-hazard { height: 7px; background: repeating-linear-gradient(135deg, #e8b34b 0 8px, #14161f 8px 16px); opacity: .9; }
-        .case-seal { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 900; color: #8fa3ff; }
-        .case-lid {
-            position: absolute; left: 0; right: 0; top: 0; height: 38%;
-            background: linear-gradient(155deg, #333c5e, #1a1f34);
-            border: 1px solid #3c4568; border-bottom: none; border-radius: 8px 8px 0 0;
-            transform-origin: top center;
-            transition: transform 3s cubic-bezier(.5,-0.2,.4,1.4), opacity 3s ease;
-        }
-        .case-box.opening .case-lid { transform: rotateX(-115deg) translateY(-10px); opacity: 0; }
-        .case-box.opening .case-front { transition: transform 3s ease .05s, opacity 3s ease .15s; transform: scale(0.8); opacity: 0; }
-        .burst {
-            position: absolute; width: 60px; height: 60px; border-radius: 50%; pointer-events: none; opacity: 0;
-            background: radial-gradient(circle, #fff8e6 0%, rgba(255,248,230,0.9) 12%, rgba(75,105,255,0.55) 35%, transparent 70%);
-        }
-        .burst.flash { animation: burstPop 3s cubic-bezier(.15,.7,.3,1) forwards; }
-        .burst-gold { background: radial-gradient(circle, #fff8e6 0%, rgba(255,248,230,0.95) 10%, rgba(232,179,75,0.6) 38%, transparent 72%); }
-        @keyframes burstPop {
-            0%{ transform:scale(0.3); opacity:0; }
-            18%{ transform:scale(1.1); opacity:1; }
-            45%{ transform:scale(2.4); opacity:.85; }
-            100%{ transform:scale(4.4); opacity:0; }
-        }
-        .result-card {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 140px; padding: 16px 12px; border-radius: 10px; text-align: center;
-            background: linear-gradient(155deg, rgba(232,179,75,0.16), rgba(20,16,6,0.6));
-            border: 1px solid rgba(232,179,75,0.5);
-            box-shadow: 0 0 0 1px rgba(232,179,75,0.15), 0 20px 50px -16px rgba(232,179,75,0.45);
-            opacity: 0; filter: blur(14px);
-            transform: translate(-50%, -50%) scale(1.5) rotateY(540deg);
-            pointer-events: none; z-index: 5;
-        }
-        .result-card.materialize { animation: materialize 3s cubic-bezier(.2,.7,.25,1) forwards; }
-        @keyframes materialize {
-            0%{ opacity:0; filter:blur(14px); transform: translate(-50%, -50%) scale(1.6) rotateY(540deg); }
-            55%{ opacity:1; }
-            100%{ opacity:1; filter:blur(0); transform: translate(-50%, -50%) scale(1) rotateY(0deg); }
-        }
-        .result-tier { font-size: 12px; letter-spacing: 0.2em; color: #e8b34b; text-transform: uppercase; }
-        .result-duration { font-family: 'Teko', sans-serif; font-size: 36px; font-weight: 700; line-height: 1; color: #fff8e6; text-shadow: 0 0 18px rgba(232,179,75,0.75); }
-        .result-sub { font-size: 11px; letter-spacing: 0.1em; color: #8b93ac; text-transform: uppercase; margin-top: 4px; }
+        .lottery-grid { display:grid; grid-template-columns:1fr 1fr; gap:30px; margin-top:30px; }
+        .lottery-card { padding:28px; }
+        .lottery-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+        .lottery-header h3 { font-size:20px; font-weight:800; color:#fff; }
+        .lottery-header .badge { background:rgba(255,51,68,0.15); color:var(--accent-red); font-size:11px; font-weight:700; padding:4px 12px; border-radius:20px; border:1px solid rgba(255,51,68,0.2); }
+        .lottery-info { display:flex; justify-content:space-between; font-size:12px; color:var(--text-sub); margin-top:10px; }
+        .lottery-info .attempts { color:#fff; font-weight:700; }
+        /* рулетка */
+        .roulette-scene { position:relative; height:110px; border-radius:10px; overflow:hidden; background:radial-gradient(ellipse at 50% 40%,#12162a,#090b12 75%); border:1px solid #1b2032; margin-bottom:15px; }
+        .pointer-top,.pointer-bottom { width:0; height:0; border-left:9px solid transparent; border-right:9px solid transparent; z-index:3; }
+        .pointer-top { border-top:11px solid #e8b34b; filter:drop-shadow(0 0 6px rgba(232,179,75,0.8)); margin:0 auto; }
+        .pointer-bottom { border-bottom:11px solid #e8b34b; filter:drop-shadow(0 0 6px rgba(232,179,75,0.8)); margin:0 auto; }
+        .roulette-window { position:relative; width:100%; height:68px; overflow:hidden; background:linear-gradient(180deg,rgba(255,255,255,0.03),transparent 20%,transparent 80%,rgba(255,255,255,0.03)); }
+        .center-slot { position:absolute; left:50%; top:0; bottom:0; width:80px; transform:translateX(-50%); border-left:1px solid rgba(232,179,75,0.35); border-right:1px solid rgba(232,179,75,0.35); background:linear-gradient(180deg,rgba(232,179,75,0.08),transparent 30%,transparent 70%,rgba(232,179,75,0.08)); z-index:1; pointer-events:none; }
+        .roulette-track { position:absolute; top:0; left:0; height:100%; display:flex; align-items:center; gap:10px; padding:0 10px; will-change:transform; }
+        .roll-item { flex:0 0 auto; width:64px; height:56px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-family:'Teko',sans-serif; font-size:20px; font-weight:700; color:#fff; position:relative; overflow:hidden; }
+        .roll-item.tier-mil { background:linear-gradient(155deg,#4b69ff,#2c3b8f); }
+        .roll-item.tier-res { background:linear-gradient(155deg,#8c4bff,#5a2fb0); }
+        .roll-item.tier-leg { background:linear-gradient(155deg,#e8b34b,#7a5417); color:#231604; }
+        .fade-edge { position:absolute; top:0; bottom:0; width:40px; z-index:2; pointer-events:none; }
+        .fade-left { left:0; background:linear-gradient(90deg,#0c0f18 5%,transparent); }
+        .fade-right { right:0; background:linear-gradient(-90deg,#0c0f18 5%,transparent); }
+        /* бокс */
+        .case-scene { position:relative; height:180px; border-radius:10px; overflow:hidden; background:radial-gradient(ellipse at 50% 40%,#12162a,#090b12 75%); border:1px solid #1b2032; margin-bottom:15px; display:flex; align-items:center; justify-content:center; }
+        .case-box { position:relative; width:100px; height:100px; cursor:pointer; }
+        .case-front { position:absolute; inset:0; border-radius:8px; background:linear-gradient(155deg,#2a3252,#171b2c 55%,#0d0f1a); border:1px solid #333c5e; box-shadow:0 18px 40px -14px rgba(75,105,255,0.35),inset 0 0 0 1px rgba(255,255,255,0.03); overflow:hidden; display:flex; flex-direction:column; }
+        .case-hazard { height:7px; background:repeating-linear-gradient(135deg,#e8b34b 0 8px,#14161f 8px 16px); opacity:.9; }
+        .case-seal { flex:1; display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:900; color:#8fa3ff; }
+        .case-lid { position:absolute; left:0; right:0; top:0; height:38%; background:linear-gradient(155deg,#333c5e,#1a1f34); border:1px solid #3c4568; border-bottom:none; border-radius:8px 8px 0 0; transform-origin:top center; transition:transform 3s cubic-bezier(.5,-0.2,.4,1.4),opacity 3s ease; }
+        .case-box.opening .case-lid { transform:rotateX(-115deg) translateY(-10px); opacity:0; }
+        .case-box.opening .case-front { transition:transform 3s ease .05s,opacity 3s ease .15s; transform:scale(0.8); opacity:0; }
+        .burst { position:absolute; width:60px; height:60px; border-radius:50%; pointer-events:none; opacity:0; background:radial-gradient(circle,#fff8e6 0%,rgba(255,248,230,0.9) 12%,rgba(75,105,255,0.55) 35%,transparent 70%); }
+        .burst.flash { animation:burstPop 3s cubic-bezier(.15,.7,.3,1) forwards; }
+        .burst-gold { background:radial-gradient(circle,#fff8e6 0%,rgba(255,248,230,0.95) 10%,rgba(232,179,75,0.6) 38%,transparent 72%); }
+        @keyframes burstPop { 0%{transform:scale(0.3);opacity:0;} 18%{transform:scale(1.1);opacity:1;} 45%{transform:scale(2.4);opacity:.85;} 100%{transform:scale(4.4);opacity:0;} }
+        .result-card { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:140px; padding:16px 12px; border-radius:10px; text-align:center; background:linear-gradient(155deg,rgba(232,179,75,0.16),rgba(20,16,6,0.6)); border:1px solid rgba(232,179,75,0.5); box-shadow:0 0 0 1px rgba(232,179,75,0.15),0 20px 50px -16px rgba(232,179,75,0.45); opacity:0; filter:blur(14px); transform:translate(-50%,-50%) scale(1.5) rotateY(540deg); pointer-events:none; z-index:5; }
+        .result-card.materialize { animation:materialize 3s cubic-bezier(.2,.7,.25,1) forwards; }
+        @keyframes materialize { 0%{opacity:0;filter:blur(14px);transform:translate(-50%,-50%) scale(1.6) rotateY(540deg);} 55%{opacity:1;} 100%{opacity:1;filter:blur(0);transform:translate(-50%,-50%) scale(1) rotateY(0deg);} }
+        .result-tier { font-size:12px; letter-spacing:.2em; color:#e8b34b; text-transform:uppercase; }
+        .result-duration { font-family:'Teko',sans-serif; font-size:36px; font-weight:700; line-height:1; color:#fff8e6; text-shadow:0 0 18px rgba(232,179,75,0.75); }
+        .result-sub { font-size:11px; letter-spacing:.1em; color:#8b93ac; text-transform:uppercase; margin-top:4px; }
 
         /* ===== ЛИЧНЫЙ КАБИНЕТ (ТОЧЬ-В-ТОЧЬ КАК НА ФОТО) ===== */
-        .dash-container-new {
-            display: grid; grid-template-columns: 280px 1fr; gap: 24px;
-            background: linear-gradient(145deg, rgba(50, 12, 18, 0.92), rgba(25, 6, 10, 0.96));
-            backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 51, 68, 0.2);
-            border-radius: 28px; padding: 24px; min-height: 600px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.7), 0 0 0 1px rgba(255, 51, 68, 0.05) inset;
-            position: relative; overflow: hidden;
-        }
-        .dash-container-new::before {
-            content: ''; position: absolute; inset: 0;
-            background: radial-gradient(circle at 30% 20%, rgba(255, 51, 68, 0.12) 0%, transparent 60%);
-            pointer-events: none;
-        }
-        .sidebar-new {
-            border-right: 1px solid rgba(255, 51, 68, 0.15);
-            padding-right: 20px;
-            display: flex; flex-direction: column; justify-content: space-between;
-            position: relative; z-index: 1;
-        }
-        .profile-card {
-            background: rgba(0,0,0,0.3); border-radius: 16px; padding: 18px;
-            border: 1px solid rgba(255, 51, 68, 0.1); margin-bottom: 20px;
-        }
-        .profile-header { display: flex; align-items: center; gap: 14px; }
-        .avatar-new {
-            width: 56px; height: 56px;
-            background: linear-gradient(135deg, #ff3344, #990022);
-            border-radius: 14px; display: flex; align-items: center; justify-content: center;
-            font-weight: 900; font-size: 22px; color: #fff;
-            box-shadow: 0 0 20px rgba(255, 51, 68, 0.3); flex-shrink: 0;
-        }
-        .profile-info { flex: 1; }
-        .profile-info .name { font-size: 18px; font-weight: 800; color: #fff; }
-        .profile-info .role-uid { font-size: 13px; color: var(--text-sub); font-weight: 600; display: flex; gap: 12px; margin-top: 2px; }
-        .profile-info .role-uid .role { color: var(--accent-red); }
-        .profile-info .role-uid .uid { color: #8b93ac; }
-        /* Блок "Аккаунт" */
-        .account-block {
-            background: rgba(0,0,0,0.25); border-radius: 14px; padding: 14px 16px;
-            margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.05);
-        }
-        .account-block .block-title {
-            font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
-            color: var(--text-sub); margin-bottom: 10px;
-        }
-        .account-item {
-            display: flex; justify-content: space-between; padding: 4px 0;
-            font-size: 14px; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.04);
-        }
-        .account-item:last-child { border-bottom: none; }
-        .account-item .label { color: var(--text-sub); font-weight: 500; }
-        .account-item .value { font-weight: 700; }
-        .account-item .value.green { color: var(--accent-green); }
-        .account-item .value.red { color: var(--accent-red); }
-        /* Блок "Действия" */
-        .actions-block { margin-top: 4px; }
-        .actions-block .block-title {
-            font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
-            color: var(--text-sub); margin-bottom: 10px;
-        }
-        .btn-download-new {
-            display: block;
-            background: linear-gradient(135deg, #ff3344, #b3001a);
-            color: #fff; border: none; padding: 12px; border-radius: 14px;
-            font-weight: 700; font-size: 14px; cursor: pointer;
-            box-shadow: 0 4px 20px rgba(255, 51, 68, 0.4);
-            transition: 0.2s; text-align: center; width: 100%;
-        }
-        .btn-download-new:hover { transform: scale(1.02); }
-        /* Меню вкладок */
-        .nav-menu-new {
-            list-style: none; display: flex; flex-direction: column; gap: 4px;
-            max-height: 400px; overflow-y: auto; padding-right: 4px; margin-top: 16px;
-        }
-        .nav-item-new {
-            padding: 10px 14px; border-radius: 12px; color: var(--text-sub);
-            font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .nav-item-new:hover, .nav-item-new.active {
-            background: rgba(255, 51, 68, 0.12); color: var(--accent-red);
-        }
-        .btn-logout-new {
-            background: none; border: 1px solid var(--border-color); color: var(--text-sub);
-            padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 12.5px;
-            width: 100%; margin-top: 10px; transition: 0.2s;
-        }
-        .btn-logout-new:hover { border-color: var(--accent-red); color: var(--accent-red); background: rgba(255, 51, 68, 0.05); }
-        .content-new {
-            padding: 10px; display: flex; flex-direction: column; gap: 18px;
-            overflow-y: auto; max-height: 560px; position: relative; z-index: 1;
-        }
-        /* Вкладки в кабинете */
-        .cab-tab-content { display: block; }
-        .cab-tab-content.hidden { display: none; }
+        .dash-container-new { display:grid; grid-template-columns:280px 1fr; gap:24px; background:linear-gradient(145deg,rgba(50,12,18,0.92),rgba(25,6,10,0.96)); backdrop-filter:blur(24px); border:1px solid rgba(255,51,68,0.2); border-radius:28px; padding:24px; min-height:600px; box-shadow:0 20px 50px rgba(0,0,0,0.7),0 0 0 1px rgba(255,51,68,0.05) inset; position:relative; overflow:hidden; }
+        .dash-container-new::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 30% 20%,rgba(255,51,68,0.12),transparent 60%); pointer-events:none; }
+        .sidebar-new { border-right:1px solid rgba(255,51,68,0.15); padding-right:20px; display:flex; flex-direction:column; justify-content:space-between; position:relative; z-index:1; }
+        .profile-card { background:rgba(0,0,0,0.3); border-radius:16px; padding:18px; border:1px solid rgba(255,51,68,0.1); margin-bottom:20px; }
+        .profile-header { display:flex; align-items:center; gap:14px; }
+        .avatar-new { width:56px; height:56px; background:linear-gradient(135deg,#ff3344,#990022); border-radius:14px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:22px; color:#fff; box-shadow:0 0 20px rgba(255,51,68,0.3); flex-shrink:0; }
+        .profile-info { flex:1; }
+        .profile-info .name { font-size:18px; font-weight:800; color:#fff; }
+        .profile-info .role-uid { font-size:13px; color:var(--text-sub); font-weight:600; display:flex; gap:12px; margin-top:2px; }
+        .profile-info .role-uid .role { color:var(--accent-red); }
+        .profile-info .role-uid .uid { color:#8b93ac; }
+        .account-block { background:rgba(0,0,0,0.25); border-radius:14px; padding:14px 16px; margin-bottom:16px; border:1px solid rgba(255,255,255,0.05); }
+        .account-block .block-title { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--text-sub); margin-bottom:10px; }
+        .account-item { display:flex; justify-content:space-between; padding:4px 0; font-size:14px; color:#fff; border-bottom:1px solid rgba(255,255,255,0.04); }
+        .account-item:last-child { border-bottom:none; }
+        .account-item .label { color:var(--text-sub); font-weight:500; }
+        .account-item .value { font-weight:700; }
+        .account-item .value.green { color:var(--accent-green); }
+        .account-item .value.red { color:var(--accent-red); }
+        .actions-block { margin-top:4px; }
+        .actions-block .block-title { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--text-sub); margin-bottom:10px; }
+        .btn-download-new { display:block; background:linear-gradient(135deg,#ff3344,#b3001a); color:#fff; border:none; padding:12px; border-radius:14px; font-weight:700; font-size:14px; cursor:pointer; box-shadow:0 4px 20px rgba(255,51,68,0.4); transition:.2s; text-align:center; width:100%; }
+        .btn-download-new:hover { transform:scale(1.02); }
+        .nav-menu-new { list-style:none; display:flex; flex-direction:column; gap:4px; max-height:400px; overflow-y:auto; padding-right:4px; margin-top:16px; }
+        .nav-item-new { padding:10px 14px; border-radius:12px; color:var(--text-sub); font-size:13px; font-weight:700; cursor:pointer; transition:.2s; display:flex; align-items:center; gap:10px; }
+        .nav-item-new:hover, .nav-item-new.active { background:rgba(255,51,68,0.12); color:var(--accent-red); }
+        .btn-logout-new { background:none; border:1px solid var(--border-color); color:var(--text-sub); padding:12px; border-radius:12px; cursor:pointer; font-weight:700; font-size:12.5px; width:100%; margin-top:10px; transition:.2s; }
+        .btn-logout-new:hover { border-color:var(--accent-red); color:var(--accent-red); background:rgba(255,51,68,0.05); }
+        .content-new { padding:10px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; max-height:560px; position:relative; z-index:1; }
+        .cab-tab-content { display:block; }
+        .cab-tab-content.hidden { display:none; }
 
         /* ===== ЗОЛОТАЯ ЛИХОРАДКА ===== */
-        .gold-rush-panel {
-            background: rgba(232,179,75,0.05); border: 1px solid rgba(232,179,75,0.2);
-            border-radius: 16px; padding: 20px; margin-bottom: 16px;
-        }
-        .gold-rush-panel h4 { color: #e8b34b; font-weight: 800; margin-bottom: 12px; }
-        .gold-rush-controls { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-        .gold-rush-controls .form-group { flex: 1; min-width: 100px; }
-        .gold-rush-status { display: flex; gap: 20px; margin-top: 12px; font-weight: 600; color: var(--text-sub); }
-        .gold-rush-status .active { color: var(--accent-green); }
-        .gold-rush-status .count { color: #fff; }
+        .gold-rush-panel { background:rgba(232,179,75,0.05); border:1px solid rgba(232,179,75,0.2); border-radius:16px; padding:20px; margin-bottom:16px; }
+        .gold-rush-panel h4 { color:#e8b34b; font-weight:800; margin-bottom:12px; }
+        .gold-rush-controls { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+        .gold-rush-controls .form-group { flex:1; min-width:100px; }
+        .gold-rush-status { display:flex; gap:20px; margin-top:12px; font-weight:600; color:var(--text-sub); }
+        .gold-rush-status .active { color:var(--accent-green); }
+        .gold-rush-status .count { color:#fff; }
 
-        /* ===== ТЕМЫ (themes) ===== */
-        .theme-toggle {
-            position: fixed; bottom: 24px; right: 24px; z-index: 999;
-            width: 48px; height: 48px;
-            background: rgba(20, 22, 32, 0.85); backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color); border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 13px; font-weight: 800; color: #fff; cursor: pointer;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5); transition: 0.2s; user-select: none;
-        }
-        .theme-toggle:hover { transform: scale(1.05); border-color: var(--border-hover); }
-        .theme-panel {
-            position: fixed; bottom: 80px; right: 24px; z-index: 998;
-            background: rgba(12, 14, 20, 0.92); backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color); border-radius: 20px;
-            padding: 20px; width: 220px; box-shadow: 0 20px 50px rgba(0,0,0,0.7);
-            display: none; flex-direction: column; gap: 14px; transition: all 0.3s ease;
-        }
-        .theme-panel.open { display: flex; }
-        .theme-panel .title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-sub); text-align: center; }
-        .theme-presets { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
-        .theme-preset {
-            width: 32px; height: 32px; border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.2s;
-        }
-        .theme-preset:hover { transform: scale(1.15); border-color: #fff; }
-        .theme-preset.active { border-color: var(--accent-red); box-shadow: 0 0 15px var(--accent-red-glow); }
-        .color-picker-wrap { display: flex; align-items: center; gap: 12px; justify-content: center; }
-        .color-picker-wrap input[type="color"] {
-            width: 40px; height: 40px; border: 2px solid var(--border-color); border-radius: 50%;
-            padding: 2px; cursor: pointer; background: transparent;
-        }
-        .color-picker-wrap input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-        .color-picker-wrap input[type="color"]::-webkit-color-swatch { border: none; border-radius: 50%; }
-        .color-hex { font-size: 12px; color: var(--text-sub); font-weight: 600; }
+        /* ===== ТЕМЫ ===== */
+        .theme-toggle { position:fixed; bottom:24px; right:24px; z-index:999; width:48px; height:48px; background:rgba(20,22,32,0.85); backdrop-filter:blur(12px); border:1px solid var(--border-color); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; color:#fff; cursor:pointer; box-shadow:0 8px 25px rgba(0,0,0,0.5); transition:.2s; user-select:none; }
+        .theme-toggle:hover { transform:scale(1.05); border-color:var(--border-hover); }
+        .theme-panel { position:fixed; bottom:80px; right:24px; z-index:998; background:rgba(12,14,20,0.92); backdrop-filter:blur(20px); border:1px solid var(--border-color); border-radius:20px; padding:20px; width:220px; box-shadow:0 20px 50px rgba(0,0,0,0.7); display:none; flex-direction:column; gap:14px; transition:all .3s ease; }
+        .theme-panel.open { display:flex; }
+        .theme-panel .title { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--text-sub); text-align:center; }
+        .theme-presets { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+        .theme-preset { width:32px; height:32px; border-radius:50%; border:2px solid rgba(255,255,255,0.1); cursor:pointer; transition:.2s; }
+        .theme-preset:hover { transform:scale(1.15); border-color:#fff; }
+        .theme-preset.active { border-color:var(--accent-red); box-shadow:0 0 15px var(--accent-red-glow); }
+        .color-picker-wrap { display:flex; align-items:center; gap:12px; justify-content:center; }
+        .color-picker-wrap input[type="color"] { width:40px; height:40px; border:2px solid var(--border-color); border-radius:50%; padding:2px; cursor:pointer; background:transparent; }
+        .color-picker-wrap input[type="color"]::-webkit-color-swatch-wrapper { padding:0; }
+        .color-picker-wrap input[type="color"]::-webkit-color-swatch { border:none; border-radius:50%; }
+        .color-hex { font-size:12px; color:var(--text-sub); font-weight:600; }
 
         /* ===== АДАПТАЦИЯ ===== */
-        @media(max-width: 850px) {
-            .lottery-grid { grid-template-columns: 1fr; }
-            .dash-container-new { grid-template-columns: 1fr; }
-            .sidebar-new { border-right: none; padding-right: 0; }
-            .info-strip { grid-template-columns: 1fr; }
-            .details-showcase { grid-template-columns: 1fr; }
-            .servers-grid { grid-template-columns: 1fr; }
-        }
-        @media(max-width: 560px) {
-            .navbar-container{ top:10px; }.navbar{ padding:7px 10px; }.nav-links{ display:none; }
-            .hero h1{ font-size:39px; }.page-section{ padding-top:105px; }
-            footer.apex-footer{ flex-direction:column; }
-            .theme-toggle { width: 40px; height: 40px; bottom: 16px; right: 16px; }
-            .theme-panel { right: 16px; bottom: 70px; width: 190px; }
-        }
+        @media(max-width:850px){ .lottery-grid{grid-template-columns:1fr;} .dash-container-new{grid-template-columns:1fr;} .sidebar-new{border-right:none;padding-right:0;} .info-strip{grid-template-columns:1fr;} .details-showcase{grid-template-columns:1fr;} .servers-grid{grid-template-columns:1fr;} }
+        @media(max-width:560px){ .navbar-container{top:10px;} .navbar{padding:7px 10px;} .nav-links{display:none;} .hero h1{font-size:39px;} .page-section{padding-top:105px;} footer.apex-footer{flex-direction:column;} .theme-toggle{width:40px;height:40px;bottom:16px;right:16px;} .theme-panel{right:16px;bottom:70px;width:190px;} }
 
         /* ===== ОБЩИЕ ВИЗУАЛЬНЫЕ ЭФФЕКТЫ ===== */
-        body{
-            background:
-                radial-gradient(circle at 50% -10%, rgba(255,61,85,.13), transparent 34%),
-                radial-gradient(circle at 5% 70%, rgba(139,92,246,.10), transparent 28%),
-                var(--theme-bg);
-        }
-        body::before{
-            content:""; position:fixed; inset:0; pointer-events:none; z-index:-1; opacity:.22;
-            background-image: linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
-                              linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
-            background-size:52px 52px;
-            mask-image:linear-gradient(to bottom,black,transparent 80%);
-        }
+        body{ background:radial-gradient(circle at 50% -10%,rgba(255,61,85,.13),transparent 34%),radial-gradient(circle at 5% 70%,rgba(139,92,246,.10),transparent 28%),var(--theme-bg); }
+        body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:-1; opacity:.22; background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px); background-size:52px 52px; mask-image:linear-gradient(to bottom,black,transparent 80%); }
         #apex-particles{ position:fixed; inset:0; width:100%; height:100%; z-index:-1; pointer-events:none; opacity:.8; }
-        .cursor-glow{
-            position:fixed; left:0; top:0; width:260px; height:260px; border-radius:50%;
-            pointer-events:none; z-index:0; transform:translate(-50%,-50%);
-            background:radial-gradient(circle,rgba(255,51,68,.10),transparent 68%);
-            mix-blend-mode:screen; transition: opacity 0.15s;
-        }
+        .cursor-glow{ position:fixed; left:0; top:0; width:260px; height:260px; border-radius:50%; pointer-events:none; z-index:0; transform:translate(-50%,-50%); background:radial-gradient(circle,rgba(255,51,68,.10),transparent 68%); mix-blend-mode:screen; transition:opacity .15s; }
         .reveal{ opacity:0; transform:translateY(18px); transition:opacity .7s ease,transform .7s cubic-bezier(.16,1,.3,1); }
         .reveal.visible{ opacity:1; transform:none; }
         .faq-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-bottom:50px; }
@@ -659,31 +316,10 @@
             <div class="stat-card"><div class="stat-val">99.8%</div><div class="stat-lbl">Обход защиты</div></div>
         </div>
         <div class="info-strip reveal">
-            <div class="info-panel">
-                <div class="section-kicker">APEX ECOSYSTEM</div>
-                <h3>Клиент, который ощущается как отдельный продукт</h3>
-                <p>ApexClient собран вокруг удобства: чистый интерфейс, быстрый доступ к модулям, аккуратный визуальный стиль и акцент на плавности игры.</p>
-                <div class="module-cloud">
-                    <span class="module-chip">Combat</span><span class="module-chip">Visuals</span>
-                    <span class="module-chip">Movement</span><span class="module-chip">Render</span>
-                    <span class="module-chip">HUD</span><span class="module-chip">Configs</span>
-                </div>
-            </div>
-            <div class="info-panel">
-                <div class="section-kicker">LIVE STATUS</div>
-                <h3>Готов к следующей игре</h3>
-                <p>Основные разделы сайта теперь собраны в одном интерфейсе: покупки, кабинет, поддержка и информация о клиенте.</p>
-                <div class="mini-metrics">
-                    <div class="mini-metric"><b>1.21.4</b><span>Версия</span></div>
-                    <div class="mini-metric"><b>Fabric</b><span>Loader</span></div>
-                    <div class="mini-metric"><b>24/7</b><span>Доступ</span></div>
-                </div>
-            </div>
+            <div class="info-panel"><div class="section-kicker">APEX ECOSYSTEM</div><h3>Клиент, который ощущается как отдельный продукт</h3><p>ApexClient собран вокруг удобства: чистый интерфейс, быстрый доступ к модулям, аккуратный визуальный стиль и акцент на плавности игры.</p><div class="module-cloud"><span class="module-chip">Combat</span><span class="module-chip">Visuals</span><span class="module-chip">Movement</span><span class="module-chip">Render</span><span class="module-chip">HUD</span><span class="module-chip">Configs</span></div></div>
+            <div class="info-panel"><div class="section-kicker">LIVE STATUS</div><h3>Готов к следующей игре</h3><p>Основные разделы сайта теперь собраны в одном интерфейсе: покупки, кабинет, поддержка и информация о клиенте.</p><div class="mini-metrics"><div class="mini-metric"><b>1.21.4</b><span>Версия</span></div><div class="mini-metric"><b>Fabric</b><span>Loader</span></div><div class="mini-metric"><b>24/7</b><span>Доступ</span></div></div></div>
         </div>
-        <div class="section-title-block">
-            <h2>Превосходные Возможности</h2>
-            <p>Всё необходимое для победы в соревновательном Minecraft</p>
-        </div>
+        <div class="section-title-block"><h2>Превосходные Возможности</h2><p>Всё необходимое для победы в соревновательном Minecraft</p></div>
         <div class="features-grid">
             <div class="feature-card"><span class="feature-icon">🚀</span><h3>Максимальная оптимизация</h3><p>Стабильный высокий фреймрейт без просадок даже в самых жарких PvP-батадиях на серверах с большим онлайном.</p></div>
             <div class="feature-card"><span class="feature-icon">🛡️</span><h3>Обход античитов нового поколения</h3><p>Инновационные алгоритмы маскировки памяти и трафика гарантируют полную безопасность вашей учетной записи.</p></div>
@@ -706,109 +342,58 @@
 
     <!-- ТАРИФЫ -->
     <div id="page-tariffs" class="page-section hidden">
-        <div class="hero">
-            <div class="section-kicker">PRE-ORDER STORE</div>
-            <h1>Предзаказ <span>ApexClient</span></h1>
-            <p>Выберите срок доступа к ApexClient 1.21.4. Все три варианта оформляются как предзаказ и отображаются в личном кабинете.</p>
-        </div>
+        <div class="hero"><div class="section-kicker">PRE-ORDER STORE</div><h1>Предзаказ <span>ApexClient</span></h1><p>Выберите срок доступа к ApexClient 1.21.4. Все три варианта оформляются как предзаказ и отображаются в личном кабинете.</p></div>
         <div class="purchase-note">💡 <b>Важно:</b> это именно карточки предзаказа. После оформления заявка появится в системе магазина.</div>
         <div class="tariffs-container">
-            <div>
-                <div class="tariffs-row-title">🚀 Доступ к ApexClient 1.21.4</div>
-                <div class="tariffs-grid">
-                    <div class="tariff-card preorder-card reveal"><div><div class="tariff-name">Предзаказ · 1 месяц</div><div class="tariff-price">149 <span>₽</span></div><ul class="tariff-features"><li>Доступ на 30 дней</li><li>Все основные модули</li><li>Обновления</li></ul></div><button class="btn-buy" onclick="buyTariff('Предзаказ — 1 месяц — 149 ₽')">Оформить</button></div>
-                    <div class="tariff-card preorder-card popular reveal"><div class="tariff-badge">ВЫГОДНО</div><div><div class="tariff-name">Предзаказ · 3 месяца</div><div class="tariff-price">239 <span>₽</span></div><ul class="tariff-features"><li>Доступ на 90 дней</li><li>Все основные модули</li><li>Обновления</li></ul></div><button class="btn-buy" onclick="buyTariff('Предзаказ — 3 месяца — 239 ₽')">Оформить</button></div>
-                    <div class="tariff-card preorder-card reveal"><div><div class="tariff-name">Предзаказ · Навсегда</div><div class="tariff-price">449 <span>₽</span></div><ul class="tariff-features"><li>Постоянный доступ</li><li>Все основные модули</li><li>Обновления</li></ul></div><button class="btn-buy" onclick="buyTariff('Предзаказ — Навсегда — 449 ₽')">Оформить</button></div>
-                </div>
-            </div>
-            <div>
-                <div class="tariffs-row-title">🛠 Дополнительная услуга</div>
-                <div class="tariffs-grid">
-                    <div class="tariff-card reveal"><div><div class="tariff-name">Сброс HWID</div><div class="tariff-price">139 <span>₽</span></div><ul class="tariff-features"><li>Заявка через кабинет</li><li>Обработка модератором</li></ul></div><button class="action-btn" onclick="requestHWIDResetModal()">Запросить сброс</button></div>
-                </div>
-            </div>
-            <div>
-                <div class="tariffs-row-title">🎰 Лотерейные услуги</div>
-                <div class="tariffs-grid">
-                    <div class="tariff-card reveal"><div><div class="tariff-name">🎲 Рулетка</div><div class="tariff-price">49 <span>₽</span></div><ul class="tariff-features"><li>Один спин</li><li>Шансы: 7д-15%, 30д-2%, 90д-0.5%</li></ul></div><button class="btn-buy" onclick="buyTariff('Рулетка — 49 ₽')">Купить спин</button></div>
-                    <div class="tariff-card reveal"><div><div class="tariff-name">📦 Бокс</div><div class="tariff-price">49 <span>₽</span></div><ul class="tariff-features"><li>Открыть кейс</li><li>Шансы: 7д-15%, 30д-2%, 90д-0.5%</li></ul></div><button class="btn-buy" onclick="buyTariff('Бокс — 49 ₽')">Открыть кейс</button></div>
-                </div>
-            </div>
+            <div><div class="tariffs-row-title">🚀 Доступ к ApexClient 1.21.4</div><div class="tariffs-grid">
+                <div class="tariff-card preorder-card reveal"><div><div class="tariff-name">Предзаказ · 1 месяц</div><div class="tariff-price">149 <span>₽</span></div><ul class="tariff-features"><li>Доступ на 30 дней</li><li>Все основные модули</li><li>Обновления</li></ul></div><button class="btn-buy" onclick="buyTariff('Предзаказ — 1 месяц — 149 ₽')">Оформить</button></div>
+                <div class="tariff-card preorder-card popular reveal"><div class="tariff-badge">ВЫГОДНО</div><div><div class="tariff-name">Предзаказ · 3 месяца</div><div class="tariff-price">239 <span>₽</span></div><ul class="tariff-features"><li>Доступ на 90 дней</li><li>Все основные модули</li><li>Обновления</li></ul></div><button class="btn-buy" onclick="buyTariff('Предзаказ — 3 месяца — 239 ₽')">Оформить</button></div>
+                <div class="tariff-card preorder-card reveal"><div><div class="tariff-name">Предзаказ · Навсегда</div><div class="tariff-price">449 <span>₽</span></div><ul class="tariff-features"><li>Постоянный доступ</li><li>Все основные модули</li><li>Обновления</li></ul></div><button class="btn-buy" onclick="buyTariff('Предзаказ — Навсегда — 449 ₽')">Оформить</button></div>
+            </div></div>
+            <div><div class="tariffs-row-title">🛠 Дополнительная услуга</div><div class="tariffs-grid">
+                <div class="tariff-card reveal"><div><div class="tariff-name">Сброс HWID</div><div class="tariff-price">139 <span>₽</span></div><ul class="tariff-features"><li>Заявка через кабинет</li><li>Обработка модератором</li></ul></div><button class="action-btn" onclick="requestHWIDResetModal()">Запросить сброс</button></div>
+            </div></div>
+            <div><div class="tariffs-row-title">🎰 Лотерейные услуги</div><div class="tariffs-grid">
+                <div class="tariff-card reveal"><div><div class="tariff-name">🎲 Рулетка</div><div class="tariff-price">49 <span>₽</span></div><ul class="tariff-features"><li>Один спин</li><li>Шансы: 7д-15%, 30д-2%, 90д-0.5%</li></ul></div><button class="btn-buy" onclick="buyTariff('Рулетка — 49 ₽')">Купить спин</button></div>
+                <div class="tariff-card reveal"><div><div class="tariff-name">📦 Бокс</div><div class="tariff-price">49 <span>₽</span></div><ul class="tariff-features"><li>Открыть кейс</li><li>Шансы: 7д-15%, 30д-2%, 90д-0.5%</li></ul></div><button class="btn-buy" onclick="buyTariff('Бокс — 49 ₽')">Открыть кейс</button></div>
+            </div></div>
         </div>
     </div>
 
     <!-- ЛОТЕРЕЯ -->
     <div id="page-lottery" class="page-section hidden">
-        <div class="hero">
-            <div class="section-kicker">🎰 Лотерейный центр</div>
-            <h1>Испытай удачу <span>с ApexClient</span></h1>
-            <p>Крути рулетку или открывай кейс — выиграй подписку на 7, 30 или 90 дней!</p>
-        </div>
+        <div class="hero"><div class="section-kicker">🎰 Лотерейный центр</div><h1>Испытай удачу <span>с ApexClient</span></h1><p>Крути рулетку или открывай кейс — выиграй подписку на 7, 30 или 90 дней!</p></div>
         <div id="goldRushIndicator" class="hidden" style="text-align:center; margin-bottom:20px; padding:12px; background:rgba(232,179,75,0.1); border:1px solid #e8b34b; border-radius:16px;">
             <span style="color:#e8b34b; font-weight:800;">🔥 ЗОЛОТАЯ ЛИХОРАДКА АКТИВНА!</span>
             <span style="margin-left:16px; color:#fff;">⏳ <span id="goldRushTimer">00:00</span></span>
             <span style="margin-left:16px; color:#fff;">👥 <span id="goldRushCount">0</span></span>
         </div>
         <div class="lottery-grid">
-            <!-- РУЛЕТКА -->
             <div class="lottery-card">
-                <div class="lottery-header">
-                    <h3>🎡 Рулетка</h3>
-                    <span class="badge" id="spinBadge">бесплатно</span>
-                </div>
+                <div class="lottery-header"><h3>🎡 Рулетка</h3><span class="badge" id="spinBadge">бесплатно</span></div>
                 <div class="roulette-scene" id="rouletteScene">
                     <div class="pointer-top"></div>
-                    <div class="roulette-window">
-                        <div class="center-slot"></div>
-                        <div class="roulette-track" id="rouletteTrack"></div>
-                        <div class="fade-edge fade-left"></div>
-                        <div class="fade-edge fade-right"></div>
-                    </div>
+                    <div class="roulette-window"><div class="center-slot"></div><div class="roulette-track" id="rouletteTrack"></div><div class="fade-edge fade-left"></div><div class="fade-edge fade-right"></div></div>
                     <div class="pointer-bottom"></div>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
                     <button class="lottery-btn" id="spinBtn" onclick="spinRoulette()">🎲 Крутить</button>
-                    <div style="font-size:12px; color:var(--text-sub);">
-                        <span id="rouletteStatus">Готов к вращению</span>
-                    </div>
+                    <div style="font-size:12px; color:var(--text-sub);"><span id="rouletteStatus">Готов к вращению</span></div>
                 </div>
-                <div class="lottery-info">
-                    <span>Шансы: 7д 15% · 30д 2% · 90д 0.5%</span>
-                    <span class="attempts">Попыток: <span id="spinAttempts">1</span></span>
-                </div>
+                <div class="lottery-info"><span>Шансы: 7д 15% · 30д 2% · 90д 0.5%</span><span class="attempts">Попыток: <span id="spinAttempts">1</span></span></div>
             </div>
-            <!-- БОКС -->
             <div class="lottery-card">
-                <div class="lottery-header">
-                    <h3>📦 Бокс</h3>
-                    <span class="badge" id="caseBadge">бесплатно</span>
-                </div>
+                <div class="lottery-header"><h3>📦 Бокс</h3><span class="badge" id="caseBadge">бесплатно</span></div>
                 <div class="case-scene" id="caseScene">
-                    <div class="case-box" id="caseBox">
-                        <div class="case-lid"></div>
-                        <div class="case-front">
-                            <div class="case-hazard"></div>
-                            <div class="case-seal">⚡</div>
-                            <div class="case-hazard"></div>
-                        </div>
-                    </div>
+                    <div class="case-box" id="caseBox"><div class="case-lid"></div><div class="case-front"><div class="case-hazard"></div><div class="case-seal">⚡</div><div class="case-hazard"></div></div></div>
                     <div class="burst burst-gold" id="caseBurst"></div>
-                    <div class="result-card" id="caseResult">
-                        <div class="result-tier" id="caseResultTier">ЛЕГЕНДАРНАЯ</div>
-                        <div class="result-duration" id="caseResultDuration">90D</div>
-                        <div class="result-sub">ПОДПИСКА</div>
-                    </div>
+                    <div class="result-card" id="caseResult"><div class="result-tier" id="caseResultTier">ЛЕГЕНДАРНАЯ</div><div class="result-duration" id="caseResultDuration">90D</div><div class="result-sub">ПОДПИСКА</div></div>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
                     <button class="lottery-btn" id="caseBtn" onclick="openCase()">📦 Открыть</button>
-                    <div style="font-size:12px; color:var(--text-sub);">
-                        <span id="caseStatus">Готов к открытию</span>
-                    </div>
+                    <div style="font-size:12px; color:var(--text-sub);"><span id="caseStatus">Готов к открытию</span></div>
                 </div>
-                <div class="lottery-info">
-                    <span>Шансы: 7д 15% · 30д 2% · 90д 0.5%</span>
-                    <span class="attempts">Попыток: <span id="caseAttempts">1</span></span>
-                </div>
+                <div class="lottery-info"><span>Шансы: 7д 15% · 30д 2% · 90д 0.5%</span><span class="attempts">Попыток: <span id="caseAttempts">1</span></span></div>
             </div>
         </div>
     </div>
@@ -933,42 +518,31 @@
                 <button class="btn-logout-new" onclick="logout()">Выйти</button>
             </div>
             <div class="content-new">
-                <!-- Главная -->
                 <div id="cab-home" class="cab-tab-content">
                     <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Статус подписки</div><div class="sub-title" id="subStatusTextNew" style="color:var(--accent-red); font-size:22px; font-weight:900; margin-bottom:6px;">НЕТ АКТИВНОЙ ПОДПИСКИ</div><div class="sub-desc" id="subStatusDescNew" style="font-size:13.5px; color:var(--text-sub); line-height:1.6;">Приобретите подписку в разделе «Тарифы» или активируйте ключ.</div></div>
                 </div>
-                <!-- Заказы -->
                 <div id="cab-orders" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">История и Подписки / Заявки</div><div id="ordersListContainer"><p class="sub-desc">У вас пока нет активных подписок.</p></div></div></div>
-                <!-- Тикеты -->
                 <div id="cab-tickets" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Мои тикеты и ответы поддержки</div><div id="userTicketsContainer"><p class="sub-desc">Вы еще не отправляли вопросы.</p></div></div></div>
-                <!-- Ключи -->
                 <div id="cab-keys" class="cab-tab-content hidden">
                     <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Активация ключа подписки</div><div class="form-group" style="margin-bottom:12px;"><input type="text" id="subKeyInput" class="form-input" placeholder="Введите ключ подписки (например, APEX-SUB-XXXX)..."></div><button class="action-btn green" onclick="activateSubKey()">Активировать подписку</button></div>
                     <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Активация ключа сброса HWID</div><div class="form-group" style="margin-bottom:12px;"><input type="text" id="hwidKeyInput" class="form-input" placeholder="Введите ключ сброса HWID..."></div><button class="action-btn green" onclick="activateHWIDKey()">Сбросить HWID ключом</button></div>
                 </div>
-                <!-- Пост -->
                 <div id="cab-post" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Создать публикацию</div><div class="form-group"><label>Заголовок поста</label><input type="text" class="form-input" placeholder="Заголовок обновления..."></div><div class="form-group"><label>Текст сообщения</label><textarea class="form-textarea" placeholder="Содержимое поста..."></textarea></div><button class="action-btn" onclick="showToast('Пост успешно опубликован!', 'success')">Опубликовать</button></div></div>
-                <!-- Загрузки -->
                 <div id="cab-downloads" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Загрузка лоадера</div><p class="sub-desc" style="margin-bottom:14px;">Последняя стабильная сборка клиента под Fabric.</p><button class="action-btn green" onclick="showToast('Загрузка ApexClient.exe...', 'success')">📥 Скачать ApexClient.exe</button></div></div>
-                <!-- Модерация -->
                 <div id="cab-moderation" class="cab-tab-content hidden">
                     <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Запросы на покупку подписок / тарифов</div><div id="purchaseRequestsContainer"><p class="sub-desc">Нет активных запросов.</p></div></div>
                     <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Заявки на сброс HWID (139 ₽)</div><div id="hwidRequestsContainer"><p class="sub-desc">Нет активных заявок.</p></div></div>
                     <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">Тикеты пользователей</div><div id="adminTicketsContainer"><p class="sub-desc">Нет активных вопросов.</p></div></div>
                 </div>
-                <!-- Настройка возможностей -->
                 <div id="cab-capabilities" class="cab-tab-content hidden">
                     <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">🛠️ Настройка возможностей пользователя (Поиск по нику)</div><div class="form-group"><label>Ник пользователя</label><div style="display:flex; gap:8px;"><input type="text" id="capSearchInput" class="form-input" placeholder="Введите точный ник или часть ника..."><button class="action-btn" style="width:140px;" onclick="searchUserCapabilities()">Найти</button></div></div><div id="capSearchResultContainer"></div></div>
                 </div>
-                <!-- Управление ролями -->
                 <div id="cab-roles" class="cab-tab-content hidden">
                     <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">👑 Управление ролями и их возможностями</div><p class="sub-desc" style="margin-bottom:16px;">Создавайте кастомные роли и настраивайте доступы.</p><div style="display:flex; gap:8px; margin-bottom:16px;"><input type="text" id="newRoleNameInput" class="form-input" placeholder="Название новой роли (например: Helper)..."><button class="action-btn green" style="width:180px;" onclick="createNewRole()">Создать роль</button></div><div id="rolesListContainer"></div></div>
                 </div>
-                <!-- Золотая лихорадка -->
                 <div id="cab-goldrush" class="cab-tab-content hidden">
                     <div class="card gold-rush-panel"><h4>🔥 Золотая лихорадка</h4><p style="color:var(--text-sub); font-size:13px; margin-bottom:12px;">Настройка временного события, в течение которого пользователи могут открыть кейс бесплатно 1 раз.</p><div class="gold-rush-controls"><div class="form-group"><label>Длительность (минуты)</label><input type="number" id="grDuration" class="form-input" value="1" min="1" style="width:80px;"></div><div class="form-group"><label>Количество человек</label><input type="number" id="grLimit" class="form-input" value="3" min="1" style="width:80px;"></div><button class="action-btn" id="grStartBtn" onclick="startGoldRush()">Начать золотую лихорадку</button></div><div id="grStatus" class="gold-rush-status"><span>Статус: <span id="grStatusText">Не активна</span></span><span>Осталось: <span id="grTimeLeft">--</span></span><span>Использовали: <span id="grUsedCount">0</span></span></div></div>
                 </div>
-                <!-- Панель владельца -->
                 <div id="cab-admin" class="cab-tab-content hidden">
                     <div class="card"><div class="card-header" style="font-size:11.5px; color:var(--text-sub); font-weight:800; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px;">⚙️ Панель Владельца — Управление системой и правами доступа</div><div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;"><div class="form-group" style="margin-bottom:0;"><label>Тип подписки для генерации</label><select id="genSubDuration" class="form-select"><option value="7д">7д</option><option value="30д">30д</option><option value="90д">90д</option><option value="Навсегда">Навсегда</option></select></div><div style="display:flex; align-items:flex-end;"><button class="action-btn green" onclick="generateSubKey()">Сгенерировать ключ</button></div></div><div class="form-group" style="margin-bottom:0;"><button class="action-btn yellow" onclick="generateHWIDKey()">Сгенерировать ключ сброса HWID</button></div><div id="generatedKeyOutput" style="margin-top:12px;"></div></div>
                 </div>
@@ -1001,10 +575,11 @@
 
     <script>
         // ========================================================================
-        // БАЗОВЫЕ ДАННЫЕ И ФУНКЦИИ
+        // ВСЕ ФУНКЦИИ ОПРЕДЕЛЕНЫ ДО ИСПОЛЬЗОВАНИЯ
         // ========================================================================
         let currentUser = localStorage.getItem('apex_user') || null;
 
+        // Инициализация базы данных
         if (!localStorage.getItem('apex_db_users_v4')) {
             localStorage.removeItem('apex_db_users');
             localStorage.removeItem('apex_roles');
@@ -1024,24 +599,10 @@
             "user": { permissions: { canBan: false, canAccessAdmin: false, canEditRoles: false, canViewTickets: false } }
         };
 
-        let appRequests = JSON.parse(localStorage.getItem('apex_requests')) || {
-            hwid: [],
-            subs: [],
-            tickets: []
-        };
-
+        let appRequests = JSON.parse(localStorage.getItem('apex_requests')) || { hwid: [], subs: [], tickets: [] };
         let activeKeysDB = JSON.parse(localStorage.getItem('apex_keys_db')) || {};
-
         let lotteryState = JSON.parse(localStorage.getItem('apex_lottery_state')) || {
-            goldRush: {
-                active: false,
-                duration: 1,
-                limit: 3,
-                used: 0,
-                startTime: null,
-                timerInterval: null,
-                usedUsers: []
-            }
+            goldRush: { active: false, duration: 1, limit: 3, used: 0, startTime: null, timerInterval: null, usedUsers: [] }
         };
 
         function saveDB() {
@@ -1058,10 +619,7 @@
             toast.className = `toast ${type}`;
             toast.innerHTML = `<span>${type === 'success' ? '✅' : '❌'}</span> ${message}`;
             container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
         // ========================================================================
@@ -1111,13 +669,10 @@
                     password: password,
                     role: lower === 'invisik' ? 'owner' : 'user',
                     sub: lower === 'invisik' ? 'Навсегда' : '30д',
-                    banned: false,
-                    banReason: '',
-                    banDuration: '',
+                    banned: false, banReason: '', banDuration: '',
                     regDate: new Date().toLocaleDateString(),
                     uid: Object.keys(registeredUsers).length + 1,
-                    freeSpinUsed: false,
-                    freeCaseUsed: false
+                    freeSpinUsed: false, freeCaseUsed: false
                 };
                 saveDB();
             }
@@ -1125,10 +680,7 @@
                 showToast('Неверный никнейм или пароль!', 'error');
                 return;
             }
-            if (registeredUsers[lower].banned) {
-                showToast('Этот аккаунт заблокирован!', 'error');
-                return;
-            }
+            if (registeredUsers[lower].banned) { showToast('Аккаунт заблокирован!', 'error'); return; }
             currentUser = usernameInput;
             localStorage.setItem('apex_user', currentUser);
             updateCabinetUI();
@@ -1142,28 +694,22 @@
             const password = document.getElementById('regPasswordInput').value.trim();
             if (!usernameInput || !password) { showToast('Заполните все поля!', 'error'); return; }
             const lower = usernameInput.toLowerCase();
-            if (registeredUsers[lower]) {
-                showToast('Пользователь уже существует!', 'error');
-                return;
-            }
+            if (registeredUsers[lower]) { showToast('Пользователь уже существует!', 'error'); return; }
             registeredUsers[lower] = {
                 password: password,
                 role: lower === 'invisik' ? 'owner' : 'user',
                 sub: lower === 'invisik' ? 'Навсегда' : '30д',
-                banned: false,
-                banReason: '',
-                banDuration: '',
+                banned: false, banReason: '', banDuration: '',
                 regDate: new Date().toLocaleDateString(),
                 uid: Object.keys(registeredUsers).length + 1,
-                freeSpinUsed: false,
-                freeCaseUsed: false
+                freeSpinUsed: false, freeCaseUsed: false
             };
             saveDB();
             currentUser = usernameInput;
             localStorage.setItem('apex_user', currentUser);
             updateCabinetUI();
             updateLotteryUI();
-            showToast(`Аккаунт ${currentUser} успешно создан!`, 'success');
+            showToast(`Аккаунт ${currentUser} создан!`, 'success');
             navigateTo('cabinet');
         }
 
@@ -1172,14 +718,13 @@
             currentUser = null;
             document.getElementById('navCabinetText').innerText = 'Кабинет';
             navigateTo('home');
-            showToast('Вы вышли из аккаунта', 'success');
+            showToast('Вы вышли', 'success');
         }
 
         function checkUserBanAction() {
             if (!currentUser) return false;
-            const userData = registeredUsers[currentUser.toLowerCase()];
-            if (userData && userData.banned) {
-                showToast('Ваш аккаунт заблокирован!', 'error');
+            if (registeredUsers[currentUser.toLowerCase()]?.banned) {
+                showToast('Аккаунт заблокирован!', 'error');
                 return true;
             }
             return false;
@@ -1210,15 +755,15 @@
             if (user.banned) {
                 subText.innerText = 'ЗАБАНЕН (' + user.banReason + ')';
                 subText.style.color = 'var(--accent-red)';
-                subDesc.innerText = 'Учетная запись заблокирована администратором.';
+                subDesc.innerText = 'Учетная запись заблокирована.';
             } else if (!user.sub || user.sub === 'Нет' || user.sub === 'нет') {
                 subText.innerText = 'НЕТ АКТИВНОЙ ПОДПИСКИ';
                 subText.style.color = 'var(--accent-red)';
-                subDesc.innerText = 'Приобретите подписку в разделе «Тарифы» или активируйте ключ.';
+                subDesc.innerText = 'Приобретите подписку или активируйте ключ.';
             } else {
                 subText.innerText = 'ПОДПИСКА АКТИВНА (' + user.sub + ')';
                 subText.style.color = 'var(--accent-green)';
-                subDesc.innerText = 'Доступ к Fabric 1.21.4 клиенту работает без ограничений.';
+                subDesc.innerText = 'Доступ к клиенту работает без ограничений.';
             }
 
             const role = (user.role || 'user').toLowerCase();
@@ -1307,30 +852,21 @@
         }
 
         function buyTariff(tariffName) {
-            if (!currentUser) { showToast('Сначала войдите в личный кабинет!', 'error'); navigateTo('cabinet'); return; }
+            if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); navigateTo('cabinet'); return; }
             if (checkUserBanAction()) return;
-            appRequests.subs.push({
-                username: currentUser,
-                tariff: tariffName,
-                date: new Date().toLocaleDateString()
-            });
+            appRequests.subs.push({ username: currentUser, tariff: tariffName, date: new Date().toLocaleDateString() });
             saveDB();
-            showToast(`Заявка на покупку "${tariffName}" успешно создана!`, 'success');
+            showToast(`Заявка на "${tariffName}" создана!`, 'success');
         }
 
         function requestHWIDResetModal() {
-            if (!currentUser) { showToast('Сначала войдите в личный кабинет!', 'error'); navigateTo('cabinet'); return; }
+            if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
             if (checkUserBanAction()) return;
-            const reason = prompt("Укажите причину для сброса HWID:");
+            const reason = prompt("Причина сброса HWID:");
             if (!reason) return;
-            appRequests.hwid.push({
-                username: currentUser,
-                hwid: "HWID-PC-" + Math.floor(Math.random() * 89999 + 10000),
-                reason: reason,
-                date: new Date().toLocaleDateString()
-            });
+            appRequests.hwid.push({ username: currentUser, hwid: "HWID-" + Math.random().toString(36).substring(2,6), reason, date: new Date().toLocaleDateString() });
             saveDB();
-            showToast('Заявка на сброс HWID отправлена.', 'success');
+            showToast('Заявка отправлена.', 'success');
         }
 
         function addNewReview() {
@@ -1351,18 +887,12 @@
         }
 
         function submitTicket() {
-            if (!currentUser) { showToast('Войдите в аккаунт', 'error'); navigateTo('cabinet'); return; }
+            if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
             if (checkUserBanAction()) return;
             const subject = document.getElementById('ticketSubject').value.trim();
             const message = document.getElementById('ticketMessage').value.trim();
             if (!subject || !message) { showToast('Заполните все поля!', 'error'); return; }
-            appRequests.tickets.push({
-                username: currentUser,
-                subject: subject,
-                message: message,
-                status: 'Открыт',
-                date: new Date().toLocaleDateString()
-            });
+            appRequests.tickets.push({ username: currentUser, subject, message, status: 'Открыт', date: new Date().toLocaleDateString() });
             saveDB();
             showToast('Тикет отправлен!', 'success');
             document.getElementById('ticketSubject').value = '';
@@ -1380,35 +910,35 @@
             updateModBadge();
 
             if (appRequests.subs.length === 0) {
-                subContainer.innerHTML = `<p class="sub-desc">Нет активных запросов.</p>`;
+                subContainer.innerHTML = '<p class="sub-desc">Нет запросов.</p>';
             } else {
                 subContainer.innerHTML = appRequests.subs.map((item, idx) => `
                     <div style="background:rgba(0,0,0,0.3); padding:12px; border-radius:12px; margin-bottom:8px; border:1px solid var(--border-color);">
-                        <div style="font-size:13px; font-weight:800; color:#fff;">Игрок: ${item.username} | Тариф: ${item.tariff}</div>
-                        <div style="font-size:11px; color:var(--text-sub); margin-bottom:8px;">Дата: ${item.date}</div>
+                        <div style="font-size:13px; font-weight:800; color:#fff;">${item.username} | ${item.tariff}</div>
+                        <div style="font-size:11px; color:var(--text-sub);">${item.date}</div>
                         <button class="action-btn green" style="padding:6px 12px; font-size:12px;" onclick="approveSub(${idx})">Одобрить</button>
                     </div>
                 `).join('');
             }
 
             if (appRequests.hwid.length === 0) {
-                hwidContainer.innerHTML = `<p class="sub-desc">Нет активных заявок.</p>`;
+                hwidContainer.innerHTML = '<p class="sub-desc">Нет заявок.</p>';
             } else {
                 hwidContainer.innerHTML = appRequests.hwid.map((item, idx) => `
                     <div style="background:rgba(0,0,0,0.3); padding:12px; border-radius:12px; margin-bottom:8px; border:1px solid var(--border-color);">
-                        <div style="font-size:13px; font-weight:800; color:#fff;">Игрок: ${item.username} | Причина: ${item.reason}</div>
-                        <div style="font-size:11px; color:var(--text-sub); margin-bottom:8px;">HWID: ${item.hwid}</div>
+                        <div style="font-size:13px; font-weight:800; color:#fff;">${item.username} | ${item.reason}</div>
+                        <div style="font-size:11px; color:var(--text-sub);">HWID: ${item.hwid}</div>
                         <button class="action-btn green" style="padding:6px 12px; font-size:12px;" onclick="approveHWID(${idx})">Сбросить</button>
                     </div>
                 `).join('');
             }
 
             if (appRequests.tickets.length === 0) {
-                ticketContainer.innerHTML = `<p class="sub-desc">Нет активных вопросов.</p>`;
+                ticketContainer.innerHTML = '<p class="sub-desc">Нет тикетов.</p>';
             } else {
                 ticketContainer.innerHTML = appRequests.tickets.map((item, idx) => `
                     <div style="background:rgba(0,0,0,0.3); padding:12px; border-radius:12px; margin-bottom:8px; border:1px solid var(--border-color);">
-                        <div style="font-size:13px; font-weight:800; color:#fff;">От: ${item.username} | Тема: ${item.subject}</div>
+                        <div style="font-size:13px; font-weight:800; color:#fff;">${item.username} | ${item.subject}</div>
                         <div style="font-size:12.5px; color:var(--text-sub); margin:6px 0;">${item.message}</div>
                         <button class="action-btn dark" style="padding:6px 12px; font-size:12px;" onclick="closeTicket(${idx})">Закрыть</button>
                     </div>
@@ -1450,60 +980,41 @@
         }
 
         // ========================================================================
-        // УПРАВЛЕНИЕ РОЛЯМИ
+        // УПРАВЛЕНИЕ РОЛЯМИ (упрощённо)
         // ========================================================================
         function searchUserCapabilities() {
-            const rawQuery = document.getElementById('capSearchInput').value;
+            const query = document.getElementById('capSearchInput').value.trim().toLowerCase();
             const container = document.getElementById('capSearchResultContainer');
             container.innerHTML = '';
-            if (!rawQuery) { container.innerHTML = `<div class="search-result-box" style="color:var(--accent-red); font-weight:700; text-align:center;">Введите ник</div>`; return; }
-            const query = rawQuery.trim().toLowerCase();
-            const matchedKeys = Object.keys(registeredUsers).filter(username => username.toLowerCase().includes(query));
-            if (matchedKeys.length === 0) { container.innerHTML = `<div class="search-result-box" style="color:var(--accent-red); font-weight:700; text-align:center;">Игрок не найден</div>`; return; }
-            container.innerHTML = matchedKeys.map(username => {
+            if (!query) { container.innerHTML = '<div style="text-align:center;color:var(--accent-red);">Введите ник</div>'; return; }
+            const keys = Object.keys(registeredUsers).filter(u => u.includes(query));
+            if (!keys.length) { container.innerHTML = '<div style="text-align:center;color:var(--accent-red);">Игрок не найден</div>'; return; }
+            container.innerHTML = keys.map(username => {
                 const u = registeredUsers[username];
-                const allRolesKeys = Object.keys(customRoles);
                 return `
-                    <div class="search-result-box" style="margin-bottom:14px; background:rgba(0,0,0,0.45); border:1px solid var(--border-color); border-radius:16px; padding:18px;">
-                        <div style="font-weight:800; font-size:15px; margin-bottom:10px; color:#fff;">Пользователь: ${username}</div>
-                        <div style="font-size:13px; color:var(--text-sub); margin-bottom:12px;">Текущая роль: <b>${u.role}</b> | Подписка: <b>${u.sub}</b> | Статус: <b>${u.banned ? 'ЗАБАНЕН' : 'Активен'}</b></div>
-                        <div class="form-group" style="margin-bottom:12px;">
+                    <div style="background:rgba(0,0,0,0.45); border:1px solid var(--border-color); border-radius:16px; padding:18px; margin-bottom:14px;">
+                        <div style="font-weight:800; font-size:15px; color:#fff;">${username}</div>
+                        <div style="font-size:13px; color:var(--text-sub);">Роль: ${u.role} | Подписка: ${u.sub} | ${u.banned ? 'ЗАБАНЕН' : 'Активен'}</div>
+                        <div class="form-group" style="margin:10px 0;">
                             <label>Выбрать роль</label>
                             <select id="selectRoleForUser_${username}" class="form-select">
-                                ${allRolesKeys.map(r => `<option value="${r}" ${u.role.toLowerCase() === r ? 'selected' : ''}>${r.toUpperCase()}</option>`).join('')}
+                                ${Object.keys(customRoles).map(r => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${r.toUpperCase()}</option>`).join('')}
                             </select>
                         </div>
-                        <div style="display:flex; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
-                            <button class="action-btn green" style="flex:1;" onclick="adminSaveUserRole('${username}')">Сохранить роль</button>
-                            <button class="action-btn yellow" style="flex:1;" onclick="adminResetHWID('${username}')">Сбросить HWID</button>
-                        </div>
-                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                            <button class="action-btn dark" style="flex:1;" onclick="adminGiveSub('${username}')">Продлить подписку</button>
-                            <button class="action-btn" style="flex:1; background:var(--accent-red);" onclick="adminPromptBan('${username}')">${u.banned ? 'Разбанить' : 'Забанить'}</button>
-                        </div>
+                        <button class="action-btn green" style="width:auto; padding:6px 12px;" onclick="adminSaveUserRole('${username}')">Сохранить</button>
+                        <button class="action-btn" style="width:auto; padding:6px 12px; background:var(--accent-red); margin-left:8px;" onclick="adminPromptBan('${username}')">${u.banned ? 'Разбанить' : 'Забанить'}</button>
                     </div>
                 `;
             }).join('');
         }
 
         function adminSaveUserRole(username) {
-            const selectEl = document.getElementById(`selectRoleForUser_${username}`);
-            if (!selectEl) return;
-            const newRole = selectEl.value;
-            registeredUsers[username].role = newRole;
+            const select = document.getElementById(`selectRoleForUser_${username}`);
+            if (!select) return;
+            registeredUsers[username].role = select.value;
             saveDB();
             if (currentUser && currentUser.toLowerCase() === username.toLowerCase()) updateCabinetUI();
-            showToast(`Роль ${username} изменена на ${newRole.toUpperCase()}!`);
-            searchUserCapabilities();
-        }
-
-        function adminResetHWID(username) { showToast(`HWID ${username} сброшен!`); }
-
-        function adminGiveSub(username) {
-            registeredUsers[username].sub = '30д';
-            saveDB();
-            if (currentUser && currentUser.toLowerCase() === username.toLowerCase()) updateCabinetUI();
-            showToast(`Игроку ${username} выдана подписка (30д)!`);
+            showToast(`Роль ${username} изменена`);
             searchUserCapabilities();
         }
 
@@ -1513,75 +1024,59 @@
                 u.banned = false; u.banReason = ''; u.banDuration = '';
                 saveDB();
                 if (currentUser && currentUser.toLowerCase() === username.toLowerCase()) updateCabinetUI();
-                showToast(`Игрок ${username} разбанен!`);
+                showToast(`${username} разбанен`);
                 searchUserCapabilities();
                 return;
             }
-            const duration = prompt(`Срок бана для ${username}:`);
-            if (!duration) return;
-            const reason = prompt(`Причина бана для ${username}:`);
+            const reason = prompt('Причина бана:');
             if (!reason) return;
-            u.banned = true; u.banDuration = duration; u.banReason = reason;
+            u.banned = true; u.banReason = reason; u.banDuration = 'навсегда';
             saveDB();
             if (currentUser && currentUser.toLowerCase() === username.toLowerCase()) updateCabinetUI();
-            showToast(`Игрок ${username} заблокирован!`, 'error');
+            showToast(`${username} заблокирован`, 'error');
             searchUserCapabilities();
         }
 
         function createNewRole() {
-            const roleInput = document.getElementById('newRoleNameInput');
-            const roleName = roleInput.value.trim().toLowerCase();
-            if (!roleName) { showToast('Введите название роли!', 'error'); return; }
-            if (customRoles[roleName]) { showToast('Такая роль уже существует!', 'error'); return; }
-            customRoles[roleName] = { permissions: { canBan: false, canAccessAdmin: false, canEditRoles: false, canViewTickets: true } };
+            const name = document.getElementById('newRoleNameInput').value.trim().toLowerCase();
+            if (!name) { showToast('Введите название!', 'error'); return; }
+            if (customRoles[name]) { showToast('Роль уже существует!', 'error'); return; }
+            customRoles[name] = { permissions: { canBan: false, canAccessAdmin: false, canEditRoles: false, canViewTickets: true } };
             saveDB();
-            roleInput.value = '';
-            showToast(`Роль "${roleName.toUpperCase()}" создана!`);
+            showToast(`Роль ${name.toUpperCase()} создана`);
             renderRolesManagement();
         }
 
         function renderRolesManagement() {
             const container = document.getElementById('rolesListContainer');
-            const rolesKeys = Object.keys(customRoles);
-            container.innerHTML = rolesKeys.map(roleKey => {
+            container.innerHTML = Object.keys(customRoles).map(roleKey => {
                 const p = customRoles[roleKey].permissions;
                 return `
                     <div style="background:rgba(0,0,0,0.35); border:1px solid var(--border-color); border-radius:16px; padding:18px; margin-bottom:14px;">
-                        <div style="font-size:15px; font-weight:800; color:#fff; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
-                            <span>👑 Роль: ${roleKey.toUpperCase()}</span>
-                            ${roleKey !== 'owner' && roleKey !== 'user' ? `<button class="action-btn" style="width:auto; padding:4px 10px; font-size:11px; background:var(--accent-red);" onclick="deleteRole('${roleKey}')">Удалить</button>` : ''}
-                        </div>
-                        <div style="display:flex; flex-direction:column; gap:8px;">
-                            <label style="font-size:12px; color:var(--text-sub); display:flex; align-items:center; gap:8px; cursor:pointer;">
-                                <input type="checkbox" ${p.canBan ? 'checked' : ''} onchange="togglePermission('${roleKey}', 'canBan', this.checked)"> Право банить
-                            </label>
-                            <label style="font-size:12px; color:var(--text-sub); display:flex; align-items:center; gap:8px; cursor:pointer;">
-                                <input type="checkbox" ${p.canAccessAdmin ? 'checked' : ''} onchange="togglePermission('${roleKey}', 'canAccessAdmin', this.checked)"> Доступ к генерации ключей
-                            </label>
-                            <label style="font-size:12px; color:var(--text-sub); display:flex; align-items:center; gap:8px; cursor:pointer;">
-                                <input type="checkbox" ${p.canViewTickets ? 'checked' : ''} onchange="togglePermission('${roleKey}', 'canViewTickets', this.checked)"> Просмотр модерации
-                            </label>
-                        </div>
+                        <div style="font-size:15px; font-weight:800; color:#fff; margin-bottom:12px;">${roleKey.toUpperCase()}</div>
+                        <label style="font-size:12px; color:var(--text-sub); display:block;"><input type="checkbox" ${p.canBan ? 'checked' : ''} onchange="togglePerm('${roleKey}','canBan',this.checked)"> Право банить</label>
+                        <label style="font-size:12px; color:var(--text-sub); display:block;"><input type="checkbox" ${p.canAccessAdmin ? 'checked' : ''} onchange="togglePerm('${roleKey}','canAccessAdmin',this.checked)"> Доступ к админке</label>
+                        <label style="font-size:12px; color:var(--text-sub); display:block;"><input type="checkbox" ${p.canViewTickets ? 'checked' : ''} onchange="togglePerm('${roleKey}','canViewTickets',this.checked)"> Просмотр тикетов</label>
+                        ${roleKey !== 'owner' && roleKey !== 'user' ? `<button class="action-btn" style="width:auto; padding:4px 10px; font-size:11px; background:var(--accent-red); margin-top:8px;" onclick="deleteRole('${roleKey}')">Удалить</button>` : ''}
                     </div>
                 `;
             }).join('');
         }
 
-        function togglePermission(roleKey, permName, value) {
+        function togglePerm(roleKey, perm, val) {
             if (!customRoles[roleKey]) return;
-            customRoles[roleKey].permissions[permName] = value;
+            customRoles[roleKey].permissions[perm] = val;
             saveDB();
-            showToast(`Права для ${roleKey.toUpperCase()} обновлены!`);
         }
 
         function deleteRole(roleKey) {
             if (roleKey === 'owner' || roleKey === 'user' || roleKey === 'admin' || roleKey === 'moder') {
-                showToast('Нельзя удалить системные роли!', 'error');
+                showToast('Нельзя удалить системную роль!', 'error');
                 return;
             }
             delete customRoles[roleKey];
             saveDB();
-            showToast(`Роль ${roleKey.toUpperCase()} удалена.`);
+            showToast('Роль удалена');
             renderRolesManagement();
         }
 
@@ -1590,24 +1085,24 @@
         // ========================================================================
         function generateSubKey() {
             const duration = document.getElementById('genSubDuration').value;
-            const randomKey = 'APEX-SUB-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-            activeKeysDB[randomKey] = duration;
+            const key = 'APEX-SUB-' + Math.random().toString(36).substring(2,8).toUpperCase();
+            activeKeysDB[key] = duration;
             saveDB();
             document.getElementById('generatedKeyOutput').innerHTML = `
-                <div class="search-result-box" style="background:rgba(0,230,118,0.05); border-color:var(--accent-green); padding:12px; border-radius:12px; margin-top:8px;">
-                    <div style="font-size:11px; color:var(--accent-green); font-weight:800; margin-bottom:4px;">КЛЮЧ ПОДПИСКИ (${duration}):</div>
-                    <div style="font-size:15px; font-weight:900; color:#fff; letter-spacing:1px;">${randomKey}</div>
+                <div style="background:rgba(0,230,118,0.05); border:1px solid var(--accent-green); padding:12px; border-radius:12px; margin-top:8px;">
+                    <div style="font-size:11px; color:var(--accent-green); font-weight:800;">КЛЮЧ (${duration}):</div>
+                    <div style="font-size:15px; font-weight:900; color:#fff;">${key}</div>
                 </div>
             `;
             showToast('Ключ сгенерирован!');
         }
 
         function generateHWIDKey() {
-            const randomKey = 'APEX-HWID-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            const key = 'APEX-HWID-' + Math.random().toString(36).substring(2,8).toUpperCase();
             document.getElementById('generatedKeyOutput').innerHTML = `
-                <div class="search-result-box" style="background:rgba(255,188,0,0.05); border-color:#ffbc00; padding:12px; border-radius:12px; margin-top:8px;">
-                    <div style="font-size:11px; color:#ffbc00; font-weight:800; margin-bottom:4px;">КЛЮЧ СБРОСА HWID:</div>
-                    <div style="font-size:15px; font-weight:900; color:#fff; letter-spacing:1px;">${randomKey}</div>
+                <div style="background:rgba(255,188,0,0.05); border:1px solid #ffbc00; padding:12px; border-radius:12px; margin-top:8px;">
+                    <div style="font-size:11px; color:#ffbc00; font-weight:800;">КЛЮЧ СБРОСА HWID:</div>
+                    <div style="font-size:15px; font-weight:900; color:#fff;">${key}</div>
                 </div>
             `;
             showToast('Ключ сброса HWID сгенерирован!');
@@ -1620,17 +1115,12 @@
             if (!key) { showToast('Введите ключ!', 'error'); return; }
             if (!activeKeysDB[key]) { showToast('Неверный ключ!', 'error'); return; }
             const duration = activeKeysDB[key];
-            const lowerUser = currentUser.toLowerCase();
-            if (registeredUsers[lowerUser]) {
-                registeredUsers[lowerUser].sub = duration;
-                delete activeKeysDB[key];
-                saveDB();
-                updateCabinetUI();
-                showToast(`Подписка активирована: ${duration}`, 'success');
-                document.getElementById('subKeyInput').value = '';
-            } else {
-                showToast('Ошибка аккаунта', 'error');
-            }
+            registeredUsers[currentUser.toLowerCase()].sub = duration;
+            delete activeKeysDB[key];
+            saveDB();
+            updateCabinetUI();
+            showToast(`Подписка активирована: ${duration}`, 'success');
+            document.getElementById('subKeyInput').value = '';
         }
 
         function activateHWIDKey() {
@@ -1654,8 +1144,7 @@
             const track = document.getElementById('rouletteTrack');
             if (!track) return;
             const cycle = [0,1,2];
-            const totalItems = 33;
-            for (let i = 0; i < totalItems; i++) {
+            for (let i = 0; i < 33; i++) {
                 const d = PRIZES[cycle[i % 3]];
                 const el = document.createElement('div');
                 el.className = 'roll-item ' + d.tierClass;
@@ -1681,23 +1170,16 @@
         }
 
         function spinRoulette() {
-            if (!currentUser) {
-                showToast('Войдите, чтобы крутить рулетку!', 'error');
-                navigateTo('cabinet');
-                return;
-            }
+            if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); navigateTo('cabinet'); return; }
             if (checkUserBanAction()) return;
-
-            const lower = currentUser.toLowerCase();
-            const user = registeredUsers[lower];
-            if (!user) { showToast('Ошибка пользователя', 'error'); return; }
-
+            const user = registeredUsers[currentUser.toLowerCase()];
+            if (!user) return;
             if (user.freeSpinUsed) {
-                showToast('У вас нет бесплатных спинов. Купите спин в разделе «Тарифы».', 'error');
+                showToast('Нет бесплатных спинов. Купите в разделе "Тарифы".', 'error');
                 return;
             }
 
-            const totalWeight = PRIZES.reduce((sum, p) => sum + p.weight, 0);
+            const totalWeight = PRIZES.reduce((s,p) => s + p.weight, 0);
             let rand = Math.random() * totalWeight;
             let selected = PRIZES[0];
             for (let p of PRIZES) {
@@ -1744,42 +1226,30 @@
         }
 
         function openCase() {
-            if (!currentUser) {
-                showToast('Войдите, чтобы открыть кейс!', 'error');
-                navigateTo('cabinet');
-                return;
-            }
+            if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); navigateTo('cabinet'); return; }
             if (checkUserBanAction()) return;
-
-            const lower = currentUser.toLowerCase();
-            const user = registeredUsers[lower];
-            if (!user) { showToast('Ошибка пользователя', 'error'); return; }
+            const user = registeredUsers[currentUser.toLowerCase()];
+            if (!user) return;
 
             let freeCase = false;
             const gr = lotteryState.goldRush;
             if (gr.active) {
-                if (gr.used < gr.limit) {
-                    if (!lotteryState.goldRush.usedUsers) lotteryState.goldRush.usedUsers = [];
-                    if (!lotteryState.goldRush.usedUsers.includes(lower)) {
-                        freeCase = true;
-                        lotteryState.goldRush.usedUsers.push(lower);
-                        gr.used++;
-                        saveDB();
-                        showToast('🔥 Бесплатное открытие по золотой лихорадке!', 'success');
-                        updateGoldRushUI();
-                    } else {
-                        showToast('Вы уже использовали бесплатную попытку в этой лихорадке.', 'error');
-                        return;
-                    }
+                if (gr.used < gr.limit && !gr.usedUsers.includes(currentUser.toLowerCase())) {
+                    freeCase = true;
+                    gr.usedUsers.push(currentUser.toLowerCase());
+                    gr.used++;
+                    saveDB();
+                    showToast('🔥 Бесплатное открытие по золотой лихорадке!', 'success');
+                    updateGoldRushUI();
                 } else {
-                    showToast('Лимит бесплатных открытий исчерпан.', 'error');
+                    showToast('Лимит исчерпан или вы уже использовали.', 'error');
                     return;
                 }
             }
 
             if (!freeCase) {
                 if (user.freeCaseUsed) {
-                    showToast('У вас нет бесплатных открытий. Купите бокс в разделе «Тарифы».', 'error');
+                    showToast('Нет бесплатных открытий. Купите в разделе "Тарифы".', 'error');
                     return;
                 }
                 freeCase = true;
@@ -1788,7 +1258,7 @@
                 showToast('🔥 Бесплатное открытие активировано!', 'success');
             }
 
-            const totalWeight = PRIZES.reduce((sum, p) => sum + p.weight, 0);
+            const totalWeight = PRIZES.reduce((s,p) => s + p.weight, 0);
             let rand = Math.random() * totalWeight;
             let selected = PRIZES[0];
             for (let p of PRIZES) {
@@ -1831,21 +1301,11 @@
         // ЗОЛОТАЯ ЛИХОРАДКА
         // ========================================================================
         function startGoldRush() {
-            const durationInput = document.getElementById('grDuration');
-            const limitInput = document.getElementById('grLimit');
-            const duration = parseInt(durationInput.value) || 1;
-            const limit = parseInt(limitInput.value) || 3;
-            if (duration < 1 || limit < 1) {
-                showToast('Введите корректные значения (мин >=1, кол-во >=1)', 'error');
-                return;
-            }
-
+            const duration = parseInt(document.getElementById('grDuration').value) || 1;
+            const limit = parseInt(document.getElementById('grLimit').value) || 3;
+            if (duration < 1 || limit < 1) { showToast('Введите корректные значения!', 'error'); return; }
             const gr = lotteryState.goldRush;
-            if (gr.active) {
-                showToast('Золотая лихорадка уже активна!', 'error');
-                return;
-            }
-
+            if (gr.active) { showToast('Уже активна!', 'error'); return; }
             gr.active = true;
             gr.duration = duration;
             gr.limit = limit;
@@ -1853,13 +1313,10 @@
             gr.startTime = Date.now();
             gr.usedUsers = [];
             saveDB();
-
-            showToast(`🔥 Золотая лихорадка запущена на ${duration} мин, ${limit} человек!`, 'success');
+            showToast(`🔥 Лихорадка запущена на ${duration} мин, ${limit} человек!`, 'success');
             updateGoldRushUI();
             if (gr.timerInterval) clearInterval(gr.timerInterval);
-            gr.timerInterval = setInterval(() => {
-                updateGoldRushTimer();
-            }, 1000);
+            gr.timerInterval = setInterval(updateGoldRushTimer, 1000);
             document.getElementById('goldRushIndicator').classList.remove('hidden');
             updateGoldRushTimer();
         }
@@ -1879,23 +1336,17 @@
             document.getElementById('grStatusText').innerText = gr.active ? 'Активна' : 'Не активна';
             document.getElementById('grTimeLeft').innerText = gr.active ? `${mins}м ${secs}с` : '--';
             document.getElementById('grUsedCount').innerText = gr.used;
-
-            if (remaining <= 0) {
-                stopGoldRush();
-            }
+            if (remaining <= 0) stopGoldRush();
         }
 
         function stopGoldRush() {
             const gr = lotteryState.goldRush;
             gr.active = false;
-            if (gr.timerInterval) {
-                clearInterval(gr.timerInterval);
-                gr.timerInterval = null;
-            }
+            if (gr.timerInterval) { clearInterval(gr.timerInterval); gr.timerInterval = null; }
             saveDB();
             document.getElementById('goldRushIndicator').classList.add('hidden');
             updateGoldRushUI();
-            showToast('Золотая лихорадка завершена.', 'success');
+            showToast('Лихорадка завершена.', 'success');
         }
 
         function updateGoldRushUI() {
@@ -1908,10 +1359,7 @@
                 updateGoldRushTimer();
             } else {
                 document.getElementById('goldRushIndicator').classList.add('hidden');
-                if (gr.timerInterval) {
-                    clearInterval(gr.timerInterval);
-                    gr.timerInterval = null;
-                }
+                if (gr.timerInterval) { clearInterval(gr.timerInterval); gr.timerInterval = null; }
             }
             const startBtn = document.getElementById('grStartBtn');
             startBtn.innerText = gr.active ? 'Остановить лихорадку' : 'Начать золотую лихорадку';
@@ -1922,24 +1370,153 @@
         // ТЕМЫ
         // ========================================================================
         function toggleThemePanel() {
-            const panel = document.getElementById('themePanel');
-            panel.classList.toggle('open');
+            document.getElementById('themePanel').classList.toggle('open');
         }
 
-        function applyTheme(color, element) {
+        function applyTheme(color, el) {
             document.documentElement.style.setProperty('--theme-bg', color);
             document.body.style.backgroundColor = color;
-            document.querySelectorAll('.theme-preset').forEach(el => el.classList.remove('active'));
-            element.classList.add('active');
+            document.querySelectorAll('.theme-preset').forEach(e => e.classList.remove('active'));
+            if (el) el.classList.add('active');
             document.getElementById('currentColorHex').innerText = color;
             document.getElementById('customColorPicker').value = color;
             localStorage.setItem('apex_theme', color);
-            // закрываем панель
             document.getElementById('themePanel').classList.remove('open');
         }
 
         function applyCustomColor(color) {
-            document.documentElement.style.setProperty('--theme-bg', color);
-            document.body.style.backgroundColor = color;
-            document.getElementById('currentColorHex').innerText = color;
-            document.querySelectorAll('.theme-pres
+            applyTheme(color, null);
+        }
+
+        // ========================================================================
+        // ВИЗУАЛЬНЫЕ ЭФФЕКТЫ (частицы, курсор)
+        // ========================================================================
+        (function initParticles() {
+            const canvas = document.getElementById('apex-particles');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let dots = [];
+            function resize() {
+                canvas.width = window.innerWidth * devicePixelRatio;
+                canvas.height = window.innerHeight * devicePixelRatio;
+                canvas.style.width = window.innerWidth + 'px';
+                canvas.style.height = window.innerHeight + 'px';
+                ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+                dots = Array.from({length: Math.min(70, Math.floor(window.innerWidth/18))}, () => ({
+                    x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight,
+                    vx: (Math.random()-.5)*.22, vy: (Math.random()-.5)*.22,
+                    r: Math.random()*1.5+.4, a: Math.random()*.45+.12
+                }));
+            }
+            function draw() {
+                ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+                for (const d of dots) {
+                    d.x += d.vx; d.y += d.vy;
+                    if (d.x<0 || d.x>window.innerWidth) d.vx *= -1;
+                    if (d.y<0 || d.y>window.innerHeight) d.vy *= -1;
+                    ctx.beginPath(); ctx.arc(d.x,d.y,d.r,0,Math.PI*2);
+                    ctx.fillStyle = `rgba(255,80,100,${d.a})`;
+                    ctx.fill();
+                }
+                requestAnimationFrame(draw);
+            }
+            window.addEventListener('resize', resize);
+            resize();
+            draw();
+        })();
+
+        (function initCursorGlow() {
+            const glow = document.getElementById('cursorGlow');
+            window.addEventListener('mousemove', e => {
+                glow.style.left = e.clientX + 'px';
+                glow.style.top = e.clientY + 'px';
+            });
+        })();
+
+        // Инициализация IntersectionObserver для .reveal
+        (function initReveal() {
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(e => {
+                    if (e.isIntersecting) e.target.classList.add('visible');
+                });
+            }, { threshold: 0.08 });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        })();
+
+        // ========================================================================
+        // ЗАГРУЗКА СТРАНИЦЫ
+        // ========================================================================
+        window.addEventListener('DOMContentLoaded', function() {
+            // Восстановление темы
+            const savedTheme = localStorage.getItem('apex_theme');
+            if (savedTheme) {
+                document.documentElement.style.setProperty('--theme-bg', savedTheme);
+                document.body.style.backgroundColor = savedTheme;
+                document.getElementById('currentColorHex').innerText = savedTheme;
+                document.getElementById('customColorPicker').value = savedTheme;
+            }
+
+            if (currentUser) {
+                if (!registeredUsers[currentUser.toLowerCase()]) {
+                    logout();
+                } else {
+                    updateCabinetUI();
+                    updateLotteryUI();
+                }
+            }
+
+            // Восстановление золотой лихорадки
+            const gr = lotteryState.goldRush;
+            if (gr.active) {
+                const elapsed = (Date.now() - gr.startTime) / 1000;
+                if (elapsed >= gr.duration * 60) {
+                    stopGoldRush();
+                } else {
+                    updateGoldRushUI();
+                    if (gr.timerInterval) clearInterval(gr.timerInterval);
+                    gr.timerInterval = setInterval(updateGoldRushTimer, 1000);
+                    updateGoldRushTimer();
+                }
+            } else {
+                document.getElementById('goldRushIndicator').classList.add('hidden');
+            }
+
+            // Обновить лотерейный UI для текущего пользователя
+            updateLotteryUI();
+        });
+
+        // Глобальные функции для onclick (убедимся, что они доступны)
+        window.navigateTo = navigateTo;
+        window.switchAuthTab = switchAuthTab;
+        window.handleLogin = handleLogin;
+        window.handleRegister = handleRegister;
+        window.logout = logout;
+        window.buyTariff = buyTariff;
+        window.requestHWIDResetModal = requestHWIDResetModal;
+        window.addNewReview = addNewReview;
+        window.submitTicket = submitTicket;
+        window.approveSub = approveSub;
+        window.approveHWID = approveHWID;
+        window.closeTicket = closeTicket;
+        window.searchUserCapabilities = searchUserCapabilities;
+        window.adminSaveUserRole = adminSaveUserRole;
+        window.adminPromptBan = adminPromptBan;
+        window.createNewRole = createNewRole;
+        window.deleteRole = deleteRole;
+        window.togglePerm = togglePerm;
+        window.generateSubKey = generateSubKey;
+        window.generateHWIDKey = generateHWIDKey;
+        window.activateSubKey = activateSubKey;
+        window.activateHWIDKey = activateHWIDKey;
+        window.spinRoulette = spinRoulette;
+        window.openCase = openCase;
+        window.startGoldRush = startGoldRush;
+        window.stopGoldRush = stopGoldRush;
+        window.toggleThemePanel = toggleThemePanel;
+        window.applyTheme = applyTheme;
+        window.applyCustomColor = applyCustomColor;
+        window.switchCabinetTab = switchCabinetTab;
+        window.showToast = showToast;
+    </script>
+</body>
+</html>
