@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ApexClient — Ultimate Minecraft 1.21.4 Fabric Client</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        /* ===== CSS-переменные и глобальные стили (сохранены из оригинала) ===== */
         :root {
             --bg-main: #040508;
             --bg-card: rgba(14, 16, 24, 0.75);
@@ -162,11 +162,7 @@
             align-items: center;
             margin-bottom: 20px;
         }
-        .lottery-header h3 {
-            font-size: 20px;
-            font-weight: 800;
-            color: #fff;
-        }
+        .lottery-header h3 { font-size: 20px; font-weight: 800; color: #fff; }
         .lottery-header .badge {
             background: rgba(255, 51, 68, 0.15);
             color: var(--accent-red);
@@ -188,21 +184,16 @@
             box-shadow: 0 4px 15px var(--accent-red-glow);
             transition: 0.2s;
         }
-        .lottery-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .lottery-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-        }
-        /* Стили для рулетки (адаптированы из file2) */
+        .lottery-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .lottery-btn:hover:not(:disabled) { transform: translateY(-2px); }
+        /* Рулетка */
         .roulette-scene {
             position: relative;
             height: 110px;
             border-radius: 10px;
             overflow: hidden;
             background: radial-gradient(ellipse at 50% 40%, #12162a 0%, #090b12 75%);
-            border: 1px solid var(--line, #1b2032);
+            border: 1px solid #1b2032;
             margin-bottom: 15px;
         }
         .pointer-top, .pointer-bottom {
@@ -273,14 +264,14 @@
         }
         .fade-left { left: 0; background: linear-gradient(90deg, #0c0f18 5%, transparent); }
         .fade-right { right: 0; background: linear-gradient(-90deg, #0c0f18 5%, transparent); }
-        /* Бокс (кейс) стили */
+        /* Бокс */
         .case-scene {
             position: relative;
             height: 180px;
             border-radius: 10px;
             overflow: hidden;
             background: radial-gradient(ellipse at 50% 40%, #12162a 0%, #090b12 75%);
-            border: 1px solid var(--line, #1b2032);
+            border: 1px solid #1b2032;
             margin-bottom: 15px;
             display: flex;
             align-items: center;
@@ -325,14 +316,14 @@
             border-bottom: none;
             border-radius: 8px 8px 0 0;
             transform-origin: top center;
-            transition: transform 0.55s cubic-bezier(.5,-0.2,.4,1.4), opacity 0.5s ease;
+            transition: transform 3s cubic-bezier(.5,-0.2,.4,1.4), opacity 3s ease;
         }
         .case-box.opening .case-lid {
             transform: rotateX(-115deg) translateY(-10px);
             opacity: 0;
         }
         .case-box.opening .case-front {
-            transition: transform .5s ease .05s, opacity .5s ease .15s;
+            transition: transform 3s ease .05s, opacity 3s ease .15s;
             transform: scale(0.8);
             opacity: 0;
         }
@@ -345,7 +336,7 @@
             background: radial-gradient(circle, #fff8e6 0%, rgba(255,248,230,0.9) 12%, rgba(75,105,255,0.55) 35%, transparent 70%);
         }
         .burst.flash {
-            animation: burstPop .8s cubic-bezier(.15,.7,.3,1) forwards;
+            animation: burstPop 3s cubic-bezier(.15,.7,.3,1) forwards;
         }
         .burst-gold {
             background: radial-gradient(circle, #fff8e6 0%, rgba(255,248,230,0.95) 10%, rgba(232,179,75,0.6) 38%, transparent 72%);
@@ -374,7 +365,7 @@
             z-index: 5;
         }
         .result-card.materialize {
-            animation: materialize .85s cubic-bezier(.2,.7,.25,1) forwards;
+            animation: materialize 3s cubic-bezier(.2,.7,.25,1) forwards;
         }
         @keyframes materialize {
             0%{ opacity:0; filter:blur(14px); transform: translate(-50%, -50%) scale(1.6) rotateY(540deg); }
@@ -400,10 +391,10 @@
             font-size: 11px;
             font-weight: 700;
         }
-        /* ===== КАБИНЕТ — НОВЫЙ ДИЗАЙН (как на фото) ===== */
+        /* ===== КАБИНЕТ — ТОЧЬ-В-ТОЧЬ КАК НА ФОТО ===== */
         .dash-container-new {
             display: grid;
-            grid-template-columns: 260px 1fr;
+            grid-template-columns: 280px 1fr;
             gap: 24px;
             background: linear-gradient(145deg, rgba(40, 10, 15, 0.85), rgba(20, 5, 8, 0.95));
             backdrop-filter: blur(24px);
@@ -431,72 +422,93 @@
             position: relative;
             z-index: 1;
         }
-        .user-card-new {
+        /* Профиль — как на фото */
+        .profile-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 18px;
+            border: 1px solid rgba(255, 51, 68, 0.1);
+            margin-bottom: 20px;
+        }
+        .profile-header {
             display: flex;
             align-items: center;
             gap: 14px;
-            padding: 16px;
-            background: rgba(0,0,0,0.4);
-            border-radius: 16px;
-            margin-bottom: 24px;
-            border: 1px solid rgba(255, 51, 68, 0.15);
         }
         .avatar-new {
-            width: 52px; height: 52px;
+            width: 56px;
+            height: 56px;
             background: linear-gradient(135deg, #ff3344, #990022);
             border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 900;
-            font-size: 20px;
+            font-size: 22px;
             color: #fff;
             box-shadow: 0 0 20px rgba(255, 51, 68, 0.3);
             flex-shrink: 0;
         }
-        .user-details-new .uname {
-            font-size: 16px;
+        .profile-info {
+            flex: 1;
+        }
+        .profile-info .name {
+            font-size: 18px;
             font-weight: 800;
             color: #fff;
         }
-        .user-details-new .urole {
-            font-size: 11px;
-            color: var(--accent-red);
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-        .user-details-new .uid {
-            font-size: 11px;
+        .profile-info .role-uid {
+            font-size: 13px;
             color: var(--text-sub);
             font-weight: 600;
+            display: flex;
+            gap: 12px;
+            margin-top: 2px;
         }
-        .user-stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            background: rgba(0,0,0,0.3);
+        .profile-info .role-uid .role { color: var(--accent-red); }
+        .profile-info .role-uid .uid { color: #8b93ac; }
+        /* Блок "Аккаунт" */
+        .account-block {
+            background: rgba(0,0,0,0.25);
             border-radius: 14px;
-            padding: 14px;
-            border: 1px solid rgba(255,255,255,0.05);
+            padding: 14px 16px;
             margin-bottom: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
-        .user-stat-item {
-            text-align: center;
-        }
-        .user-stat-item .label {
-            font-size: 10px;
-            color: var(--text-sub);
+        .account-block .block-title {
+            font-size: 12px;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            color: var(--text-sub);
+            margin-bottom: 10px;
         }
-        .user-stat-item .value {
-            font-size: 15px;
-            font-weight: 800;
+        .account-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 14px;
             color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
         }
-        .user-stat-item .value.green { color: var(--accent-green); }
-        .user-stat-item .value.red { color: var(--accent-red); }
-        .btn-download {
+        .account-item:last-child { border-bottom: none; }
+        .account-item .label { color: var(--text-sub); font-weight: 500; }
+        .account-item .value { font-weight: 700; }
+        .account-item .value.green { color: var(--accent-green); }
+        .account-item .value.red { color: var(--accent-red); }
+        /* Блок "Действия" */
+        .actions-block {
+            margin-top: 4px;
+        }
+        .actions-block .block-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-sub);
+            margin-bottom: 10px;
+        }
+        .btn-download-new {
             display: block;
             background: linear-gradient(135deg, #ff3344, #b3001a);
             color: #fff;
@@ -504,16 +516,15 @@
             padding: 12px;
             border-radius: 14px;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 14px;
             cursor: pointer;
             box-shadow: 0 4px 20px rgba(255, 51, 68, 0.4);
             transition: 0.2s;
             text-align: center;
-            margin-top: 8px;
+            width: 100%;
         }
-        .btn-download:hover {
-            transform: scale(1.02);
-        }
+        .btn-download-new:hover { transform: scale(1.02); }
+        /* Меню вкладок */
         .nav-menu-new {
             list-style: none;
             display: flex;
@@ -522,6 +533,7 @@
             max-height: 400px;
             overflow-y: auto;
             padding-right: 4px;
+            margin-top: 16px;
         }
         .nav-item-new {
             padding: 10px 14px;
@@ -567,7 +579,7 @@
             position: relative;
             z-index: 1;
         }
-        /* ===== ЛИХОРАДКА ===== */
+        /* Золотая лихорадка */
         .gold-rush-panel {
             background: rgba(232,179,75,0.05);
             border: 1px solid rgba(232,179,75,0.2);
@@ -603,8 +615,9 @@
         @media(max-width: 850px) {
             .lottery-grid { grid-template-columns: 1fr; }
             .dash-container-new { grid-template-columns: 1fr; }
+            .sidebar-new { border-right: none; padding-right: 0; }
         }
-        /* ===== ApexClient визуальные улучшения (сохранены) ===== */
+        /* ===== ApexClient визуальные улучшения ===== */
         body{
             background:
                 radial-gradient(circle at 50% -10%, rgba(255,61,85,.13), transparent 34%),
@@ -639,8 +652,6 @@
             footer.apex-footer{ flex-direction:column; }
         }
     </style>
-    <!-- Подключаем шрифт Teko для рулетки -->
-    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <canvas id="apex-particles"></canvas>
@@ -677,7 +688,6 @@
 
     <!-- ===== СТРАНИЦЫ ===== -->
     <div id="page-home" class="page-section">
-        <!-- ... (оставлен оригинальный контент) ... -->
         <div class="hero">
             <div class="hero-badge">⚡ Fabric 1.21.4 Client Ecosystem</div>
             <h1>Абсолютное Доминирование <br><span>В Каждом Сражении</span></h1>
@@ -745,7 +755,7 @@
         </div>
     </div>
 
-    <!-- ===== СТРАНИЦА ТАРИФЫ ===== (добавлены карточки Бокс и Рулетка) -->
+    <!-- ===== СТРАНИЦА ТАРИФЫ ===== -->
     <div id="page-tariffs" class="page-section hidden">
         <div class="hero">
             <div class="section-kicker">PRE-ORDER STORE</div>
@@ -831,7 +841,6 @@
             <h1>Испытай удачу <span>с ApexClient</span></h1>
             <p>Крути рулетку или открывай кейс — выиграй подписку на 7, 30 или 90 дней!</p>
         </div>
-        <!-- Индикатор золотой лихорадки (отображается если активна) -->
         <div id="goldRushIndicator" class="hidden" style="text-align:center; margin-bottom:20px; padding:12px; background:rgba(232,179,75,0.1); border:1px solid #e8b34b; border-radius:16px;">
             <span style="color:#e8b34b; font-weight:800;">🔥 ЗОЛОТАЯ ЛИХОРАДКА АКТИВНА!</span>
             <span style="margin-left:16px; color:#fff;">⏳ <span id="goldRushTimer">00:00</span></span>
@@ -865,7 +874,7 @@
                     <span id="freeSpinInfo">Бесплатно: 1 раз</span>
                 </div>
             </div>
-            <!-- БОКС (КЕЙС) -->
+            <!-- БОКС -->
             <div class="lottery-card">
                 <div class="lottery-header">
                     <h3>📦 Бокс</h3>
@@ -901,7 +910,7 @@
         </div>
     </div>
 
-    <!-- ===== СТРАНИЦА ОТЗЫВЫ ===== (оставлена) -->
+    <!-- ===== СТРАНИЦА ОТЗЫВЫ ===== -->
     <div id="page-reviews" class="page-section hidden">
         <div class="hero"><h1>Отзывы пользователей</h1><p>Поделитесь вашим впечатлением или посмотрите мнения других игроков о клиенте.</p></div>
         <div style="max-width:650px; margin:0 auto;">
@@ -951,7 +960,7 @@
         </div>
     </div>
 
-    <!-- ===== СТРАНИЦА АВТОРИЗАЦИИ ===== (без изменений) -->
+    <!-- ===== СТРАНИЦА АВТОРИЗАЦИИ ===== -->
     <div id="page-auth" class="page-section hidden">
         <div class="auth-wrapper">
             <div class="auth-card">
@@ -975,26 +984,38 @@
         </div>
     </div>
 
-    <!-- ===== СТРАНИЦА КАБИНЕТ (НОВЫЙ ДИЗАЙН + вкладка "Лихорадка") ===== -->
+    <!-- ===== СТРАНИЦА КАБИНЕТ (НОВЫЙ ДИЗАЙН ТОЧЬ-В-ТОЧЬ КАК НА ФОТО) ===== -->
     <div id="page-cabinet" class="page-section hidden">
         <div class="dash-container-new">
             <div class="sidebar-new">
                 <div>
-                    <div class="user-card-new">
-                        <div class="avatar-new" id="sidebarAvatarNew">A</div>
-                        <div class="user-details-new">
-                            <div class="uname" id="sidebarUsernameNew">User</div>
-                            <div class="urole" id="sidebarRoleNew">USER</div>
-                            <div class="uid" id="sidebarUidNew">UID: --</div>
+                    <!-- Профиль -->
+                    <div class="profile-card">
+                        <div class="profile-header">
+                            <div class="avatar-new" id="sidebarAvatarNew">A</div>
+                            <div class="profile-info">
+                                <div class="name" id="sidebarUsernameNew">User</div>
+                                <div class="role-uid">
+                                    <span class="role" id="sidebarRoleNew">USER</span>
+                                    <span class="uid" id="sidebarUidNew">UID: --</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="user-stats-grid">
-                        <div class="user-stat-item"><div class="label">Подписка</div><div class="value" id="dashSubValue">Нет</div></div>
-                        <div class="user-stat-item"><div class="label">Регистрация</div><div class="value" id="dashRegValue">--</div></div>
-                        <div class="user-stat-item"><div class="label">Доступ</div><div class="value green" id="dashAccessValue">Активен</div></div>
-                        <div class="user-stat-item"><div class="label">UID</div><div class="value" id="dashUidValue">--</div></div>
+                    <!-- Блок "Аккаунт" -->
+                    <div class="account-block">
+                        <div class="block-title">Аккаунт</div>
+                        <div class="account-item"><span class="label">Подписка</span><span class="value" id="dashSubValue">Нет</span></div>
+                        <div class="account-item"><span class="label">Регистрация</span><span class="value" id="dashRegValue">--</span></div>
+                        <div class="account-item"><span class="label">Доступ</span><span class="value green" id="dashAccessValue">Активен</span></div>
+                        <div class="account-item"><span class="label">UID</span><span class="value" id="dashUidValue">--</span></div>
                     </div>
-                    <button class="btn-download" onclick="showToast('Загрузка ApexClient.exe...', 'success')">📥 Скачать ApexClient</button>
+                    <!-- Блок "Действия" -->
+                    <div class="actions-block">
+                        <div class="block-title">Действия</div>
+                        <button class="btn-download-new" onclick="showToast('Загрузка ApexClient.exe...', 'success')">📥 Скачать ApexClient</button>
+                    </div>
+                    <!-- Меню вкладок -->
                     <ul class="nav-menu-new">
                         <li class="nav-item-new active" onclick="switchCabinetTabNew('home', this)">🏠 Главная</li>
                         <li class="nav-item-new" onclick="switchCabinetTabNew('orders', this)">📦 Мои предзаказы</li>
@@ -1127,7 +1148,7 @@
 
     <script>
         // ========================================================================
-        // БАЗОВЫЕ ДАННЫЕ И ФУНКЦИИ (сохранены из оригинала, расширены)
+        // БАЗОВЫЕ ДАННЫЕ И ФУНКЦИИ
         // ========================================================================
         let currentUser = localStorage.getItem('apex_user') || null;
 
@@ -1158,16 +1179,16 @@
 
         let activeKeysDB = JSON.parse(localStorage.getItem('apex_keys_db')) || {};
 
-        // Хранилище для состояния лотереи и лихорадки
         let lotteryState = JSON.parse(localStorage.getItem('apex_lottery_state')) || {
-            freeSpinUsed: {}, // { username: true/false }
+            freeSpinUsed: {},
             goldRush: {
                 active: false,
-                duration: 1, // минуты
+                duration: 1,
                 limit: 3,
                 used: 0,
                 startTime: null,
-                timerInterval: null
+                timerInterval: null,
+                usedUsers: []
             }
         };
 
@@ -1223,7 +1244,7 @@
         }
 
         // ========================================================================
-        // АВТОРИЗАЦИЯ / ВХОД / РЕГИСТРАЦИЯ (с обновлением UID и даты)
+        // АВТОРИЗАЦИЯ
         // ========================================================================
         function handleLogin() {
             const usernameInput = document.getElementById('loginUsernameInput').value.trim();
@@ -1306,7 +1327,7 @@
         }
 
         // ========================================================================
-        // ОБНОВЛЕНИЕ ИНТЕРФЕЙСА КАБИНЕТА (НОВЫЙ ДИЗАЙН)
+        // ОБНОВЛЕНИЕ КАБИНЕТА
         // ========================================================================
         function updateCabinetUI() {
             if (!currentUser) return;
@@ -1319,14 +1340,12 @@
             document.getElementById('sidebarUidNew').innerText = 'UID: ' + (user.uid || '--');
             document.getElementById('navCabinetText').innerText = currentUser;
 
-            // Статистика
             document.getElementById('dashSubValue').innerText = user.sub || 'Нет';
             document.getElementById('dashRegValue').innerText = user.regDate || '--';
             document.getElementById('dashAccessValue').innerText = user.banned ? 'Забанен' : 'Активен';
             document.getElementById('dashAccessValue').className = 'value ' + (user.banned ? 'red' : 'green');
             document.getElementById('dashUidValue').innerText = user.uid || '--';
 
-            // Статус подписки
             const subText = document.getElementById('subStatusTextNew');
             const subDesc = document.getElementById('subStatusDescNew');
             if (user.banned) {
@@ -1343,7 +1362,6 @@
                 subDesc.innerText = 'Доступ к Fabric 1.21.4 клиенту работает без ограничений.';
             }
 
-            // Роли и видимость вкладок
             const role = (user.role || 'user').toLowerCase();
             document.getElementById('navItemPostNew').classList.add('hidden');
             document.getElementById('navItemModerationNew').classList.add('hidden');
@@ -1365,14 +1383,10 @@
             if (role === 'owner' || lower === 'invisik') {
                 document.getElementById('navItemAdminNew').classList.remove('hidden');
             }
-            // Обновить счетчики тикетов
             updateTicketBadge();
             updateModBadge();
-            // Обновить список заказов
             renderOrders();
-            // Обновить тикеты пользователя
             renderUserTickets();
-            // Обновить состояние лихорадки
             updateGoldRushUI();
         }
 
@@ -1399,9 +1413,6 @@
             document.getElementById('modCountBadgeNew').innerText = total;
         }
 
-        // ========================================================================
-        // ЗАКАЗЫ, ТИКЕТЫ, ОТЗЫВЫ (без изменений, но используем новые id)
-        // ========================================================================
         function renderOrders() {
             const container = document.getElementById('ordersListContainer');
             if (!currentUser) { container.innerHTML = '<p class="sub-desc">Войдите, чтобы видеть заказы.</p>'; return; }
@@ -1501,7 +1512,7 @@
         }
 
         // ========================================================================
-        // МОДЕРАЦИЯ (без изменений, используем новые id)
+        // МОДЕРАЦИЯ
         // ========================================================================
         function renderModerationData() {
             const subContainer = document.getElementById('purchaseRequestsContainer');
@@ -1580,7 +1591,7 @@
         }
 
         // ========================================================================
-        // УПРАВЛЕНИЕ РОЛЯМИ И ВОЗМОЖНОСТЯМИ (без изменений)
+        // УПРАВЛЕНИЕ РОЛЯМИ
         // ========================================================================
         function searchUserCapabilities() {
             const rawQuery = document.getElementById('capSearchInput').value;
@@ -1716,7 +1727,7 @@
         }
 
         // ========================================================================
-        // ГЕНЕРАЦИЯ КЛЮЧЕЙ (без изменений)
+        // ГЕНЕРАЦИЯ КЛЮЧЕЙ
         // ========================================================================
         function generateSubKey() {
             const duration = document.getElementById('genSubDuration').value;
@@ -1772,20 +1783,17 @@
         }
 
         // ========================================================================
-        // ЛОТЕРЕЯ: РУЛЕТКА И БОКС
+        // ЛОТЕРЕЯ: РУЛЕТКА И БОКС (анимации по 3 секунды)
         // ========================================================================
-        // Конфигурация призов
         const PRIZES = [
             { key: '7д', label: '7 дней', tier: 'ОБЫЧНАЯ', tierClass: 'tier-mil', weight: 15 },
             { key: '30д', label: '30 дней', tier: 'РЕДКАЯ', tierClass: 'tier-res', weight: 2 },
             { key: '90д', label: '90 дней', tier: 'ЛЕГЕНДАРНАЯ', tierClass: 'tier-leg', weight: 0.5 }
         ];
 
-        // Инициализация рулетки (построение трека)
         (function initRoulette() {
             const track = document.getElementById('rouletteTrack');
             if (!track) return;
-            // Строим длинный трек из 33 элементов (цикл 7д, 30д, 90д)
             const cycle = [0,1,2];
             const totalItems = 33;
             for (let i = 0; i < totalItems; i++) {
@@ -1817,7 +1825,6 @@
             const user = registeredUsers[lower];
             if (!user) { showToast('Ошибка пользователя', 'error'); return; }
 
-            // Проверяем, есть ли бесплатный спин
             let freeSpin = false;
             if (!user.freeSpinUsed) {
                 freeSpin = true;
@@ -1825,14 +1832,11 @@
                 saveDB();
                 showToast('🔥 Бесплатный спин активирован!', 'success');
             } else {
-                // Проверяем, есть ли у пользователя купленная рулетка (по заявке)
-                // Для простоты: если нет бесплатного, то требуется покупка. Пока просто сообщаем.
-                // В реальности нужно проверять наличие активной услуги "Рулетка" в заказах.
                 showToast('У вас нет бесплатных спинов. Купите спин в разделе «Тарифы».', 'error');
                 return;
             }
 
-            // Выбор приза с весами
+            // Выбор приза
             const totalWeight = PRIZES.reduce((sum, p) => sum + p.weight, 0);
             let rand = Math.random() * totalWeight;
             let selected = PRIZES[0];
@@ -1841,58 +1845,46 @@
                 if (rand <= 0) { selected = p; break; }
             }
 
-            // Анимация рулетки: нужно определить позицию, чтобы выбранный приз оказался в центре
-            // В треке 33 элемента. Найдем индекс элемента с таким же ключом (ближайший к центру)
             const track = document.getElementById('rouletteTrack');
             const items = track.querySelectorAll('.roll-item');
-            // Ищем индекс элемента, который соответствует выбранному ключу, в середине трека (около 16)
             let targetIndex = -1;
-            // Проходим по элементам, начиная с середины (индекс 15-18)
             const mid = Math.floor(items.length / 2);
             for (let i = mid; i < items.length; i++) {
                 if (items[i].textContent === selected.key) { targetIndex = i; break; }
             }
             if (targetIndex === -1) {
-                // fallback: ищем с начала
                 for (let i = 0; i < items.length; i++) {
                     if (items[i].textContent === selected.key) { targetIndex = i; break; }
                 }
             }
             if (targetIndex === -1) targetIndex = 0;
 
-            // Вычисляем смещение, чтобы элемент оказался в центре (ширина окна /2 - центр элемента)
             const windowWidth = track.parentElement.clientWidth;
-            const itemWidth = 64 + 10; // ширина + gap
-            const itemCenter = targetIndex * itemWidth + 10 + 64/2; // padding 10 + половина ширины
-            const offset = windowWidth/2 - itemCenter + (Math.random() - 0.5) * 10; // небольшой джиттер
+            const itemWidth = 64 + 10;
+            const itemCenter = targetIndex * itemWidth + 10 + 64/2;
+            const offset = windowWidth/2 - itemCenter + (Math.random() - 0.5) * 10;
 
-            // Применяем анимацию
-            track.style.transition = 'transform 1s cubic-bezier(0.12, 0.85, 0.18, 1)';
+            track.style.transition = 'transform 3s cubic-bezier(0.12, 0.85, 0.18, 1)'; // 3 секунды
             track.style.transform = `translateX(${offset}px)`;
 
             const btn = document.getElementById('spinBtn');
             btn.disabled = true;
             document.getElementById('rouletteStatus').innerText = 'Вращение...';
 
-            // После анимации показываем результат
             setTimeout(() => {
                 btn.disabled = false;
                 document.getElementById('rouletteStatus').innerText = `🎉 Выиграл: ${selected.label}`;
-                // Начисляем подписку пользователю
                 if (user) {
                     user.sub = selected.key;
                     saveDB();
                     updateCabinetUI();
                     showToast(`Поздравляем! Вы выиграли подписку на ${selected.label}!`, 'success');
                 }
-                // Обновляем счетчик бесплатных попыток
                 document.getElementById('freeSpinInfo').innerText = 'Бесплатно: использовано';
-            }, 1200);
+            }, 3200); // чуть больше 3 секунд
         }
 
-        // ========================================================================
-        // БОКС (КЕЙС)
-        // ========================================================================
+        // ===== БОКС =====
         function openCase() {
             if (!currentUser) {
                 showToast('Войдите, чтобы открыть кейс!', 'error');
@@ -1905,17 +1897,13 @@
             const user = registeredUsers[lower];
             if (!user) { showToast('Ошибка пользователя', 'error'); return; }
 
-            // Проверяем, активна ли золотая лихорадка и может ли пользователь использовать бесплатную попытку
             let freeCase = false;
             const gr = lotteryState.goldRush;
             if (gr.active) {
-                // Проверяем, не превышен ли лимит и не использовал ли уже этот пользователь
                 if (gr.used < gr.limit) {
-                    // Проверяем, не использовал ли пользователь уже бесплатную попытку в этой лихорадке
                     if (!lotteryState.goldRush.usedUsers) lotteryState.goldRush.usedUsers = [];
                     if (!lotteryState.goldRush.usedUsers.includes(lower)) {
                         freeCase = true;
-                        // Добавляем пользователя в использовавшие
                         lotteryState.goldRush.usedUsers.push(lower);
                         gr.used++;
                         saveDB();
@@ -1923,20 +1911,19 @@
                         updateGoldRushUI();
                     } else {
                         showToast('Вы уже использовали бесплатную попытку в этой лихорадке.', 'error');
+                        return;
                     }
                 } else {
                     showToast('Лимит бесплатных открытий исчерпан.', 'error');
+                    return;
                 }
             }
 
             if (!freeCase) {
-                // Проверяем, есть ли у пользователя купленный бокс (по заявке)
-                // Для простоты: если нет бесплатного, требуем покупку
                 showToast('У вас нет бесплатных открытий. Купите бокс в разделе «Тарифы».', 'error');
                 return;
             }
 
-            // Выбор приза с весами (те же шансы)
             const totalWeight = PRIZES.reduce((sum, p) => sum + p.weight, 0);
             let rand = Math.random() * totalWeight;
             let selected = PRIZES[0];
@@ -1945,7 +1932,6 @@
                 if (rand <= 0) { selected = p; break; }
             }
 
-            // Анимация открытия кейса
             const caseBox = document.getElementById('caseBox');
             const burst = document.getElementById('caseBurst');
             const resultCard = document.getElementById('caseResult');
@@ -1954,13 +1940,12 @@
 
             caseBox.classList.add('opening');
             burst.classList.add('flash');
+
             setTimeout(() => {
-                // Показать результат
                 resultTier.innerText = selected.tier;
                 resultDuration.innerText = selected.key;
                 resultCard.style.opacity = '1';
                 resultCard.classList.add('materialize');
-                // Начисляем подписку
                 if (user) {
                     user.sub = selected.key;
                     saveDB();
@@ -1968,23 +1953,20 @@
                     showToast(`Поздравляем! Вы выиграли подписку на ${selected.label}!`, 'success');
                 }
                 document.getElementById('caseStatus').innerText = `🎉 Выиграл: ${selected.label}`;
-                // Обновляем счетчик бесплатных попыток
                 document.getElementById('caseFreeInfo').innerText = 'Бесплатно: использовано';
-            }, 800);
+            }, 3000);
 
-            // Сброс анимации после завершения (чтобы можно было открыть снова)
             setTimeout(() => {
                 caseBox.classList.remove('opening');
                 burst.classList.remove('flash');
                 resultCard.classList.remove('materialize');
                 resultCard.style.opacity = '0';
-                // Сброс статуса
                 document.getElementById('caseStatus').innerText = 'Готов к открытию';
-            }, 3000);
+            }, 6000);
         }
 
         // ========================================================================
-        // ЗОЛОТАЯ ЛИХОРАДКА (управление)
+        // ЗОЛОТАЯ ЛИХОРАДКА
         // ========================================================================
         function startGoldRush() {
             const durationInput = document.getElementById('grDuration');
@@ -2012,12 +1994,10 @@
 
             showToast(`🔥 Золотая лихорадка запущена на ${duration} мин, ${limit} человек!`, 'success');
             updateGoldRushUI();
-            // Запускаем таймер
             if (gr.timerInterval) clearInterval(gr.timerInterval);
             gr.timerInterval = setInterval(() => {
                 updateGoldRushTimer();
             }, 1000);
-            // Показать индикатор на странице лотереи
             document.getElementById('goldRushIndicator').classList.remove('hidden');
             updateGoldRushTimer();
         }
@@ -2034,13 +2014,11 @@
             const secs = Math.floor(remaining % 60);
             document.getElementById('goldRushTimer').innerText = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
             document.getElementById('goldRushCount').innerText = gr.used;
-            // Обновляем статус в кабинете
             document.getElementById('grStatusText').innerText = gr.active ? 'Активна' : 'Не активна';
             document.getElementById('grTimeLeft').innerText = gr.active ? `${mins}м ${secs}с` : '--';
             document.getElementById('grUsedCount').innerText = gr.used;
 
             if (remaining <= 0) {
-                // Завершаем лихорадку
                 stopGoldRush();
             }
         }
@@ -2073,18 +2051,13 @@
                     gr.timerInterval = null;
                 }
             }
-            // Обновляем кнопку
             const startBtn = document.getElementById('grStartBtn');
             startBtn.innerText = gr.active ? 'Остановить лихорадку' : 'Начать золотую лихорадку';
-            if (gr.active) {
-                startBtn.onclick = function() { stopGoldRush(); };
-            } else {
-                startBtn.onclick = function() { startGoldRush(); };
-            }
+            startBtn.onclick = gr.active ? stopGoldRush : startGoldRush;
         }
 
         // ========================================================================
-        // ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ
+        // ИНИЦИАЛИЗАЦИЯ
         // ========================================================================
         window.addEventListener('DOMContentLoaded', () => {
             if (!registeredUsers["invisik"]) {
@@ -2104,7 +2077,6 @@
                 }
             }
 
-            // Восстановление состояния лихорадки, если активна
             const gr = lotteryState.goldRush;
             if (gr.active) {
                 const elapsed = (Date.now() - gr.startTime) / 1000;
@@ -2122,7 +2094,6 @@
                 document.getElementById('goldRushIndicator').classList.add('hidden');
             }
 
-            // Если пользователь залогинен, обновляем информацию о бесплатном спине
             if (currentUser) {
                 const lower = currentUser.toLowerCase();
                 const user = registeredUsers[lower];
@@ -2137,18 +2108,17 @@
         });
 
         // ========================================================================
-        // ВИЗУАЛЬНЫЕ ЭФФЕКТЫ (частицы, курсор, анимации)
+        // ВИЗУАЛЬНЫЕ ЭФФЕКТЫ
         // ========================================================================
         (() => {
             const canvas = document.getElementById('apex-particles');
             const ctx = canvas.getContext('2d');
             const glow = document.getElementById('cursorGlow');
             let dots = [];
-            let w = 0, h = 0;
 
             function resize(){
-                w = canvas.width = window.innerWidth * devicePixelRatio;
-                h = canvas.height = window.innerHeight * devicePixelRatio;
+                canvas.width = window.innerWidth * devicePixelRatio;
+                canvas.height = window.innerHeight * devicePixelRatio;
                 canvas.style.width = window.innerWidth + 'px';
                 canvas.style.height = window.innerHeight + 'px';
                 ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
@@ -2183,7 +2153,6 @@
             window.addEventListener('DOMContentLoaded',observe);
             setTimeout(observe,100);
         })();
-
     </script>
 </body>
 </html>
