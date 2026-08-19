@@ -115,6 +115,16 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
 .auth-tab-btn.active{background:#ff3344;color:#fff;box-shadow:0 4px 15px rgba(255,51,68,.35)}
 .hero-pills{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-bottom:38px}
 .hero-pill{padding:8px 13px;border:1px solid rgba(255,255,255,.08);border-radius:999px;background:rgba(255,255,255,.035);color:#cbd0df;font-size:11px;font-weight:800;backdrop-filter:blur(10px)}
+.theme-toggle{position:fixed;bottom:24px;right:24px;z-index:999;width:48px;height:48px;background:rgba(20,22,32,.85);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;cursor:pointer;box-shadow:0 8px 25px rgba(0,0,0,.5)}
+.theme-panel{position:fixed;bottom:80px;right:24px;z-index:998;background:rgba(12,14,20,.92);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:20px;width:220px;box-shadow:0 20px 50px rgba(0,0,0,.7);display:none;flex-direction:column;gap:14px}
+.theme-panel.open{display:flex}
+.theme-presets{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.theme-preset{width:32px;height:32px;border-radius:50%;border:2px solid rgba(255,255,255,.1);cursor:pointer;transition:.2s}
+.theme-preset:hover{transform:scale(1.15);border-color:#fff}
+.theme-preset.active{border-color:#ff3344;box-shadow:0 0 15px rgba(255,51,68,.35)}
+.color-picker-wrap{display:flex;align-items:center;gap:12px;justify-content:center}
+.color-picker-wrap input[type="color"]{width:40px;height:40px;border:2px solid rgba(255,255,255,.08);border-radius:50%;padding:2px;cursor:pointer;background:transparent}
+.color-hex{font-size:12px;color:#949aab;font-weight:600}
 @media(max-width:850px){.dash-container{grid-template-columns:1fr}.sidebar{border-right:none;padding-right:0}.lottery-grid{grid-template-columns:1fr}.faq-grid{grid-template-columns:1fr}}
 @media(max-width:560px){.navbar-container{top:10px}.navbar{padding:7px 10px}.nav-links{display:none}.hero h1{font-size:39px}.page-section{padding-top:105px}footer.apex-footer{flex-direction:column}}
 </style>
@@ -285,48 +295,4 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
 </div>
 <div id="authFormLogin">
 <div class="form-group"><label>Никнейм</label><input type="text" id="loginUsernameInput" class="form-input" placeholder="Введите ник..."></div>
-<div class="form-group"><label>Пароль</label><input type="password" id="loginPasswordInput" class="form-input" placeholder="Введите пароль..."></div>
-<button class="action-btn" onclick="handleLogin()">Войти</button>
-</div>
-<div id="authFormRegister" class="hidden">
-<div class="form-group"><label>Никнейм</label><input type="text" id="regUsernameInput" class="form-input" placeholder="Ваш ник..."></div>
-<div class="form-group"><label>Пароль</label><input type="password" id="regPasswordInput" class="form-input" placeholder="Надежный пароль..."></div>
-<button class="action-btn" onclick="handleRegister()">Зарегистрироваться</button>
-</div>
-</div>
-</div>
-</div>
-
-<footer class="apex-footer">
-<span>© 2026 ApexClient · Minecraft 1.21.4 Fabric</span>
-<span>Сделано с упором на стиль, удобство и производительность.</span>
-</footer>
-
-<script>
-// ===== ВСЕ ФУНКЦИИ =====
-let currentUser = localStorage.getItem('apex_user') || null;
-
-let registeredUsers = JSON.parse(localStorage.getItem('apex_users')) || {
-    "invisik": { password: "123", role: "owner", sub: "Навсегда", freeSpinUsed: false, freeCaseUsed: false, extraSpinAttempts: 0, extraCaseAttempts: 0 }
-};
-let appRequests = JSON.parse(localStorage.getItem('apex_requests')) || { subs: [], hwid: [], tickets: [] };
-let activeKeysDB = JSON.parse(localStorage.getItem('apex_keys')) || {};
-
-function saveDB() {
-    localStorage.setItem('apex_users', JSON.stringify(registeredUsers));
-    localStorage.setItem('apex_requests', JSON.stringify(appRequests));
-    localStorage.setItem('apex_keys', JSON.stringify(activeKeysDB));
-}
-
-function showToast(msg, type = 'success') {
-    const c = document.getElementById('toast-container');
-    const t = document.createElement('div');
-    t.className = 'toast ' + (type === 'success' ? 'success' : '');
-    t.innerHTML = '<span>' + (type === 'success' ? '✅' : '❌') + '</span> ' + msg;
-    c.appendChild(t);
-    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
-}
-
-function navigateTo(page) {
-    if (page === 'cabinet' && !currentUser) { page = 'auth'; }
-    document.querySelectorAll('.page-section').
+<div class="form-group"><label>П
