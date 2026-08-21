@@ -569,6 +569,133 @@ window.onload = function() {
     }
     updateLotteryUI();
 };
+
+</script>
+<script>
+// ===== ИСПРАВЛЯЮ ЛОГИКУ ПОПЫТОК =====
+
+spinRoulette = function() {
+    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+    const data = registeredUsers[currentUser.toLowerCase()];
+    if (!data) return;
+    
+    const hasFreeSpin = !data.freeSpinUsed;
+    const hasExtraSpin = (data.extraSpinAttempts || 0) > 0;
+    
+    if (!hasFreeSpin && !hasExtraSpin) {
+        showToast('❌ Нет попыток! Купите в разделе "Тарифы"', 'error');
+        return;
+    }
+    
+    if (hasFreeSpin) {
+        data.freeSpinUsed = true;
+    } else {
+        data.extraSpinAttempts = (data.extraSpinAttempts || 0) - 1;
+    }
+    
+    const totalWeight = 15 + 2 + 0.5;
+    let rand = Math.random() * totalWeight;
+    let selected = PRIZES[0];
+    for (let p of PRIZES) {
+        rand -= p.weight;
+        if (rand <= 0) { selected = p; break; }
+    }
+    
+    data.sub = selected.key;
+    saveDB();
+    updateCabinetUI();
+    updateLotteryUI();
+    showToast('🎉 Вы выиграли подписку на ' + selected.label + '!');
+};
+
+openCase = function() {
+    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+    const data = registeredUsers[currentUser.toLowerCase()];
+    if (!data) return;
+    
+    const hasFreeCase = !data.freeCaseUsed;
+    const hasExtraCase = (data.extraCaseAttempts || 0) > 0;
+    
+    if (!hasFreeCase && !hasExtraCase) {
+        showToast('❌ Нет попыток! Купите в разделе "Тарифы"', 'error');
+        return;
+    }
+    
+    if (hasFreeCase) {
+        data.freeCaseUsed = true;
+    } else {
+        data.extraCaseAttempts = (data.extraCaseAttempts || 0) - 1;
+    }
+    
+    const totalWeight = 15 + 2 + 0.5;
+    let rand = Math.random() * totalWeight;
+    let selected = PRIZES[0];
+    for (let p of PRIZES) {
+        rand -= p.weight;
+        if (rand <= 0) { selected = p; break; }
+    }
+    
+    data.sub = selected.key;
+    saveDB();
+    updateCabinetUI();
+    updateLotteryUI();
+    showToast('🎉 Вы выиграли подписку на ' + selected.label + '!');
+};
+
+updateLotteryUI = function() {
+    if (!currentUser) return;
+    const data = registeredUsers[currentUser.toLowerCase()];
+    if (!data) return;
+    
+    const spinTotal = (data.freeSpinUsed ? 0 : 1) + (data.extraSpinAttempts || 0);
+    const caseTotal = (data.freeCaseUsed ? 0 : 1) + (data.extraCaseAttempts || 0);
+    
+    const spinEl = document.getElementById('spinAttempts');
+    const caseEl = document.getElementById('caseAttempts');
+    if (spinEl) spinEl.textContent = spinTotal;
+    if (caseEl) caseEl.textContent = caseTotal;
+    
+    const spinBadge = document.getElementById('spinBadge');
+    const caseBadge = document.getElementById('caseBadge');
+    if (spinBadge) spinBadge.textContent = spinTotal > 0 ? 'доступно' : 'нет';
+    if (caseBadge) caseBadge.textContent = caseTotal > 0 ? 'доступно' : 'нет';
+};
+
+approveSub = function(idx) {
+    const req = appRequests.subs[idx];
+    const lower = req.user.toLowerCase();
+    if (registeredUsers[lower]) {
+        if (req.tariff.includes('Рулетка') || req.tariff.includes('рулетка')) {
+            registeredUsers[lower].extraSpinAttempts = (registeredUsers[lower].extraSpinAttempts || 0) + 1;
+            showToast('🎲 +1 спин рулетки выдан!');
+        } else if (req.tariff.includes('Бокс') || req.tariff.includes('бокс')) {
+            registeredUsers[lower].extraCaseAttempts = (registeredUsers[lower].extraCaseAttempts || 0) + 1;
+            showToast('📦 +1 открытие кейса выдано!');
+        } else {
+            let term = '30д';
+            if (req.tariff.includes('7')) term = '7д';
+            else if (req.tariff.includes('30') || req.tariff.includes('1 месяц')) term = '30д';
+            else if (req.tariff.includes('90') || req.tariff.includes('3 месяца')) term = '90д';
+            else if (req.tariff.includes('навсегда')) term = 'Навсегда';
+            registeredUsers[lower].sub = term;
+            showToast('✅ Подписка ' + term + ' выдана!');
+        }
+        saveDB();
+        if (currentUser && currentUser.toLowerCase() === lower) {
+            updateCabinetUI();
+            updateLotteryUI();
+        }
+    }
+    appRequests.subs.splice(idx, 1);
+    saveDB();
+    renderModerationData();
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (currentUser) {
+        updateLotteryUI();
+    }
+});
 </script>
 </body>
 </html>
