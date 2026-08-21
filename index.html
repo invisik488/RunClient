@@ -33,7 +33,6 @@
             position: relative;
         }
 
-        /* Фоновые свечения */
         .bg-glow-1 {
             position: fixed;
             top: -150px;
@@ -47,7 +46,6 @@
             filter: blur(60px);
         }
 
-        /* Навигация */
         .navbar-container {
             position: fixed;
             top: 24px;
@@ -134,7 +132,6 @@
             transform: scale(1.05);
         }
 
-        /* Главная секция */
         .page-section {
             padding-top: 150px;
             padding-bottom: 80px;
@@ -182,7 +179,6 @@
             margin: 0 auto;
         }
 
-        /* Тарифы / Магазин */
         .tariffs-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -263,7 +259,6 @@
             transform: scale(1.02);
         }
 
-        /* Личный кабинет / Панель */
         .dash-container {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -360,13 +355,14 @@
             font-size: 0.9rem;
             word-break: break-all;
         }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <div class="bg-glow-1"></div>
 
-    <!-- Навигация -->
     <div class="navbar-container">
         <nav class="navbar">
             <div class="nav-brand">
@@ -383,14 +379,12 @@
     </div>
 
     <div class="page-section">
-        <!-- Главный экран -->
         <div class="hero">
             <div class="hero-badge">⚡ Minecraft 1.21.4 Fabric Client</div>
             <h1>Добро пожаловать в <span>ApexClient</span></h1>
             <p>Лучший клиент с кастомным интерфейсом, оптимизацией и набором мощных модулей для комфортной игры.</p>
         </div>
 
-        <!-- Магазин (Тарифы со ссылками на FunPay) -->
         <div class="tariffs-grid" id="store">
             <div class="tariff-card">
                 <div>
@@ -441,26 +435,22 @@
             </div>
         </div>
 
-        <!-- Личный кабинет и Панель управления -->
         <div class="dash-container" id="cabinet">
             <div class="dash-title">Личный кабинет</div>
             <div class="dash-sub">Управление подписками, активация ключей и инструменты разработчика.</div>
 
-            <!-- Активация обычного ключа -->
             <div class="form-group">
                 <label for="keyInput">Активация обычного ключа</label>
                 <input type="text" id="keyInput" class="form-input" placeholder="Введите ключ подписки...">
                 <button class="action-btn" style="margin-top: 12px;" onclick="activateKey()">Активировать</button>
             </div>
 
-            <!-- Активация спец-ключа -->
             <div class="form-group">
                 <label for="specKeyInput">Активация спец ключа</label>
                 <input type="text" id="specKeyInput" class="form-input" placeholder="Введите спец ключ...">
                 <button class="action-btn spec-btn" style="margin-top: 12px;" onclick="activateSpecKey()">Активировать спец ключ</button>
             </div>
 
-            <!-- Панель владельца -->
             <div class="owner-section">
                 <div class="owner-title">Панель Владельца</div>
                 
