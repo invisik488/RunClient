@@ -204,7 +204,6 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
 </div>
 </div>
 </div>
-
 <div id="page-reviews" class="page-section hidden">
 <div class="hero"><h1>Отзывы пользователей</h1></div>
 <div style="max-width:650px;margin:0 auto">
@@ -297,19 +296,8 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
 <div class="form-group"><label>Пароль</label><input type="password" id="loginPasswordInput" class="form-input" placeholder="Введите пароль..."></div>
 <button class="action-btn" onclick="handleLogin()">Войти</button>
 </div>
-<div id
-"authFormRegister" class="hidden">
-    <div class="form-group"><label>Никнейм</label><input type="text" id="regUsernameInput" class="form-input" placeholder="Ваш ник..."></div>
-    <div class="form-group"><label>Пароль</label><input type="password" id="regPasswordInput" class="form-input" placeholder="Надежный пароль..."></div>
-    <button class="action-btn green" onclick="handleRegister()">Зарегистрироваться</button>
-</div>
-</div>
-</div>
-</div>
-<footer class="apex-footer">
-<span>© 2026 ApexClient · Minecraft 1.21.4 Fabric</span>
-<span>Сделано с упором на стиль, удобство и производительность.</span>
-</footer>
+<div id="authFormRegister" class="hidden">
+<div class="form-group"><label>Никнейм</label><input type="text" id="regUsernameInput" class="form-input
 <script>
 // ===== ВСЕ ФУНКЦИИ =====
 let currentUser = localStorage.getItem('apex_user') || null;
@@ -459,25 +447,6 @@ function renderModerationData() {
     container.innerHTML = appRequests.subs.map((item, idx) => '<div style="background:rgba(0,0,0,.3);padding:12px;border-radius:12px;margin-bottom:8px"><div style="font-weight:800;color:#fff">' + item.user + ' | ' + item.tariff + '</div><div style="font-size:11px;color:#949aab">' + item.date + '</div><button class="action-btn green" style="padding:6px 12px;font-size:12px;width:auto" onclick="approveSub(' + idx + ')">Одобрить</button></div>').join('');
 }
 
-function approveSub(idx) {
-    const req = appRequests.subs[idx];
-    const lower = req.user.toLowerCase();
-    if (registeredUsers[lower]) {
-        let term = '30д';
-        if (req.tariff.includes('7')) term = '7д';
-        else if (req.tariff.includes('30') || req.tariff.includes('1 месяц')) term = '30д';
-        else if (req.tariff.includes('90') || req.tariff.includes('3 месяца')) term = '90д';
-        else if (req.tariff.includes('навсегда')) term = 'Навсегда';
-        registeredUsers[lower].sub = term;
-        saveDB();
-        if (currentUser && currentUser.toLowerCase() === lower) updateCabinetUI();
-    }
-    appRequests.subs.splice(idx, 1);
-    saveDB();
-    showToast('Подписка одобрена!');
-    renderModerationData();
-}
-
 const PRIZES = [{ key: '7д', label: '7 дней', weight: 15 }, { key: '30д', label: '30 дней', weight: 2 }, { key: '90д', label: '90 дней', weight: 0.5 }];
 
 function getPrize() {
@@ -487,93 +456,7 @@ function getPrize() {
     return PRIZES[0];
 }
 
-function spinRoulette() {
-    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
-    const data = registeredUsers[currentUser.toLowerCase()];
-    if (!data) return;
-    if (!data.freeSpinUsed && data.extraSpinAttempts <= 0) { showToast('Нет попыток! Купите в разделе "Тарифы"', 'error'); return; }
-    if (!data.freeSpinUsed) { data.freeSpinUsed = true; } else { data.extraSpinAttempts--; }
-    const prize = getPrize();
-    data.sub = prize.key;
-    saveDB();
-    updateCabinetUI();
-    updateLotteryUI();
-    showToast('🎉 Вы выиграли подписку на ' + prize.label + '!');
-}
-
-function openCase() {
-    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
-    const data = registeredUsers[currentUser.toLowerCase()];
-    if (!data) return;
-    if (!data.freeCaseUsed && data.extraCaseAttempts <= 0) { showToast('Нет попыток! Купите в разделе "Тарифы"', 'error'); return; }
-    if (!data.freeCaseUsed) { data.freeCaseUsed = true; } else { data.extraCaseAttempts--; }
-    const prize = getPrize();
-    data.sub = prize.key;
-    saveDB();
-    updateCabinetUI();
-    updateLotteryUI();
-    showToast('🎉 Вы выиграли подписку на ' + prize.label + '!');
-}
-
-function updateLotteryUI() {
-    if (!currentUser) return;
-    const data = registeredUsers[currentUser.toLowerCase()];
-    if (!data) return;
-    document.getElementById('spinAttempts').textContent = (data.freeSpinUsed ? 0 : 1) + data.extraSpinAttempts;
-    document.getElementById('caseAttempts').textContent = (data.freeCaseUsed ? 0 : 1) + data.extraCaseAttempts;
-}
-
-function activateSubKey() {
-    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
-    const key = document.getElementById('subKeyInput').value.trim().toUpperCase();
-    if (!key) { showToast('Введите ключ!', 'error'); return; }
-    if (!activeKeysDB[key]) { showToast('Неверный ключ!', 'error'); return; }
-    registeredUsers[currentUser.toLowerCase()].sub = activeKeysDB[key];
-    delete activeKeysDB[key];
-    saveDB();
-    updateCabinetUI();
-    showToast('Подписка активирована!');
-    document.getElementById('subKeyInput').value = '';
-}
-
-function activateHWIDKey() {
-    showToast('HWID сброшен!', 'success');
-}
-
-function toggleThemePanel() {
-    document.getElementById('themePanel').classList.toggle('open');
-}
-
-function applyTheme(color, el) {
-    document.documentElement.style.setProperty('--theme-bg', color);
-    document.body.style.backgroundColor = color;
-    document.querySelectorAll('.theme-preset').forEach(e => e.classList.remove('active'));
-    if (el) el.classList.add('active');
-    document.getElementById('currentColorHex').textContent = color;
-    document.getElementById('customColorPicker').value = color;
-    localStorage.setItem('apex_theme', color);
-    document.getElementById('themePanel').classList.remove('open');
-}
-
-function applyCustomColor(color) { applyTheme(color, null); }
-
-window.onload = function() {
-    const savedTheme = localStorage.getItem('apex_theme');
-    if (savedTheme) { applyTheme(savedTheme, document.querySelector('.theme-preset')); }
-    if (currentUser && registeredUsers[currentUser.toLowerCase()]) {
-        updateCabinetUI();
-        updateLotteryUI();
-        navigateTo('cabinet');
-    } else {
-        navigateTo('home');
-    }
-    updateLotteryUI();
-};
-
-</script>
-<script>
-// ===== ИСПРАВЛЯЮ ЛОГИКУ ПОПЫТОК =====
-
+// ===== ИСПРАВЛЕННЫЕ ФУНКЦИИ =====
 spinRoulette = function() {
     if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
     const data = registeredUsers[currentUser.toLowerCase()];
@@ -691,11 +574,52 @@ approveSub = function(idx) {
     renderModerationData();
 };
 
-document.addEventListener('DOMContentLoaded', function() {
-    if (currentUser) {
+function activateSubKey() {
+    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+    const key = document.getElementById('subKeyInput').value.trim().toUpperCase();
+    if (!key) { showToast('Введите ключ!', 'error'); return; }
+    if (!activeKeysDB[key]) { showToast('Неверный ключ!', 'error'); return; }
+    registeredUsers[currentUser.toLowerCase()].sub = activeKeysDB[key];
+    delete activeKeysDB[key];
+    saveDB();
+    updateCabinetUI();
+    showToast('Подписка активирована!');
+    document.getElementById('subKeyInput').value = '';
+}
+
+function activateHWIDKey() {
+    showToast('HWID сброшен!', 'success');
+}
+
+function toggleThemePanel() {
+    document.getElementById('themePanel').classList.toggle('open');
+}
+
+function applyTheme(color, el) {
+    document.documentElement.style.setProperty('--theme-bg', color);
+    document.body.style.backgroundColor = color;
+    document.querySelectorAll('.theme-preset').forEach(e => e.classList.remove('active'));
+    if (el) el.classList.add('active');
+    document.getElementById('currentColorHex').textContent = color;
+    document.getElementById('customColorPicker').value = color;
+    localStorage.setItem('apex_theme', color);
+    document.getElementById('themePanel').classList.remove('open');
+}
+
+function applyCustomColor(color) { applyTheme(color, null); }
+
+window.onload = function() {
+    const savedTheme = localStorage.getItem('apex_theme');
+    if (savedTheme) { applyTheme(savedTheme, document.querySelector('.theme-preset')); }
+    if (currentUser && registeredUsers[currentUser.toLowerCase()]) {
+        updateCabinetUI();
         updateLotteryUI();
+        navigateTo('cabinet');
+    } else {
+        navigateTo('home');
     }
-});
+    updateLotteryUI();
+};
 </script>
 </body>
 </html>
