@@ -1,3 +1,11 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ApexClient</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
 :root{--bg-main:#040508;--bg-card:rgba(14,16,24,0.75);--bg-card-hover:rgba(22,26,38,0.9);--border-color:rgba(255,255,255,0.08);--border-hover:rgba(255,51,68,0.4);--accent-red:#ff3344;--accent-red-glow:rgba(255,51,68,0.35);--accent-green:#00e676;--text-main:#fff;--text-sub:#949aab;--theme-bg:#040508}
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif;scroll-behavior:smooth}
 body{background:var(--theme-bg);color:var(--text-main);min-height:100vh;font-size:14px;overflow-x:hidden;transition:background .4s}
@@ -174,7 +182,8 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
 .detail-box{padding:32px;position:relative;overflow:hidden}
 .detail-box h3{font-size:1.4rem;font-weight:800;color:#fff;margin-bottom:12px}
 .detail-box p{font-size:.85rem;color:var(--text-sub);line-height:1.6;margin-bottom:16px}
-.detail-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.detail-list{list-style:none;display:flex;flex
+flex-direction:column;gap:8px}
 .detail-list li{font-size:.85rem;color:#fff;font-weight:600;display:flex;align-items:center;gap:8px}
 .detail-list li::before{content:'✔';color:var(--accent-green);font-weight:900}
 .servers-section{text-align:center;margin-top:40px;margin-bottom:40px}
@@ -183,68 +192,1460 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
 .server-card span{display:block;font-size:.7rem;color:var(--accent-green);font-weight:600;margin-top:4px}
 @media(max-width:850px){.lottery-grid{grid-template-columns:1fr}.dash-container-new{grid-template-columns:1fr}.sidebar-new{border-right:none;padding-right:0}.info-strip{grid-template-columns:1fr}.details-showcase{grid-template-columns:1fr}.servers-grid{grid-template-columns:1fr}}
 @media(max-width:560px){.navbar-container{top:10px}.navbar{padding:7px 10px}.nav-links{display:none}.hero h1{font-size:2.2rem}.page-section{padding-top:105px}footer.apex-footer{flex-direction:column}.theme-toggle{width:40px;height:40px;bottom:16px;right:16px}.theme-panel{right:16px;bottom:70px;width:190px}}
-</style></head><body><div class="rain" id="rainContainer"></div><canvas id="apex-particles"></canvas><div class="cursor-glow" id="cursorGlow"></div><div class="bg-glow-1"></div><div class="bg-glow-2"></div><div id="toast-container"></div><div class="navbar-container"><nav class="navbar"><div class="nav-left"><div class="nav-brand" onclick="navigateTo('home')"><div class="brand-icon">A</div><span>ApexClient</span><span class="pendulum" style="margin-left:8px;font-size:1.2rem">⚡</span></div><ul class="nav-links"><li><a class="nav-link active" id="nav-home" onclick="navigateTo('home')">Главная</a></li><li><a class="nav-link" id="nav-tariffs" onclick="navigateTo('tariffs')">Тарифы</a></li><li><a class="nav-link" id="nav-lottery" onclick="navigateTo('lottery')">Лотерея</a></li><li><a class="nav-link" id="nav-reviews" onclick="navigateTo('reviews')">Отзывы</a></li><li><a class="nav-link" id="nav-help" onclick="navigateTo('help')">Помощь</a></li><li><a class="nav-link" id="nav-faq" onclick="navigateTo('faq')">FAQ</a></li><li><a class="nav-link" id="nav-support" onclick="navigateTo('support')">Задать вопрос</a></li></ul></div><div class="nav-right"><button class="btn-cabinet" onclick="navigateTo('cabinet')">👤 <span id="navCabinetText">Кабинет</span></button></div></nav></div><div id="page-home" class="page-section"><div class="hero"><div class="hero-badge">⚡ Fabric 1.21.4 Client Ecosystem <span class="badge-new" style="margin-left:8px">NEW</span></div><h1>Абсолютное Доминирование <br><span>В Каждом Сражении</span></h1><p>Передовой игровой клиент с надежным обходом античитов, гибкой настройкой визуальных модулей, кастомными 3D-моделями и абсолютной оптимизацией для максимального FPS.</p><div class="hero-buttons"><button class="btn-main-action btn-pulse" onclick="navigateTo('tariffs')">Выбрать подписку</button><button class="btn-secondary-action" onclick="navigateTo('cabinet')">Личный кабинет</button></div><div class="hero-pills"><span class="hero-pill">⚡ Fabric 1.21.4</span><span class="hero-pill">🎯 PvP / Visual</span><span class="hero-pill">🧩 Модульная система</span><span class="hero-pill">🚀 FPS Focus</span><span class="hero-pill">🔐 HWID Protection</span></div></div><div class="stats-grid"><div class="stat-card"><div class="stat-val" id="onlineCount">480+</div><div class="stat-lbl">Онлайн игроков <span class="badge-hot" style="margin-left:6px">LIVE</span></div></div><div class="stat-card"><div class="stat-val">1,620+</div><div class="stat-lbl">Активных подписок</div></div><div class="stat-card"><div class="stat-val">99.8%</div><div class="stat-lbl">Обход защиты</div></div></div><div class="info-strip reveal"><div class="info-panel"><div class="section-kicker">APEX ECOSYSTEM</div><h3>Клиент, который ощущается как отдельный продукт</h3><p>ApexClient собран вокруг удобства: чистый интерфейс, быстрый доступ к модулям, аккуратный визуальный стиль и акцент на плавности игры.</p><div class="module-cloud"><span class="module-chip">Combat</span><span class="module-chip">Visuals</span><span class="module-chip">Movement</span><span class="module-chip">Render</span><span class="module-chip">HUD</span><span class="module-chip">Configs</span></div></div><div class="info-panel"><div class="section-kicker">LIVE STATUS</div><h3>Готов к следующей игре</h3><p>Основные разделы сайта теперь собраны в одном интерфейсе: покупки, кабинет, поддержка и информация о клиенте.</p><div class="mini-metrics"><div class="mini-metric"><b>1.21.4</b><span>Версия</span></div><div class="mini-metric"><b>Fabric</b><span>Loader</span></div><div class="mini-metric"><b>24/7</b><span>Доступ</span></div></div></div></div><div class="section-title-block"><h2>Превосходные Возможности</h2><p>Всё необходимое для победы в соревновательном Minecraft</p></div><div class="features-grid"><div class="feature-card"><span class="feature-icon float-icon">🚀</span><h3>Максимальная оптимизация</h3><p>Стабильный высокий фреймрейт без просадок даже в самых жарких PvP-батадиях на серверах с большим онлайном.</p></div><div class="feature-card"><span class="feature-icon float-icon" style="animation-delay:.5s">🛡️</span><h3>Обход античитов нового поколения</h3><p>Инновационные алгоритмы маскировки памяти и трафика гарантируют полную безопасность вашей учетной записи.</p></div><div class="feature-card"><span class="feature-icon float-icon" style="animation-delay:1s">✨</span><h3>Кастомные визуальные модули</h3><p>Настраиваемый ClickGUI, индивидуальные хитбоксы, частицы ударов, кастомный туман и система плащей с крыльями.</p></div></div><div class="details-showcase"><div class="detail-box"><h3>Интерфейс и Управление HUD</h3><p>ApexClient разработан с учетом потребностей лучших игроков. Удобное расположение модулей, быстрые бинды и мгновенный доступ к функциям прямо во время игры.</p><ul class="detail-list"><li>Модульная система ClickGUI в стиле Modern Dark</li><li>Автоматический свитч предметов (AutoSwap)</li><li>Продвинутая система подсветки и рендеринга</li></ul></div><div class="detail-box"><h3>Безопасность и Защита HWID</h3><p>Мы используем надежную привязку оборудования, исключающую несанкционированный доступ к вашему аккаунту и купленному софту.</p><ul class="detail-list"><li>Мгновенная активация ключей через сайт</li><li>Удобный сброс HWID в личном кабинете</li><li>Круглосуточная поддержка пользователей</li></ul></div></div><div class="servers-section"><div class="servers-title" style="font-size:1.3rem;font-weight:900;color:#fff;margin-bottom:6px">Поддерживаемые Серверы</div><div class="servers-subtitle" style="color:var(--text-sub);font-size:.85rem">Полная оптимизация и проверенная стабильность работы</div><div class="servers-grid"><div class="server-card">FunTime<span>Стабильный обход</span></div><div class="server-card">HolyWorld<span>Полная совместимость</span></div><div class="server-card">ReallyWorld<span>Максимальный FPS</span></div></div></div></div>
-<div id="page-tariffs" class="page-section hidden"><div class="hero"><div class="section-kicker">PRE-ORDER STORE</div><h1>Предзаказ <span>ApexClient</span></h1><p>Выберите срок доступа к ApexClient 1.21.4. Все три варианта оформляются как предзаказ и отображаются в личном кабинете.</p></div><div class="purchase-note">💡 <b>Важно:</b> это именно карточки предзаказа. После оформления заявка появится в системе магазина.</div><div class="tariffs-container"><div><div class="tariffs-row-title">🚀 Доступ к ApexClient 1.21.4</div><div class="tariffs-grid"><div class="tariff-card preorder-card reveal"><div><div class="tariff-name">Предзаказ · 1 месяц <span class="badge-new" style="margin-left:6px">NEW</span></div><div class="tariff-price">149 <span>₽</span></div><ul class="tariff-features"><li>Доступ на 30 дней</li><li>Все основные модули</li><li>Обновления</li></ul></div><button class="btn-buy" onclick="buyWithRedirect('Предзаказ — 1 месяц — 149 ₽','https://funpay.com/lots/offer?id=75148408')">Оформить</button></div><div class="tariff-card preorder-card popular reveal"><div class="tariff-badge">ВЫГОДНО</div><div><div class="tariff-name">Предзаказ · 3 месяца <span class="badge-hot" style="margin-left:6px">HOT</span></div><div class="tariff-price">239 <span>₽</span></div><ul class="tariff-features"><li>Доступ на 90 дней</li><li>Все основные модули</li><li>Обновления</li></ul></div><button class="btn-buy" onclick="buyWithRedirect('Предзаказ — 3 месяца — 239 ₽','https://funpay.com/lots/offer?id=75148529')">Оформить</button></div><div class="tariff-card preorder-card reveal"><div><div class="tariff-name">Предзаказ · Навсегда</div><div class="tariff-price">449 <span>₽</span></div><ul class="tariff-features"><li>Постоянный доступ</li><li>Все основные модули</li><li>Обновления</li></ul></div><button class="btn-buy" onclick="buyWithRedirect('Предзаказ — Навсегда — 449 ₽','https://funpay.com/lots/offer?id=75148529')">Оформить</button></div></div></div><div><div class="tariffs-row-title">🛠 Дополнительная услуга</div><div class="tariffs-grid"><div class="tariff-card reveal"><div><div class="tariff-name">Сброс HWID</div><div class="tariff-price">139 <span>₽</span></div><ul class="tariff-features"><li>Заявка через кабинет</li><li>Обработка модератором</li></ul></div><button class="action-btn" onclick="buyWithRedirect('Сброс HWID — 139 ₽','https://funpay.com/lots/offer?id=75148630')">Запросить сброс</button></div></div></div><div><div class="tariffs-row-title">🎰 Лотерейные услуги</div><div class="tariffs-grid"><div class="tariff-card reveal"><div><div class="tariff-name">🎲 Рулетка <span class="badge-hot" style="margin-left:6px">HOT</span></div><div class="tariff-price">49 <span>₽</span></div><ul class="tariff-features"><li>Один спин</li><li>Шансы: 7д-15%, 30д-2%, 90д-0.5%</li></ul></div><button class="btn-buy" onclick="buyTariff('Рулетка — 49 ₽')">Купить спин</button></div><div class="tariff-card reveal"><div><div class="tariff-name">📦 Бокс</div><div class="tariff-price">49 <span>₽</span></div><ul class="tariff-features"><li>Открыть кейс</li><li>Шансы: 7д-15%, 30д-2%, 90д-0.5%</li></ul></div><button class="btn-buy" onclick="buyTariff('Бокс — 49 ₽')">Открыть кейс</button></div></div></div></div></div><div id="page-lottery" class="page-section hidden"><div class="hero"><div class="section-kicker">🎰 Лотерейный центр</div><h1>Испытай удачу <span>с ApexClient</span></h1><p>Крути рулетку или открывай кейс — выиграй подписку на 7, 30 или 90 дней!</p></div><div class="lottery-grid"><div class="lottery-card"><div class="lottery-header"><h3>🎡 Рулетка</h3><span class="badge">в разработке</span></div><div style="text-align:center;padding:40px 0;color:var(--text-sub)"><div style="font-size:3rem;margin-bottom:16px" class="float-icon">🎰</div><div style="font-size:1.2rem;font-weight:700">В разработке</div><div style="font-size:.85rem;color:#6a728b">Функция появится в ближайшее время</div></div><button class="lottery-btn btn-pulse" onclick="showToast('В разработке!','error')" style="width:100%">🎲 Крутить</button></div><div class="lottery-card"><div class="lottery-header"><h3>📦 Бокс</h3><span class="badge">в разработке</span></div><div style="text-align:center;padding:40px 0;color:var(--text-sub)"><div style="font-size:3rem;margin-bottom:16px" class="float-icon" style="animation-delay:.5s">📦</div><div style="font-size:1.2rem;font-weight:700">В разработке</div><div style="font-size:.85rem;color:#6a728b">Функция появится в ближайшее время</div></div><button class="lottery-btn btn-pulse" onclick="showToast('В разработке!','error')" style="width:100%">📦 Открыть</button></div></div></div><div id="page-reviews" class="page-section hidden"><div class="hero"><h1>Отзывы пользователей</h1><p>Поделитесь вашим впечатлением или посмотрите мнения других игроков.</p></div><div style="max-width:650px;margin:0 auto"><div class="card" style="margin-bottom:30px"><div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Оставить отзыв</div><div class="form-group"><label>Ваш ник</label><input type="text" id="reviewAuthorInput" class="form-input" placeholder="invisik"></div><div class="form-group"><label>Оценка (звезды)</label><select id="reviewRatingInput" class="form-select"><option value="5">★★★★★ (5/5)</option><option value="4">★★★★☆ (4/5)</option><option value="3">★★★☆☆ (3/5)</option><option value="2">★★☆☆☆ (2/5)</option><option value="1">★☆☆☆☆ (1/5)</option></select></div><div class="form-group"><label>Текст отзыва</label><textarea id="reviewTextInput" class="form-textarea" placeholder="Напишите, что вам понравилось..."></textarea></div><button class="action-btn" onclick="addNewReview()">Опубликовать отзыв</button></div><div id="reviewsListContainer"><div class="review-card"><div class="review-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span class="review-author" style="font-weight:800;font-size:.9rem;color:#fff">Sextazyst</span><span class="review-stars" style="color:#ffbc00;font-size:.85rem;letter-spacing:2px">★★★★★</span></div><p class="review-text" style="font-size:.85rem;color:var(--text-sub);line-height:1.6">Лучший клиент под 1.21.4, функционал пушка, фпс держит стабильно на фантайме!</p></div><div class="review-card"><div class="review-header"><span class="review-author" style="font-weight:800;font-size:.9rem;color:#fff">Veselchak</span><span class="review-stars" style="color:#ffbc00;font-size:.85rem;letter-spacing:2px">★★★★★</span></div><p class="review-text" style="font-size:.85rem;color:var(--text-sub);line-height:1.6">Очень удобный интерфейс, обход работает отлично. Рекомендую брать тариф навсегда.</p></div></div></div></div><div id="page-help" class="page-section hidden"><div class="hero"><h1>Центр помощи</h1><p>Часто задаваемые вопросы и руководства.</p></div><div style="max-width:650px;margin:0 auto;display:flex;flex-direction:column;gap:14px"><div class="card"><div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Как запустить клиент?</div><p class="sub-desc" style="font-size:.85rem;color:var(--text-sub);line-height:1.6">Скачайте лоадер в личном кабинете, запустите и войдите под своей учетной записью с активной подпиской.</p></div><div class="card"><div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Что делать при смене ПК (HWID ошибка)?</div><p class="sub-desc" style="font-size:.85rem;color:var(--text-sub);line-height:1.6">Оформите заявку на сброс HWID за 139 рублей или активируйте специальный ключ.</p></div></div></div><div id="page-faq" class="page-section hidden"><div class="hero"><div class="section-kicker">FAQ</div><h1>Частые вопросы</h1><p>Коротко о покупке, версии и кабинете.</p></div><div class="faq-grid"><div class="faq-item"><b>Какая версия поддерживается?</b><p>ApexClient ориентирован на Minecraft 1.21.4 Fabric.</p></div><div class="faq-item"><b>Где появляется предзаказ?</b><p>После оформления заявка сохраняется в разделе «Мои предзаказы».</p></div><div class="faq-item"><b>Можно ли оформить другой срок?</b><p>Доступны три варианта: 1 месяц, 3 месяца и навсегда.</p></div><div class="faq-item"><b>Что делать при проблеме с HWID?</b><p>Оформите заявку на сброс HWID в разделе покупок.</p></div></div></div><div id="page-support" class="page-section hidden"><div class="hero"><h1>Техническая поддержка</h1><p>Возникли проблемы? Создайте тикет, ответы придут в личный кабинет.</p></div><div style="max-width:500px;margin:0 auto"><div class="card"><div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Новое обращение</div><div class="form-group"><label>Тема обращения</label><input type="text" id="ticketSubject" class="form-input" placeholder="Например: Ошибка запуска..."></div><div class="form-group"><label>Описание проблемы</label><textarea id="ticketMessage" class="form-textarea" placeholder="Опишите детали ошибки..."></textarea></div><button class="action-btn" onclick="submitTicket()">Отправить вопрос</button></div></div></div><div id="page-auth" class="page-section hidden"><div class="auth-wrapper" style="display:flex;align-items:center;justify-content:center;min-height:60vh"><div class="auth-card" style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:28px;padding:40px;width:100%;max-width:420px;box-shadow:0 25px 60px rgba(0,0,0,0.7);backdrop-filter:blur(20px)"><div class="auth-title" style="font-size:1.8rem;font-weight:900;text-align:center;margin-bottom:4px">Apex<span style="color:var(--accent-red)">Client</span></div><div class="auth-subtitle" style="font-size:.8rem;color:var(--text-sub);text-align:center;margin-bottom:24px;font-weight:600">Системный доступ</div><div class="auth-tabs" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;background:rgba(0,0,0,0.4);padding:5px;border-radius:14px;margin-bottom:24px;border:1px solid var(--border-color)"><button class="auth-tab-btn active" id="tabBtnLogin" onclick="switchAuthTab('login')" style="background:none;border:none;padding:10px;border-radius:10px;font-size:.8rem;font-weight:700;color:var(--text-sub);cursor:pointer;transition:.2s">Вход</button><button class="auth-tab-btn" id="tabBtnRegister" onclick="switchAuthTab('register')" style="background:none;border:none;padding:10px;border-radius:10px;font-size:.8rem;font-weight:700;color:var(--text-sub);cursor:pointer;transition:.2s">Регистрация</button></div><div id="authFormLogin"><div class="form-group"><label>Никнейм</label><input type="text" id="loginUsernameInput" class="form-input" placeholder="Введите ник..."></div><div class="form-group"><label>Пароль</label><input type="password" id="loginPasswordInput" class="form-input" placeholder="Введите пароль..."></div><button class="action-btn" onclick="handleLogin()">Войти в систему</button></div><div id="authFormRegister" class="hidden"><div class="form-group"><label>Придумайте никнейм</label><input type="text" id="regUsernameInput" class="form-input" placeholder="Ваш ник..."></div><div class="form-group"><label>Придумайте пароль</label><input type="password" id="regPasswordInput" class="form-input" placeholder="Надежный пароль..."></div><button class="action-btn green" onclick="handleRegister()">Зарегистрироваться</button></div></div></div></div>
-<div id="page-cabinet" class="page-section hidden"><div class="dash-container-new"><div class="sidebar-new"><div><div class="profile-card"><div class="profile-header"><div class="avatar-new" id="sidebarAvatarNew">A</div><div class="profile-info"><div class="name" id="sidebarUsernameNew">User</div><div class="email" id="sidebarEmailNew">user@apexclient.tech</div><div class="role-uid"><span class="role" id="sidebarRoleNew">USER</span><span class="uid" id="sidebarUidNew">UID: --</span></div></div></div></div><div class="account-block"><div class="block-title">Аккаунт</div><div class="account-item"><span class="label">Подписка</span><span class="value" id="dashSubValue">Нет</span></div><div class="account-item"><span class="label">Регистрация</span><span class="value" id="dashRegValue">--</span></div><div class="account-item"><span class="label">Доступ</span><span class="value green" id="dashAccessValue">Активен</span></div><div class="account-item"><span class="label">UID</span><span class="value" id="dashUidValue">--</span></div><div class="progress-bar" style="margin-top:10px"><div class="fill" id="subProgress" style="width:0%"></div></div></div><div class="actions-block"><div class="block-title">Действия</div><button class="btn-download-new" onclick="showToast('Загрузка ApexClient.exe...','success')">📥 Скачать ApexClient</button></div><ul class="nav-menu-new"><li class="nav-item-new active" onclick="switchCabinetTab('home',this)">🏠 Главная</li><li class="nav-item-new" onclick="switchCabinetTab('orders',this)">📦 Мои предзаказы</li><li class="nav-item-new" onclick="switchCabinetTab('tickets',this)">💬 Мои тикеты (<span id="ticketCountBadgeNew">0</span>)</li><li class="nav-item-new" onclick="switchCabinetTab('keys',this)">🔑 Активация ключей</li><li class="nav-item-new hidden" id="navItemPostNew" onclick="switchCabinetTab('post',this)">📝 Сделать пост</li><li class="nav-item-new" onclick="switchCabinetTab('downloads',this)">📥 Загрузки</li><li class="nav-item-new hidden" id="navItemModerationNew" onclick="switchCabinetTab('moderation',this)">🛡️ Модерация (<span id="modCountBadgeNew">0</span>)</li><li class="nav-item-new hidden" id="navItemCapabilitiesNew" onclick="switchCabinetTab('capabilities',this)">🛠️ Настройка возможностей</li><li class="nav-item-new hidden" id="navItemRolesNew" onclick="switchCabinetTab('roles',this)">👑 Управление ролями</li><li class="nav-item-new hidden" id="navItemGoldRush" onclick="switchCabinetTab('goldrush',this)">🔥 Золотая лихорадка</li><li class="nav-item-new hidden" id="navItemAdminNew" onclick="switchCabinetTab('admin',this)">⚙️ Панель Владельца</li></ul></div><button class="btn-logout-new" onclick="logout()">Выйти</button></div><div class="content-new"><div id="cab-home" class="cab-tab-content"><div class="card"><div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Статус подписки</div><div class="sub-title" id="subStatusTextNew" style="color:var(--accent-red);font-size:1.4rem;font-weight:900;margin-bottom:6px">НЕТ АКТИВНОЙ ПОДПИСКИ</div><div class="sub-desc" id="subStatusDescNew" style="font-size:.85rem;color:var(--text-sub);line-height:1.6">Приобретите подписку в разделе «Тарифы» или активируйте ключ.</div></div></div><div id="cab-orders" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">История и Подписки / Заявки</div><div id="ordersListContainer"><p class="sub-desc" style="font-size:.85rem;color:var(--text-sub)">У вас пока нет активных подписок.</p></div></div></div><div id="cab-tickets" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Мои тикеты и ответы поддержки</div><div id="userTicketsContainer"><p class="sub-desc" style="font-size:.85rem;color:var(--text-sub)">Вы еще не отправляли вопросы.</p></div></div></div><div id="cab-keys" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Активация ключа подписки</div><div class="form-group" style="margin-bottom:12px"><input type="text" id="subKeyInput" class="form-input" placeholder="Введите ключ подписки (например, APEX-SUB-XXXX)..."></div><button class="action-btn green" onclick="activateSubKey()">Активировать подписку</button></div><div class="card"><div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Активация ключа сброса HWID</div><div class="form-group" style="margin-bottom:12px"><input type="text" id="hwidKeyInput" class="form-input" placeholder="Введите ключ сброса HWID..."></div><button class="action-btn green" onclick="activateHWIDKey()">Сбросить HWID ключом</button></div><div class="card"><div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Активация спец ключа</div><div class="form-group" style="margin-bottom:12px"><input type="text" id="specialKeyInput" class="form-input" placeholder="Введите спец ключ (например, APEX-SPECIAL-XXXX)..."></div><button class="action-btn yellow" onclick="activateSpecialKey()">Активировать спец ключ</button></div></div><div id="cab-post" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Создать публикацию</div><div class="form-group"><label>Заголовок поста</label><input type="text" class="form-input" placeholder="Заголовок обновления..."></div><div class="form-group"><label>Текст сообщения</label><textarea class="form-textarea" placeholder="Содержимое поста..."></textarea></div><button class="action-btn" onclick="showToast('Пост успешно опубликован!','success')">Опубликовать</button></div></div><div id="cab-downloads" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Загрузка лоадера</div><p class="sub-desc" style="font-size:.85rem;color:var(--text-sub);margin-bottom:14px">Последняя стабильная сборка клиента под Fabric.</p><button class="action-btn green" onclick="showToast('Загрузка ApexClient.exe...','success')">📥 Скачать ApexClient.exe</button></div></div><div id="cab-moderation" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Запросы на покупку подписок / тарифов</div><div id="purchaseRequestsContainer"><p class="sub-desc" style="font-size:.85rem;color:var(--text-sub)">Нет активных запросов.</p></div></div><div class="card"><div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Заявки на сброс HWID (139 ₽)</div><div id="hwidRequestsContainer"><p class="sub-desc" style="font-size:.85rem;color:var(--text-sub)">Нет активных заявок.</p></div></div><div class="card"><div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Тикеты пользователей</div><div id="adminTicketsContainer"><p class="sub-desc" style="font-size:.85rem;color:var(--text-sub)">Нет активных вопросов.</p></div></div></div><div id="cab-capabilities" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">🛠️ Настройка возможностей пользователя (Поиск по нику)</div><div class="form-group"><label>Ник пользователя</label><div style="display:flex;gap:8px"><input type="text" id="capSearchInput" class="form-input" placeholder="Введите точный ник или часть ника..."><button class="action-btn" style="width:140px" onclick="searchUserCapabilities()">Найти</button></div></div><div id="capSearchResultContainer"></div></div></div><div id="cab-roles" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">👑 Управление ролями и их возможностями</div><p class="sub-desc" style="font-size:.85rem;color:var(--text-sub);margin-bottom:16px">Создавайте кастомные роли и настраивайте доступы.</p><div style="display:flex;gap:8px;margin-bottom:16px"><input type="text" id="newRoleNameInput" class="form-input" placeholder="Название новой роли (например: Helper)..."><button class="action-btn green" style="width:180px" onclick="createNewRole()">Создать роль</button></div><div id="rolesListContainer"></div></div></div><div id="cab-goldrush" class="cab-tab-content hidden"><div class="card gold-rush-panel" style="background:rgba(232,179,75,0.05);border:1px solid rgba(232,179,75,0.2);border-radius:16px;padding:20px;margin-bottom:16px"><h4 style="color:#e8b34b;font-weight:800;font-size:1.1rem;margin-bottom:12px">🔥 Золотая лихорадка</h4><p style="color:var(--text-sub);font-size:.85rem;margin-bottom:12px">Настройка временного события, в течение которого пользователи могут открыть кейс бесплатно 1 раз.</p><div class="gold-rush-controls" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><div class="form-group" style="flex:1;min-width:100px"><label>Длительность (минуты)</label><input type="number" id="grDuration" class="form-input" value="1" min="1" style="width:80px"></div><div class="form-group" style="flex:1;min-width:100px"><label>Количество человек</label><input type="number" id="grLimit" class="form-input" value="3" min="1" style="width:80px"></div><button class="action-btn" id="grStartBtn" onclick="startGoldRush()">Начать золотую лихорадку</button></div><div id="grStatus" class="gold-rush-status" style="display:flex;gap:20px;margin-top:12px;font-weight:600;color:var(--text-sub)"><span>Статус: <span id="grStatusText">Не активна</span></span><span>Осталось: <span id="grTimeLeft">--</span></span><span>Использовали: <span id="grUsedCount">0</span></span></div></div></div><div id="cab-admin" class="cab-tab-content hidden"><div class="card"><div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">⚙️ Панель Владельца</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px"><div class="form-group" style="margin-bottom:0"><label>Тип подписки для генерации</label><select id="genSubDuration" class="form-select"><option value="7д">7д</option><option value="30д">30д</option><option value="90д">90д</option><option value="Навсегда">Навсегда</option></select></div><div style="display:flex;align-items:flex-end"><button class="action-btn green" onclick="generateSubKey()">Сгенерировать ключ</button></div></div><div class="form-group" style="margin-bottom:0"><button class="action-btn yellow" onclick="generateHWIDKey()">Сгенерировать ключ сброса HWID</button></div><div id="generatedKeyOutput" style="margin-top:12px"></div></div><div class="card"><div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">🔑 Генерация спец ключа</div><div class="form-group"><label>Роль для спец ключа</label><select id="specialRoleSelect" class="form-select"><option value="moder">Moder</option><option value="admin">Admin</option><option value="owner">Owner</option></select></div><div class="form-group"><label>Количество использований</label><input type="number" id="specialUsesInput" class="form-input" value="1" min="1"></div><button class="action-btn yellow" onclick="generateSpecialKey()">Сгенерировать спец ключ</button></div></div></div></div></div></div>
-<footer class="apex-footer"><span>© 2026 ApexClient · Minecraft 1.21.4 Fabric</span><span>Сделано с упором на стиль, удобство и производительность.</span></footer><div class="theme-toggle" id="themeToggle" onclick="toggleThemePanel()">🎨</div><div class="theme-panel" id="themePanel"><div class="title">Выбор темы</div><div class="theme-presets"><div class="theme-preset active" style="background:#040508" onclick="applyTheme('#040508',this)"></div><div class="theme-preset" style="background:#0a0e1a" onclick="applyTheme('#0a0e1a',this)"></div><div class="theme-preset" style="background:#1a0a0a" onclick="applyTheme('#1a0a0a',this)"></div><div class="theme-preset" style="background:#0a1a0a" onclick="applyTheme('#0a1a0a',this)"></div><div class="theme-preset" style="background:#1a1a0a" onclick="applyTheme('#1a1a0a',this)"></div><div class="theme-preset" style="background:#1a0a1a" onclick="applyTheme('#1a0a1a',this)"></div></div><div class="color-picker-wrap"><input type="color" id="customColorPicker" value="#040508" onchange="applyCustomColor(this.value)"><span class="color-hex" id="currentColorHex">#040508</span></div><div class="glass-toggle-wrap"><label for="glassToggle">Обычное</label><input type="checkbox" id="glassToggle" onchange="toggleGlassMode(this.checked)"><label for="glassToggle">Эффектное</label></div></div><script>
-let currentUser=localStorage.getItem('apex_user')||null;if(!localStorage.getItem('apex_db_users_v4')){localStorage.removeItem('apex_db_users');localStorage.removeItem('apex_roles');localStorage.setItem('apex_db_users_v4','true');}
-let registeredUsers=JSON.parse(localStorage.getItem('apex_db_users'))||{"invisik":{password:"123",role:"owner",sub:"Навсегда",banned:false,banReason:"",banDuration:"",regDate:"10.08.2026",uid:1,freeSpinUsed:false,freeCaseUsed:false},"sextazyst":{password:"123",role:"user",sub:"Нет",banned:false,banReason:"",banDuration:"",regDate:"12.08.2026",uid:2,freeSpinUsed:false,freeCaseUsed:false},"veselchak":{password:"123",role:"user",sub:"Нет",banned:false,banReason:"",banDuration:"",regDate:"15.08.2026",uid:3,freeSpinUsed:false,freeCaseUsed:false}};
-let customRoles=JSON.parse(localStorage.getItem('apex_roles'))||{"owner":{permissions:{canBan:true,canAccessAdmin:true,canEditRoles:true,canViewTickets:true}},"admin":{permissions:{canBan:true,canAccessAdmin:true,canEditRoles:false,canViewTickets:true}},"moder":{permissions:{canBan:false,canAccessAdmin:false,canEditRoles:false,canViewTickets:true}},"user":{permissions:{canBan:false,canAccessAdmin:false,canEditRoles:false,canViewTickets:false}}};
-let appRequests=JSON.parse(localStorage.getItem('apex_requests'))||{hwid:[],subs:[],tickets:[]};
-let activeKeysDB=JSON.parse(localStorage.getItem('apex_keys_db'))||{};
-let specialKeysDB=JSON.parse(localStorage.getItem('apex_special_keys'))||{};
-let lotteryState=JSON.parse(localStorage.getItem('apex_lottery_state'))||{goldRush:{active:false,duration:1,limit:3,used:0,startTime:null,timerInterval:null,usedUsers:[]}};
-function saveDB(){localStorage.setItem('apex_db_users',JSON.stringify(registeredUsers));localStorage.setItem('apex_roles',JSON.stringify(customRoles));localStorage.setItem('apex_requests',JSON.stringify(appRequests));localStorage.setItem('apex_keys_db',JSON.stringify(activeKeysDB));localStorage.setItem('apex_special_keys',JSON.stringify(specialKeysDB));localStorage.setItem('apex_lottery_state',JSON.stringify(lotteryState));}
-function showToast(message,type='success'){const container=document.getElementById('toast-container');const toast=document.createElement('div');toast.className='toast '+type;toast.innerHTML='<span>'+(type==='success'?'✅':'❌')+'</span> '+message;container.appendChild(toast);setTimeout(()=>{toast.style.opacity='0';setTimeout(()=>toast.remove(),300);},3000);}
-function navigateTo(pageId){if(pageId==='cabinet'&&!currentUser){pageId='auth';}document.querySelectorAll('.page-section').forEach(sec=>sec.classList.add('hidden'));const target=document.getElementById('page-'+pageId);if(target)target.classList.remove('hidden');document.querySelectorAll('.nav-link').forEach(link=>link.classList.remove('active'));const activeLink=document.getElementById('nav-'+pageId);if(activeLink)activeLink.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
-function switchAuthTab(tab){const btnLogin=document.getElementById('tabBtnLogin');const btnRegister=document.getElementById('tabBtnRegister');const formLogin=document.getElementById('authFormLogin');const formRegister=document.getElementById('authFormRegister');if(tab==='login'){btnLogin.classList.add('active');btnRegister.classList.remove('active');formLogin.classList.remove('hidden');formRegister.classList.add('hidden');}else{btnRegister.classList.add('active');btnLogin.classList.remove('active');formRegister.classList.remove('hidden');formLogin.classList.add('hidden');}}
-function handleLogin(){const usernameInput=document.getElementById('loginUsernameInput').value.trim();const password=document.getElementById('loginPasswordInput').value.trim();if(!usernameInput||!password){showToast('Заполните все поля!','error');return;}const lower=usernameInput.toLowerCase();if(!registeredUsers[lower]){registeredUsers[lower]={password:password,role:lower==='invisik'?'owner':'user',sub:lower==='invisik'?'Навсегда':'Нет',banned:false,banReason:'',banDuration:'',regDate:new Date().toLocaleDateString(),uid:Object.keys(registeredUsers).length+1,freeSpinUsed:false,freeCaseUsed:false};saveDB();}if(String(registeredUsers[lower].password)!==String(password)){showToast('Неверный никнейм или пароль!','error');return;}if(registeredUsers[lower].banned){showToast('Этот аккаунт заблокирован!','error');return;}currentUser=usernameInput;localStorage.setItem('apex_user',currentUser);updateCabinetUI();showToast('Успешный вход как '+currentUser+'!','success');navigateTo('cabinet');}
-function handleRegister(){const usernameInput=document.getElementById('regUsernameInput').value.trim();const password=document.getElementById('regPasswordInput').value.trim();if(!usernameInput||!password){showToast('Заполните все поля!','error');return;}const lower=usernameInput.toLowerCase();if(registeredUsers[lower]){showToast('Пользователь уже существует!','error');return;}registeredUsers[lower]={password:password,role:lower==='invisik'?'owner':'user',sub:lower==='invisik'?'Навсегда':'Нет',banned:false,banReason:'',banDuration:'',regDate:new Date().toLocaleDateString(),uid:Object.keys(registeredUsers).length+1,freeSpinUsed:false,freeCaseUsed:false};saveDB();currentUser=usernameInput;localStorage.setItem('apex_user',currentUser);updateCabinetUI();showToast('Аккаунт '+currentUser+' успешно создан!','success');navigateTo('cabinet');}
-function logout(){localStorage.removeItem('apex_user');currentUser=null;document.getElementById('navCabinetText').innerText='Кабинет';navigateTo('home');showToast('Вы вышли из аккаунта','success');}
-function checkUserBanAction(){if(!currentUser)return false;const userData=registeredUsers[currentUser.toLowerCase()];if(userData&&userData.banned){showToast('Ваш аккаунт заблокирован!','error');return true;}return false;}
-function updateCabinetUI(){if(!currentUser)return;const lower=currentUser.toLowerCase();const user=registeredUsers[lower];if(!user)return;document.getElementById('sidebarAvatarNew').innerText=currentUser.charAt(0).toUpperCase();document.getElementById('sidebarUsernameNew').innerText=currentUser;document.getElementById('sidebarEmailNew').innerText=currentUser.toLowerCase()+'@apexclient.tech';document.getElementById('sidebarRoleNew').innerText=(user.role||'user').toUpperCase();document.getElementById('sidebarUidNew').innerText='UID: '+(user.uid||'--');document.getElementById('navCabinetText').innerText=currentUser;document.getElementById('dashSubValue').innerText=user.sub||'Нет';document.getElementById('dashRegValue').innerText=user.regDate||'--';document.getElementById('dashAccessValue').innerText=user.banned?'Забанен':'Активен';document.getElementById('dashAccessValue').className='value '+(user.banned?'red':'green');document.getElementById('dashUidValue').innerText=user.uid||'--';const progress=document.getElementById('subProgress');if(user.sub&&user.sub!=='Нет'&&user.sub!=='нет'){progress.style.width='100%';progress.style.background='linear-gradient(90deg, var(--accent-green), #00e676)';}else{progress.style.width='0%';progress.style.background='linear-gradient(90deg, var(--accent-red), #ff6b6b)';}const subText=document.getElementById('subStatusTextNew');const subDesc=document.getElementById('subStatusDescNew');if(user.banned){subText.innerText='ЗАБАНЕН ('+user.banReason+')';subText.style.color='var(--accent-red)';subDesc.innerText='Учетная запись заблокирована администратором.';}else if(!user.sub||user.sub==='Нет'||user.sub==='нет'){subText.innerText='НЕТ АКТИВНОЙ ПОДПИСКИ';subText.style.color='var(--accent-red)';subDesc.innerText='Приобретите подписку в разделе «Тарифы» или активируйте ключ.';}else{subText.innerText='ПОДПИСКА АКТИВНА ('+user.sub+')';subText.style.color='var(--accent-green)';subDesc.innerText='Доступ к клиенту работает без ограничений.';}const role=(user.role||'user').toLowerCase();document.getElementById('navItemPostNew').classList.add('hidden');document.getElementById('navItemModerationNew').classList.add('hidden');document.getElementById('navItemCapabilitiesNew').classList.add('hidden');document.getElementById('navItemRolesNew').classList.add('hidden');document.getElementById('navItemGoldRush').classList.add('hidden');document.getElementById('navItemAdminNew').classList.add('hidden');if(role==='owner'||role==='admin'||lower==='invisik'){document.getElementById('navItemPostNew').classList.remove('hidden');document.getElementById('navItemCapabilitiesNew').classList.remove('hidden');document.getElementById('navItemRolesNew').classList.remove('hidden');document.getElementById('navItemGoldRush').classList.remove('hidden');}if(role==='owner'||role==='admin'||role==='moder'){document.getElementById('navItemModerationNew').classList.remove('hidden');document.getElementById('navItemGoldRush').classList.remove('hidden');}if(role==='owner'||lower==='invisik'){document.getElementById('navItemAdminNew').classList.remove('hidden');}updateTicketBadge();updateModBadge();renderOrders();renderUserTickets();updateGoldRushUI();}
-function switchCabinetTab(tabName,element){document.querySelectorAll('.cab-tab-content').forEach(tab=>tab.classList.add('hidden'));const targetTab=document.getElementById('cab-'+tabName);if(targetTab)targetTab.classList.remove('hidden');document.querySelectorAll('.nav-item-new').forEach(item=>item.classList.remove('active'));if(element)element.classList.add('active');if(tabName==='moderation')renderModerationData();if(tabName==='tickets')renderUserTickets();if(tabName==='roles')renderRolesManagement();if(tabName==='goldrush')updateGoldRushUI();}
-function updateTicketBadge(){if(!currentUser)return;const myTickets=appRequests.tickets.filter(t=>t.username.toLowerCase()===currentUser.toLowerCase());document.getElementById('ticketCountBadgeNew').innerText=myTickets.length;}
-function updateModBadge(){const total=appRequests.hwid.length+appRequests.subs.length+appRequests.tickets.length;document.getElementById('modCountBadgeNew').innerText=total;}
-function renderOrders(){const container=document.getElementById('ordersListContainer');if(!currentUser){container.innerHTML='<p class="sub-desc">Войдите, чтобы видеть заказы.</p>';return;}const userOrders=appRequests.subs.filter(s=>s.username.toLowerCase()===currentUser.toLowerCase());if(userOrders.length===0){container.innerHTML='<p class="sub-desc">У вас пока нет активных подписок.</p>';return;}container.innerHTML=userOrders.map(o=>'<div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)"><div style="font-weight:800;color:#fff;font-size:.9rem">'+o.tariff+'</div><div style="font-size:.7rem;color:var(--text-sub)">Дата: '+o.date+'</div></div>').join('');}
-function renderUserTickets(){const container=document.getElementById('userTicketsContainer');if(!currentUser){container.innerHTML='<p class="sub-desc">Войдите, чтобы видеть тикеты.</p>';return;}const myTickets=appRequests.tickets.filter(t=>t.username.toLowerCase()===currentUser.toLowerCase());document.getElementById('ticketCountBadgeNew').innerText=myTickets.length;if(myTickets.length===0){container.innerHTML='<p class="sub-desc">Вы еще не отправляли вопросы.</p>';return;}container.innerHTML=myTickets.map(t=>'<div style="background:rgba(0,0,0,0.3);padding:14px;border-radius:14px;margin-bottom:10px;border:1px solid var(--border-color)"><div style="font-weight:800;color:#fff;font-size:.9rem;margin-bottom:4px">Тема: '+t.subject+'</div><div style="font-size:.85rem;color:var(--text-sub);margin-bottom:8px">'+t.message+'</div><div style="font-size:.7rem;color:var(--accent-green);font-weight:700">Статус: '+t.status+'</div></div>').join('');}
-function buyTariff(tariffName){if(!currentUser){showToast('Сначала войдите в личный кабинет!','error');navigateTo('cabinet');return;}if(checkUserBanAction())return;appRequests.subs.push({username:currentUser,tariff:tariffName,date:new Date().toLocaleDateString()});saveDB();showToast('Заявка на покупку "'+tariffName+'" успешно создана!','success');}
-function buyWithRedirect(tariffName,paymentUrl){if(!currentUser){showToast('Сначала войдите в личный кабинет!','error');navigateTo('cabinet');return;}if(checkUserBanAction())return;appRequests.subs.push({username:currentUser,tariff:tariffName,date:new Date().toLocaleDateString(),status:'Ожидает оплаты'});saveDB();showToast('Заявка создана! Перенаправление на оплату...','success');setTimeout(()=>{window.open(paymentUrl,'_blank');},1500);}
-function requestHWIDResetModal(){if(!currentUser){showToast('Сначала войдите в личный кабинет!','error');navigateTo('cabinet');return;}if(checkUserBanAction())return;const reason=prompt('Укажите причину для сброса HWID:');if(!reason)return;appRequests.hwid.push({username:currentUser,hwid:'HWID-PC-'+Math.floor(Math.random()*89999+10000),reason:reason,date:new Date().toLocaleDateString()});saveDB();showToast('Заявка на сброс HWID отправлена.','success');}
-function addNewReview(){if(checkUserBanAction())return;const author=document.getElementById('reviewAuthorInput').value.trim();const text=document.getElementById('reviewTextInput').value.trim();const rating=document.getElementById('reviewRatingInput').value;if(!author||!text){showToast('Заполните все поля!','error');return;}const container=document.getElementById('reviewsListContainer');const stars='★'.repeat(rating)+'☆'.repeat(5-rating);const card=document.createElement('div');card.className='review-card';card.innerHTML='<div class="review-header"><span class="review-author">'+author+'</span><span class="review-stars">'+stars+'</span></div><p class="review-text">'+text+'</p>';container.prepend(card);document.getElementById('reviewAuthorInput').value='';document.getElementById('reviewTextInput').value='';showToast('Отзыв опубликован!','success');}
-function submitTicket(){if(!currentUser){showToast('Войдите в аккаунт!','error');navigateTo('cabinet');return;}if(checkUserBanAction())return;const subject=document.getElementById('ticketSubject').value.trim();const message=document.getElementById('ticketMessage').value.trim();if(!subject||!message){showToast('Заполните все поля!','error');return;}appRequests.tickets.push({username:currentUser,subject:subject,message:message,status:'Открыт',date:new Date().toLocaleDateString()});saveDB();showToast('Тикет отправлен!','success');document.getElementById('ticketSubject').value='';document.getElementById('ticketMessage').value='';updateTicketBadge();}
-function renderModerationData(){const subContainer=document.getElementById('purchaseRequestsContainer');const hwidContainer=document.getElementById('hwidRequestsContainer');const ticketContainer=document.getElementById('adminTicketsContainer');updateModBadge();if(appRequests.subs.length===0){subContainer.innerHTML='<p class="sub-desc">Нет активных запросов на покупку.</p>';}else{subContainer.innerHTML=appRequests.subs.map((item,idx)=>'<div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)"><div style="font-size:.85rem;font-weight:800;color:#fff">Игрок: '+item.username+' | Тариф: '+item.tariff+'</div><div style="font-size:.7rem;color:var(--text-sub);margin-bottom:8px">Дата: '+item.date+'</div><button class="action-btn green" style="padding:6px 12px;font-size:.8rem" onclick="approveSub('+idx+')">Одобрить подписку</button></div>').join('');}if(appRequests.hwid.length===0){hwidContainer.innerHTML='<p class="sub-desc">Нет активных заявок на сброс HWID.</p>';}else{hwidContainer.innerHTML=appRequests.hwid.map((item,idx)=>'<div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)"><div style="font-size:.85rem;font-weight:800;color:#fff">Игрок: '+item.username+' | Причина: '+item.reason+'</div><div style="font-size:.7rem;color:var(--text-sub);margin-bottom:8px">HWID: '+item.hwid+'</div><button class="action-btn green" style="padding:6px 12px;font-size:.8rem" onclick="approveHWID('+idx+')">Сбросить HWID</button></div>').join('');}if(appRequests.tickets.length===0){ticketContainer.innerHTML='<p class="sub-desc">Нет активных вопросов.</p>';}else{ticketContainer.innerHTML=appRequests.tickets.map((item,idx)=>'<div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)"><div style="font-size:.85rem;font-weight:800;color:#fff">От: '+item.username+' | Тема: '+item.subject+'</div><div style="font-size:.8rem;color:var(--text-sub);margin:6px 0">'+item.message+'</div><button class="action-btn dark" style="padding:6px 12px;font-size:.8rem" onclick="closeTicket('+idx+')">Закрыть тикет</button></div>').join('');}}
-function approveSub(index){const req=appRequests.subs[index];const lower=req.username.toLowerCase();if(registeredUsers[lower]){let term='30д';if(req.tariff.toLowerCase().includes('7'))term='7д';else if(req.tariff.toLowerCase().includes('30')||req.tariff.toLowerCase().includes('1 месяц'))term='30д';else if(req.tariff.toLowerCase().includes('90')||req.tariff.toLowerCase().includes('3 месяца'))term='90д';else if(req.tariff.toLowerCase().includes('навсегда'))term='Навсегда';registeredUsers[lower].sub=term;saveDB();if(currentUser&&currentUser.toLowerCase()===lower)updateCabinetUI();}appRequests.subs.splice(index,1);saveDB();showToast('Подписка успешно одобрена и выдана!');renderModerationData();}
-function approveHWID(index){appRequests.hwid.splice(index,1);saveDB();showToast('HWID успешно сброшен по заявке!');renderModerationData();}
-function closeTicket(index){appRequests.tickets.splice(index,1);saveDB();showToast('Тикет закрыт.');renderModerationData();}
-function searchUserCapabilities(){const rawQuery=document.getElementById('capSearchInput').value;const container=document.getElementById('capSearchResultContainer');container.innerHTML='';if(!rawQuery){container.innerHTML='<div class="search-result-box" style="color:var(--accent-red);font-weight:700;text-align:center">Введите ник для поиска игрока</div>';return;}const query=rawQuery.trim().toLowerCase();const matchedKeys=Object.keys(registeredUsers).filter(username=>username.toLowerCase().includes(query));if(matchedKeys.length===0){container.innerHTML='<div class="search-result-box" style="color:var(--accent-red);font-weight:700;text-align:center">данный игрок не найден или не правильные данные</div>';return;}container.innerHTML=matchedKeys.map(username=>{const u=registeredUsers[username];const allRolesKeys=Object.keys(customRoles);return'<div class="search-result-box" style="margin-bottom:14px;background:rgba(0,0,0,0.45);border:1px solid var(--border-color);border-radius:16px;padding:18px"><div style="font-weight:800;font-size:.95rem;margin-bottom:10px;color:#fff">Пользователь: '+username+'</div><div style="font-size:.85rem;color:var(--text-sub);margin-bottom:12px">Текущая роль: <b>'+u.role+'</b> | Подписка: <b>'+u.sub+'</b> | Статус: <b>'+(u.banned?'ЗАБАНЕН':'Активен')+'</b></div><div class="form-group" style="margin-bottom:12px"><label>Выбрать роль для игрока</label><select id="selectRoleForUser_'+username+'" class="form-select">'+allRolesKeys.map(r=>'<option value="'+r+'" '+(u.role.toLowerCase()===r?'selected':'')+'>'+r.toUpperCase()+'</option>').join('')+'</select></div><div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap"><button class="action-btn green" style="flex:1" onclick="adminSaveUserRole(\''+username+'\')">Сохранить роль</button><button class="action-btn yellow" style="flex:1" onclick="adminResetHWID(\''+username+'\')">Сбросить HWID</button></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="action-btn dark" style="flex:1" onclick="adminGiveSub(\''+username+'\')">Продлить подписку</button><button class="action-btn" style="flex:1;background:var(--accent-red)" onclick="adminPromptBan(\''+username+'\')">'+(u.banned?'Разбанить':'Забанить')+'</button></div></div>';}).join('');}
-function adminSaveUserRole(username){const selectEl=document.getElementById('selectRoleForUser_'+username);if(!selectEl)return;const newRole=selectEl.value;registeredUsers[username].role=newRole;saveDB();if(currentUser&&currentUser.toLowerCase()===username.toLowerCase())updateCabinetUI();showToast('Роль игрока '+username+' изменена на '+newRole.toUpperCase()+'!');searchUserCapabilities();}
-function adminResetHWID(username){showToast('HWID игрока '+username+' успешно сброшен!');}
-function adminGiveSub(username){registeredUsers[username].sub='30д';saveDB();if(currentUser&&currentUser.toLowerCase()===username.toLowerCase())updateCabinetUI();showToast('Игроку '+username+' выдана подписка (30д)!');searchUserCapabilities();}
-function adminPromptBan(username){const u=registeredUsers[username];if(u.banned){u.banned=false;u.banReason='';u.banDuration='';saveDB();if(currentUser&&currentUser.toLowerCase()===username.toLowerCase())updateCabinetUI();showToast('Игрок '+username+' разбанен! Подписка разморожена.');searchUserCapabilities();return;}const duration=prompt('Введите срок бана для игрока '+username+' (например, 7 дней, навсегда):');if(!duration)return;const reason=prompt('Введите причину бана для игрока '+username+':');if(!reason)return;u.banned=true;u.banDuration=duration;u.banReason=reason;saveDB();if(currentUser&&currentUser.toLowerCase()===username.toLowerCase())updateCabinetUI();showToast('Игрок '+username+' заблокирован, подписка заморожена!','error');searchUserCapabilities();}
-function createNewRole(){const roleInput=document.getElementById('newRoleNameInput');const roleName=roleInput.value.trim().toLowerCase();if(!roleName){showToast('Введите название роли!','error');return;}if(customRoles[roleName]){showToast('Такая роль уже существует!','error');return;}customRoles[roleName]={permissions:{canBan:false,canAccessAdmin:false,canEditRoles:false,canViewTickets:true}};saveDB();roleInput.value='';showToast('Роль "'+roleName.toUpperCase()+'" успешно создана!');renderRolesManagement();}
-function renderRolesManagement(){const container=document.getElementById('rolesListContainer');const rolesKeys=Object.keys(customRoles);container.innerHTML=rolesKeys.map(roleKey=>{const p=customRoles[roleKey].permissions;return'<div style="background:rgba(0,0,0,0.35);border:1px solid var(--border-color);border-radius:16px;padding:18px;margin-bottom:14px"><div style="font-size:.95rem;font-weight:800;color:#fff;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center"><span>👑 Роль: '+roleKey.toUpperCase()+'</span>'+(roleKey!=='owner'&&roleKey!=='user'?'<button class="action-btn" style="width:auto;padding:4px 10px;font-size:.7rem;background:var(--accent-red)" onclick="deleteRole(\''+roleKey+'\')">Удалить</button>':'')+'</div><div style="display:flex;flex-direction:column;gap:8px"><label style="font-size:.8rem;color:var(--text-sub);display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" '+(p.canBan?'checked':'')+' onchange="togglePermission(\''+roleKey+'\',\'canBan\',this.checked)"> Право банить пользователей</label><label style="font-size:.8rem;color:var(--text-sub);display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" '+(p.canAccessAdmin?'checked':'')+' onchange="togglePermission(\''+roleKey+'\',\'canAccessAdmin\',this.checked)"> Доступ к генерации ключей владельца</label><label style="font-size:.8rem;color:var(--text-sub);display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" '+(p.canViewTickets?'checked':'')+' onchange="togglePermission(\''+roleKey+'\',\'canViewTickets\',this.checked)"> Просмотр модерации и тикетов</label></div></div>';}).join('');}
-function togglePermission(roleKey,permName,value){if(!customRoles[roleKey])return;customRoles[roleKey].permissions[permName]=value;saveDB();showToast('Права для роли '+roleKey.toUpperCase()+' обновлены!');}
-function deleteRole(roleKey){if(roleKey==='owner'||roleKey==='user'||roleKey==='admin'||roleKey==='moder'){showToast('Нельзя удалить стандартные системные роли!','error');return;}delete customRoles[roleKey];saveDB();showToast('Роль '+roleKey.toUpperCase()+' удалена.');renderRolesManagement();}
-function generateSubKey(){const duration=document.getElementById('genSubDuration').value;const randomKey='APEX-SUB-'+Math.random().toString(36).substring(2,8).toUpperCase();activeKeysDB[randomKey]=duration;saveDB();document.getElementById('generatedKeyOutput').innerHTML='<div class="search-result-box" style="background:rgba(0,230,118,0.05);border-color:var(--accent-green);padding:12px;border-radius:12px;margin-top:8px"><div style="font-size:.7rem;color:var(--accent-green);font-weight:800;margin-bottom:4px">СГЕНЕРИРОВАН КЛЮЧ ПОДПИСКИ ('+duration+'):</div><div style="font-size:.95rem;font-weight:900;color:#fff;letter-spacing:1px">'+randomKey+'</div></div>';showToast('Ключ подписки успешно сгенерирован!');}
-function generateHWIDKey(){const randomKey='APEX-HWID-'+Math.random().toString(36).substring(2,8).toUpperCase();document.getElementById('generatedKeyOutput').innerHTML='<div class="search-result-box" style="background:rgba(255,188,0,0.05);border-color:#ffbc00;padding:12px;border-radius:12px;margin-top:8px"><div style="font-size:.7rem;color:#ffbc00;font-weight:800;margin-bottom:4px">СГЕНЕРИРОВАН КЛЮЧ СБРОСА HWID:</div><div style="font-size:.95rem;font-weight:900;color:#fff;letter-spacing:1px">'+randomKey+'</div></div>';showToast('Ключ сброса HWID успешно сгенерирован!');}
-function generateSpecialKey(){const role=document.getElementById('specialRoleSelect').value;const uses=parseInt(document.getElementById('specialUsesInput').value)||1;const key='APEX-SPECIAL-'+Math.random().toString(36).substring(2,8).toUpperCase();specialKeysDB[key]={role:role,uses:uses,used:0};localStorage.setItem('apex_special_keys',JSON.stringify(specialKeysDB));document.getElementById('generatedKeyOutput').innerHTML='<div style="background:rgba(255,188,0,0.1);border:1px solid #ffbc00;padding:12px;border-radius:12px;margin-top:8px"><div style="font-size:.7rem;color:#ffbc00;font-weight:800;margin-bottom:4px">СПЕЦ КЛЮЧ ('+role.toUpperCase()+', '+uses+' использований):</div><div style="font-size:.95rem;font-weight:900;color:#fff;letter-spacing:1px">'+key+'</div></div>';showToast('Спец ключ сгенерирован!','success');}
-function activateSubKey(){if(!currentUser){showToast('Войдите в аккаунт!','error');return;}if(checkUserBanAction())return;const key=document.getElementById('subKeyInput').value.trim().toUpperCase();if(!key){showToast('Введите ключ подписки!','error');return;}if(!activeKeysDB[key]){showToast('Неверный или уже использованный ключ!','error');return;}const duration=activeKeysDB[key];const lowerUser=currentUser.toLowerCase();if(registeredUsers[lowerUser]){registeredUsers[lowerUser].sub=duration;delete activeKeysDB[key];saveDB();updateCabinetUI();showToast('Ключ успешно активирован! Подписка обновлена на: '+duration,'success');document.getElementById('subKeyInput').value='';}else{showToast('Ошибка аккаунта в базе данных','error');}}
-function activateHWIDKey(){if(checkUserBanAction())return;const key=document.getElementById('hwidKeyInput').value.trim();if(!key){showToast('Введите ключ сброса HWID!','error');return;}showToast('HWID успешно сброшен ключом!','success');document.getElementById('hwidKeyInput').value='';}
-function activateSpecialKey(){if(!currentUser){showToast('Войдите в аккаунт!','error');return;}if(checkUserBanAction())return;const key=document.getElementById('specialKeyInput').value.trim().toUpperCase();if(!key){showToast('Введите спец ключ!','error');return;}if(!specialKeysDB[key]){showToast('Неверный или использованный ключ!','error');return;}const keyData=specialKeysDB[key];if(keyData.used>=keyData.uses){showToast('Ключ использован!','error');return;}const lowerUser=currentUser.toLowerCase();registeredUsers[lowerUser].role=keyData.role;keyData.used++;localStorage.setItem('apex_special_keys',JSON.stringify(specialKeysDB));saveDB();updateCabinetUI();showToast('Роль '+keyData.role.toUpperCase()+' активирована навсегда!','success');document.getElementById('specialKeyInput').value='';}
-function startGoldRush(){const durationInput=document.getElementById('grDuration');const limitInput=document.getElementById('grLimit');const duration=parseInt(durationInput.value)||1;const limit=parseInt(limitInput.value)||3;if(duration<1||limit<1){showToast('Введите корректные значения (мин >=1, кол-во >=1)','error');return;}const gr=lotteryState.goldRush;if(gr.active){showToast('Золотая лихорадка уже активна!','error');return;}gr.active=true;gr.duration=duration;gr.limit=limit;gr.used=0;gr.startTime=Date.now();gr.usedUsers=[];saveDB();showToast('🔥 Золотая лихорадка запущена на '+duration+' мин, '+limit+' человек!','success');updateGoldRushUI();if(gr.timerInterval)clearInterval(gr.timerInterval);gr.timerInterval=setInterval(()=>{updateGoldRushTimer();},1000);updateGoldRushTimer();}
-function updateGoldRushTimer(){const gr=lotteryState.goldRush;if(!gr.active){document.getElementById('goldRushIndicator').classList.add('hidden');return;}const elapsed=(Date.now()-gr.startTime)/1000;const remaining=Math.max(0,gr.duration*60-elapsed);const mins=Math.floor(remaining/60);const secs=Math.floor(remaining%60);document.getElementById('goldRushTimer').innerText=String(mins).padStart(2,'0')+':'+String(secs).padStart(2,'0');document.getElementById('goldRushCount').innerText=gr.used;document.getElementById('grStatusText').innerText=gr.active?'Активна':'Не активна';document.getElementById('grTimeLeft').innerText=gr.active?mins+'м '+secs+'с':'--';document.getElementById('grUsedCount').innerText=gr.used;if(remaining<=0){stopGoldRush();}}
-function stopGoldRush(){const gr=lotteryState.goldRush;gr.active=false;if(gr.timerInterval){clearInterval(gr.timerInterval);gr.timerInterval=null;}saveDB();updateGoldRushUI();showToast('Золотая лихорадка завершена.','success');}
-function updateGoldRushUI(){const gr=lotteryState.goldRush;document.getElementById('grStatusText').innerText=gr.active?'Активна':'Не активна';document.getElementById('grTimeLeft').innerText=gr.active?'--':'--';document.getElementById('grUsedCount').innerText=gr.used;if(gr.active){document.getElementById('goldRushIndicator').classList.remove('hidden');updateGoldRushTimer();}else{document.getElementById('goldRushIndicator').classList.add('hidden');if(gr.timerInterval){clearInterval(gr.timerInterval);gr.timerInterval=null;}}const startBtn=document.getElementById('grStartBtn');startBtn.innerText=gr.active?'Остановить лихорадку':'Начать золотую лихорадку';startBtn.onclick=gr.active?stopGoldRush:startGoldRush;}
-function toggleThemePanel(){document.getElementById('themePanel').classList.toggle('open');}
-function applyTheme(color,el){document.documentElement.style.setProperty('--theme-bg',color);document.body.style.backgroundColor=color;document.querySelectorAll('.theme-preset').forEach(e=>e.classList.remove('active'));if(el)el.classList.add('active');document.getElementById('currentColorHex').innerText=color;document.getElementById('customColorPicker').value=color;localStorage.setItem('apex_theme',color);document.getElementById('themePanel').classList.remove('open');}
-function applyCustomColor(color){applyTheme(color,null);}
-function toggleGlassMode(enabled){if(enabled){document.body.classList.add('glass-effect');localStorage.setItem('apex_glass','true');}else{document.body.classList.remove('glass-effect');localStorage.setItem('apex_glass','false');}}
-(function initRain(){const container=document.getElementById('rainContainer');if(!container)return;for(let i=0;i<50;i++){const drop=document.createElement('div');drop.className='rain-drop';drop.style.left=Math.random()*100+'%';drop.style.animationDelay=Math.random()*2+'s';drop.style.animationDuration=(1.5+Math.random()*1.5)+'s';drop.style.height=(15+Math.random()*25)+'px';container.appendChild(drop);}})();
-(function initParticles(){const canvas=document.getElementById('apex-particles');if(!canvas)return;const ctx=canvas.getContext('2d');let dots=[];function resize(){canvas.width=window.innerWidth*devicePixelRatio;canvas.height=window.innerHeight*devicePixelRatio;canvas.style.width=window.innerWidth+'px';canvas.style.height=window.innerHeight+'px';ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);dots=Array.from({length:Math.min(70,Math.floor(window.innerWidth/18))},()=>({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,vx:(Math.random()-.5)*.22,vy:(Math.random()-.5)*.22,r:Math.random()*1.5+.4,a:Math.random()*.45+.12}));}function draw(){ctx.clearRect(0,0,window.innerWidth,window.innerHeight);for(const d of dots){d.x+=d.vx;d.y+=d.vy;if(d.x<0||d.x>window.innerWidth)d.vx*=-1;if(d.y<0||d.y>window.innerHeight)d.vy*=-1;ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,Math.PI*2);ctx.fillStyle='rgba(255,80,100,'+d.a+')';ctx.fill();}requestAnimationFrame(draw);}window.addEventListener('resize',resize);resize();draw();})();
-(function initCursorGlow(){const glow=document.getElementById('cursorGlow');window.addEventListener('mousemove',e=>{glow.style.left=e.clientX+'px';glow.style.top=e.clientY+'px';});})();
-(function initReveal(){const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.08});document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));})();
-(function initOnlineCounter(){let count=480;const el=document.getElementById('onlineCount');setInterval(()=>{count+=Math.floor(Math.random()*3)+1;el.innerText=count+'+';},5000);})();
-window.addEventListener('DOMContentLoaded',function(){const savedTheme=localStorage.getItem('apex_theme');if(savedTheme){document.documentElement.style.setProperty('--theme-bg',savedTheme);document.body.style.backgroundColor=savedTheme;document.getElementById('currentColorHex').innerText=savedTheme;document.getElementById('customColorPicker').value=savedTheme;document.querySelectorAll('.theme-preset').forEach(el=>{if(el.style.backgroundColor===savedTheme)el.classList.add('active');});}const glassState=localStorage.getItem('apex_glass');if(glassState==='true'){document.body.classList.add('glass-effect');document.getElementById('glassToggle').checked=true;}if(currentUser){if(!registeredUsers[currentUser.toLowerCase()]){logout();}else{updateCabinetUI();}}const gr=lotteryState.goldRush;if(gr.active){const elapsed=(Date.now()-gr.startTime)/1000;if(elapsed>=gr.duration*60){stopGoldRush();}else{updateGoldRushUI();if(gr.timerInterval)clearInterval(gr.timerInterval);gr.timerInterval=setInterval(updateGoldRushTimer,1000);updateGoldRushTimer();}}else{document.getElementById('goldRushIndicator').classList.add('hidden');}});
-window.navigateTo=navigateTo;window.switchAuthTab=switchAuthTab;window.handleLogin=handleLogin;window.handleRegister=handleRegister;window.logout=logout;window.buyTariff=buyTariff;window.buyWithRedirect=buyWithRedirect;window.requestHWIDResetModal=requestHWIDResetModal;window.addNewReview=addNewReview;window.submitTicket=submitTicket;window.approveSub=approveSub;window.approveHWID=approveHWID;window.closeTicket=closeTicket;window.searchUserCapabilities=searchUserCapabilities;window.adminSaveUserRole=adminSaveUserRole;window.adminResetHWID=adminResetHWID;window.adminGiveSub=adminGiveSub;window.adminPromptBan=adminPromptBan;window.createNewRole=createNewRole;window.deleteRole=deleteRole;window.togglePermission=togglePermission;window.generateSubKey=generateSubKey;window.generateHWIDKey=generateHWIDKey;window.generateSpecialKey=generateSpecialKey;window.activateSubKey=activateSubKey;window.activateHWIDKey=activateHWIDKey;window.activateSpecialKey=activateSpecialKey;window.startGoldRush=startGoldRush;window.stopGoldRush=stopGoldRush;window.toggleThemePanel=toggleThemePanel;window.applyTheme=applyTheme;window.applyCustomColor=applyCustomColor;window.toggleGlassMode=toggleGlassMode;window.switchCabinetTab=switchCabinetTab;window.showToast=showToast;
-</script></body></html>
+</style></head>
+<body>
+<div class="rain" id="rainContainer"></div>
+<canvas id="apex-particles"></canvas>
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="bg-glow-1"></div>
+<div class="bg-glow-2"></div>
+<div id="toast-container"></div>
+
+<div class="navbar-container">
+    <nav class="navbar">
+        <div class="nav-left">
+            <div class="nav-brand" onclick="navigateTo('home')">
+                <div class="brand-icon">A</div>
+                <span>ApexClient</span>
+                <span class="pendulum" style="margin-left:8px;font-size:1.2rem">⚡</span>
+            </div>
+            <ul class="nav-links">
+                <li><a class="nav-link active" id="nav-home" onclick="navigateTo('home')">Главная</a></li>
+                <li><a class="nav-link" id="nav-tariffs" onclick="navigateTo('tariffs')">Тарифы</a></li>
+                <li><a class="nav-link" id="nav-lottery" onclick="navigateTo('lottery')">Лотерея</a></li>
+                <li><a class="nav-link" id="nav-reviews" onclick="navigateTo('reviews')">Отзывы</a></li>
+                <li><a class="nav-link" id="nav-help" onclick="navigateTo('help')">Помощь</a></li>
+                <li><a class="nav-link" id="nav-faq" onclick="navigateTo('faq')">FAQ</a></li>
+                <li><a class="nav-link" id="nav-support" onclick="navigateTo('support')">Задать вопрос</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <button class="btn-cabinet" onclick="navigateTo('cabinet')">👤 <span id="navCabinetText">Кабинет</span></button>
+        </div>
+    </nav>
+</div>
+
+<div id="page-home" class="page-section">
+    <div class="hero">
+        <div class="hero-badge">⚡ Fabric 1.21.4 Client Ecosystem <span class="badge-new" style="margin-left:8px">NEW</span></div>
+        <h1>Абсолютное Доминирование <br><span>В Каждом Сражении</span></h1>
+        <p>Передовой игровой клиент с надежным обходом античитов, гибкой настройкой визуальных модулей, кастомными 3D-моделями и абсолютной оптимизацией для максимального FPS.</p>
+        <div class="hero-buttons">
+            <button class="btn-main-action btn-pulse" onclick="navigateTo('tariffs')">Выбрать подписку</button>
+            <button class="btn-secondary-action" onclick="navigateTo('cabinet')">Личный кабинет</button>
+        </div>
+        <div class="hero-pills">
+            <span class="hero-pill">⚡ Fabric 1.21.4</span>
+            <span class="hero-pill">🎯 PvP / Visual</span>
+            <span class="hero-pill">🧩 Модульная система</span>
+            <span class="hero-pill">🚀 FPS Focus</span>
+            <span class="hero-pill">🔐 HWID Protection</span>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-val" id="onlineCount">480+</div>
+            <div class="stat-lbl">Онлайн игроков <span class="badge-hot" style="margin-left:6px">LIVE</span></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-val">1,620+</div>
+            <div class="stat-lbl">Активных подписок</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-val">99.8%</div>
+            <div class="stat-lbl">Обход защиты</div>
+        </div>
+    </div>
+
+    <div class="info-strip reveal">
+        <div class="info-panel">
+            <div class="section-kicker">APEX ECOSYSTEM</div>
+            <h3>Клиент, который ощущается как отдельный продукт</h3>
+            <p>ApexClient собран вокруг удобства: чистый интерфейс, быстрый доступ к модулям, аккуратный визуальный стиль и акцент на плавности игры.</p>
+            <div class="module-cloud">
+                <span class="module-chip">Combat</span>
+                <span class="module-chip">Visuals</span>
+                <span class="module-chip">Movement</span>
+                <span class="module-chip">Render</span>
+                <span class="module-chip">HUD</span>
+                <span class="module-chip">Configs</span>
+            </div>
+        </div>
+        <div class="info-panel">
+            <div class="section-kicker">LIVE STATUS</div>
+            <h3>Готов к следующей игре</h3>
+            <p>Основные разделы сайта теперь собраны в одном интерфейсе: покупки, кабинет, поддержка и информация о клиенте.</p>
+            <div class="mini-metrics">
+                <div class="mini-metric"><b>1.21.4</b><span>Версия</span></div>
+                <div class="mini-metric"><b>Fabric</b><span>Loader</span></div>
+                <div class="mini-metric"><b>24/7</b><span>Доступ</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-title-block">
+        <h2>Превосходные Возможности</h2>
+        <p>Всё необходимое для победы в соревновательном Minecraft</p>
+    </div>
+
+    <div class="features-grid">
+        <div class="feature-card">
+            <span class="feature-icon float-icon">🚀</span>
+            <h3>Максимальная оптимизация</h3>
+            <p>Стабильный высокий фреймрейт без просадок даже в самых жарких PvP-батадиях на серверах с большим онлайном.</p>
+        </div>
+        <div class="feature-card">
+            <span class="feature-icon float-icon" style="animation-delay:.5s">🛡️</span>
+            <h3>Обход античитов нового поколения</h3>
+            <p>Инновационные алгоритмы маскировки памяти и трафика гарантируют полную безопасность вашей учетной записи.</p>
+        </div>
+        <div class="feature-card">
+            <span class="feature-icon float-icon" style="animation-delay:1s">✨</span>
+            <h3>Кастомные визуальные модули</h3>
+            <p>Настраиваемый ClickGUI, индивидуальные хитбоксы, частицы ударов, кастомный туман и система плащей с крыльями.</p>
+        </div>
+    </div>
+
+    <div class="details-showcase">
+        <div class="detail-box">
+            <h3>Интерфейс и Управление HUD</h3>
+            <p>ApexClient разработан с учетом потребностей лучших игроков. Удобное расположение модулей, быстрые бинды и мгновенный доступ к функциям прямо во время игры.</p>
+            <ul class="detail-list">
+                <li>Модульная система ClickGUI в стиле Modern Dark</li>
+                <li>Автоматический свитч предметов (AutoSwap)</li>
+                <li>Продвинутая система подсветки и рендеринга</li>
+            </ul>
+        </div>
+        <div class="detail-box">
+            <h3>Безопасность и Защита HWID</h3>
+            <p>Мы используем надежную привязку оборудования, исключающую несанкционированный доступ к вашему аккаунту и купленному софту.</p>
+            <ul class="detail-list">
+                <li>Мгновенная активация ключей через сайт</li>
+                <li>Удобный сброс HWID в личном кабинете</li>
+                <li>Круглосуточная поддержка пользователей</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="servers-section">
+        <div class="servers-title" style="font-size:1.3rem;font-weight:900;color:#fff;margin-bottom:6px">Поддерживаемые Серверы</div>
+        <div class="servers-subtitle" style="color:var(--text-sub);font-size:.85rem">Полная оптимизация и проверенная стабильность работы</div>
+        <div class="servers-grid">
+            <div class="server-card">FunTime<span>Стабильный обход</span></div>
+            <div class="server-card">HolyWorld<span>Полная совместимость</span></div>
+            <div class="server-card">ReallyWorld<span>Максимальный FPS</span></div>
+        </div>
+    </div>
+</div>Ы
+<div id="page-tariffs" class="page-section hidden">
+    <div class="hero">
+        <div class="section-kicker">PRE-ORDER STORE</div>
+        <h1>Предзаказ <span>ApexClient</span></h1>
+        <p>Выберите срок доступа к ApexClient 1.21.4. Все три варианта оформляются как предзаказ и отображаются в личном кабинете.</p>
+    </div>
+    <div class="purchase-note">💡 <b>Важно:</b> это именно карточки предзаказа. После оформления заявка появится в системе магазина.</div>
+    <div class="tariffs-container">
+        <div>
+            <div class="tariffs-row-title">🚀 Доступ к ApexClient 1.21.4</div>
+            <div class="tariffs-grid">
+                <div class="tariff-card preorder-card reveal">
+                    <div>
+                        <div class="tariff-name">Предзаказ · 1 месяц <span class="badge-new" style="margin-left:6px">NEW</span></div>
+                        <div class="tariff-price">149 <span>₽</span></div>
+                        <ul class="tariff-features">
+                            <li>Доступ на 30 дней</li>
+                            <li>Все основные модули</li>
+                            <li>Обновления</li>
+                        </ul>
+                    </div>
+                    <button class="btn-buy" onclick="buyWithRedirect('Предзаказ — 1 месяц — 149 ₽','https://funpay.com/lots/offer?id=75148408')">Оформить</button>
+                </div>
+                <div class="tariff-card preorder-card popular reveal">
+                    <div class="tariff-badge">ВЫГОДНО</div>
+                    <div>
+                        <div class="tariff-name">Предзаказ · 3 месяца <span class="badge-hot" style="margin-left:6px">HOT</span></div>
+                        <div class="tariff-price">239 <span>₽</span></div>
+                        <ul class="tariff-features">
+                            <li>Доступ на 90 дней</li>
+                            <li>Все основные модули</li>
+                            <li>Обновления</li>
+                        </ul>
+                    </div>
+                    <button class="btn-buy" onclick="buyWithRedirect('Предзаказ — 3 месяца — 239 ₽','https://funpay.com/lots/offer?id=75148529')">Оформить</button>
+                </div>
+                <div class="tariff-card preorder-card reveal">
+                    <div>
+                        <div class="tariff-name">Предзаказ · Навсегда</div>
+                        <div class="tariff-price">449 <span>₽</span></div>
+                        <ul class="tariff-features">
+                            <li>Постоянный доступ</li>
+                            <li>Все основные модули</li>
+                            <li>Обновления</li>
+                        </ul>
+                    </div>
+                    <button class="btn-buy" onclick="buyWithRedirect('Предзаказ — Навсегда — 449 ₽','https://funpay.com/lots/offer?id=75148529')">Оформить</button>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="tariffs-row-title">🛠 Дополнительная услуга</div>
+            <div class="tariffs-grid">
+                <div class="tariff-card reveal">
+                    <div>
+                        <div class="tariff-name">Сброс HWID</div>
+                        <div class="tariff-price">139 <span>₽</span></div>
+                        <ul class="tariff-features">
+                            <li>Заявка через кабинет</li>
+                            <li>Обработка модератором</li>
+                        </ul>
+                    </div>
+                    <button class="action-btn" onclick="buyWithRedirect('Сброс HWID — 139 ₽','https://funpay.com/lots/offer?id=75148630')">Запросить сброс</button>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="tariffs-row-title">🎰 Лотерейные услуги</div>
+            <div class="tariffs-grid">
+                <div class="tariff-card reveal">
+                    <div>
+                        <div class="tariff-name">🎲 Рулетка <span class="badge-hot" style="margin-left:6px">HOT</span></div>
+                        <div class="tariff-price">49 <span>₽</span></div>
+                        <ul class="tariff-features">
+                            <li>Один спин</li>
+                            <li>Шансы: 7д-15%, 30д-2%, 90д-0.5%</li>
+                        </ul>
+                    </div>
+                    <button class="btn-buy" onclick="buyTariff('Рулетка — 49 ₽')">Купить спин</button>
+                </div>
+                <div class="tariff-card reveal">
+                    <div>
+                        <div class="tariff-name">📦 Бокс</div>
+                        <div class="tariff-price">49 <span>₽</span></div>
+                        <ul class="tariff-features">
+                            <li>Открыть кейс</li>
+                            <li>Шансы: 7д-15%, 30д-2%, 90д-0.5%</li>
+                        </ul>
+                    </div>
+                    <button class="btn-buy" onclick="buyTariff('Бокс — 49 ₽')">Открыть кейс</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="page-lottery" class="page-section hidden">
+    <div class="hero">
+        <div class="section-kicker">🎰 Лотерейный центр</div>
+        <h1>Испытай удачу <span>с ApexClient</span></h1>
+        <p>Крути рулетку или открывай кейс — выиграй подписку на 7, 30 или 90 дней!</p>
+    </div>
+    <div class="lottery-grid">
+        <div class="lottery-card">
+            <div class="lottery-header">
+                <h3>🎡 Рулетка</h3>
+                <span class="badge">в разработке</span>
+            </div>
+            <div style="text-align:center;padding:40px 0;color:var(--text-sub)">
+                <div style="font-size:3rem;margin-bottom:16px" class="float-icon">🎰</div>
+                <div style="font-size:1.2rem;font-weight:700">В разработке</div>
+                <div style="font-size:.85rem;color:#6a728b">Функция появится в ближайшее время</div>
+            </div>
+            <button class="lottery-btn btn-pulse" onclick="showToast('В разработке!','error')" style="width:100%">🎲 Крутить</button>
+        </div>
+        <div class="lottery-card">
+            <div class="lottery-header">
+                <h3>📦 Бокс</h3>
+                <span class="badge">в разработке</span>
+            </div>
+            <div style="text-align:center;padding:40px 0;color:var(--text-sub)">
+                <div style="font-size:3rem;margin-bottom:16px" class="float-icon" style="animation-delay:.5s">📦</div>
+                <div style="font-size:1.2rem;font-weight:700">В разработке</div>
+                <div style="font-size:.85rem;color:#6a728b">Функция появится в ближайшее время</div>
+            </div>
+            <button class="lottery-btn btn-pulse" onclick="showToast('В разработке!','error')" style="width:100%">📦 Открыть</button>
+        </div>
+    </div>
+</div>Ы
+<div id="page-reviews" class="page-section hidden">
+    <div class="hero">
+        <h1>Отзывы пользователей</h1>
+        <p>Поделитесь вашим впечатлением или посмотрите мнения других игроков.</p>
+    </div>
+    <div style="max-width:650px;margin:0 auto">
+        <div class="card" style="margin-bottom:30px">
+            <div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Оставить отзыв</div>
+            <div class="form-group"><label>Ваш ник</label><input type="text" id="reviewAuthorInput" class="form-input" placeholder="invisik"></div>
+            <div class="form-group"><label>Оценка (звезды)</label><select id="reviewRatingInput" class="form-select"><option value="5">★★★★★ (5/5)</option><option value="4">★★★★☆ (4/5)</option><option value="3">★★★☆☆ (3/5)</option><option value="2">★★☆☆☆ (2/5)</option><option value="1">★☆☆☆☆ (1/5)</option></select></div>
+            <div class="form-group"><label>Текст отзыва</label><textarea id="reviewTextInput" class="form-textarea" placeholder="Напишите, что вам понравилось..."></textarea></div>
+            <button class="action-btn" onclick="addNewReview()">Опубликовать отзыв</button>
+        </div>
+        <div id="reviewsListContainer">
+            <div class="review-card">
+                <div class="review-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                    <span class="review-author" style="font-weight:800;font-size:.9rem;color:#fff">Sextazyst</span>
+                    <span class="review-stars" style="color:#ffbc00;font-size:.85rem;letter-spacing:2px">★★★★★</span>
+                </div>
+                <p class="review-text" style="font-size:.85rem;color:var(--text-sub);line-height:1.6">Лучший клиент под 1.21.4, функционал пушка, фпс держит стабильно на фантайме!</p>
+            </div>
+            <div class="review-card">
+                <div class="review-header">
+                    <span class="review-author" style="font-weight:800;font-size:.9rem;color:#fff">Veselchak</span>
+                    <span class="review-stars" style="color:#ffbc00;font-size:.85rem;letter-spacing:2px">★★★★★</span>
+                </div>
+                <p class="review-text" style="font-size:.85rem;color:var(--text-sub);line-height:1.6">Очень удобный интерфейс, обход работает отлично. Рекомендую брать тариф навсегда.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="page-help" class="page-section hidden">
+    <div class="hero">
+        <h1>Центр помощи</h1>
+        <p>Часто задаваемые вопросы и руководства.</p>
+    </div>
+    <div style="max-width:650px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
+        <div class="card">
+            <div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Как запустить клиент?</div>
+            <p class="sub-desc" style="font-size:.85rem;color:var(--text-sub);line-height:1.6">Скачайте лоадер в личном кабинете, запустите и войдите под своей учетной записью с активной подпиской.</p>
+        </div>
+        <div class="card">
+            <div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Что делать при смене ПК (HWID ошибка)?</div>
+            <p class="sub-desc" style="font-size:.85rem;color:var(--text-sub);line-height:1.6">Оформите заявку на сброс HWID за 139 рублей или активируйте специальный ключ.</p>
+        </div>
+    </div>
+</div>
+
+<div id="page-faq" class="page-section hidden">
+    <div class="hero">
+        <div class="section-kicker">FAQ</div>
+        <h1>Частые вопросы</h1>
+        <p>Коротко о покупке, версии и кабинете.</p>
+    </div>
+    <div class="faq-grid">
+        <div class="faq-item"><b>Какая версия поддерживается?</b><p>ApexClient ориентирован на Minecraft 1.21.4 Fabric.</p></div>
+        <div class="faq-item"><b>Где появляется предзаказ?</b><p>После оформления заявка сохраняется в разделе «Мои предзаказы».</p></div>
+        <div class="faq-item"><b>Можно ли оформить другой срок?</b><p>Доступны три варианта: 1 месяц, 3 месяца и навсегда.</p></div>
+        <div class="faq-item"><b>Что делать при проблеме с HWID?</b><p>Оформите заявку на сброс HWID в разделе покупок.</p></div>
+    </div>
+</div>
+
+<div id="page-support" class="page-section hidden">
+    <div class="hero">
+        <h1>Техническая поддержка</h1>
+        <p>Возникли проблемы? Создайте тикет, ответы придут в личный кабинет.</p>
+    </div>
+    <div style="max-width:500px;margin:0 auto">
+        <div class="card">
+            <div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Новое обращение</div>
+            <div class="form-group"><label>Тема обращения</label><input type="text" id="ticketSubject" class="form-input" placeholder="Например: Ошибка запуска..."></div>
+            <div class="form-group"><label>Описание проблемы</label><textarea id="ticketMessage" class="form-textarea" placeholder="Опишите детали ошибки..."></textarea></div>
+            <button class="action-btn" onclick="submitTicket()">Отправить вопрос</button>
+        </div>
+    </div>
+</div>
+
+<div id="page-auth" class="page-section hidden">
+    <div class="auth-wrapper" style="display:flex;align-items:center;justify-content:center;min-height:60vh">
+        <div class="auth-card" style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:28px;padding:40px;width:100%;max-width:420px;box-shadow:0 25px 60px rgba(0,0,0,0.7);backdrop-filter:blur(20px)">
+            <div class="auth-title" style="font-size:1.8rem;font-weight:900;text-align:center;margin-bottom:4px">Apex<span style="color:var(--accent-red)">Client</span></div>
+            <div class="auth-subtitle" style="font-size:.8rem;color:var(--text-sub);text-align:center;margin-bottom:24px;font-weight:600">Системный доступ</div>
+            <div class="auth-tabs" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;background:rgba(0,0,0,0.4);padding:5px;border-radius:14px;margin-bottom:24px;border:1px solid var(--border-color)">
+                <button class="auth-tab-btn active" id="tabBtnLogin" onclick="switchAuthTab('login')" style="background:none;border:none;padding:10px;border-radius:10px;font-size:.8rem;font-weight:700;color:var(--text-sub);cursor:pointer;transition:.2s">Вход</button>
+                <button class="auth-tab-btn" id="tabBtnRegister" onclick="switchAuthTab('register')" style="background:none;border:none;padding:10px;border-radius:10px;font-size:.8rem;font-weight:700;color:var(--text-sub);cursor:pointer;transition:.2s">Регистрация</button>
+            </div>
+            <div id="authFormLogin">
+                <div class="form-group"><label>Никнейм</label><input type="text" id="loginUsernameInput" class="form-input" placeholder="Введите ник..."></div>
+                <div class="form-group"><label>Пароль</label><input type="password" id="loginPasswordInput" class="form-input" placeholder="Введите пароль..."></div>
+                <button class="action-btn" onclick="handleLogin()">Войти в систему</button>
+            </div>
+            <div id="authFormRegister" class="hidden">
+                <div class="form-group"><label>Придумайте никнейм</label><input type="text" id="regUsernameInput" class="form-input" placeholder="Ваш ник..."></div>
+                <div class="form-group"><label>Придумайте пароль</label><input type="password" id="regPasswordInput" class="form-input" placeholder="Надежный пароль..."></div>
+                <button class="action-btn green" onclick="handleRegister()">Зарегистрироваться</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="page-cabinet" class="page-section hidden">
+    <div class="dash-container-new">
+        <div class="sidebar-new">
+            <div>
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="avatar-new" id="sidebarAvatarNew">A</div>
+                        <div class="profile-info">
+                            <div class="name" id="sidebarUsernameNew">User</div>
+                            <div class="email" id="sidebarEmailNew">user@apexclient.tech</div>
+                            <div class="role-uid">
+                                <span class="role" id="sidebarRoleNew">USER</span>
+                                <span class="uid" id="sidebarUidNew">UID: --</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="account-block">
+                    <div class="block-title">Аккаунт</div>
+                    <div class="account-item"><span class="label">Подписка</span><span class="value" id="dashSubValue">Нет</span></div>
+                    <div class="account-item"><span class="label">Регистрация</span><span class="value" id="dashRegValue">--</span></div>
+                    <div class="account-item"><span class="label">Доступ</span><span class="value green" id="dashAccessValue">Активен</span></div>
+                    <div class="account-item"><span class="label">UID</span><span class="value" id="dashUidValue">--</span></div>
+                    <div class="progress-bar" style="margin-top:10px"><div class="fill" id="subProgress" style="width:0%"></div></div>
+                </div>
+                <div class="actions-block">
+                    <div class="block-title">Действия</div>
+                    <button class="btn-download-new" onclick="showToast('Загрузка ApexClient.exe...','success')">📥 Скачать ApexClient</button>
+                </div>
+                <ul class="nav-menu-new">
+                    <li class="nav-item-new active" onclick="switchCabinetTab('home',this)">🏠 Главная</li>
+                    <li class="nav-item-new" onclick="switchCabinetTab('orders',this)">📦 Мои предзаказы</li>
+                    <li class="nav-item-new" onclick="switchCabinetTab('tickets',this)">💬 Мои тикеты (<span id="ticketCountBadgeNew">0</span>)</li>
+                    <li class="nav-item-new" onclick="switchCabinetTab('keys',this)">🔑 Активация ключей</li>
+                    <li class="nav-item-new hidden" id="navItemPostNew" onclick="switchCabinetTab('post',this)">📝 Сделать пост</li>
+                    <li class="nav-item-new" onclick="switchCabinetTab('downloads',this)">📥 Загрузки</li>
+                    <li class="nav-item-new hidden" id="navItemModerationNew" onclick="switchCabinetTab('moderation',this)">🛡️ Модерация (<span id="modCountBadgeNew">0</span>)</li>
+                    <li class="nav-item-new hidden" id="navItemCapabilitiesNew" onclick="switchCabinetTab('capabilities',this)">🛠️ Настройка возможностей</li>
+                    <li class="nav-item-new hidden" id="navItemRolesNew" onclick="switchCabinetTab('roles',this)">👑 Управление ролями</li>
+                    <li class="nav-item-new hidden" id="navItemGoldRush" onclick="switchCabinetTab('goldrush',this)">🔥 Золотая лихорадка</li>
+                    <li class="nav-item-new hidden" id="navItemAdminNew" onclick="switchCabinetTab('admin',this)">⚙️ Панель Владельца</li>
+                </ul>
+            </div>
+            <button class="btn-logout-new" onclick="logout()">Выйти</button>
+        </div>
+        <div class="content-new">
+            <div id="cab-home" class="cab-tab-content">
+                <div class="card">
+                    <div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Статус подписки</div>
+                    <div class="sub-title" id="subStatusTextNew" style="color:var(--accent-red);font-size:1.4rem;font-weight:900;margin-bottom:6px">НЕТ АКТИВНОЙ ПОДПИСКИ</div>
+                    <div class="sub-desc" id="subStatusDescNew" style="font-size:.85rem;color:var(--text-sub);line-height:1.6">Приобретите подписку в разделе «Тарифы» или активируйте ключ.</div>
+                </div>
+            </div>
+            <div id="cab-orders" class="cab-tab-content hidden">
+                <div class="card">
+                    <div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">История и Подписки / Заявки</div>
+                    <div id="ordersListContainer"><p class="sub-desc" style="font-size:.85rem;color:var(--text-sub)">У вас пока нет активных подписок.</p></div>
+                </div>
+            </div>
+            <div id="cab-tickets" class="cab-tab-content hidden">
+                <div class="card">
+                    <div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Мои тикеты и ответы поддержки</div>
+                    <div id="userTicketsContainer"><p class="sub-desc" style="font-size:.85rem;color:var(--text-sub)">Вы еще не отправляли вопросы.</p></div>
+                </div>
+            </div>
+            <div id="cab-keys" class="cab-tab-content hidden">
+                <div class="card">
+                    <div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Активация ключа подписки</div>
+                    <div class="form-group" style="margin-bottom:12px"><input type="text" id="subKeyInput" class="form-input" placeholder="Введите ключ подписки (например, APEX-SUB-XXXX)..."></div>
+                    <button class="action-btn green" onclick="activateSubKey()">Активировать подписку</button>
+                </div>
+                <div class="card">
+                    <div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Активация ключа сброса HWID</div>
+                    <div class="form-group" style="margin-bottom:12px"><input type="text" id="hwidKeyInput" class="form-input" placeholder="Введите ключ сброса HWID..."></div>
+                    <button class="action-btn green" onclick="activateHWIDKey()">Сбросить HWID ключом</button>
+                </div>
+                <div class="card">
+                    <div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Активация спец ключа</div>
+                    <div class="form-group" style="margin-bottom:12px"><input type="text" id="specialKeyInput" class="form-input" placeholder="Введите спец ключ (например, APEX-SPECIAL-XXXX)..."></div>
+                    <button class="action-btn yellow" onclick="activateSpecialKey()">Активировать спец ключ</button>
+                </div>
+            </div>
+            <div id="cab-post" class="cab-tab-content hidden">
+                <div class="card">
+                    <div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Создать публикацию</div>
+                    <div class="form-group"><label>Заголовок поста</label><input type="text" class="form-input" placeholder="Заголовок обновления..."></div>
+                    <div class="form-group"><label>Текст сообщения</label><textarea class="form-textarea" placeholder="Содержимое поста..."></textarea></div>
+                    <button class="action-btn" onclick="showToast('Пост успешно опубликован!','success')">Опубликовать</button>
+                </div>
+            </div>
+            <div id="cab-downloads" class="cab-tab-content hidden">
+                <div class="card">
+                    <div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Загрузка лоадера</div>
+                    <p class="sub-desc" style="font-size:.85rem;color:var(--text-sub);margin-bottom:14px">Последняя стабильная сборка клиента под Fabric.</p>
+                    <button class="action-btn green" onclick="showToast('Загрузка ApexClient.exe...','success')">📥 Скачать ApexClient.exe</button>
+                </div>
+            </div>
+            <div id="cab-moderation" class="cab-tab-content hidden">
+                <div class="card">
+                    <div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Запросы на покупку подписок / тарифов</div>
+                    <div id="purchaseRequestsContainer"><p class="sub-desc" style="font-size:.85rem;color:var(--text-sub)">Нет активных запросов.</p></div>
+                </div>
+                <div class="card">
+                    <div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Заявки на сброс HWID (139 ₽)</div>
+                    <div id="hwidRequestsContainer"><p class="sub-desc" style="font-size:.85rem;color:var(--text-sub)">Нет активных заявок.</p></div>
+                </div>
+                <div class="card">
+                    <div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">Тикеты пользователей</div>
+                    <div id="adminTicketsContainer"><p class="sub-desc" style="font-size:.85rem;color:var(--text-sub)">Нет активных вопросов.</p></div>
+                </div>
+            </div>
+            <div id="cab-capabilities" class="cab-tab-content hidden">
+                <div class="card">
+                    <div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">🛠️ Настройка возможностей пользователя (Поиск по нику)</div>
+                    <div class="form-group"><label>Ник пользователя</label><div style="display:flex;gap:8px"><input type="text" id="capSearchInput" class="form-input" placeholder="Введите точный ник или часть ника..."><button class="action-btn" style="width:140px" onclick="searchUserCapabilities()">Найти</button></div></div>
+                    <div id="capSearchResultContainer"></div>
+                </div>
+            </div>
+            <div id="cab-roles" class="cab-tab-content hidden">
+                <div class="card">
+                    <div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">👑 Управление ролями и их возможностями</div>
+                    <p class="sub-desc" style="font-size:.85rem;color:var(--text-sub);margin-bottom:16px">Создавайте кастомные роли и настраивайте доступы.</p>
+                    <div style="display:flex;gap:8px;margin-bottom:16px"><input type="text" id="newRoleNameInput" class="form-input" placeholder="Название новой роли (например: Helper)..."><button class="action-btn green" style="width:180px" onclick="createNewRole()">Создать роль</button></div>
+                    <div id="rolesListContainer"></div>
+                </div>
+            </div>
+            <div id="cab-goldrush" class="cab-tab-content hidden">
+                <div class="card gold-rush-panel" style="background:rgba(232,179,75,0.05);border:1px solid rgba(232,179,75,0.2);border-radius:16px;padding:20px;margin-bottom:16px">
+                    <h4 style="color:#e8b34b;font-weight:800;font-size:1.1rem;margin-bottom:12px">🔥 Золотая лихорадка</h4>
+                    <p style="color:var(--text-sub);font-size:.85rem;margin-bottom:12px">Настройка временного события, в течение которого пользователи могут открыть кейс бесплатно 1 раз.</p>
+                    <div class="gold-rush-controls" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+                        <div class="form-group" style="flex:1;min-width:100px"><label>Длительность (минуты)</label><input type="number" id="grDuration" class="form-input" value="1" min="1" style="width:80px"></div>
+                        <div class="form-group" style="flex:1;min-width:100px"><label>Количество человек</label><input type="number" id="grLimit" class="form-input" value="3" min="1" style="width:80px"></div>
+                        <button class="action-btn" id="grStartBtn" onclick="startGoldRush()">Начать золотую лихорадку</button>
+                    </div>
+                    <div id="grStatus" class="gold-rush-status" style="display:flex;gap:20px;margin-top:12px;font-weight:600;color:var(--text-sub)">
+                        <span>Статус: <span id="grStatusText">Не активна</span></span>
+                        <span>Осталось: <span id="grTimeLeft">--</span></span>
+                        <span>Использовали: <span id="grUsedCount">0</span></span>
+                    </div>
+                </div>
+            </div>
+            <div id="cab-admin" class="cab-tab-content hidden">
+                <div class="card">
+                    <div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">⚙️ Панель Владельца</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+                        <div class="form-group" style="margin-bottom:0"><label>Тип подписки для генерации</label><select id="genSubDuration" class="form-select"><option value="7д">7д</option><option value="30д">30д</option><option value="90д">90д</option><option value="Навсегда">Навсегда</option></select></div>
+                        <div style="display:flex;align-items:flex-end"><button class="action-btn green" onclick="generateSubKey()">Сгенерировать ключ</button></div>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0"><button class="action-btn yellow" onclick="generateHWIDKey()">Сгенерировать ключ сброса HWID</button></div>
+                    <div id="generatedKeyOutput" style="margin-top:12px"></div>
+                </div>
+                <div class="card">
+                    <div class="card-header" style="font-size:.7rem;color:var(--text-sub);font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px">🔑 Генерация спец ключа</div>
+                    <div class="form-group"><label>Роль для спец ключа</label><select id="specialRoleSelect" class="form-select"><option value="moder">Moder</option><option value="admin">Admin</option><option value="owner">Owner</option></select></div>
+                    <div class="form-group"><label>Количество использований</label><input type="number" id="specialUsesInput" class="form-input" value="1" min="1"></div>
+                    <button class="action-btn yellow" onclick="generateSpecialKey()">Сгенерировать спец ключ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer class="apex-footer">
+    <span>© 2026 ApexClient · Minecraft 1.21.4 Fabric</span>
+    <span>Сделано с упором на стиль, удобство и производительность.</span>
+</footer>
+
+<div class="theme-toggle" id="themeToggle" onclick="toggleThemePanel()">🎨</div>
+<div class="theme-panel" id="themePanel">
+    <div class="title">Выбор темы</div>
+    <div class="theme-presets">
+        <div class="theme-preset active" style="background:#040508" onclick="applyTheme('#040508',this)"></div>
+        <div class="theme-preset" style="background:#0a0e1a" onclick="applyTheme('#0a0e1a',this)"></div>
+        <div class="theme-preset" style="background:#1a0a0a" onclick="applyTheme('#1a0a0a',this)"></div>
+        <div class="theme-preset" style="background:#0a1a0a" onclick="applyTheme('#0a1a0a',this)"></div>
+        <div class="theme-preset" style="background:#1a1a0a" onclick="applyTheme('#1a1a0a',this)"></div>
+        <div class="theme-preset" style="background:#1a0a1a" onclick="applyTheme('#1a0a1a',this)"></div>
+    </div>
+    <div class="color-picker-wrap">
+        <input type="color" id="customColorPicker" value="#040508" onchange="applyCustomColor(this.value)">
+        <span class="color-hex" id="currentColorHex">#040508</span>
+    </div>
+    <div class="glass-toggle-wrap">
+        <label for="glassToggle">Обычное</label>
+        <input type="checkbox" id="glassToggle" onchange="toggleGlassMode(this.checked)">
+        <label for="glassToggle">Эффектное</label>
+    </div>
+</div>
+
+<script>
+let currentUser = localStorage.getItem('apex_user') || null;
+if (!localStorage.getItem('apex_db_users_v4')) {
+    localStorage.removeItem('apex_db_users');
+    localStorage.removeItem('apex_roles');
+    localStorage.setItem('apex_db_users_v4', 'true');
+}
+let registeredUsers = JSON.parse(localStorage.getItem('apex_db_users')) || {
+    "invisik": {password:"123",role:"owner",sub:"Навсегда",banned:false,banReason:"",banDuration:"",regDate:"10.08.2026",uid:1,freeSpinUsed:false,freeCaseUsed:false},
+    "sextazyst": {password:"123",role:"user",sub:"Нет",banned:false,banReason:"",banDuration:"",regDate:"12.08.2026",uid:2,freeSpinUsed:false,freeCaseUsed:false},
+    "veselchak": {password:"123",role:"user",sub:"Нет",banned:false,banReason:"",banDuration:"",regDate:"15.08.2026",uid:3,freeSpinUsed:false,freeCaseUsed:false}
+};
+let customRoles = JSON.parse(localStorage.getItem('apex_roles')) || {
+    "owner": {permissions:{canBan:true,canAccessAdmin:true,canEditRoles:true,canViewTickets:true}},
+    "admin": {permissions:{canBan:true,canAccessAdmin:true,canEditRoles:false,canViewTickets:true}},
+    "moder": {permissions:{canBan:false,canAccessAdmin:false,canEditRoles:false,canViewTickets:true}},
+    "user": {permissions:{canBan:false,canAccessAdmin:false,canEditRoles:false,canViewTickets:false}}
+};
+let appRequests = JSON.parse(localStorage.getItem('apex_requests')) || {hwid:[], subs:[], tickets:[]};
+let activeKeysDB = JSON.parse(localStorage.getItem('apex_keys_db')) || {};
+let specialKeysDB = JSON.parse(localStorage.getItem('apex_special_keys')) || {};
+let lotteryState = JSON.parse(localStorage.getItem('apex_lottery_state')) || {
+    goldRush: {active:false, duration:1, limit:3, used:0, startTime:null, timerInterval:null, usedUsers:[]}
+};
+
+function saveDB() {
+    localStorage.setItem('apex_db_users', JSON.stringify(registeredUsers));
+    localStorage.setItem('apex_roles', JSON.stringify(customRoles));
+    localStorage.setItem('apex_requests', JSON.stringify(appRequests));
+    localStorage.setItem('apex_keys_db', JSON.stringify(activeKeysDB));
+    localStorage.setItem('apex_special_keys', JSON.stringify(specialKeysDB));
+    localStorage.setItem('apex_lottery_state', JSON.stringify(lotteryState));
+}
+
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast ' + type;
+    toast.innerHTML = '<span>' + (type === 'success' ? '✅' : '❌') + '</span> ' + message;
+    container.appendChild(toast);
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+function navigateTo(pageId) {
+    if (pageId === 'cabinet' && !currentUser) {
+        pageId = 'auth';
+    }
+    document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
+    const target = document.getElementById('page-' + pageId);
+    if (target) target.classList.remove('hidden');
+    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+    const activeLink = document.getElementById('nav-' + pageId);
+    if (activeLink) activeLink.classList.add('active');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function switchAuthTab(tab) {
+    const btnLogin = document.getElementById('tabBtnLogin');
+    const btnRegister = document.getElementById('tabBtnRegister');
+    const formLogin = document.getElementById('authFormLogin');
+    const formRegister = document.getElementById('authFormRegister');
+    if (tab === 'login') {
+        btnLogin.classList.add('active');
+        btnRegister.classList.remove('active');
+        formLogin.classList.remove('hidden');
+        formRegister.classList.add('hidden');
+    } else {
+        btnRegister.classList.add('active');
+        btnLogin.classList.remove('active');
+        formRegister.classList.remove('hidden');
+        formLogin.classList.add('hidden');
+    }
+}
+
+function handleLogin() {
+    const usernameInput = document.getElementById('loginUsernameInput').value.trim();
+    const password = document.getElementById('loginPasswordInput').value.trim();
+    if (!usernameInput || !password) {
+        showToast('Заполните все поля!', 'error');
+        return;
+    }
+    const lower = usernameInput.toLowerCase();
+    if (!registeredUsers[lower]) {
+        registeredUsers[lower] = {
+            password: password,
+            role: lower === 'invisik' ? 'owner' : 'user',
+            sub: lower === 'invisik' ? 'Навсегда' : 'Нет',
+            banned: false,
+            banReason: '',
+            banDuration: '',
+            regDate: new Date().toLocaleDateString(),
+            uid: Object.keys(registeredUsers).length + 1,
+            freeSpinUsed: false,
+            freeCaseUsed: false
+        };
+        saveDB();
+    }
+    if (String(registeredUsers[lower].password) !== String(password)) {
+        showToast('Неверный никнейм или пароль!', 'error');
+        return;
+    }
+    if (registeredUsers[lower].banned) {
+        showToast('Этот аккаунт заблокирован!', 'error');
+        return;
+    }
+    currentUser = usernameInput;
+    localStorage.setItem('apex_user', currentUser);
+    updateCabinetUI();
+    showToast('Успешный вход как ' + currentUser + '!', 'success');
+    navigateTo('cabinet');
+}
+
+function handleRegister() {
+    const usernameInput = document.getElementById('regUsernameInput').value.trim();
+    const password = document.getElementById('regPasswordInput').value.trim();
+    if (!usernameInput || !password) {
+        showToast('Заполните все поля!', 'error');
+        return;
+    }
+    const lower = usernameInput.toLowerCase();
+    if (registeredUsers[lower]) {
+        showToast('Пользователь уже существует!', 'error');
+        return;
+    }
+    registeredUsers[lower] = {
+        password: password,
+        role: lower === 'invisik' ? 'owner' : 'user',
+        sub: lower === 'invisik' ? 'Навсегда' : 'Нет',
+        banned: false,
+        banReason: '',
+        banDuration: '',
+        regDate: new Date().toLocaleDateString(),
+        uid: Object.keys(registeredUsers).length + 1,
+        freeSpinUsed: false,
+        freeCaseUsed: false
+    };
+    saveDB();
+    currentUser = usernameInput;
+    localStorage.setItem('apex_user', currentUser);
+    updateCabinetUI();
+    showToast('Аккаунт ' + currentUser + ' успешно создан!', 'success');
+    navigateTo('cabinet');
+}
+
+function logout() {
+    localStorage.removeItem('apex_user');
+    currentUser = null;
+    document.getElementById('navCabinetText').innerText = 'Кабинет';
+    navigateTo('home');
+    showToast('Вы вышли из аккаунта', 'success');
+}
+
+function checkUserBanAction() {
+    if (!currentUser) return false;
+    const userData = registeredUsers[currentUser.toLowerCase()];
+    if (userData && userData.banned) {
+        showToast('Ваш аккаунт заблокирован!', 'error');
+        return true;
+    }
+    return false;
+}
+
+function updateCabinetUI() {
+    if (!currentUser) return;
+    const lower = currentUser.toLowerCase();
+    const user = registeredUsers[lower];
+    if (!user) return;
+    document.getElementById('sidebarAvatarNew').innerText = currentUser.charAt(0).toUpperCase();
+    document.getElementById('sidebarUsernameNew').innerText = currentUser;
+    document.getElementById('sidebarEmailNew').innerText = currentUser.toLowerCase() + '@apexclient.tech';
+    document.getElementById('sidebarRoleNew').innerText = (user.role || 'user').toUpperCase();
+    document.getElementById('sidebarUidNew').innerText = 'UID: ' + (user.uid || '--');
+    document.getElementById('navCabinetText').innerText = currentUser;
+    document.getElementById('dashSubValue').innerText = user.sub || 'Нет';
+    document.getElementById('dashRegValue').innerText = user.regDate || '--';
+    document.getElementById('dashAccessValue').innerText = user.banned ? 'Забанен' : 'Активен';
+    document.getElementById('dashAccessValue').className = 'value ' + (user.banned ? 'red' : 'green');
+    document.getElementById('dashUidValue').innerText = user.uid || '--';
+    const progress = document.getElementById('subProgress');
+    if (user.sub && user.sub !== 'Нет' && user.sub !== 'нет') {
+        progress.style.width = '100%';
+        progress.style.background = 'linear-gradient(90deg, var(--accent-green), #00e676)';
+    } else {
+        progress.style.width = '0%';
+        progress.style.background = 'linear-gradient(90deg, var(--accent-red), #ff6b6b)';
+    }
+    const subText = document.getElementById('subStatusTextNew');
+    const subDesc = document.getElementById('subStatusDescNew');
+    if (user.banned) {
+        subText.innerText = 'ЗАБАНЕН (' + user.banReason + ')';
+        subText.style.color = 'var(--accent-red)';
+        subDesc.innerText = 'Учетная запись заблокирована администратором.';
+    } else if (!user.sub || user.sub === 'Нет' || user.sub === 'нет') {
+        subText.innerText = 'НЕТ АКТИВНОЙ ПОДПИСКИ';
+        subText.style.color = 'var(--accent-red)';
+        subDesc.innerText = 'Приобретите подписку в разделе «Тарифы» или активируйте ключ.';
+    } else {
+        subText.innerText = 'ПОДПИСКА АКТИВНА (' + user.sub + ')';
+        subText.style.color = 'var(--accent-green)';
+        subDesc.innerText = 'Доступ к клиенту работает без ограничений.';
+    }
+    const role = (user.role || 'user').toLowerCase();
+    document.getElementById('navItemPostNew').classList.add('hidden');
+    document.getElementById('navItemModerationNew').classList.add('hidden');
+    document.getElementById('navItemCapabilitiesNew').classList.add('hidden');
+    document.getElementById('navItemRolesNew').classList.add('hidden');
+    document.getElementById('navItemGoldRush').classList.add('hidden');
+    document.getElementById('navItemAdminNew').classList.add('hidden');
+    if (role === 'owner' || role === 'admin' || lower === 'invisik') {
+        document.getElementById('navItemPostNew').classList.remove('hidden');
+        document.getElementById('navItemCapabilitiesNew').classList.remove('hidden');
+        document.getElementById('navItemRolesNew').classList.remove('hidden');
+        document.getElementById('navItemGoldRush').classList.remove('hidden');
+    }
+    if (role === 'owner' || role === 'admin' || role === 'moder') {
+        document.getElementById('navItemModerationNew').classList.remove('hidden');
+        document.getElementById('navItemGoldRush').classList.remove('hidden');
+    }
+    if (role === 'owner' || lower === 'invisik') {
+        document.getElementById('navItemAdminNew').classList.remove('hidden');
+    }
+    updateTicketBadge();
+    updateModBadge();
+    renderOrders();
+    renderUserTickets();
+    updateGoldRushUI();
+}
+
+function switchCabinetTab(tabName, element) {
+    document.querySelectorAll('.cab-tab-content').forEach(tab => tab.classList.add('hidden'));
+    const targetTab = document.getElementById('cab-' + tabName);
+    if (targetTab) targetTab.classList.remove('hidden');
+    document.querySelectorAll('.nav-item-new').forEach(item => item.classList.remove('active'));
+    if (element) element.classList.add('active');
+    if (tabName === 'moderation') renderModerationData();
+    if (tabName === 'tickets') renderUserTickets();
+    if (tabName === 'roles') renderRolesManagement();
+    if (tabName === 'goldrush') updateGoldRushUI();
+}
+
+function updateTicketBadge() {
+    if (!currentUser) return;
+    const myTickets = appRequests.tickets.filter(t => t.username.toLowerCase() === currentUser.toLowerCase());
+    document.getElementById('ticketCountBadgeNew').innerText = myTickets.length;
+}
+
+function updateModBadge() {
+    const total = appRequests.hwid.length + appRequests.subs.length + appRequests.tickets.length;
+    document.getElementById('modCountBadgeNew').innerText = total;
+}
+
+function renderOrders() {
+    const container = document.getElementById('ordersListContainer');
+    if (!currentUser) {
+        container.innerHTML = '<p class="sub-desc">Войдите, чтобы видеть заказы.</p>';
+        return;
+    }
+    const userOrders = appRequests.subs.filter(s => s.username.toLowerCase() === currentUser.toLowerCase());
+    if (userOrders.length === 0) {
+        container.innerHTML = '<p class="sub-desc">У вас пока нет активных подписок.</p>';
+        return;
+    }
+    container.innerHTML = userOrders.map(o => '<div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)"><div style="font-weight:800;color:#fff;font-size:.9rem">' + o.tariff + '</div><div style="font-size:.7rem;color:var(--text-sub)">Дата: ' + o.date + '</div></div>').join('');
+}
+
+function renderUserTickets() {
+    const container = document.getElementById('userTicketsContainer');
+    if (!currentUser) {
+        container.innerHTML = '<p class="sub-desc">Войдите, чтобы видеть тикеты.</p>';
+        return;
+    }
+    const myTickets = appRequests.tickets.filter(t => t.username.toLowerCase() === currentUser.toLowerCase());
+    document.getElementById('ticketCountBadgeNew').innerText = myTickets.length;
+    if (myTickets.length === 0) {
+        container.innerHTML = '<p class="sub-desc">Вы еще не отправляли вопросы.</p>';
+        return;
+    }
+    container.innerHTML = myTickets.map(t => '<div style="background:rgba(0,0,0,0.3);padding:14px;border-radius:14px;margin-bottom:10px;border:1px solid var(--border-color)"><div style="font-weight:800;color:#fff;font-size:.9rem;margin-bottom:4px">Тема: ' + t.subject + '</div><div style="font-size:.85rem;color:var(--text-sub);margin-bottom:8px">' + t.message + '</div><div style="font-size:.7rem;color:var(--accent-green);font-weight:700">Статус: ' + t.status + '</div></div>').join('');
+}
+
+function buyTariff(tariffName) {
+    if (!currentUser) {
+        showToast('Сначала войдите в личный кабинет!', 'error');
+        navigateTo('cabinet');
+        return;
+    }
+    if (checkUserBanAction()) return;
+    appRequests.subs.push({username: currentUser, tariff: tariffName, date: new Date().toLocaleDateString()});
+    saveDB();
+    showToast('Заявка на покупку "' + tariffName + '" успешно создана!', 'success');
+}
+
+function buyWithRedirect(tariffName, paymentUrl) {
+    if (!currentUser) {
+        showToast('Сначала войдите в личный кабинет!', 'error');
+        navigateTo('cabinet');
+        return;
+    }
+    if (checkUserBanAction()) return;
+    appRequests.subs.push({username: currentUser, tariff: tariffName, date: new Date().toLocaleDateString(), status: 'Ожидает оплаты'});
+    saveDB();
+    showToast('Заявка создана! Перенаправление на оплату...', 'success');
+    setTimeout(() => {
+        window.open(paymentUrl, '_blank');
+    }, 1500);
+}
+
+function requestHWIDResetModal() {
+    if (!currentUser) {
+        showToast('Сначала войдите в личный кабинет!', 'error');
+        navigateTo('cabinet');
+        return;
+    }
+    if (checkUserBanAction()) return;
+    const reason = prompt('Укажите причину для сброса HWID:');
+    if (!reason) return;
+    appRequests.hwid.push({username: currentUser, hwid: 'HWID-PC-' + Math.floor(Math.random() * 89999 + 10000), reason: reason, date: new Date().toLocaleDateString()});
+    saveDB();
+    showToast('Заявка на сброс HWID отправлена.', 'success');
+}
+
+function addNewReview() {
+    if (checkUserBanAction()) return;
+    const author = document.getElementById('reviewAuthorInput').value.trim();
+    const text = document.getElementById('reviewTextInput').value.trim();
+    const rating = document.getElementById('reviewRatingInput').value;
+    if (!author || !text) {
+        showToast('Заполните все поля!', 'error');
+        return;
+    }
+    const container = document.getElementById('reviewsListContainer');
+    const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+    const card = document.createElement('div');
+    card.className = 'review-card';
+    card.innerHTML = '<div class="review-header"><span class="review-author">' + author + '</span><span class="review-stars">' + stars + '</span></div><p class="review-text">' + text + '</p>';
+    container.prepend(card);
+    document.getElementById('reviewAuthorInput').value = '';
+    document.getElementById('reviewTextInput').value = '';
+    showToast('Отзыв опубликован!', 'success');
+}
+
+function submitTicket() {
+    if (!currentUser) {
+        showToast('Войдите в аккаунт!', 'error');
+        navigateTo('cabinet');
+        return;
+    }
+    if (checkUserBanAction()) return;
+    const subject = document.getElementById('ticketSubject').value.trim();
+    const message = document.getElementById('ticketMessage').value.trim();
+    if (!subject || !message) {
+        showToast('Заполните все поля!', 'error');
+        return;
+    }
+    appRequests.tickets.push({username: currentUser, subject: subject, message: message, status: 'Открыт', date: new Date().toLocaleDateString()});
+    saveDB();
+    showToast('Тикет отправлен!', 'success');
+    document.getElementById('ticketSubject').value = '';
+    document.getElementById('ticketMessage').value = '';
+    updateTicketBadge();
+}
+function renderModerationData() {
+    const subContainer = document.getElementById('purchaseRequestsContainer');
+    const hwidContainer = document.getElementById('hwidRequestsContainer');
+    const ticketContainer = document.getElementById('adminTicketsContainer');
+    updateModBadge();
+    if (appRequests.subs.length === 0) {
+        subContainer.innerHTML = '<p class="sub-desc">Нет активных запросов на покупку.</p>';
+    } else {
+        subContainer.innerHTML = appRequests.subs.map((item, idx) => '<div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)"><div style="font-size:.85rem;font-weight:800;color:#fff">Игрок: ' + item.username + ' | Тариф: ' + item.tariff + '</div><div style="font-size:.7rem;color:var(--text-sub);margin-bottom:8px">Дата: ' + item.date + '</div><button class="action-btn green" style="padding:6px 12px;font-size:.8rem" onclick="approveSub(' + idx + ')">Одобрить подписку</button></div>').join('');
+    }
+    if (appRequests.hwid.length === 0) {
+        hwidContainer.innerHTML = '<p class="sub-desc">Нет активных заявок на сброс HWID.</p>';
+    } else {
+        hwidContainer.innerHTML = appRequests.hwid.map((item, idx) => '<div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)"><div style="font-size:.85rem;font-weight:800;color:#fff">Игрок: ' + item.username + ' | Причина: ' + item.reason + '</div><div style="font-size:.7rem;color:var(--text-sub);margin-bottom:8px">HWID: ' + item.hwid + '</div><button class="action-btn green" style="padding:6px 12px;font-size:.8rem" onclick="approveHWID(' + idx + ')">Сбросить HWID</button></div>').join('');
+    }
+    if (appRequests.tickets.length === 0) {
+        ticketContainer.innerHTML = '<p class="sub-desc">Нет активных вопросов.</p>';
+    } else {
+        ticketContainer.innerHTML = appRequests.tickets.map((item, idx) => '<div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)"><div style="font-size:.85rem;font-weight:800;color:#fff">От: ' + item.username + ' | Тема: ' + item.subject + '</div><div style="font-size:.8rem;color:var(--text-sub);margin:6px 0">' + item.message + '</div><button class="action-btn dark" style="padding:6px 12px;font-size:.8rem" onclick="closeTicket(' + idx + ')">Закрыть тикет</button></div>').join('');
+    }
+}
+
+function approveSub(index) {
+    const req = appRequests.subs[index];
+    const lower = req.username.toLowerCase();
+    if (registeredUsers[lower]) {
+        let term = '30д';
+        if (req.tariff.toLowerCase().includes('7')) term = '7д';
+        else if (req.tariff.toLowerCase().includes('30') || req.tariff.toLowerCase().includes('1 месяц')) term = '30д';
+        else if (req.tariff.toLowerCase().includes('90') || req.tariff.toLowerCase().includes('3 месяца')) term = '90д';
+        else if (req.tariff.toLowerCase().includes('навсегда')) term = 'Навсегда';
+        registeredUsers[lower].sub = term;
+        saveDB();
+        if (currentUser && currentUser.toLowerCase() === lower) updateCabinetUI();
+    }
+    appRequests.subs.splice(index, 1);
+    saveDB();
+    showToast('Подписка успешно одобрена и выдана!');
+    renderModerationData();
+}
+
+function approveHWID(index) {
+    appRequests.hwid.splice(index, 1);
+    saveDB();
+    showToast('HWID успешно сброшен по заявке!');
+    renderModerationData();
+}
+
+function closeTicket(index) {
+    appRequests.tickets.splice(index, 1);
+    saveDB();
+    showToast('Тикет закрыт.');
+    renderModerationData();
+}
+
+function searchUserCapabilities() {
+    const rawQuery = document.getElementById('capSearchInput').value;
+    const container = document.getElementById('capSearchResultContainer');
+    container.innerHTML = '';
+    if (!rawQuery) {
+        container.innerHTML = '<div class="search-result-box" style="color:var(--accent-red);font-weight:700;text-align:center">Введите ник для поиска игрока</div>';
+        return;
+    }
+    const query = rawQuery.trim().toLowerCase();
+    const matchedKeys = Object.keys(registeredUsers).filter(username => username.toLowerCase().includes(query));
+    if (matchedKeys.length === 0) {
+        container.innerHTML = '<div class="search-result-box" style="color:var(--accent-red);font-weight:700;text-align:center">данный игрок не найден или не правильные данные</div>';
+        return;
+    }
+    container.innerHTML = matchedKeys.map(username => {
+        const u = registeredUsers[username];
+        const allRolesKeys = Object.keys(customRoles);
+        return '<div class="search-result-box" style="margin-bottom:14px;background:rgba(0,0,0,0.45);border:1px solid var(--border-color);border-radius:16px;padding:18px"><div style="font-weight:800;font-size:.95rem;margin-bottom:10px;color:#fff">Пользователь: ' + username + '</div><div style="font-size:.85rem;color:var(--text-sub);margin-bottom:12px">Текущая роль: <b>' + u.role + '</b> | Подписка: <b>' + u.sub + '</b> | Статус: <b>' + (u.banned ? 'ЗАБАНЕН' : 'Активен') + '</b></div><div class="form-group" style="margin-bottom:12px"><label>Выбрать роль для игрока</label><select id="selectRoleForUser_' + username + '" class="form-select">' + allRolesKeys.map(r => '<option value="' + r + '" ' + (u.role.toLowerCase() === r ? 'selected' : '') + '>' + r.toUpperCase() + '</option>').join('') + '</select></div><div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap"><button class="action-btn green" style="flex:1" onclick="adminSaveUserRole(\'' + username + '\')">Сохранить роль</button><button class="action-btn yellow" style="flex:1" onclick="adminResetHWID(\'' + username + '\')">Сбросить HWID</button></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="action-btn dark" style="flex:1" onclick="adminGiveSub(\'' + username + '\')">Продлить подписку</button><button class="action-btn" style="flex:1;background:var(--accent-red)" onclick="adminPromptBan(\'' + username + '\')">' + (u.banned ? 'Разбанить' : 'Забанить') + '</button></div></div>';
+    }).join('');
+}
+
+function adminSaveUserRole(username) {
+    const selectEl = document.getElementById('selectRoleForUser_' + username);
+    if (!selectEl) return;
+    const newRole = selectEl.value;
+    registeredUsers[username].role = newRole;
+    saveDB();
+    if (currentUser && currentUser.toLowerCase() === username.toLowerCase()) updateCabinetUI();
+    showToast('Роль игрока ' + username + ' изменена на ' + newRole.toUpperCase() + '!');
+    searchUserCapabilities();
+}
+
+function adminResetHWID(username) {
+    showToast('HWID игрока ' + username + ' успешно сброшен!');
+}
+
+function adminGiveSub(username) {
+    registeredUsers[username].sub = '30д';
+    saveDB();
+    if (currentUser && currentUser.toLowerCase() === username.toLowerCase()) updateCabinetUI();
+    showToast('Игроку ' + username + ' выдана подписка (30д)!');
+    searchUserCapabilities();
+}
+
+function adminPromptBan(username) {
+    const u = registeredUsers[username];
+    if (u.banned) {
+        u.banned = false;
+        u.banReason = '';
+        u.banDuration = '';
+        saveDB();
+        if (currentUser && currentUser.toLowerCase() === username.toLowerCase()) updateCabinetUI();
+        showToast('Игрок ' + username + ' разбанен! Подписка разморожена.');
+        searchUserCapabilities();
+        return;
+    }
+    const duration = prompt('Введите срок бана для игрока ' + username + ' (например, 7 дней, навсегда):');
+    if (!duration) return;
+    const reason = prompt('Введите причину бана для игрока ' + username + ':');
+    if (!reason) return;
+    u.banned = true;
+    u.banDuration = duration;
+    u.banReason = reason;
+    saveDB();
+    if (currentUser && currentUser.toLowerCase() === username.toLowerCase()) updateCabinetUI();
+    showToast('Игрок ' + username + ' заблокирован, подписка заморожена!', 'error');
+    searchUserCapabilities();
+}
+
+function createNewRole() {
+    const roleInput = document.getElementById('newRoleNameInput');
+    const roleName = roleInput.value.trim().toLowerCase();
+    if (!roleName) {
+        showToast('Введите название роли!', 'error');
+        return;
+    }
+    if (customRoles[roleName]) {
+        showToast('Такая роль уже существует!', 'error');
+        return;
+    }
+    customRoles[roleName] = {permissions: {canBan: false, canAccessAdmin: false, canEditRoles: false, canViewTickets: true}};
+    saveDB();
+    roleInput.value = '';
+    showToast('Роль "' + roleName.toUpperCase() + '" успешно создана!');
+    renderRolesManagement();
+}
+
+function renderRolesManagement() {
+    const container = document.getElementById('rolesListContainer');
+    const rolesKeys = Object.keys(customRoles);
+    container.innerHTML = rolesKeys.map(roleKey => {
+        const p = customRoles[roleKey].permissions;
+        return '<div style="background:rgba(0,0,0,0.35);border:1px solid var(--border-color);border-radius:16px;padding:18px;margin-bottom:14px"><div style="font-size:.95rem;font-weight:800;color:#fff;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center"><span>👑 Роль: ' + roleKey.toUpperCase() + '</span>' + (roleKey !== 'owner' && roleKey !== 'user' ? '<button class="action-btn" style="width:auto;padding:4px 10px;font-size:.7rem;background:var(--accent-red)" onclick="deleteRole(\'' + roleKey + '\')">Удалить</button>' : '') + '</div><div style="display:flex;flex-direction:column;gap:8px"><label style="font-size:.8rem;color:var(--text-sub);display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" ' + (p.canBan ? 'checked' : '') + ' onchange="togglePermission(\'' + roleKey + '\',\'canBan\',this.checked)"> Право банить пользователей</label><label style="font-size:.8rem;color:var(--text-sub);display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" ' + (p.canAccessAdmin ? 'checked' : '') + ' onchange="togglePermission(\'' + roleKey + '\',\'canAccessAdmin\',this.checked)"> Доступ к генерации ключей владельца</label><label style="font-size:.8rem;color:var(--text-sub);display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" ' + (p.canViewTickets ? 'checked' : '') + ' onchange="togglePermission(\'' + roleKey + '\',\'canViewTickets\',this.checked)"> Просмотр модерации и тикетов</label></div></div>';
+    }).join('');
+}
+
+function togglePermission(roleKey, permName, value) {
+    if (!customRoles[roleKey]) return;
+    customRoles[roleKey].permissions[permName] = value;
+    saveDB();
+    showToast('Права для роли ' + roleKey.toUpperCase() + ' обновлены!');
+}
+
+function deleteRole(roleKey) {
+    if (roleKey === 'owner' || roleKey === 'user' || roleKey === 'admin' || roleKey === 'moder') {
+        showToast('Нельзя удалить стандартные системные роли!', 'error');
+        return;
+    }
+    delete customRoles[roleKey];
+    saveDB();
+    showToast('Роль ' + roleKey.toUpperCase() + ' удалена.');
+    renderRolesManagement();
+}
+
+function generateSubKey() {
+    const duration = document.getElementById('genSubDuration').value;
+    const randomKey = 'APEX-SUB-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+    activeKeysDB[randomKey] = duration;
+    saveDB();
+    document.getElementById('generatedKeyOutput').innerHTML = '<div class="search-result-box" style="background:rgba(0,230,118,0.05);border-color:var(--accent-green);padding:12px;border-radius:12px;margin-top:8px"><div style="font-size:.7rem;color:var(--accent-green);font-weight:800;margin-bottom:4px">СГЕНЕРИРОВАН КЛЮЧ ПОДПИСКИ (' + duration + '):</div><div style="font-size:.95rem;font-weight:900;color:#fff;letter-spacing:1px">' + randomKey + '</div></div>';
+    showToast('Ключ подписки успешно сгенерирован!');
+}
+
+function generateHWIDKey() {
+    const randomKey = 'APEX-HWID-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+    document.getElementById('generatedKeyOutput').innerHTML = '<div class="search-result-box" style="background:rgba(255,188,0,0.05);border-color:#ffbc00;padding:12px;border-radius:12px;margin-top:8px"><div style="font-size:.7rem;color:#ffbc00;font-weight:800;margin-bottom:4px">СГЕНЕРИРОВАН КЛЮЧ СБРОСА HWID:</div><div style="font-size:.95rem;font-weight:900;color:#fff;letter-spacing:1px">' + randomKey + '</div></div>';
+    showToast('Ключ сброса HWID успешно сгенерирован!');
+}
+
+function generateSpecialKey() {
+    const role = document.getElementById('specialRoleSelect').value;
+    const uses = parseInt(document.getElementById('specialUsesInput').value) || 1;
+    const key = 'APEX-SPECIAL-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+    specialKeysDB[key] = {role: role, uses: uses, used: 0};
+    localStorage.setItem('apex_special_keys', JSON.stringify(specialKeysDB));
+    document.getElementById('generatedKeyOutput').innerHTML = '<div style="background:rgba(255,188,0,0.1);border:1px solid #ffbc00;padding:12px;border-radius:12px;margin-top:8px"><div style="font-size:.7rem;color:#ffbc00;font-weight:800;margin-bottom:4px">СПЕЦ КЛЮЧ (' + role.toUpperCase() + ', ' + uses + ' использований):</div><div style="font-size:.95rem;font-weight:900;color:#fff;letter-spacing:1px">' + key + '</div></div>';
+    showToast('Спец ключ сгенерирован!', 'success');
+}
+
+function activateSubKey() {
+    if (!currentUser) {
+        showToast('Войдите в аккаунт!', 'error');
+        return;
+    }
+    if (checkUserBanAction()) return;
+    const key = document.getElementById('subKeyInput').value.trim().toUpperCase();
+    if (!key) {
+        showToast('Введите ключ подписки!', 'error');
+        return;
+    }
+    if (!activeKeysDB[key]) {
+        showToast('Неверный или уже использованный ключ!', 'error');
+        return;
+    }
+    const duration = activeKeysDB[key];
+    const lowerUser = currentUser.toLowerCase();
+    if (registeredUsers[lowerUser]) {
+        registeredUsers[lowerUser].sub = duration;
+        delete activeKeysDB[key];
+        saveDB();
+        updateCabinetUI();
+        showToast('Ключ успешно активирован! Подписка обновлена на: ' + duration, 'success');
+        document.getElementById('subKeyInput').value = '';
+    } else {
+        showToast('Ошибка аккаунта в базе данных', 'error');
+    }
+}
+
+function activateHWIDKey() {
+    if (checkUserBanAction()) return;
+    const key = document.getElementById('hwidKeyInput').value.trim();
+    if (!key) {
+        showToast('Введите ключ сброса HWID!', 'error');
+        return;
+    }
+    showToast('HWID успешно сброшен ключом!', 'success');
+    document.getElementById('hwidKeyInput').value = '';
+}
+
+function activateSpecialKey() {
+    if (!currentUser) {
+        showToast('Войдите в аккаунт!', 'error');
+        return;
+    }
+    if (checkUserBanAction()) return;
+    const key = document.getElementById('specialKeyInput').value.trim().toUpperCase();
+    if (!key) {
+        showToast('Введите спец ключ!', 'error');
+        return;
+    }
+    if (!specialKeysDB[key]) {
+        showToast('Неверный или использованный ключ!', 'error');
+        return;
+    }
+    const keyData = specialKeysDB[key];
+    if (keyData.used >= keyData.uses) {
+        showToast('Ключ использован!', 'error');
+        return;
+    }
+    const lowerUser = currentUser.toLowerCase();
+    registeredUsers[lowerUser].role = keyData.role;
+    keyData.used++;
+    localStorage.setItem('apex_special_keys', JSON.stringify(specialKeysDB));
+    saveDB();
+    updateCabinetUI();
+    showToast('Роль ' + keyData.role.toUpperCase() + ' активирована навсегда!', 'success');
+    document.getElementById('specialKeyInput').value = '';
+}
+
+function startGoldRush() {
+    const durationInput = document.getElementById('grDuration');
+    const limitInput = document.getElementById('grLimit');
+    const duration = parseInt(durationInput.value) || 1;
+    const limit = parseInt(limitInput.value) || 3;
+    if (duration < 1 || limit < 1) {
+        showToast('Введите корректные значения (мин >=1, кол-во >=1)', 'error');
+        return;
+    }
+    const gr = lotteryState.goldRush;
+    if (gr.active) {
+        showToast('Золотая лихорадка уже активна!', 'error');
+        return;
+    }
+    gr.active = true;
+    gr.duration = duration;
+    gr.limit = limit;
+    gr.used = 0;
+    gr.startTime = Date.now();
+    gr.usedUsers = [];
+    saveDB();
+    showToast('🔥 Золотая лихорадка запущена на ' + duration + ' мин, ' + limit + ' человек!', 'success');
+    updateGoldRushUI();
+    if (gr.timerInterval) clearInterval(gr.timerInterval);
+    gr.timerInterval = setInterval(() => { updateGoldRushTimer(); }, 1000);
+    updateGoldRushTimer();
+}
+
+function updateGoldRushTimer() {
+    const gr = lotteryState.goldRush;
+    if (!gr.active) {
+        document.getElementById('goldRushIndicator').classList.add('hidden');
+        return;
+    }
+    const elapsed = (Date.now() - gr.startTime) / 1000;
+    const remaining = Math.max(0, gr.duration * 60 - elapsed);
+    const mins = Math.floor(remaining / 60);
+    const secs = Math.floor(remaining % 60);
+    document.getElementById('goldRushTimer').innerText = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+    document.getElementById('goldRushCount').innerText = gr.used;
+    document.getElementById('grStatusText').innerText = gr.active ? 'Активна' : 'Не активна';
+    document.getElementById('grTimeLeft').innerText = gr.active ? mins + 'м ' + secs + 'с' : '--';
+    document.getElementById('grUsedCount').innerText = gr.used;
+    if (remaining <= 0) {
+        stopGoldRush();
+    }
+}
+
+function stopGoldRush() {
+    const gr = lotteryState.goldRush;
+    gr.active = false;
+    if (gr.timerInterval) {
+        clearInterval(gr.timerInterval);
+        gr.timerInterval = null;
+    }
+    saveDB();
+    updateGoldRushUI();
+    showToast('Золотая лихорадка завершена.', 'success');
+}
+
+function updateGoldRushUI() {
+    const gr = lotteryState.goldRush;
+    document.getElementById('grStatusText').innerText = gr.active ? 'Активна' : 'Не активна';
+    document.getElementById('grTimeLeft').innerText = gr.active ? '--' : '--';
+    document.getElementById('grUsedCount').innerText = gr.used;
+    if (gr.active) {
+        document.getElementById('goldRushIndicator').classList.remove('hidden');
+        updateGoldRushTimer();
+    } else {
+        document.getElementById('goldRushIndicator').classList.add('hidden');
+        if (gr.timerInterval) {
+            clearInterval(gr.timerInterval);
+            gr.timerInterval = null;
+        }
+    }
+    const startBtn = document.getElementById('grStartBtn');
+    startBtn.innerText = gr.active ? 'Остановить лихорадку' : 'Начать золотую лихорадку';
+    startBtn.onclick = gr.active ? stopGoldRush : startGoldRush;
+}
+
+function toggleThemePanel() {
+    document.getElementById('themePanel').classList.toggle('open');
+}
+
+function applyTheme(color, el) {
+    document.documentElement.style.setProperty('--theme-bg', color);
+    document.body.style.backgroundColor = color;
+    document.querySelectorAll('.theme-preset').forEach(e => e.classList.remove('active'));
+    if (el) el.classList.add('active');
+    document.getElementById('currentColorHex').innerText = color;
+    document.getElementById('customColorPicker').value = color;
+    localStorage.setItem('apex_theme', color);
+    document.getElementById('themePanel').classList.remove('open');
+}
+
+function applyCustomColor(color) {
+    applyTheme(color, null);
+}
+
+function toggleGlassMode(enabled) {
+    if (enabled) {
+        document.body.classList.add('glass-effect');
+        localStorage.setItem('apex_glass', 'true');
+    } else {
+        document.body.classList.remove('glass-effect');
+        localStorage.setItem('apex_glass', 'false');
+    }
+}
+
+(function initRain() {
+    const container = document.getElementById('rainContainer');
+    if (!container) return;
+    for (let i = 0; i < 50; i++) {
+        const drop = document.createElement('div');
+        drop.className = 'rain-drop';
+        drop.style.left = Math.random() * 100 + '%';
+        drop.style.animationDelay = Math.random() * 2 + 's';
+        drop.style.animationDuration = (1.5 + Math.random() * 1.5) + 's';
+        drop.style.height = (15 + Math.random() * 25) + 'px';
+        container.appendChild(drop);
+    }
+})();
+
+(function initParticles() {
+    const canvas = document.getElementById('apex-particles');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let dots = [];
+    function resize() {
+        canvas.width = window.innerWidth * devicePixelRatio;
+        canvas.height = window.innerHeight * devicePixelRatio;
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+        ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+        dots = Array.from({length: Math.min(70, Math.floor(window.innerWidth / 18))}, () => ({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            vx: (Math.random() - 0.5) * 0.22,
+            vy: (Math.random() - 0.5) * 0.22,
+            r: Math.random() * 1.5 + 0.4,
+            a: Math.random() * 0.45 + 0.12
+        }));
+    }
+    function draw() {
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        for (const d of dots) {
+            d.x += d.vx;
+            d.y += d.vy;
+            if (d.x < 0 || d.x > window.innerWidth) d.vx *= -1;
+            if (d.y < 0 || d.y > window.innerHeight) d.vy *= -1;
+            ctx.beginPath();
+            ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,80,100,' + d.a + ')';
+            ctx.fill();
+        }
+        requestAnimationFrame(draw);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+    draw();
+})();
+
+(function initCursorGlow() {
+    const glow = document.getElementById('cursorGlow');
+    window.addEventListener('mousemove', e => {
+        glow.style.left = e.clientX + 'px';
+        glow.style.top = e.clientY + 'px';
+    });
+})();
+
+(function initReveal() {
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) e.target.classList.add('visible');
+        });
+    }, {threshold: 0.08});
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+})();
+
+(function initOnlineCounter() {
+    let count = 480;
+    const el = document.getElementById('onlineCount');
+    setInterval(() => {
+        count += Math.floor(Math.random() * 3) + 1;
+        el.innerText = count + '+';
+    }, 5000);
+})();
+
+window.addEventListener('DOMContentLoaded', function() {
+    const savedTheme = localStorage.getItem('apex_theme');
+    if (savedTheme) {
+        document.documentElement.style.setProperty('--theme-bg', savedTheme);
+        document.body.style.backgroundColor = savedTheme;
+        document.getElementById('currentColorHex').innerText = savedTheme;
+        document.getElementById('customColorPicker').value = savedTheme;
+        document.querySelectorAll('.theme-preset').forEach(el => {
+            if (el.style.backgroundColor === savedTheme) el.classList.add('active');
+        });
+    }
+    const glassState = localStorage.getItem('apex_glass');
+    if (glassState === 'true') {
+        document.body.classList.add('glass-effect');
+        document.getElementById('glassToggle').checked = true;
+    }
+    if (currentUser) {
+        if (!registeredUsers[currentUser.toLowerCase()]) {
+            logout();
+        } else {
+            updateCabinetUI();
+        }
+    }
+    const gr = lotteryState.goldRush;
+    if (gr.active) {
+        const elapsed = (Date.now() - gr.startTime) / 1000;
+        if (elapsed >= gr.duration * 60) {
+            stopGoldRush();
+        } else {
+            updateGoldRushUI();
+            if (gr.timerInterval) clearInterval(gr.timerInterval);
+            gr.timerInterval = setInterval(updateGoldRushTimer, 1000);
+            updateGoldRushTimer();
+        }
+    } else {
+        document.getElementById('goldRushIndicator').classList.add('hidden');
+    }
+});
+
+window.navigateTo = navigateTo;
+window.switchAuthTab = switchAuthTab;
+window.handleLogin = handleLogin;
+window.handleRegister = handleRegister;
+window.logout = logout;
+window.buyTariff = buyTariff;
+window.buyWithRedirect = buyWithRedirect;
+window.requestHWIDResetModal = requestHWIDResetModal;
+window.addNewReview = addNewReview;
+window.submitTicket = submitTicket;
+window.approveSub = approveSub;
+window.approveHWID = approveHWID;
+window.closeTicket = closeTicket;
+window.searchUserCapabilities = searchUserCapabilities;
+window.adminSaveUserRole = adminSaveUserRole;
+window.adminResetHWID = adminResetHWID;
+window.adminGiveSub = adminGiveSub;
+window.adminPromptBan = adminPromptBan;
+window.createNewRole = createNewRole;
+window.deleteRole = deleteRole;
+window.togglePermission = togglePermission;
+window.generateSubKey = generateSubKey;
+window.generateHWIDKey = generateHWIDKey;
+window.generateSpecialKey = generateSpecialKey;
+window.activateSubKey = activateSubKey;
+window.activateHWIDKey = activateHWIDKey;
+window.activateSpecialKey = activateSpecialKey;
+window.startGoldRush = startGoldRush;
+window.stopGoldRush = stopGoldRush;
+window.toggleThemePanel = toggleThemePanel;
+window.applyTheme = applyTheme;
+window.applyCustomColor = applyCustomColor;
+window.toggleGlassMode = toggleGlassMode;
+window.switchCabinetTab = switchCabinetTab;
+window.showToast = showToast;
+</script>
+</body>
+</html>
