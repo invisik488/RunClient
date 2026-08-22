@@ -1646,6 +1646,154 @@ window.applyCustomColor = applyCustomColor;
 window.toggleGlassMode = toggleGlassMode;
 window.switchCabinetTab = switchCabinetTab;
 window.showToast = showToast;
+// ========== ИСПРАВЛЕННАЯ МОДЕРАЦИЯ ==========
+function renderModerationData() {
+    const subContainer = document.getElementById('purchaseRequestsContainer');
+    const hwidContainer = document.getElementById('hwidRequestsContainer');
+    const ticketContainer = document.getElementById('adminTicketsContainer');
+    updateModBadge();
+    
+    if (appRequests.subs.length === 0) {
+        subContainer.innerHTML = '<p class="sub-desc">Нет активных запросов на покупку.</p>';
+    } else {
+        subContainer.innerHTML = appRequests.subs.map((item, idx) => `
+            <div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)">
+                <div style="font-size:.85rem;font-weight:800;color:#fff">👤 ${item.username}</div>
+                <div style="font-size:.85rem;color:#ffbc00">📦 ${item.tariff}</div>
+                <div style="font-size:.7rem;color:var(--text-sub);margin-bottom:8px">📅 ${item.date}</div>
+                <button class="action-btn green" style="padding:6px 12px;font-size:.8rem" onclick="approveSub(${idx})">✅ Одобрить</button>
+                <button class="action-btn" style="padding:6px 12px;font-size:.8rem;background:#666" onclick="declineSub(${idx})">❌ Отказать</button>
+            </div>
+        `).join('');
+    }
+    
+    if (appRequests.hwid.length === 0) {
+        hwidContainer.innerHTML = '<p class="sub-desc">Нет активных заявок на сброс HWID.</p>';
+    } else {
+        hwidContainer.innerHTML = appRequests.hwid.map((item, idx) => `
+            <div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)">
+                <div style="font-size:.85rem;font-weight:800;color:#fff">👤 ${item.username}</div>
+                <div style="font-size:.85rem;color:#ff6b6b">🔑 ${item.reason}</div>
+                <div style="font-size:.7rem;color:var(--text-sub);margin-bottom:8px">🆔 ${item.hwid}</div>
+                <button class="action-btn green" style="padding:6px 12px;font-size:.8rem" onclick="approveHWID(${idx})">✅ Сбросить HWID</button>
+            </div>
+        `).join('');
+    }
+    
+    if (appRequests.tickets.length === 0) {
+        ticketContainer.innerHTML = '<p class="sub-desc">Нет активных вопросов.</p>';
+    } else {
+        ticketContainer.innerHTML = appRequests.tickets.map((item, idx) => `
+            <div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)">
+                <div style="font-size:.85rem;font-weight:800;color:#fff">👤 ${item.username}</div>
+                <div style="font-size:.85rem;color:#38bdf8">📝 ${item.subject}</div>
+                <div style="font-size:.8rem;color:var(--text-sub);margin:6px 0">${item.message}</div>
+                <button class="action-btn dark" style="padding:6px 12px;font-size:.8rem" onclick="closeTicket(${idx})">❌ Закрыть</button>
+            </div>
+        `).join('');
+    }
+}
+
+function approveSub(index) {
+    const req = appRequests.subs[index];
+    if (!req) {
+        showToast('❌ Ошибка: заявка не найдена!', 'error');
+        return;
+    }
+    const lower = req.username.toLowerCase();
+    if (registeredUsers[lower]) {
+        let term = '30д';
+        if (req.tariff.toLowerCase().includes('7')) term = '7д';
+        else if (req.tariff.toLowerCase().includes('30') || req.tariff.toLowerCase().includes('1 месяц')) term = '30д';
+        else if (req.tariff.toLowerCase().includes('90') || req.tariff.toLowerCase().includes('3 месяца')) term = '90д';
+        else if (req.tariff.toLowerCase().includes('навсегда')) term = 'Навсегда';
+        registeredUsers[lower].sub = term;
+        saveDB();
+        if (currentUser && currentUser.toLowerCase() === lower) updateCabinetUI();
+    }
+    appRequests.subs.splice(index, 1);
+    saveDB();
+    showToast('✅ Подписка ' + term + ' выдана ' + req.username + '!', 'success');
+    renderModerationData();
+    updateModBadge();
+}
+
+function declineSub(index) {
+    const req = appRequests.subs[index];
+    if (!req) {
+        showToast('❌ Ошибка: заявка не найдена!', 'error');
+        return;
+    }
+    appRequests.subs.splice(index, 1);
+    saveDB();
+    showToast('❌ Заявка ' + req.username + ' отклонена.', 'error');
+    renderModerationData();
+    updateModBadge();
+}
+
+function approveHWID(index) {
+    const req = appRequests.hwid[index];
+    if (!req) {
+        showToast('❌ Ошибка: заявка не найдена!', 'error');
+        return;
+    }
+    appRequests.hwid.splice(index, 1);
+    saveDB();
+    showToast('✅ HWID ' + req.username + ' сброшен!', 'success');
+    renderModerationData();
+    updateModBadge();
+}
+
+function closeTicket(index) {
+    const req = appRequests.tickets[index];
+    if (!req) {
+        showToast('❌ Ошибка: тикет не найден!', 'error');
+        return;
+    }
+    appRequests.tickets.splice(index, 1);
+    saveDB();
+    showToast('✅ Тикет ' + req.username + ' закрыт.', 'success');
+    renderModerationData();
+    updateModBadge();
+}
+
+// ========== ИСПРАВЛЕННАЯ НАВИГАЦИЯ (БЕЗ ДЕРГАНЬЯ) ==========
+const originalNavigateTo = navigateTo;
+navigateTo = function(pageId) {
+    if (pageId === 'cabinet' && !currentUser) {
+        pageId = 'auth';
+    }
+    document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
+    const target = document.getElementById('page-' + pageId);
+    if (target) target.classList.remove('hidden');
+    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+    const activeLink = document.getElementById('nav-' + pageId);
+    if (activeLink) activeLink.classList.add('active');
+    // Плавная прокрутка без рывков
+    window.scrollTo({top: 0, behavior: 'smooth'});
+};
+
+// ========== ВОССТАНОВЛЕНИЕ СВЕЧЕНИЯ ЗА МЫШКОЙ ==========
+(function initCursorGlowFixed() {
+    const glow = document.getElementById('cursorGlow');
+    if (!glow) return;
+    let isMoving = false;
+    let timeout;
+    window.addEventListener('mousemove', function(e) {
+        glow.style.left = e.clientX + 'px';
+        glow.style.top = e.clientY + 'px';
+        glow.style.opacity = '1';
+        isMoving = true;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            glow.style.opacity = '0.3';
+        }, 3000);
+    });
+    // Показываем при входе на страницу
+    glow.style.opacity = '0.7';
+})();
+
+console.log('✅ Все исправления применены!');
 </script>
 </body>
 </html>
