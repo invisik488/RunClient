@@ -2349,6 +2349,101 @@ console.log('✅ ВСЕ ИСПРАВЛЕНИЯ ПРИМЕНЕНЫ! Кнопка 
     glow.style.opacity = '0.6';
     console.log('✅ Адаптивное свечение за мышкой установлено!');
 })();
+// ============================================================
+// ИСПРАВЛЕННАЯ АВТОРИЗАЦИЯ (РАБОТАЕТ!)
+// ============================================================
+function handleLogin() {
+    const usernameInput = document.getElementById('loginUsernameInput').value.trim();
+    const password = document.getElementById('loginPasswordInput').value.trim();
+    
+    if (!usernameInput || !password) {
+        showToast('Заполните все поля!', 'error');
+        return;
+    }
+    
+    const lower = usernameInput.toLowerCase();
+    
+    // Проверяем, есть ли пользователь
+    if (!registeredUsers[lower]) {
+        showToast('❌ Пользователь не найден! Зарегистрируйтесь.', 'error');
+        return;
+    }
+    
+    // Проверяем пароль
+    if (String(registeredUsers[lower].password) !== String(password)) {
+        showToast('❌ Неверный пароль! Попробуйте снова.', 'error');
+        return;
+    }
+    
+    // Проверяем бан
+    if (registeredUsers[lower].banned) {
+        showToast('❌ Этот аккаунт заблокирован!', 'error');
+        return;
+    }
+    
+    // Всё ок — вход
+    currentUser = usernameInput;
+    localStorage.setItem('apex_user', currentUser);
+    updateCabinetUI();
+    showToast('✅ Успешный вход как ' + currentUser + '!', 'success');
+    navigateTo('cabinet');
+}
+
+function handleRegister() {
+    const usernameInput = document.getElementById('regUsernameInput').value.trim();
+    const password = document.getElementById('regPasswordInput').value.trim();
+    
+    if (!usernameInput || !password) {
+        showToast('Заполните все поля!', 'error');
+        return;
+    }
+    
+    if (usernameInput.length < 3) {
+        showToast('❌ Ник должен быть минимум 3 символа!', 'error');
+        return;
+    }
+    
+    if (password.length < 3) {
+        showToast('❌ Пароль должен быть минимум 3 символа!', 'error');
+        return;
+    }
+    
+    const lower = usernameInput.toLowerCase();
+    
+    // Проверяем, существует ли уже пользователь
+    if (registeredUsers[lower]) {
+        showToast('❌ Пользователь с таким ником уже существует!', 'error');
+        return;
+    }
+    
+    // Создаём нового пользователя
+    registeredUsers[lower] = {
+        password: password,
+        role: lower === 'invisik' ? 'owner' : 'user',
+        sub: lower === 'invisik' ? 'Навсегда' : 'Нет',
+        banned: false,
+        banReason: '',
+        banDuration: '',
+        regDate: new Date().toLocaleDateString(),
+        uid: Object.keys(registeredUsers).length + 1,
+        freeSpinUsed: false,
+        freeCaseUsed: false
+    };
+    saveDB();
+    
+    // Автоматический вход после регистрации
+    currentUser = usernameInput;
+    localStorage.setItem('apex_user', currentUser);
+    updateCabinetUI();
+    showToast('✅ Аккаунт ' + currentUser + ' успешно создан!', 'success');
+    navigateTo('cabinet');
+}
+
+// Переопределяем функции в глобальном объекте
+window.handleLogin = handleLogin;
+window.handleRegister = handleRegister;
+
+console.log('✅ АВТОРИЗАЦИЯ ИСПРАВЛЕНА!');
 </script>
 </body>
 </html>
