@@ -2650,6 +2650,212 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 console.log('🔥 ТЕПЕРЬ ЛЮБОЙ ПОЛЬЗОВАТЕЛЬ МОЖЕТ ЗАРЕГИСТРИРОВАТЬСЯ И ВОЙТИ!');
+// ============================================================
+// ПОЛНАЯ ПЕРЕЗАПИСЬ АВТОРИЗАЦИИ + БАЗА ДАННЫХ (РАБОТАЕТ!)
+// ============================================================
+
+// 1. ПРОВЕРЯЕМ БАЗУ ПРИ ЗАГРУЗКЕ
+(function initDatabase() {
+    // Если база пустая или нет пользователей — создаём
+    if (!localStorage.getItem('apex_db_users')) {
+        let defaultUsers = {
+            "invisik": {
+                password: "123",
+                role: "owner",
+                sub: "Навсегда",
+                banned: false,
+                banReason: "",
+                banDuration: "",
+                regDate: new Date().toLocaleDateString(),
+                uid: 1,
+                freeSpinUsed: false,
+                freeCaseUsed: false
+            }
+        };
+        localStorage.setItem('apex_db_users', JSON.stringify(defaultUsers));
+    }
+    
+    // Загружаем актуальную базу
+    registeredUsers = JSON.parse(localStorage.getItem('apex_db_users'));
+    console.log('📋 Текущая база пользователей:', Object.keys(registeredUsers));
+})();
+
+// 2. ПЕРЕЗАПИСЬ ФУНКЦИЙ ВХОДА/РЕГИСТРАЦИИ
+window.handleLogin = function() {
+    const usernameInput = document.getElementById('loginUsernameInput').value.trim();
+    const password = document.getElementById('loginPasswordInput').value.trim();
+    
+    if (!usernameInput || !password) {
+        showToast('❌ Заполните все поля!', 'error');
+        return;
+    }
+    
+    const lower = usernameInput.toLowerCase();
+    
+    // Обновляем базу из localStorage
+    registeredUsers = JSON.parse(localStorage.getItem('apex_db_users'));
+    
+    if (!registeredUsers[lower]) {
+        showToast('❌ Пользователь "' + usernameInput + '" не найден! Зарегистрируйтесь.', 'error');
+        return;
+    }
+    
+    if (String(registeredUsers[lower].password) !== String(password)) {
+        showToast('❌ Неверный пароль!', 'error');
+        return;
+    }
+    
+    if (registeredUsers[lower].banned) {
+        showToast('❌ Аккаунт заблокирован!', 'error');
+        return;
+    }
+    
+    currentUser = usernameInput;
+    localStorage.setItem('apex_user', currentUser);
+    updateCabinetUI();
+    showToast('✅ Добро пожаловать, ' + currentUser + '!', 'success');
+    navigateTo('cabinet');
+};
+
+window.handleRegister = function() {
+    const usernameInput = document.getElementById('regUsernameInput').value.trim();
+    const password = document.getElementById('regPasswordInput').value.trim();
+    
+    if (!usernameInput || !password) {
+        showToast('❌ Заполните все поля!', 'error');
+        return;
+    }
+    
+    if (usernameInput.length < 3) {
+        showToast('❌ Ник должен быть минимум 3 символа!', 'error');
+        return;
+    }
+    
+    if (password.length < 3) {
+        showToast('❌ Пароль должен быть минимум 3 символа!', 'error');
+        return;
+    }
+    
+    const lower = usernameInput.toLowerCase();
+    
+    // Обновляем базу из localStorage
+    registeredUsers = JSON.parse(localStorage.getItem('apex_db_users'));
+    
+    if (registeredUsers[lower]) {
+        showToast('❌ Пользователь "' + usernameInput + '" уже существует!', 'error');
+        return;
+    }
+    
+    // СОЗДАЁМ НОВОГО ПОЛЬЗОВАТЕЛЯ
+    const newUser = {
+        password: password,
+        role: 'user',
+        sub: 'Нет',
+        banned: false,
+        banReason: '',
+        banDuration: '',
+        regDate: new Date().toLocaleDateString(),
+        uid: Object.keys(registeredUsers).length + 1,
+        freeSpinUsed: false,
+        freeCaseUsed: false
+    };
+    
+    registeredUsers[lower] = newUser;
+    localStorage.setItem('apex_db_users', JSON.stringify(registeredUsers));
+    
+    // ОБНОВЛЯЕМ ГЛОБАЛЬНУЮ ПЕРЕМЕННУЮ
+    registeredUsers = JSON.parse(localStorage.getItem('apex_db_users'));
+    
+    currentUser = usernameInput;
+    localStorage.setItem('apex_user', currentUser);
+    updateCabinetUI();
+    showToast('✅ Аккаунт ' + currentUser + ' создан!', 'success');
+    navigateTo('cabinet');
+};
+
+// 3. ИСПРАВЛЕННЫЕ СПЕЦ-КЛЮЧИ
+window.generateSpecialKey = function() {
+    const role = document.getElementById('specialRoleSelect').value;
+    const uses = parseInt(document.getElementById('specialUsesInput').value) || 1;
+    const key = 'APEX-SPECIAL-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+    
+    // Загружаем существующие ключи
+    let specialKeys = JSON.parse(localStorage.getItem('apex_special_keys')) || {};
+    
+    specialKeys[key] = {
+        role: role,
+        uses: uses,
+        used: 0
+    };
+    
+    localStorage.setItem('apex_special_keys', JSON.stringify(specialKeys));
+    specialKeysDB = specialKeys;
+    
+    document.getElementById('generatedKeyOutput').innerHTML = `
+        <div style="background:rgba(255,188,0,0.1);border:1px solid #ffbc00;padding:12px;border-radius:12px;margin-top:8px">
+            <div style="font-size:.7rem;color:#ffbc00;font-weight:800;margin-bottom:4px">СПЕЦ КЛЮЧ (${role.toUpperCase()}, ${uses} использований):</div>
+            <div style="font-size:.95rem;font-weight:900;color:#fff;letter-spacing:1px">${key}</div>
+        </div>
+    `;
+    showToast('✅ Спец ключ сгенерирован!', 'success');
+};
+
+window.activateSpecialKey = function() {
+    if (!currentUser) {
+        showToast('❌ Войдите в аккаунт!', 'error');
+        return;
+    }
+    if (checkUserBanAction()) return;
+    
+    const key = document.getElementById('specialKeyInput').value.trim().toUpperCase();
+    if (!key) {
+        showToast('❌ Введите спец ключ!', 'error');
+        return;
+    }
+    
+    // Загружаем актуальные ключи
+    let specialKeys = JSON.parse(localStorage.getItem('apex_special_keys')) || {};
+    specialKeysDB = specialKeys;
+    
+    if (!specialKeys[key]) {
+        showToast('❌ Неверный или использованный ключ!', 'error');
+        return;
+    }
+    
+    const keyData = specialKeys[key];
+    if (keyData.used >= keyData.uses) {
+        showToast('❌ Ключ использован!', 'error');
+        return;
+    }
+    
+    // Обновляем базу пользователей
+    registeredUsers = JSON.parse(localStorage.getItem('apex_db_users'));
+    const lowerUser = currentUser.toLowerCase();
+    
+    if (!registeredUsers[lowerUser]) {
+        showToast('❌ Ошибка: пользователь не найден!', 'error');
+        return;
+    }
+    
+    // Выдаём роль
+    registeredUsers[lowerUser].role = keyData.role;
+    localStorage.setItem('apex_db_users', JSON.stringify(registeredUsers));
+    registeredUsers = JSON.parse(localStorage.getItem('apex_db_users'));
+    
+    // Обновляем использованный ключ
+    keyData.used++;
+    specialKeys[key] = keyData;
+    localStorage.setItem('apex_special_keys', JSON.stringify(specialKeys));
+    specialKeysDB = specialKeys;
+    
+    updateCabinetUI();
+    showToast('✅ Роль ' + keyData.role.toUpperCase() + ' активирована навсегда!', 'success');
+    document.getElementById('specialKeyInput').value = '';
+};
+
+console.log('✅ ВСЯ СИСТЕМА ПЕРЕЗАПИСАНА!');
+console.log('📋 Теперь регистрация работает правильно!');
+console.log('🔑 Спец-ключи тоже починены!');
 </script>
 </body>
 </html>
