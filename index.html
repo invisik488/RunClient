@@ -1794,6 +1794,114 @@ navigateTo = function(pageId) {
 })();
 
 console.log('✅ Все исправления применены!');
+// ============================================================
+// ПОЛНАЯ ПЕРЕЗАПИСЬ ФУНКЦИЙ МОДЕРАЦИИ
+// ============================================================
+function renderModerationData() {
+    const subContainer = document.getElementById('purchaseRequestsContainer');
+    const hwidContainer = document.getElementById('hwidRequestsContainer');
+    const ticketContainer = document.getElementById('adminTicketsContainer');
+    updateModBadge();
+    subContainer.innerHTML = appRequests.subs.length === 0 ? '<p class="sub-desc">✅ Нет активных запросов.</p>' : appRequests.subs.map((item, idx) => `
+        <div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)">
+            <div style="font-size:.85rem;font-weight:800;color:#fff">👤 ${item.username}</div>
+            <div style="font-size:.85rem;color:#ffbc00">📦 ${item.tariff}</div>
+            <div style="font-size:.7rem;color:var(--text-sub);margin-bottom:8px">📅 ${item.date}</div>
+            <button class="action-btn green" style="padding:6px 12px;font-size:.8rem;margin-right:6px" onclick="approveSub(${idx})">✅ Одобрить</button>
+            <button class="action-btn" style="padding:6px 12px;font-size:.8rem;background:#666" onclick="declineSub(${idx})">❌ Отказать</button>
+        </div>
+    `).join('');
+    hwidContainer.innerHTML = appRequests.hwid.length === 0 ? '<p class="sub-desc">✅ Нет активных заявок HWID.</p>' : appRequests.hwid.map((item, idx) => `
+        <div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)">
+            <div style="font-size:.85rem;font-weight:800;color:#fff">👤 ${item.username}</div>
+            <div style="font-size:.85rem;color:#ff6b6b">🔑 ${item.reason}</div>
+            <div style="font-size:.7rem;color:var(--text-sub);margin-bottom:8px">🆔 ${item.hwid}</div>
+            <button class="action-btn green" style="padding:6px 12px;font-size:.8rem" onclick="approveHWID(${idx})">✅ Сбросить HWID</button>
+        </div>
+    `).join('');
+    ticketContainer.innerHTML = appRequests.tickets.length === 0 ? '<p class="sub-desc">✅ Нет активных тикетов.</p>' : appRequests.tickets.map((item, idx) => `
+        <div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)">
+            <div style="font-size:.85rem;font-weight:800;color:#fff">👤 ${item.username}</div>
+            <div style="font-size:.85rem;color:#38bdf8">📝 ${item.subject}</div>
+            <div style="font-size:.8rem;color:var(--text-sub);margin:6px 0">${item.message}</div>
+            <button class="action-btn dark" style="padding:6px 12px;font-size:.8rem" onclick="closeTicket(${idx})">❌ Закрыть</button>
+        </div>
+    `).join('');
+}
+
+function approveSub(index) {
+    const req = appRequests.subs[index];
+    if (!req) { showToast('❌ Заявка не найдена!', 'error'); return; }
+    let term = '30д';
+    if (req.tariff.toLowerCase().includes('7')) term = '7д';
+    else if (req.tariff.toLowerCase().includes('30') || req.tariff.toLowerCase().includes('1 месяц')) term = '30д';
+    else if (req.tariff.toLowerCase().includes('90') || req.tariff.toLowerCase().includes('3 месяца')) term = '90д';
+    else if (req.tariff.toLowerCase().includes('навсегда')) term = 'Навсегда';
+    const lower = req.username.toLowerCase();
+    if (registeredUsers[lower]) {
+        registeredUsers[lower].sub = term;
+        saveDB();
+        if (currentUser && currentUser.toLowerCase() === lower) updateCabinetUI();
+        showToast('✅ ' + req.username + ' получил подписку ' + term + '!', 'success');
+    } else {
+        showToast('❌ Игрок ' + req.username + ' не найден!', 'error');
+    }
+    appRequests.subs.splice(index, 1);
+    saveDB();
+    renderModerationData();
+    updateModBadge();
+}
+
+function declineSub(index) {
+    const req = appRequests.subs[index];
+    if (!req) { showToast('❌ Заявка не найдена!', 'error'); return; }
+    appRequests.subs.splice(index, 1);
+    saveDB();
+    showToast('❌ Заявка ' + req.username + ' отклонена.', 'error');
+    renderModerationData();
+    updateModBadge();
+}
+
+function approveHWID(index) {
+    const req = appRequests.hwid[index];
+    if (!req) { showToast('❌ Заявка не найдена!', 'error'); return; }
+    appRequests.hwid.splice(index, 1);
+    saveDB();
+    showToast('✅ HWID ' + req.username + ' сброшен!', 'success');
+    renderModerationData();
+    updateModBadge();
+}
+
+function closeTicket(index) {
+    const req = appRequests.tickets[index];
+    if (!req) { showToast('❌ Тикет не найден!', 'error'); return; }
+    appRequests.tickets.splice(index, 1);
+    saveDB();
+    showToast('✅ Тикет ' + req.username + ' закрыт.', 'success');
+    renderModerationData();
+    updateModBadge();
+}
+
+// ============================================================
+// ВОССТАНОВЛЕНИЕ СВЕЧЕНИЯ ЗА МЫШКОЙ
+// ============================================================
+(function initCursorGlowFixed() {
+    let glow = document.getElementById('cursorGlow');
+    if (!glow) {
+        glow = document.createElement('div');
+        glow.className = 'cursor-glow';
+        glow.id = 'cursorGlow';
+        document.body.appendChild(glow);
+    }
+    document.addEventListener('mousemove', function(e) {
+        glow.style.left = e.clientX + 'px';
+        glow.style.top = e.clientY + 'px';
+        glow.style.opacity = '1';
+    });
+    glow.style.opacity = '0.6';
+})();
+
+console.log('✅ Все исправления применены!');
 </script>
 </body>
 </html>
