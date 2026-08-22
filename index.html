@@ -2444,6 +2444,212 @@ window.handleLogin = handleLogin;
 window.handleRegister = handleRegister;
 
 console.log('✅ АВТОРИЗАЦИЯ ИСПРАВЛЕНА!');
+// ============================================================
+// ПОЛНАЯ ПЕРЕЗАПИСЬ АВТОРИЗАЦИИ (ФИНАЛ)
+// ============================================================
+// 1. Очищаем старые функции
+window.handleLogin = null;
+window.handleRegister = null;
+
+// 2. Записываем новые
+window.handleLogin = function() {
+    const usernameInput = document.getElementById('loginUsernameInput').value.trim();
+    const password = document.getElementById('loginPasswordInput').value.trim();
+    
+    if (!usernameInput || !password) {
+        showToast('❌ Заполните все поля!', 'error');
+        return;
+    }
+    
+    const lower = usernameInput.toLowerCase();
+    
+    // ПРОВЕРКА: выводим в консоль что ищем
+    console.log('🔍 Ищем пользователя:', lower);
+    console.log('📋 Все пользователи:', Object.keys(registeredUsers));
+    
+    if (!registeredUsers[lower]) {
+        showToast('❌ Пользователь "' + usernameInput + '" не найден! Зарегистрируйтесь.', 'error');
+        return;
+    }
+    
+    // ПРОВЕРКА: выводим пароль из базы
+    console.log('🔑 Пароль в базе:', registeredUsers[lower].password);
+    console.log('🔑 Введённый пароль:', password);
+    
+    if (String(registeredUsers[lower].password) !== String(password)) {
+        showToast('❌ Неверный пароль! Попробуйте снова.', 'error');
+        return;
+    }
+    
+    if (registeredUsers[lower].banned) {
+        showToast('❌ Этот аккаунт заблокирован!', 'error');
+        return;
+    }
+    
+    currentUser = usernameInput;
+    localStorage.setItem('apex_user', currentUser);
+    updateCabinetUI();
+    showToast('✅ Успешный вход как ' + currentUser + '!', 'success');
+    navigateTo('cabinet');
+};
+
+window.handleRegister = function() {
+    const usernameInput = document.getElementById('regUsernameInput').value.trim();
+    const password = document.getElementById('regPasswordInput').value.trim();
+    
+    if (!usernameInput || !password) {
+        showToast('❌ Заполните все поля!', 'error');
+        return;
+    }
+    
+    if (usernameInput.length < 3) {
+        showToast('❌ Ник должен быть минимум 3 символа!', 'error');
+        return;
+    }
+    
+    if (password.length < 3) {
+        showToast('❌ Пароль должен быть минимум 3 символа!', 'error');
+        return;
+    }
+    
+    const lower = usernameInput.toLowerCase();
+    
+    if (registeredUsers[lower]) {
+        showToast('❌ Пользователь "' + usernameInput + '" уже существует!', 'error');
+        return;
+    }
+    
+    registeredUsers[lower] = {
+        password: password,
+        role: lower === 'invisik' ? 'owner' : 'user',
+        sub: lower === 'invisik' ? 'Навсегда' : 'Нет',
+        banned: false,
+        banReason: '',
+        banDuration: '',
+        regDate: new Date().toLocaleDateString(),
+        uid: Object.keys(registeredUsers).length + 1,
+        freeSpinUsed: false,
+        freeCaseUsed: false
+    };
+    saveDB();
+    
+    currentUser = usernameInput;
+    localStorage.setItem('apex_user', currentUser);
+    updateCabinetUI();
+    showToast('✅ Аккаунт ' + currentUser + ' создан!', 'success');
+    navigateTo('cabinet');
+};
+
+// 3. Принудительно обновляем кнопки
+document.addEventListener('DOMContentLoaded', function() {
+    const loginBtn = document.querySelector('#authFormLogin .action-btn');
+    const registerBtn = document.querySelector('#authFormRegister .action-btn');
+    if (loginBtn) loginBtn.onclick = window.handleLogin;
+    if (registerBtn) registerBtn.onclick = window.handleRegister;
+    console.log('✅ Авторизация перезаписана!');
+});
+
+console.log('🔥 АВТОРИЗАЦИЯ ПЕРЕЗАПИСАНА! Используй логин: invisik, пароль: 123');
+// ============================================================
+// АВТОРИЗАЦИЯ ДЛЯ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ (РАБОТАЕТ)
+// ============================================================
+window.handleLogin = function() {
+    const usernameInput = document.getElementById('loginUsernameInput').value.trim();
+    const password = document.getElementById('loginPasswordInput').value.trim();
+    
+    if (!usernameInput || !password) {
+        showToast('❌ Заполните все поля!', 'error');
+        return;
+    }
+    
+    const lower = usernameInput.toLowerCase();
+    
+    // Если пользователь НЕ СУЩЕСТВУЕТ — предлагаем зарегистрироваться
+    if (!registeredUsers[lower]) {
+        showToast('❌ Пользователь "' + usernameInput + '" не найден! Зарегистрируйтесь.', 'error');
+        return;
+    }
+    
+    // Проверяем пароль
+    if (String(registeredUsers[lower].password) !== String(password)) {
+        showToast('❌ Неверный пароль! Попробуйте снова.', 'error');
+        return;
+    }
+    
+    // Проверяем бан
+    if (registeredUsers[lower].banned) {
+        showToast('❌ Этот аккаунт заблокирован!', 'error');
+        return;
+    }
+    
+    // ВХОД
+    currentUser = usernameInput;
+    localStorage.setItem('apex_user', currentUser);
+    updateCabinetUI();
+    showToast('✅ Успешный вход как ' + currentUser + '!', 'success');
+    navigateTo('cabinet');
+};
+
+window.handleRegister = function() {
+    const usernameInput = document.getElementById('regUsernameInput').value.trim();
+    const password = document.getElementById('regPasswordInput').value.trim();
+    
+    if (!usernameInput || !password) {
+        showToast('❌ Заполните все поля!', 'error');
+        return;
+    }
+    
+    if (usernameInput.length < 3) {
+        showToast('❌ Ник должен быть минимум 3 символа!', 'error');
+        return;
+    }
+    
+    if (password.length < 3) {
+        showToast('❌ Пароль должен быть минимум 3 символа!', 'error');
+        return;
+    }
+    
+    const lower = usernameInput.toLowerCase();
+    
+    // Если пользователь УЖЕ СУЩЕСТВУЕТ
+    if (registeredUsers[lower]) {
+        showToast('❌ Пользователь "' + usernameInput + '" уже существует!', 'error');
+        return;
+    }
+    
+    // РЕГИСТРАЦИЯ
+    registeredUsers[lower] = {
+        password: password,
+        role: lower === 'invisik' ? 'owner' : 'user', // invisik — всегда владелец
+        sub: 'Нет', // У всех новых подписка ОТСУТСТВУЕТ
+        banned: false,
+        banReason: '',
+        banDuration: '',
+        regDate: new Date().toLocaleDateString(),
+        uid: Object.keys(registeredUsers).length + 1,
+        freeSpinUsed: false,
+        freeCaseUsed: false
+    };
+    saveDB();
+    
+    // АВТОВХОД ПОСЛЕ РЕГИСТРАЦИИ
+    currentUser = usernameInput;
+    localStorage.setItem('apex_user', currentUser);
+    updateCabinetUI();
+    showToast('✅ Аккаунт ' + currentUser + ' создан!', 'success');
+    navigateTo('cabinet');
+};
+
+// Принудительно обновляем кнопки
+document.addEventListener('DOMContentLoaded', function() {
+    const loginBtn = document.querySelector('#authFormLogin .action-btn');
+    const registerBtn = document.querySelector('#authFormRegister .action-btn');
+    if (loginBtn) loginBtn.onclick = window.handleLogin;
+    if (registerBtn) registerBtn.onclick = window.handleRegister;
+    console.log('✅ Авторизация перезаписана для всех пользователей!');
+});
+
+console.log('🔥 ТЕПЕРЬ ЛЮБОЙ ПОЛЬЗОВАТЕЛЬ МОЖЕТ ЗАРЕГИСТРИРОВАТЬСЯ И ВОЙТИ!');
 </script>
 </body>
 </html>
