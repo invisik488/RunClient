@@ -3224,6 +3224,189 @@ window.closeTicket = function(index) {
 
 console.log('✅ ВСЯ СИСТЕМА КЛЮЧЕЙ И ПОКУПОК ПЕРЕЗАПИСАНА!');
 console.log('🔑 Теперь ключи работают, заявки приходят, FunPay открывается!');
+// ============================================================
+// БЛОК СРАВНЕНИЯ (ДО/ПОСЛЕ) — АВТОМАТИЧЕСКАЯ ВСТАВКА
+// ============================================================
+(function addCompareBlock() {
+    // 1. Добавляем стили
+    const style = document.createElement('style');
+    style.textContent = `
+        .compare-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .compare-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        .compare-title span { color: var(--accent-red); }
+        .compare-wrap {
+            position: relative;
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            user-select: none;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+            border: 1px solid var(--border-color);
+            background: #0a0c14;
+        }
+        .compare-wrap img {
+            display: block;
+            width: 100%;
+            height: auto;
+            pointer-events: none;
+        }
+        .compare-before { width: 100%; }
+        .compare-after-wrap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            border-right: 3px solid var(--accent-red);
+            transition: none;
+        }
+        .compare-after-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .compare-handle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: var(--accent-red);
+            border-radius: 50%;
+            cursor: ew-resize;
+            box-shadow: 0 0 20px var(--accent-red-glow);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #fff;
+            font-weight: 900;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        .compare-handle::before,
+        .compare-handle::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 24px;
+            background: #fff;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .compare-handle::before { left: 8px; }
+        .compare-handle::after { right: 8px; }
+        .compare-label {
+            position: absolute;
+            bottom: 16px;
+            padding: 4px 14px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(6px);
+            color: #fff;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: 6px;
+            letter-spacing: 0.3px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .compare-label.before { left: 16px; }
+        .compare-label.after { right: 16px; }
+    `;
+    document.head.appendChild(style);
+
+    // 2. Создаём HTML-блок
+    const container = document.createElement('div');
+    container.className = 'compare-container reveal';
+    container.innerHTML = `
+        <div class="compare-title">Сравни <span>до</span> и <span style="color:var(--accent-green);">после</span></div>
+        <div class="compare-wrap" id="compare">
+            <img class="compare-before" src="https://via.placeholder.com/800x400/1a1f2e/ffffff?text=ДО" alt="До">
+            <div class="compare-after-wrap" id="afterWrap">
+                <img id="afterImg" src="https://via.placeholder.com/800x400/2a2f3e/ff3344?text=ПОСЛЕ" alt="После">
+            </div>
+            <div class="compare-handle" id="handle">↔</div>
+            <span class="compare-label before">🔴 ДО</span>
+            <span class="compare-label after">🟢 ПОСЛЕ</span>
+        </div>
+    `;
+
+    // 3. Вставляем на главную страницу (после блока с возможностями или в конец)
+    const homePage = document.getElementById('page-home');
+    if (homePage) {
+        // Ищем место для вставки: после details-showcase или перед servers-section
+        const insertAfter = homePage.querySelector('.details-showcase');
+        if (insertAfter) {
+            insertAfter.parentNode.insertBefore(container, insertAfter.nextSibling);
+        } else {
+            homePage.appendChild(container);
+        }
+    } else {
+        // Если страницы нет — просто добавляем в body
+        document.body.appendChild(container);
+    }
+
+    // 4. Инициализируем слайдер
+    const compare = document.getElementById('compare');
+    const afterWrap = document.getElementById('afterWrap');
+    const afterImg = document.getElementById('afterImg');
+    const handle = document.getElementById('handle');
+
+    if (compare && afterWrap && afterImg && handle) {
+        function setWidth() {
+            if (compare.offsetWidth) {
+                afterImg.style.setProperty('--full-width', compare.offsetWidth + 'px');
+                afterImg.style.width = compare.offsetWidth + 'px';
+            }
+        }
+        setWidth();
+        window.addEventListener('resize', setWidth);
+
+        let dragging = false;
+        function updatePosition(clientX) {
+            const rect = compare.getBoundingClientRect();
+            let x = clientX - rect.left;
+            x = Math.max(0, Math.min(x, rect.width));
+            const percent = (x / rect.width) * 100;
+            afterWrap.style.width = percent + '%';
+            handle.style.left = percent + '%';
+        }
+
+        compare.addEventListener('mousedown', (e) => {
+            dragging = true;
+            updatePosition(e.clientX);
+        });
+        window.addEventListener('mousemove', (e) => {
+            if (dragging) updatePosition(e.clientX);
+        });
+        window.addEventListener('mouseup', () => dragging = false);
+
+        compare.addEventListener('touchstart', (e) => {
+            dragging = true;
+            updatePosition(e.touches[0].clientX);
+        }, { passive: true });
+        compare.addEventListener('touchmove', (e) => {
+            if (dragging) updatePosition(e.touches[0].clientX);
+        }, { passive: true });
+        window.addEventListener('touchend', () => dragging = false);
+
+        console.log('✅ Блок сравнения добавлен и работает!');
+    }
+})();
 </script>
 </body>
 </html>
