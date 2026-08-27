@@ -212,6 +212,7 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
             <ul class="nav-links">
                 <li><a class="nav-link active" id="nav-home" onclick="navigateTo('home')" data-key="nav_home">Главная</a></li>
                 <li><a class="nav-link" id="nav-tariffs" onclick="navigateTo('tariffs')" data-key="nav_tariffs">Тарифы</a></li>
+                <li><a class="nav-link" id="nav-lottery" onclick="navigateTo('lottery')" data-key="nav_lottery">Лотерея</a></li>
                 <li><a class="nav-link" id="nav-reviews" onclick="navigateTo('reviews')" data-key="nav_reviews">Отзывы</a></li>
                 <li><a class="nav-link" id="nav-help" onclick="navigateTo('help')" data-key="nav_help">Помощь</a></li>
                 <li><a class="nav-link" id="nav-faq" onclick="navigateTo('faq')" data-key="nav_faq">FAQ</a></li>
@@ -292,6 +293,78 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
     </div>
 </div>
 
+<!-- ===== ВОЗВРАЩАЕМ РУЛЕТКУ И БОКС ===== -->
+<div id="page-lottery" class="page-section hidden">
+    <div class="hero">
+        <div class="section-kicker">🎰 Лотерейный центр</div>
+        <h1>Испытай удачу <span>с RunClient</span></h1>
+        <p>Крути рулетку или открывай кейс — выиграй подписку на 7, 30 или 90 дней!</p>
+    </div>
+    <div id="goldRushIndicator" class="hidden" style="text-align:center; margin-bottom:20px; padding:12px; background:rgba(232,179,75,0.1); border:1px solid #e8b34b; border-radius:16px;">
+        <span style="color:#e8b34b; font-weight:800;">🔥 ЗОЛОТАЯ ЛИХОРАДКА АКТИВНА!</span>
+        <span style="margin-left:16px; color:#fff;">⏳ <span id="goldRushTimer">00:00</span></span>
+        <span style="margin-left:16px; color:#fff;">👥 <span id="goldRushCount">0</span></span>
+    </div>
+    <div class="lottery-grid">
+        <!-- РУЛЕТКА -->
+        <div class="lottery-card">
+            <div class="lottery-header">
+                <h3>🎡 Рулетка</h3>
+                <span class="badge" id="spinBadge">бесплатно</span>
+            </div>
+            <div class="roulette-scene" id="rouletteScene" style="position:relative;height:110px;border-radius:10px;overflow:hidden;background:radial-gradient(ellipse at 50% 40%,#12162a 0%,#090b12 75%);border:1px solid #1b2032;margin-bottom:15px;">
+                <div class="pointer-top" style="width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;z-index:3;border-top:11px solid #e8b34b;filter:drop-shadow(0 0 6px rgba(232,179,75,0.8));margin:0 auto;"></div>
+                <div class="roulette-window" style="position:relative;width:100%;height:68px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,0.03),transparent 20%,transparent 80%,rgba(255,255,255,0.03));">
+                    <div class="center-slot" style="position:absolute;left:50%;top:0;bottom:0;width:80px;transform:translateX(-50%);border-left:1px solid rgba(232,179,75,0.35);border-right:1px solid rgba(232,179,75,0.35);background:linear-gradient(180deg,rgba(232,179,75,0.08),transparent 30%,transparent 70%,rgba(232,179,75,0.08));z-index:1;pointer-events:none;"></div>
+                    <div class="roulette-track" id="rouletteTrack" style="position:absolute;top:0;left:0;height:100%;display:flex;align-items:center;gap:10px;padding:0 10px;will-change:transform;"></div>
+                    <div class="fade-edge fade-left" style="position:absolute;top:0;bottom:0;width:40px;z-index:2;pointer-events:none;left:0;background:linear-gradient(90deg,#0c0f18 5%,transparent);"></div>
+                    <div class="fade-edge fade-right" style="position:absolute;top:0;bottom:0;width:40px;z-index:2;pointer-events:none;right:0;background:linear-gradient(-90deg,#0c0f18 5%,transparent);"></div>
+                </div>
+                <div class="pointer-bottom" style="width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;z-index:3;border-bottom:11px solid #e8b34b;filter:drop-shadow(0 0 6px rgba(232,179,75,0.8));margin:0 auto;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+                <button class="lottery-btn" id="spinBtn" onclick="spinRoulette()" style="background:var(--accent-red);color:#fff;border:none;padding:12px 18px;border-radius:14px;font-size:.85rem;font-weight:800;cursor:pointer;box-shadow:0 4px 15px var(--accent-red-glow);transition:.2s;display:inline-flex;align-items:center;justify-content:center;gap:6px;">🎲 Крутить</button>
+                <div style="font-size:12px;color:var(--text-sub);"><span id="rouletteStatus">Готов к вращению</span></div>
+            </div>
+            <div class="lottery-info" style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-sub);margin-top:10px;">
+                <span>Шансы: 7д 15% · 30д 2% · 90д 0.5%</span>
+                <span class="attempts" style="color:#fff;font-weight:700;">Попыток: <span id="spinAttempts">1</span></span>
+            </div>
+        </div>
+        <!-- БОКС -->
+        <div class="lottery-card">
+            <div class="lottery-header">
+                <h3>📦 Бокс</h3>
+                <span class="badge" id="caseBadge">бесплатно</span>
+            </div>
+            <div class="case-scene" id="caseScene" style="position:relative;height:180px;border-radius:10px;overflow:hidden;background:radial-gradient(ellipse at 50% 40%,#12162a 0%,#090b12 75%);border:1px solid #1b2032;margin-bottom:15px;display:flex;align-items:center;justify-content:center;">
+                <div class="case-box" id="caseBox" style="position:relative;width:100px;height:100px;cursor:pointer;">
+                    <div class="case-lid" style="position:absolute;left:0;right:0;top:0;height:38%;background:linear-gradient(155deg,#333c5e,#1a1f34);border:1px solid #3c4568;border-bottom:none;border-radius:8px 8px 0 0;transform-origin:top center;transition:transform 3s cubic-bezier(.5,-0.2,.4,1.4),opacity 3s ease;"></div>
+                    <div class="case-front" style="position:absolute;inset:0;border-radius:8px;background:linear-gradient(155deg,#2a3252,#171b2c 55%,#0d0f1a 100%);border:1px solid #333c5e;box-shadow:0 18px 40px -14px rgba(75,105,255,0.35),inset 0 0 0 1px rgba(255,255,255,0.03);overflow:hidden;display:flex;flex-direction:column;">
+                        <div class="case-hazard" style="height:7px;background:repeating-linear-gradient(135deg,#e8b34b 0 8px,#14161f 8px 16px);opacity:.9;"></div>
+                        <div class="case-seal" style="flex:1;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:#8fa3ff;">⚡</div>
+                        <div class="case-hazard" style="height:7px;background:repeating-linear-gradient(135deg,#e8b34b 0 8px,#14161f 8px 16px);opacity:.9;"></div>
+                    </div>
+                </div>
+                <div class="burst burst-gold" id="caseBurst" style="position:absolute;width:60px;height:60px;border-radius:50%;pointer-events:none;opacity:0;background:radial-gradient(circle,#fff8e6 0%,rgba(255,248,230,0.95) 10%,rgba(232,179,75,0.6) 38%,transparent 72%);"></div>
+                <div class="result-card" id="caseResult" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:140px;padding:16px 12px;border-radius:10px;text-align:center;background:linear-gradient(155deg,rgba(232,179,75,0.16),rgba(20,16,6,0.6));border:1px solid rgba(232,179,75,0.5);box-shadow:0 0 0 1px rgba(232,179,75,0.15),0 20px 50px -16px rgba(232,179,75,0.45);opacity:0;filter:blur(14px);transform:translate(-50%,-50%) scale(1.5) rotateY(540deg);pointer-events:none;z-index:5;">
+                    <div class="result-tier" id="caseResultTier" style="font-size:12px;letter-spacing:.2em;color:#e8b34b;text-transform:uppercase;">ЛЕГЕНДАРНАЯ</div>
+                    <div class="result-duration" id="caseResultDuration" style="font-family:'Teko',sans-serif;font-size:36px;font-weight:700;line-height:1;color:#fff8e6;text-shadow:0 0 18px rgba(232,179,75,0.75);">90D</div>
+                    <div class="result-sub" style="font-size:11px;letter-spacing:.1em;color:#8b93ac;text-transform:uppercase;margin-top:4px;">ПОДПИСКА</div>
+                </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+                <button class="lottery-btn" id="caseBtn" onclick="openCase()" style="background:var(--accent-red);color:#fff;border:none;padding:12px 18px;border-radius:14px;font-size:.85rem;font-weight:800;cursor:pointer;box-shadow:0 4px 15px var(--accent-red-glow);transition:.2s;display:inline-flex;align-items:center;justify-content:center;gap:6px;">📦 Открыть</button>
+                <div style="font-size:12px;color:var(--text-sub);"><span id="caseStatus">Готов к открытию</span></div>
+            </div>
+            <div class="lottery-info" style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-sub);margin-top:10px;">
+                <span>Шансы: 7д 15% · 30д 2% · 90д 0.5%</span>
+                <span class="attempts" style="color:#fff;font-weight:700;">Попыток: <span id="caseAttempts">1</span></span>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="page-reviews" class="page-section hidden">
     <div class="hero"><h1 data-key="reviews_title">Отзывы пользователей</h1><p data-key="reviews_sub">Поделитесь вашим впечатлением или посмотрите мнения других игроков.</p></div>
     <div style="max-width:650px;margin:0 auto">
@@ -338,6 +411,7 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
     </div>
 </div>
 
+<!-- ===== АВТОРИЗАЦИЯ (С КНОПКОЙ НАЗАД) ===== -->
 <div id="page-auth" class="page-section hidden">
     <div style="display:flex;align-items:center;justify-content:center;min-height:70vh;">
         <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:28px;padding:40px;width:100%;max-width:440px;box-shadow:0 25px 60px rgba(0,0,0,0.7);backdrop-filter:blur(20px);">
@@ -361,6 +435,9 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
                 <div class="form-group"><label data-key="reg_password_label">Придумайте пароль</label><input type="password" id="regPasswordInput" class="form-input" placeholder="Надежный пароль..."></div>
                 <div class="form-group"><label data-key="reg_email_label">Email (необязательно)</label><input type="email" id="regEmailInput" class="form-input" placeholder="example@mail.com"></div>
                 <button class="action-btn green" onclick="handleRegister()" style="width:100%;padding:14px 20px;"><span data-key="reg_btn">Зарегистрироваться</span></button>
+                <div style="margin-top:12px;text-align:center;">
+                    <span style="color:var(--accent-red);cursor:pointer;font-weight:600;font-size:.85rem;" onclick="switchAuthTab('login')" data-key="auth_back_to_login">← Назад к входу</span>
+                </div>
             </div>
         </div>
     </div>
@@ -464,12 +541,12 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
 </div>
 
 <script>
-// ===== ПЕРЕВОД =====
+// ===== ПЕРЕВОД (ПРОСТОЙ СПИСОК) =====
 const translations = {
-    ru: { currency: '₽', currency_name: 'руб.', nav_home: 'Главная', nav_tariffs: 'Тарифы', nav_reviews: 'Отзывы', nav_help: 'Помощь', nav_faq: 'FAQ', nav_support: 'Поддержка',
+    ru: { currency: '₽', nav_home: 'Главная', nav_tariffs: 'Тарифы', nav_lottery: 'Лотерея', nav_reviews: 'Отзывы', nav_help: 'Помощь', nav_faq: 'FAQ', nav_support: 'Поддержка',
     hero_desc: 'Триггер-бот, аимасист, ESP и другие легитные функции для комфортной игры без риска бана.',
-    hero_btn_buy: 'Выбрать подписку', hero_btn_cabinet: 'Личный кабинет', ecosystem: 'LEGIT ECOSYSTEM',
-    ecosystem_title: 'Клиент для тех, кто ценит честную игру',
+    hero_btn_buy: 'Выбрать подписку', hero_btn_cabinet: 'Личный кабинет',
+    ecosystem: 'LEGIT ECOSYSTEM', ecosystem_title: 'Клиент для тех, кто ценит честную игру',
     ecosystem_desc: 'RunClient предоставляет только легитные функции, которые улучшают вашу игру, не нарушая правил. Триггер-бот, аимасист и ESP работают незаметно и безопасно.',
     live_status: 'LIVE STATUS', live_title: 'Готов к игре', live_desc: 'Все функции протестированы и работают на популярных серверах. Постоянные обновления и поддержка.',
     features_title: 'Легитные возможности', features_desc: 'Всё для комфортной и безопасной игры',
@@ -506,8 +583,9 @@ const translations = {
     auth_email_label: 'Email или логин', auth_password_label: 'пароль', auth_forgot: 'Забыли пароль?',
     auth_error: 'Введён неверный логин при попытке авторизации.', auth_login_btn: 'Войти',
     reg_username_label: 'Придумайте никнейм', reg_password_label: 'Придумайте пароль', reg_email_label: 'Email (необязательно)',
-    reg_btn: 'Зарегистрироваться', cab_account: 'Аккаунт', cab_sub: 'Подписка', cab_reg: 'Регистрация',
-    cab_access: 'Доступ', cab_uid: 'UID', cab_actions: 'Действия', cab_download: '📥 Скачать RunClient',
+    reg_btn: 'Зарегистрироваться', auth_back_to_login: '← Назад к входу',
+    cab_account: 'Аккаунт', cab_sub: 'Подписка', cab_reg: 'Регистрация', cab_access: 'Доступ', cab_uid: 'UID',
+    cab_actions: 'Действия', cab_download: '📥 Скачать RunClient',
     cab_home: '🏠 Главная', cab_orders: '📦 Мои предзаказы', cab_tickets: '💬 Мои тикеты',
     cab_keys: '🔑 Активация ключей', cab_post: '📝 Сделать пост', cab_downloads: '📥 Загрузки',
     cab_moderation: '🛡️ Модерация', cab_capabilities: '🛠️ Настройка возможностей',
@@ -548,14 +626,12 @@ const translations = {
     cab_admin_special_uses_label: 'Количество использований',
     cab_admin_special_gen_btn: 'Сгенерировать спец ключ'
     },
-    en: { currency: '$', currency_name: 'USD', nav_home: 'Home', nav_tariffs: 'Tariffs', nav_reviews: 'Reviews', nav_help: 'Help', nav_faq: 'FAQ', nav_support: 'Support',
+    en: { currency: '$', nav_home: 'Home', nav_tariffs: 'Tariffs', nav_lottery: 'Lottery', nav_reviews: 'Reviews', nav_help: 'Help', nav_faq: 'FAQ', nav_support: 'Support',
     hero_desc: 'TriggerBot, AimAssist, ESP and other legit features for comfortable gaming without ban risk.',
     hero_btn_buy: 'Choose subscription', hero_btn_cabinet: 'Dashboard',
-    ecosystem: 'LEGIT ECOSYSTEM',
-    ecosystem_title: 'Client for those who value fair play',
+    ecosystem: 'LEGIT ECOSYSTEM', ecosystem_title: 'Client for those who value fair play',
     ecosystem_desc: 'RunClient provides only legit features that improve your game without breaking rules. TriggerBot, AimAssist and ESP work discreetly and safely.',
-    live_status: 'LIVE STATUS', live_title: 'Ready to play',
-    live_desc: 'All features are tested and work on popular servers. Constant updates and support.',
+    live_status: 'LIVE STATUS', live_title: 'Ready to play', live_desc: 'All features are tested and work on popular servers. Constant updates and support.',
     features_title: 'Legit Features', features_desc: 'Everything for comfortable and safe gameplay',
     feature1_title: 'TriggerBot', feature1_desc: 'Automatic shot when aiming at enemy. Adjustable delay and hit zone.',
     feature2_title: 'AimAssist', feature2_desc: 'Smooth aim assist. Adjustable sensitivity and field of view for natural aiming.',
@@ -590,8 +666,9 @@ const translations = {
     auth_email_label: 'Email or login', auth_password_label: 'Password', auth_forgot: 'Forgot password?',
     auth_error: 'Invalid login or password.', auth_login_btn: 'Login',
     reg_username_label: 'Choose a nickname', reg_password_label: 'Choose a password', reg_email_label: 'Email (optional)',
-    reg_btn: 'Register', cab_account: 'Account', cab_sub: 'Subscription', cab_reg: 'Registration',
-    cab_access: 'Access', cab_uid: 'UID', cab_actions: 'Actions', cab_download: '📥 Download RunClient',
+    reg_btn: 'Register', auth_back_to_login: '← Back to login',
+    cab_account: 'Account', cab_sub: 'Subscription', cab_reg: 'Registration', cab_access: 'Access', cab_uid: 'UID',
+    cab_actions: 'Actions', cab_download: '📥 Download RunClient',
     cab_home: '🏠 Home', cab_orders: '📦 My orders', cab_tickets: '💬 My tickets',
     cab_keys: '🔑 Activate keys', cab_post: '📝 Create post', cab_downloads: '📥 Downloads',
     cab_moderation: '🛡️ Moderation', cab_capabilities: '🛠️ User settings',
@@ -632,14 +709,12 @@ const translations = {
     cab_admin_special_uses_label: 'Number of uses',
     cab_admin_special_gen_btn: 'Generate special key'
     },
-    ua: { currency: '₴', currency_name: 'грн.', nav_home: 'Головна', nav_tariffs: 'Тарифи', nav_reviews: 'Відгуки', nav_help: 'Допомога', nav_faq: 'FAQ', nav_support: 'Підтримка',
+    ua: { currency: '₴', nav_home: 'Головна', nav_tariffs: 'Тарифи', nav_lottery: 'Лотерея', nav_reviews: 'Відгуки', nav_help: 'Допомога', nav_faq: 'FAQ', nav_support: 'Підтримка',
     hero_desc: 'Тригер-бот, аімасист, ESP та інші легітні функції для комфортної гри без ризику бану.',
     hero_btn_buy: 'Обрати підписку', hero_btn_cabinet: 'Особистий кабінет',
-    ecosystem: 'LEGIT ECOSYSTEM',
-    ecosystem_title: 'Клієнт для тих, хто цінує чесну гру',
+    ecosystem: 'LEGIT ECOSYSTEM', ecosystem_title: 'Клієнт для тих, хто цінує чесну гру',
     ecosystem_desc: 'RunClient надає тільки легітні функції, які покращують вашу гру, не порушуючи правил. Тригер-бот, аімасист та ESP працюють непомітно та безпечно.',
-    live_status: 'LIVE STATUS', live_title: 'Готовий до гри',
-    live_desc: 'Всі функції перевірені та працюють на популярних серверах. Постійні оновлення та підтримка.',
+    live_status: 'LIVE STATUS', live_title: 'Готовий до гри', live_desc: 'Всі функції перевірені та працюють на популярних серверах. Постійні оновлення та підтримка.',
     features_title: 'Легітні можливості', features_desc: 'Все для комфортної та безпечної гри',
     feature1_title: 'Тригер-бот', feature1_desc: 'Автоматичний постріл при наведенні на супротивника. Налаштовувана затримка та зона ураження.',
     feature2_title: 'Аімасист', feature2_desc: 'Плавне наведення на ціль. Налаштування чутливості та зони дії для природного прицілювання.',
@@ -674,8 +749,9 @@ const translations = {
     auth_email_label: 'Email або логін', auth_password_label: 'пароль', auth_forgot: 'Забули пароль?',
     auth_error: 'Введено невірний логін або пароль.', auth_login_btn: 'Увійти',
     reg_username_label: 'Придумайте нікнейм', reg_password_label: 'Придумайте пароль', reg_email_label: 'Email (необов\'язково)',
-    reg_btn: 'Зареєструватися', cab_account: 'Акаунт', cab_sub: 'Підписка', cab_reg: 'Реєстрація',
-    cab_access: 'Доступ', cab_uid: 'UID', cab_actions: 'Дії', cab_download: '📥 Завантажити RunClient',
+    reg_btn: 'Зареєструватися', auth_back_to_login: '← Назад до входу',
+    cab_account: 'Акаунт', cab_sub: 'Підписка', cab_reg: 'Реєстрація', cab_access: 'Доступ', cab_uid: 'UID',
+    cab_actions: 'Дії', cab_download: '📥 Завантажити RunClient',
     cab_home: '🏠 Головна', cab_orders: '📦 Мої передзамовлення', cab_tickets: '💬 Мої тікети',
     cab_keys: '🔑 Активація ключів', cab_post: '📝 Створити пост', cab_downloads: '📥 Завантаження',
     cab_moderation: '🛡️ Модерація', cab_capabilities: '🛠️ Налаштування можливостей',
@@ -721,18 +797,18 @@ const translations = {
 let currentLang = localStorage.getItem('runclient_lang') || 'ru';
 
 function applyLanguage(lang) {
-    const langData = translations[lang];
-    if (!langData) return;
-    document.querySelectorAll('.currency-sign').forEach(el => el.textContent = langData.currency);
+    const data = translations[lang];
+    if (!data) return;
+    document.querySelectorAll('.currency-sign').forEach(el => el.textContent = data.currency);
     document.querySelectorAll('[data-key]').forEach(el => {
         const key = el.getAttribute('data-key');
-        if (langData[key]) {
+        if (data[key]) {
             if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
-                if (el.placeholder) el.placeholder = langData[key];
+                if (el.placeholder) el.placeholder = data[key];
             } else if (el.tagName === 'OPTION') {
-                el.textContent = langData[key];
+                el.textContent = data[key];
             } else {
-                el.textContent = langData[key];
+                el.textContent = data[key];
             }
         }
     });
@@ -740,8 +816,8 @@ function applyLanguage(lang) {
     localStorage.setItem('runclient_lang', lang);
     currentLang = lang;
 }
-document.getElementById('langSelect').addEventListener('change', function() { applyLanguage(this.value); });
-window.addEventListener('DOMContentLoaded', function() { applyLanguage(currentLang); });
+document.getElementById('langSelect').addEventListener('change', function(){ applyLanguage(this.value); });
+window.addEventListener('DOMContentLoaded', function(){ applyLanguage(currentLang); });
 
 // ===== ЯДРО САЙТА =====
 let currentUser = localStorage.getItem('runclient_user') || null;
@@ -778,8 +854,8 @@ function navigateTo(page) {
     const target = document.getElementById('page-' + page);
     if (target) target.classList.remove('hidden');
     document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-    const activeLink = document.getElementById('nav-' + page);
-    if (activeLink) activeLink.classList.add('active');
+    const active = document.getElementById('nav-' + page);
+    if (active) active.classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -787,6 +863,8 @@ function switchAuthTab(tab) {
     document.getElementById('authFormLogin').classList.toggle('hidden', tab !== 'login');
     document.getElementById('authFormRegister').classList.toggle('hidden', tab !== 'register');
 }
+
+// ===== ИСПРАВЛЕННАЯ АВТОРИЗАЦИЯ =====
 function handleLogin() {
     const username = document.getElementById('loginUsernameInput').value.trim();
     const pass = document.getElementById('loginPasswordInput').value.trim();
@@ -801,6 +879,7 @@ function handleLogin() {
     showToast('Добро пожаловать, ' + currentUser + '!', 'success');
     navigateTo('cabinet');
 }
+
 function handleRegister() {
     const username = document.getElementById('regUsernameInput').value.trim();
     const pass = document.getElementById('regPasswordInput').value.trim();
@@ -815,6 +894,7 @@ function handleRegister() {
     showToast('Аккаунт создан!', 'success');
     navigateTo('cabinet');
 }
+
 function logout() { localStorage.removeItem('runclient_user'); currentUser = null; document.getElementById('navCabinetText').innerText = 'Кабинет'; navigateTo('home'); showToast('Вы вышли'); }
 
 function updateCabinetUI() {
@@ -840,17 +920,9 @@ function updateCabinetUI() {
     else if (!user.sub || user.sub === 'Нет' || user.sub === 'нет') { subText.innerText = 'НЕТ АКТИВНОЙ ПОДПИСКИ'; subText.style.color = 'var(--accent-red)'; subDesc.innerText = 'Приобретите подписку в разделе «Тарифы» или активируйте ключ.'; }
     else { subText.innerText = 'ПОДПИСКА АКТИВНА (' + user.sub + ')'; subText.style.color = 'var(--accent-green)'; subDesc.innerText = 'Доступ к клиенту работает без ограничений.'; }
     const role = (user.role || 'user').toLowerCase();
-    document.getElementById('navItemPostNew').classList.add('hidden');
-    document.getElementById('navItemModerationNew').classList.add('hidden');
-    document.getElementById('navItemCapabilitiesNew').classList.add('hidden');
-    document.getElementById('navItemRolesNew').classList.add('hidden');
-    document.getElementById('navItemGoldRush').classList.add('hidden');
-    document.getElementById('navItemAdminNew').classList.add('hidden');
+    ['navItemPostNew','navItemModerationNew','navItemCapabilitiesNew','navItemRolesNew','navItemGoldRush','navItemAdminNew'].forEach(id => document.getElementById(id).classList.add('hidden'));
     if (role === 'owner' || role === 'admin' || currentUser.toLowerCase() === 'invisik') {
-        document.getElementById('navItemPostNew').classList.remove('hidden');
-        document.getElementById('navItemCapabilitiesNew').classList.remove('hidden');
-        document.getElementById('navItemRolesNew').classList.remove('hidden');
-        document.getElementById('navItemGoldRush').classList.remove('hidden');
+        ['navItemPostNew','navItemCapabilitiesNew','navItemRolesNew','navItemGoldRush'].forEach(id => document.getElementById(id).classList.remove('hidden'));
     }
     if (role === 'owner' || role === 'admin' || role === 'moder') {
         document.getElementById('navItemModerationNew').classList.remove('hidden');
@@ -891,21 +963,42 @@ function renderUserTickets() {
 }
 function buyTariff(name) { if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; } appRequests.subs.push({ username: currentUser, tariff: name, date: new Date().toLocaleDateString() }); saveDB(); showToast('Заявка на "' + name + '" создана!', 'success'); }
 function requestHWIDResetModal() { if (!currentUser) return; const reason = prompt('Причина сброса HWID:'); if (!reason) return; appRequests.hwid.push({ username: currentUser, hwid: 'HWID-' + Math.random().toString(36).substring(2,6), reason: reason, date: new Date().toLocaleDateString() }); saveDB(); showToast('Заявка отправлена.'); }
-function addNewReview() { const author = document.getElementById('reviewAuthorInput').value.trim(); const text = document.getElementById('reviewTextInput').value.trim(); const rating = document.getElementById('reviewRatingInput').value; if (!author || !text) { showToast('Заполните все поля!', 'error'); return; } const container = document.getElementById('reviewsListContainer'); const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating); const card = document.createElement('div'); card.className = 'review-card'; card.innerHTML = '<div class="review-header"><span class="review-author">' + author + '</span><span class="review-stars">' + stars + '</span></div><p class="review-text">' + text + '</p>'; container.prepend(card); document.getElementById('reviewAuthorInput').value = ''; document.getElementById('reviewTextInput').value = ''; showToast('Отзыв опубликован!'); }
-function submitTicket() { if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; } const subject = document.getElementById('ticketSubject').value.trim(); const msg = document.getElementById('ticketMessage').value.trim(); if (!subject || !msg) { showToast('Заполните все поля!', 'error'); return; } appRequests.tickets.push({ username: currentUser, subject: subject, message: msg, status: 'Открыт', date: new Date().toLocaleDateString() }); saveDB(); showToast('Тикет отправлен!'); document.getElementById('ticketSubject').value = ''; document.getElementById('ticketMessage').value = ''; renderUserTickets(); }
+function addNewReview() { const author = document.getElementById('reviewAuthorInput').value.trim(); const text = document.getElementById('reviewTextInput').value.trim(); const rating = document.getElementById('reviewRatingInput').value; if (!author || !text) { showToast('Заполните все поля!', 'error'); return; } const container = document.getElementById('reviewsListContainer'); const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating); const card = document.createElement('div'); card.className = 'review-card'; card.innerHTML = '<div class="review-header"><
+document.getElementById('reviewAuthorInput').value = '';
+    document.getElementById('reviewTextInput').value = '';
+    showToast('Отзыв опубликован!');
+}
+
+function submitTicket() {
+    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+    const subject = document.getElementById('ticketSubject').value.trim();
+    const msg = document.getElementById('ticketMessage').value.trim();
+    if (!subject || !msg) { showToast('Заполните все поля!', 'error'); return; }
+    appRequests.tickets.push({ username: currentUser, subject: subject, message: msg, status: 'Открыт', date: new Date().toLocaleDateString() });
+    saveDB();
+    showToast('Тикет отправлен!');
+    document.getElementById('ticketSubject').value = '';
+    document.getElementById('ticketMessage').value = '';
+    renderUserTickets();
+}
+
 function renderModerationData() {
     const subC = document.getElementById('purchaseRequestsContainer');
     const hwidC = document.getElementById('hwidRequestsContainer');
     const tickC = document.getElementById('adminTicketsContainer');
     document.getElementById('modCountBadgeNew').innerText = appRequests.hwid.length + appRequests.subs.length + appRequests.tickets.length;
-    if (appRequests.subs.length === 0) subC.innerHTML = '<p class="sub-desc">Нет запросов.</p>'; else subC.innerHTML = appRequests.subs.map((item, idx) => '<div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)"><div style="font-weight:800;color:#fff;">' + item.username + ' | ' + item.tariff + '</div><div style="font-size:.7rem;color:var(--text-sub);margin-bottom:8px">' + item.date + '</div><button class="action-btn green" style="padding:6px 12px;font-size:.8rem" onclick="approveSub(' + idx + ')">Одобрить</button></div>').join('');
-    if (appRequests.hwid.length === 0) hwidC.innerHTML = '<p class="sub-desc">Нет заявок.</p>'; else hwidC.innerHTML = appRequests.hwid.map((item, idx) => '<div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)"><div style="font-weight:800;color:#fff;">' + item.username + ' | ' + item.reason + '</div><div style="font-size:.7rem;color:var(--text-sub);margin-bottom:8px">' + item.hwid + '</div><button class="action-btn green" style="padding:6px 12px;font-size:.8rem" onclick="approveHWID(' + idx + ')">Сбросить HWID</button></div>').join('');
-    if (appRequests.tickets.length === 0) tickC.innerHTML = '<p class="sub-desc">Нет тикетов.</p>'; else tickC.innerHTML = appRequests.tickets.map((item, idx) => '<div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)"><div style="font-weight:800;color:#fff;">' + item.username + ' | ' + item.subject + '</div><div style="font-size:.8rem;color:var(--text-sub);margin:6px 0">' + item.message + '</div><button class="action-btn dark" style="padding:6px 12px;font-size:.8rem" onclick="closeTicket(' + idx + ')">Закрыть</button></div>').join('');
+    if (appRequests.subs.length === 0) subC.innerHTML = '<p class="sub-desc">Нет запросов.</p>';
+    else subC.innerHTML = appRequests.subs.map((item, idx) => '<div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)"><div style="font-weight:800;color:#fff;">' + item.username + ' | ' + item.tariff + '</div><div style="font-size:.7rem;color:var(--text-sub);margin-bottom:8px">' + item.date + '</div><button class="action-btn green" style="padding:6px 12px;font-size:.8rem" onclick="approveSub(' + idx + ')">Одобрить</button></div>').join('');
+    if (appRequests.hwid.length === 0) hwidC.innerHTML = '<p class="sub-desc">Нет заявок.</p>';
+    else hwidC.innerHTML = appRequests.hwid.map((item, idx) => '<div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)"><div style="font-weight:800;color:#fff;">' + item.username + ' | ' + item.reason + '</div><div style="font-size:.7rem;color:var(--text-sub);margin-bottom:8px">' + item.hwid + '</div><button class="action-btn green" style="padding:6px 12px;font-size:.8rem" onclick="approveHWID(' + idx + ')">Сбросить HWID</button></div>').join('');
+    if (appRequests.tickets.length === 0) tickC.innerHTML = '<p class="sub-desc">Нет тикетов.</p>';
+    else tickC.innerHTML = appRequests.tickets.map((item, idx) => '<div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)"><div style="font-weight:800;color:#fff;">' + item.username + ' | ' + item.subject + '</div><div style="font-size:.8rem;color:var(--text-sub);margin:6px 0">' + item.message + '</div><button class="action-btn dark" style="padding:6px 12px;font-size:.8rem" onclick="closeTicket(' + idx + ')">Закрыть</button></div>').join('');
 }
+
 function approveSub(idx) { const req = appRequests.subs[idx]; if (!req) return; const lower = req.username.toLowerCase(); if (registeredUsers[lower]) { let term = '30д'; if (req.tariff.includes('7')) term = '7д'; else if (req.tariff.includes('30') || req.tariff.includes('1 месяц')) term = '30д'; else if (req.tariff.includes('90') || req.tariff.includes('3 месяца')) term = '90д'; else if (req.tariff.includes('навсегда')) term = 'Навсегда'; registeredUsers[lower].sub = term; saveDB(); if (currentUser && currentUser.toLowerCase() === lower) updateCabinetUI(); } appRequests.subs.splice(idx,1); saveDB(); showToast('Подписка одобрена!'); renderModerationData(); }
 function approveHWID(idx) { appRequests.hwid.splice(idx,1); saveDB(); showToast('HWID сброшен!'); renderModerationData(); }
 function closeTicket(idx) { appRequests.tickets.splice(idx,1); saveDB(); showToast('Тикет закрыт.'); renderModerationData(); }
-function searchUserCapabilities() { /* упрощённо */ showToast('Поиск работает через консоль', 'success'); }
+function searchUserCapabilities() { showToast('Поиск работает через консоль', 'success'); }
 function createNewRole() { showToast('Роль создана (демо)', 'success'); }
 
 function activateSubKey() { if (!currentUser) return; const key = document.getElementById('subKeyInput').value.trim().toUpperCase(); if (!key) { showToast('Введите ключ!', 'error'); return; } if (!activeKeysDB[key]) { showToast('Неверный ключ!', 'error'); return; } registeredUsers[currentUser.toLowerCase()].sub = activeKeysDB[key]; delete activeKeysDB[key]; saveDB(); updateCabinetUI(); showToast('Подписка активирована!'); document.getElementById('subKeyInput').value = ''; }
@@ -922,17 +1015,9 @@ function updateGoldRushUI() { const gr = lotteryState.goldRush; document.getElem
 function toggleThemePanel() { document.getElementById('themePanel').classList.toggle('open'); }
 function applyTheme(color, el) { document.documentElement.style.setProperty('--theme-bg', color); document.body.style.backgroundColor = color; document.querySelectorAll('.theme-preset').forEach(e => e.classList.remove('active')); if (el) el.classList.add('active'); document.getElementById('currentColorHex').innerText = color; document.getElementById('customColorPicker').value = color; localStorage.setItem('runclient_theme', color); document.getElementById('themePanel').classList.remove('open'); }
 function applyCustomColor(color) { applyTheme(color, null); }
-function toggleGlassMode(enabled) { document.body.classList.t
-if (enabled) {
-        document.body.classList.add('glass-effect');
-        localStorage.setItem('runclient_glass', 'true');
-    } else {
-        document.body.classList.remove('glass-effect');
-        localStorage.setItem('runclient_glass', 'false');
-    }
-}
+function toggleGlassMode(enabled) { if (enabled) { document.body.classList.add('glass-effect'); localStorage.setItem('runclient_glass', 'true'); } else { document.body.classList.remove('glass-effect'); localStorage.setItem('runclient_glass', 'false'); } }
 
-// ===== ИНИЦИАЛИЗАЦИЯ ====
+// ===== ИНИЦИАЛИЗАЦИЯ =====
 (function initParticles() {
     const canvas = document.getElementById('apex-particles');
     if (!canvas) return;
@@ -1020,6 +1105,145 @@ if (enabled) {
     }, 5000);
 })();
 
+// ===== РУЛЕТКА И БОКС =====
+const PRIZES = [
+    { key: '7д', label: '7 дней', tier: 'ОБЫЧНАЯ', tierClass: 'tier-mil', weight: 15 },
+    { key: '30д', label: '30 дней', tier: 'РЕДКАЯ', tierClass: 'tier-res', weight: 2 },
+    { key: '90д', label: '90 дней', tier: 'ЛЕГЕНДАРНАЯ', tierClass: 'tier-leg', weight: 0.5 }
+];
+
+(function initRoulette() {
+    const track = document.getElementById('rouletteTrack');
+    if (!track) return;
+    const cycle = [0,1,2];
+    for (let i = 0; i < 33; i++) {
+        const d = PRIZES[cycle[i % 3]];
+        const el = document.createElement('div');
+        el.className = 'roll-item ' + d.tierClass;
+        el.textContent = d.key;
+        track.appendChild(el);
+    }
+})();
+
+function updateLotteryUI() {
+    if (!currentUser) { document.getElementById('spinAttempts').innerText = '0'; document.getElementById('caseAttempts').innerText = '0'; return; }
+    const user = registeredUsers[currentUser.toLowerCase()];
+    if (!user) return;
+    const spinLeft = user.freeSpinUsed ? 0 : 1;
+    const caseLeft = user.freeCaseUsed ? 0 : 1;
+    document.getElementById('spinAttempts').innerText = spinLeft;
+    document.getElementById('caseAttempts').innerText = caseLeft;
+    document.getElementById('spinBadge').innerText = spinLeft > 0 ? 'бесплатно' : 'платно';
+    document.getElementById('caseBadge').innerText = caseLeft > 0 ? 'бесплатно' : 'платно';
+}
+
+function spinRoulette() {
+    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+    if (checkUserBanAction()) return;
+    const user = registeredUsers[currentUser.toLowerCase()];
+    if (!user) return;
+    if (user.freeSpinUsed) { showToast('Нет бесплатных спинов. Купите в разделе "Тарифы".', 'error'); return; }
+    const totalWeight = PRIZES.reduce((s,p) => s + p.weight, 0);
+    let rand = Math.random() * totalWeight;
+    let selected = PRIZES[0];
+    for (let p of PRIZES) { rand -= p.weight; if (rand <= 0) { selected = p; break; } }
+    const track = document.getElementById('rouletteTrack');
+    const items = track.querySelectorAll('.roll-item');
+    let targetIndex = -1;
+    const mid = Math.floor(items.length / 2);
+    for (let i = mid; i < items.length; i++) { if (items[i].textContent === selected.key) { targetIndex = i; break; } }
+    if (targetIndex === -1) { for (let i = 0; i < items.length; i++) { if (items[i].textContent === selected.key) { targetIndex = i; break; } } }
+    if (targetIndex === -1) targetIndex = 0;
+    const windowWidth = track.parentElement.clientWidth;
+    const itemWidth = 64 + 10;
+    const itemCenter = targetIndex * itemWidth + 10 + 64/2;
+    const offset = windowWidth/2 - itemCenter + (Math.random() - 0.5) * 10;
+    track.style.transition = 'transform 3s cubic-bezier(0.12, 0.85, 0.18, 1)';
+    track.style.transform = 'translateX(' + offset + 'px)';
+    const btn = document.getElementById('spinBtn');
+    btn.disabled = true;
+    document.getElementById('rouletteStatus').innerText = 'Вращение...';
+    setTimeout(() => {
+        btn.disabled = false;
+        document.getElementById('rouletteStatus').innerText = '🎉 Выиграл: ' + selected.label;
+        user.sub = selected.key;
+        user.freeSpinUsed = true;
+        saveDB();
+        updateCabinetUI();
+        updateLotteryUI();
+        showToast('Поздравляем! Вы выиграли подписку на ' + selected.label + '!', 'success');
+    }, 3200);
+}
+
+function openCase() {
+    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+    if (checkUserBanAction()) return;
+    const user = registeredUsers[currentUser.toLowerCase()];
+    if (!user) return;
+    let freeCase = false;
+    const gr = lotteryState.goldRush;
+    if (gr.active) {
+        if (gr.used < gr.limit && !gr.usedUsers.includes(currentUser.toLowerCase())) {
+            freeCase = true;
+            gr.usedUsers.push(currentUser.toLowerCase());
+            gr.used++;
+            saveDB();
+            showToast('🔥 Бесплатное открытие по золотой лихорадке!', 'success');
+            updateGoldRushUI();
+        } else {
+            showToast('Лимит исчерпан или вы уже использовали.', 'error');
+            return;
+        }
+    }
+    if (!freeCase) {
+        if (user.freeCaseUsed) { showToast('Нет бесплатных открытий. Купите в разделе "Тарифы".', 'error'); return; }
+        freeCase = true;
+        user.freeCaseUsed = true;
+        saveDB();
+        showToast('🔥 Бесплатное открытие активировано!', 'success');
+    }
+    const totalWeight = PRIZES.reduce((s,p) => s + p.weight, 0);
+    let rand = Math.random() * totalWeight;
+    let selected = PRIZES[0];
+    for (let p of PRIZES) { rand -= p.weight; if (rand <= 0) { selected = p; break; } }
+    const caseBox = document.getElementById('caseBox');
+    const burst = document.getElementById('caseBurst');
+    const resultCard = document.getElementById('caseResult');
+    const resultTier = document.getElementById('caseResultTier');
+    const resultDuration = document.getElementById('caseResultDuration');
+    caseBox.classList.add('opening');
+    burst.classList.add('flash');
+    setTimeout(() => {
+        resultTier.innerText = selected.tier;
+        resultDuration.innerText = selected.key;
+        resultCard.style.opacity = '1';
+        resultCard.classList.add('materialize');
+        user.sub = selected.key;
+        saveDB();
+        updateCabinetUI();
+        updateLotteryUI();
+        showToast('Поздравляем! Вы выиграли подписку на ' + selected.label + '!', 'success');
+        document.getElementById('caseStatus').innerText = '🎉 Выиграл: ' + selected.label;
+    }, 3000);
+    setTimeout(() => {
+        caseBox.classList.remove('opening');
+        burst.classList.remove('flash');
+        resultCard.classList.remove('materialize');
+        resultCard.style.opacity = '0';
+        document.getElementById('caseStatus').innerText = 'Готов к открытию';
+    }, 6000);
+}
+
+function checkUserBanAction() {
+    if (!currentUser) return false;
+    const userData = registeredUsers[currentUser.toLowerCase()];
+    if (userData && userData.banned) {
+        showToast('Ваш аккаунт заблокирован!', 'error');
+        return true;
+    }
+    return false;
+}
+
 window.addEventListener('DOMContentLoaded', function() {
     const savedTheme = localStorage.getItem('runclient_theme');
     if (savedTheme) {
@@ -1041,6 +1265,7 @@ window.addEventListener('DOMContentLoaded', function() {
             logout();
         } else {
             updateCabinetUI();
+            updateLotteryUI();
         }
     }
     const gr = lotteryState.goldRush;
@@ -1094,6 +1319,9 @@ window.renderUserTickets = renderUserTickets;
 window.renderOrders = renderOrders;
 window.updateGoldRushUI = updateGoldRushUI;
 window.updateGoldRushTimer = updateGoldRushTimer;
+window.spinRoulette = spinRoulette;
+window.openCase = openCase;
+window.updateLotteryUI = updateLotteryUI;
 
 console.log('✅ RunClient website loaded successfully!');
 </script>
