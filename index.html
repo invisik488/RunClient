@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RunClient — Легитный чит-клиент для Minecraft</title>
+<title>RunClient — Легитный чит-клиент</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg-main:#040508;--bg-card:rgba(14,16,24,0.75);--bg-card-hover:rgba(22,26,38,0.9);--border-color:rgba(255,255,255,0.08);--border-hover:rgba(255,51,68,0.4);--accent-red:#ff3344;--accent-red-glow:rgba(255,51,68,0.35);--accent-green:#00e676;--text-main:#fff;--text-sub:#949aab;--theme-bg:#040508}
@@ -206,7 +206,7 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
         <div class="nav-left">
             <div class="nav-brand" onclick="navigateTo('home')">
                 <div class="brand-icon">R</div>
-                <span id="brandName">RunClient</span>
+                <span>RunClient</span>
                 <span class="pendulum" style="margin-left:8px;font-size:1.2rem">⚡</span>
             </div>
             <ul class="nav-links">
@@ -230,7 +230,6 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
 </div>
 
 <!-- ===== СТРАНИЦЫ ===== -->
-<!-- ГЛАВНАЯ -->
 <div id="page-home" class="page-section">
     <div class="hero">
         <div class="hero-badge">🎯 Легитный чит для Minecraft <span class="badge-new" style="margin-left:8px">NEW</span></div>
@@ -278,7 +277,6 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
     </div>
 </div>
 
-<!-- ТАРИФЫ -->
 <div id="page-tariffs" class="page-section hidden">
     <div class="hero"><div class="section-kicker" data-key="store_title">SUBSCRIBE STORE</div><h1>Подписка <span>RunClient</span></h1><p data-key="store_desc">Выберите срок доступа к RunClient. Все варианты оформляются как предзаказ и отображаются в личном кабинете.</p></div>
     <div class="purchase-note">💡 <b data-key="store_note">Важно:</b> <span data-key="store_note_text">После оформления заявка появится в системе магазина.</span></div>
@@ -294,7 +292,6 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
     </div>
 </div>
 
-<!-- ОТЗЫВЫ -->
 <div id="page-reviews" class="page-section hidden">
     <div class="hero"><h1 data-key="reviews_title">Отзывы пользователей</h1><p data-key="reviews_sub">Поделитесь вашим впечатлением или посмотрите мнения других игроков.</p></div>
     <div style="max-width:650px;margin:0 auto">
@@ -312,7 +309,6 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
     </div>
 </div>
 
-<!-- ПОМОЩЬ -->
 <div id="page-help" class="page-section hidden">
     <div class="hero"><h1 data-key="help_title">Центр помощи</h1><p data-key="help_sub">Часто задаваемые вопросы и руководства.</p></div>
     <div style="max-width:650px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
@@ -321,7 +317,6 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
     </div>
 </div>
 
-<!-- FAQ -->
 <div id="page-faq" class="page-section hidden">
     <div class="hero"><div class="section-kicker">FAQ</div><h1 data-key="faq_title">Частые вопросы</h1><p data-key="faq_sub">Коротко о покупке, версии и кабинете.</p></div>
     <div class="faq-grid">
@@ -332,7 +327,6 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
     </div>
 </div>
 
-<!-- ПОДДЕРЖКА -->
 <div id="page-support" class="page-section hidden">
     <div class="hero"><h1 data-key="support_title">Техническая поддержка</h1><p data-key="support_sub">Возникли проблемы? Создайте тикет, ответы придут в личный кабинет.</p></div>
     <div style="max-width:500px;margin:0 auto">
@@ -344,7 +338,6 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
     </div>
 </div>
 
-<!-- АВТОРИЗАЦИЯ (НОВЫЙ СТИЛЬ) -->
 <div id="page-auth" class="page-section hidden">
     <div style="display:flex;align-items:center;justify-content:center;min-height:70vh;">
         <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:28px;padding:40px;width:100%;max-width:440px;box-shadow:0 25px 60px rgba(0,0,0,0.7);backdrop-filter:blur(20px);">
@@ -373,7 +366,6 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
     </div>
 </div>
 
-<!-- ЛИЧНЫЙ КАБИНЕТ -->
 <div id="page-cabinet" class="page-section hidden">
     <div class="dash-container-new">
         <div class="sidebar-new">
@@ -456,7 +448,6 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
     <span>Сделано с упором на стиль, удобство и производительность.</span>
 </footer>
 
-<!-- ТЕМЫ -->
 <div class="theme-toggle" id="themeToggle" onclick="toggleThemePanel()">🎨</div>
 <div class="theme-panel" id="themePanel">
     <div class="title">Выбор темы</div>
@@ -473,526 +464,257 @@ footer.apex-footer{max-width:1100px;width:92%;margin:0 auto 30px;padding:24px 0;
 </div>
 
 <script>
-// ===== ЛОКАЛИЗАЦИЯ =====
+// ===== ПЕРЕВОД =====
 const translations = {
-    ru: {
-        currency: '₽',
-        currency_name: 'руб.',
-        nav_home: 'Главная',
-        nav_tariffs: 'Тарифы',
-        nav_reviews: 'Отзывы',
-        nav_help: 'Помощь',
-        nav_faq: 'FAQ',
-        nav_support: 'Поддержка',
-        hero_desc: 'Триггер-бот, аимасист, ESP и другие легитные функции для комфортной игры без риска бана.',
-        hero_btn_buy: 'Выбрать подписку',
-        hero_btn_cabinet: 'Личный кабинет',
-        ecosystem: 'LEGIT ECOSYSTEM',
-        ecosystem_title: 'Клиент для тех, кто ценит честную игру',
-        ecosystem_desc: 'RunClient предоставляет только легитные функции, которые улучшают вашу игру, не нарушая правил. Триггер-бот, аимасист и ESP работают незаметно и безопасно.',
-        live_status: 'LIVE STATUS',
-        live_title: 'Готов к игре',
-        live_desc: 'Все функции протестированы и работают на популярных серверах. Постоянные обновления и поддержка.',
-        features_title: 'Легитные возможности',
-        features_desc: 'Всё для комфортной и безопасной игры',
-        feature1_title: 'Триггер-бот',
-        feature1_desc: 'Автоматический выстрел при наведении на противника. Настраиваемая задержка и зона поражения.',
-        feature2_title: 'Аимасист',
-        feature2_desc: 'Плавное наведение на цель. Настройка чувствительности и зоны действия для естественного прицеливания.',
-        feature3_title: 'ESP',
-        feature3_desc: 'Отображение игроков, предметов и мобов через стены. Настраиваемые цвета и фильтры.',
-        detail1_title: 'Интерфейс и управление',
-        detail1_desc: 'Настраиваемый ClickGUI, удобные бинды и интуитивно понятные настройки. Быстрый доступ ко всем функциям.',
-        detail1_list1: 'Модульный ClickGUI',
-        detail1_list2: 'Настройка горячих клавиш',
-        detail1_list3: 'Сохранение конфигураций',
-        detail2_title: 'Безопасность',
-        detail2_desc: 'Алгоритмы маскировки и обхода античитов. Регулярные обновления для поддержания актуальности.',
-        detail2_list1: 'Обход современных античитов',
-        detail2_list2: 'Анонимная работа',
-        detail2_list3: 'Круглосуточная поддержка',
-        servers_title: 'Поддерживаемые серверы',
-        servers_sub: 'Проверенная работа на популярных серверах',
-        server1: 'Стабильная работа',
-        server2: 'Полная совместимость',
-        server3: 'Максимальная производительность',
-        store_title: 'SUBSCRIBE STORE',
-        store_desc: 'Выберите срок доступа к RunClient. Все варианты оформляются как предзаказ и отображаются в личном кабинете.',
-        store_note: 'Важно:',
-        store_note_text: 'После оформления заявка появится в системе магазина.',
-        tariffs_access: 'Доступ к RunClient',
-        tariff1_name: '1 месяц',
-        tariff1_feat1: 'Доступ на 30 дней',
-        tariff1_feat2: 'Все легитные модули',
-        tariff1_feat3: 'Обновления',
-        tariff2_name: '3 месяца',
-        tariff2_feat1: 'Доступ на 90 дней',
-        tariff2_feat2: 'Все легитные модули',
-        tariff2_feat3: 'Приоритетная поддержка',
-        tariff3_name: 'Навсегда',
-        tariff3_feat1: 'Постоянный доступ',
-        tariff3_feat2: 'Все легитные модули',
-        tariff3_feat3: 'Эксклюзивная роль',
-        popular: 'ВЫГОДНО',
-        buy_btn: 'Оформить',
-        additional: 'Дополнительная услуга',
-        hwid_reset: 'Сброс HWID',
-        hwid_feat1: 'Заявка через кабинет',
-        hwid_feat2: 'Обработка модератором',
-        hwid_btn: 'Запросить сброс',
-        reviews_title: 'Отзывы пользователей',
-        reviews_sub: 'Поделитесь вашим впечатлением или посмотрите мнения других игроков.',
-        review_form_title: 'Оставить отзыв',
-        review_nick: 'Ваш ник',
-        review_rating: 'Оценка (звезды)',
-        review_text_label: 'Текст отзыва',
-        review_submit: 'Опубликовать отзыв',
-        help_title: 'Центр помощи',
-        help_sub: 'Часто задаваемые вопросы и руководства.',
-        help_q1: 'Как запустить клиент?',
-        help_a1: 'Скачайте лоадер в личном кабинете, запустите и войдите под своей учетной записью с активной подпиской.',
-        help_q2: 'Что делать при смене ПК (HWID ошибка)?',
-        help_a2: 'Оформите заявку на сброс HWID за 139 рублей или активируйте специальный ключ.',
-        faq_title: 'Частые вопросы',
-        faq_sub: 'Коротко о покупке, версии и кабинете.',
-        faq_q1: 'Какая версия поддерживается?',
-        faq_a1: 'RunClient ориентирован на Minecraft 1.21.4 Fabric.',
-        faq_q2: 'Где появляется предзаказ?',
-        faq_a2: 'После оформления заявка сохраняется в разделе «Мои предзаказы».',
-        faq_q3: 'Можно ли оформить другой срок?',
-        faq_a3: 'Доступны три варианта: 1 месяц, 3 месяца и навсегда.',
-        faq_q4: 'Что делать при проблеме с HWID?',
-        faq_a4: 'Оформите заявку на сброс HWID в разделе покупок.',
-        support_title: 'Техническая поддержка',
-        support_sub: 'Возникли проблемы? Создайте тикет, ответы придут в личный кабинет.',
-        ticket_new: 'Новое обращение',
-        ticket_subject_label: 'Тема обращения',
-        ticket_message_label: 'Описание проблемы',
-        ticket_send: 'Отправить вопрос',
-        auth_no_account: 'Нет аккаунта?',
-        auth_register_link: 'Регистрация',
-        auth_email_label: 'Email или логин',
-        auth_password_label: 'пароль',
-        auth_forgot: 'Забыли пароль?',
-        auth_error: 'Введён неверный логин при попытке авторизации.',
-        auth_login_btn: 'Войти',
-        reg_username_label: 'Придумайте никнейм',
-        reg_password_label: 'Придумайте пароль',
-        reg_email_label: 'Email (необязательно)',
-        reg_btn: 'Зарегистрироваться',
-        cab_account: 'Аккаунт',
-        cab_sub: 'Подписка',
-        cab_reg: 'Регистрация',
-        cab_access: 'Доступ',
-        cab_uid: 'UID',
-        cab_actions: 'Действия',
-        cab_download: '📥 Скачать RunClient',
-        cab_home: '🏠 Главная',
-        cab_orders: '📦 Мои предзаказы',
-        cab_tickets: '💬 Мои тикеты',
-        cab_keys: '🔑 Активация ключей',
-        cab_post: '📝 Сделать пост',
-        cab_downloads: '📥 Загрузки',
-        cab_moderation: '🛡️ Модерация',
-        cab_capabilities: '🛠️ Настройка возможностей',
-        cab_roles: '👑 Управление ролями',
-        cab_goldrush: '🔥 Золотая лихорадка',
-        cab_admin: '⚙️ Панель Владельца',
-        cab_logout: 'Выйти',
-        cab_status_title: 'Статус подписки',
-        cab_status_none: 'НЕТ АКТИВНОЙ ПОДПИСКИ',
-        cab_status_desc: 'Приобретите подписку в разделе «Тарифы» или активируйте ключ.',
-        cab_orders_title: 'История и Подписки / Заявки',
-        cab_orders_none: 'У вас пока нет активных подписок.',
-        cab_tickets_title: 'Мои тикеты и ответы поддержки',
-        cab_tickets_none: 'Вы еще не отправляли вопросы.',
-        cab_key_sub_title: 'Активация ключа подписки',
-        cab_key_sub_btn: 'Активировать подписку',
-        cab_key_hwid_title: 'Активация ключа сброса HWID',
-        cab_key_hwid_btn: 'Сбросить HWID ключом',
-        cab_key_special_title: 'Активация спец ключа',
-        cab_key_special_btn: 'Активировать спец ключ',
-        cab_post_title: 'Создать публикацию',
-        cab_post_title_label: 'Заголовок поста',
-        cab_post_text_label: 'Текст сообщения',
-        cab_post_btn: 'Опубликовать',
-        cab_downloads_title: 'Загрузка лоадера',
-        cab_downloads_desc: 'Последняя стабильная сборка клиента под Fabric.',
-        cab_downloads_btn: '📥 Скачать RunClient.exe',
-        cab_mod_sub_title: 'Запросы на покупку подписок / тарифов',
-        cab_mod_sub_none: 'Нет активных запросов.',
-        cab_mod_hwid_title: 'Заявки на сброс HWID (139 ₽)',
-        cab_mod_hwid_none: 'Нет активных заявок.',
-        cab_mod_tickets_title: 'Тикеты пользователей',
-        cab_mod_tickets_none: 'Нет активных вопросов.',
-        cab_cap_title: '🛠️ Настройка возможностей пользователя (Поиск по нику)',
-        cab_cap_search_label: 'Ник пользователя',
-        cab_cap_search_btn: 'Найти',
-        cab_roles_title: '👑 Управление ролями и их возможностями',
-        cab_roles_desc: 'Создавайте кастомные роли и настраивайте доступы.',
-        cab_roles_create: 'Создать роль',
-        cab_gold_title: '🔥 Золотая лихорадка',
-        cab_gold_desc: 'Настройка временного события, в течение которого пользователи могут открыть кейс бесплатно 1 раз.',
-        cab_gold_duration_label: 'Длительность (минуты)',
-        cab_gold_limit_label: 'Количество человек',
-        cab_gold_start: 'Начать золотую лихорадку',
-        cab_gold_status_label: 'Статус:',
-        cab_gold_time_label: 'Осталось:',
-        cab_gold_used_label: 'Использовали:',
-        cab_admin_title: '⚙️ Панель Владельца',
-        cab_admin_sub_type_label: 'Тип подписки для генерации',
-        cab_admin_gen_sub_btn: 'Сгенерировать ключ',
-        cab_admin_gen_hwid_btn: 'Сгенерировать ключ сброса HWID',
-        cab_admin_special_title: '🔑 Генерация спец ключа',
-        cab_admin_special_role_label: 'Роль для спец ключа',
-        cab_admin_special_uses_label: 'Количество использований',
-        cab_admin_special_gen_btn: 'Сгенерировать спец ключ'
+    ru: { currency: '₽', currency_name: 'руб.', nav_home: 'Главная', nav_tariffs: 'Тарифы', nav_reviews: 'Отзывы', nav_help: 'Помощь', nav_faq: 'FAQ', nav_support: 'Поддержка',
+    hero_desc: 'Триггер-бот, аимасист, ESP и другие легитные функции для комфортной игры без риска бана.',
+    hero_btn_buy: 'Выбрать подписку', hero_btn_cabinet: 'Личный кабинет', ecosystem: 'LEGIT ECOSYSTEM',
+    ecosystem_title: 'Клиент для тех, кто ценит честную игру',
+    ecosystem_desc: 'RunClient предоставляет только легитные функции, которые улучшают вашу игру, не нарушая правил. Триггер-бот, аимасист и ESP работают незаметно и безопасно.',
+    live_status: 'LIVE STATUS', live_title: 'Готов к игре', live_desc: 'Все функции протестированы и работают на популярных серверах. Постоянные обновления и поддержка.',
+    features_title: 'Легитные возможности', features_desc: 'Всё для комфортной и безопасной игры',
+    feature1_title: 'Триггер-бот', feature1_desc: 'Автоматический выстрел при наведении на противника. Настраиваемая задержка и зона поражения.',
+    feature2_title: 'Аимасист', feature2_desc: 'Плавное наведение на цель. Настройка чувствительности и зоны действия для естественного прицеливания.',
+    feature3_title: 'ESP', feature3_desc: 'Отображение игроков, предметов и мобов через стены. Настраиваемые цвета и фильтры.',
+    detail1_title: 'Интерфейс и управление', detail1_desc: 'Настраиваемый ClickGUI, удобные бинды и интуитивно понятные настройки. Быстрый доступ ко всем функциям.',
+    detail1_list1: 'Модульный ClickGUI', detail1_list2: 'Настройка горячих клавиш', detail1_list3: 'Сохранение конфигураций',
+    detail2_title: 'Безопасность', detail2_desc: 'Алгоритмы маскировки и обхода античитов. Регулярные обновления для поддержания актуальности.',
+    detail2_list1: 'Обход современных античитов', detail2_list2: 'Анонимная работа', detail2_list3: 'Круглосуточная поддержка',
+    servers_title: 'Поддерживаемые серверы', servers_sub: 'Проверенная работа на популярных серверах',
+    server1: 'Стабильная работа', server2: 'Полная совместимость', server3: 'Максимальная производительность',
+    store_title: 'SUBSCRIBE STORE', store_desc: 'Выберите срок доступа к RunClient. Все варианты оформляются как предзаказ и отображаются в личном кабинете.',
+    store_note: 'Важно:', store_note_text: 'После оформления заявка появится в системе магазина.',
+    tariffs_access: 'Доступ к RunClient', tariff1_name: '1 месяц', tariff1_feat1: 'Доступ на 30 дней', tariff1_feat2: 'Все легитные модули', tariff1_feat3: 'Обновления',
+    tariff2_name: '3 месяца', tariff2_feat1: 'Доступ на 90 дней', tariff2_feat2: 'Все легитные модули', tariff2_feat3: 'Приоритетная поддержка',
+    tariff3_name: 'Навсегда', tariff3_feat1: 'Постоянный доступ', tariff3_feat2: 'Все легитные модули', tariff3_feat3: 'Эксклюзивная роль',
+    popular: 'ВЫГОДНО', buy_btn: 'Оформить', additional: 'Дополнительная услуга', hwid_reset: 'Сброс HWID',
+    hwid_feat1: 'Заявка через кабинет', hwid_feat2: 'Обработка модератором', hwid_btn: 'Запросить сброс',
+    reviews_title: 'Отзывы пользователей', reviews_sub: 'Поделитесь вашим впечатлением или посмотрите мнения других игроков.',
+    review_form_title: 'Оставить отзыв', review_nick: 'Ваш ник', review_rating: 'Оценка (звезды)',
+    review_text_label: 'Текст отзыва', review_submit: 'Опубликовать отзыв',
+    help_title: 'Центр помощи', help_sub: 'Часто задаваемые вопросы и руководства.',
+    help_q1: 'Как запустить клиент?', help_a1: 'Скачайте лоадер в личном кабинете, запустите и войдите под своей учетной записью с активной подпиской.',
+    help_q2: 'Что делать при смене ПК (HWID ошибка)?', help_a2: 'Оформите заявку на сброс HWID за 139 рублей или активируйте специальный ключ.',
+    faq_title: 'Частые вопросы', faq_sub: 'Коротко о покупке, версии и кабинете.',
+    faq_q1: 'Какая версия поддерживается?', faq_a1: 'RunClient ориентирован на Minecraft 1.21.4 Fabric.',
+    faq_q2: 'Где появляется предзаказ?', faq_a2: 'После оформления заявка сохраняется в разделе «Мои предзаказы».',
+    faq_q3: 'Можно ли оформить другой срок?', faq_a3: 'Доступны три варианта: 1 месяц, 3 месяца и навсегда.',
+    faq_q4: 'Что делать при проблеме с HWID?', faq_a4: 'Оформите заявку на сброс HWID в разделе покупок.',
+    support_title: 'Техническая поддержка', support_sub: 'Возникли проблемы? Создайте тикет, ответы придут в личный кабинет.',
+    ticket_new: 'Новое обращение', ticket_subject_label: 'Тема обращения', ticket_message_label: 'Описание проблемы',
+    ticket_send: 'Отправить вопрос', auth_no_account: 'Нет аккаунта?', auth_register_link: 'Регистрация',
+    auth_email_label: 'Email или логин', auth_password_label: 'пароль', auth_forgot: 'Забыли пароль?',
+    auth_error: 'Введён неверный логин при попытке авторизации.', auth_login_btn: 'Войти',
+    reg_username_label: 'Придумайте никнейм', reg_password_label: 'Придумайте пароль', reg_email_label: 'Email (необязательно)',
+    reg_btn: 'Зарегистрироваться', cab_account: 'Аккаунт', cab_sub: 'Подписка', cab_reg: 'Регистрация',
+    cab_access: 'Доступ', cab_uid: 'UID', cab_actions: 'Действия', cab_download: '📥 Скачать RunClient',
+    cab_home: '🏠 Главная', cab_orders: '📦 Мои предзаказы', cab_tickets: '💬 Мои тикеты',
+    cab_keys: '🔑 Активация ключей', cab_post: '📝 Сделать пост', cab_downloads: '📥 Загрузки',
+    cab_moderation: '🛡️ Модерация', cab_capabilities: '🛠️ Настройка возможностей',
+    cab_roles: '👑 Управление ролями', cab_goldrush: '🔥 Золотая лихорадка', cab_admin: '⚙️ Панель Владельца',
+    cab_logout: 'Выйти', cab_status_title: 'Статус подписки', cab_status_none: 'НЕТ АКТИВНОЙ ПОДПИСКИ',
+    cab_status_desc: 'Приобретите подписку в разделе «Тарифы» или активируйте ключ.',
+    cab_orders_title: 'История и Подписки / Заявки', cab_orders_none: 'У вас пока нет активных подписок.',
+    cab_tickets_title: 'Мои тикеты и ответы поддержки', cab_tickets_none: 'Вы еще не отправляли вопросы.',
+    cab_key_sub_title: 'Активация ключа подписки', cab_key_sub_btn: 'Активировать подписку',
+    cab_key_hwid_title: 'Активация ключа сброса HWID', cab_key_hwid_btn: 'Сбросить HWID ключом',
+    cab_key_special_title: 'Активация спец ключа', cab_key_special_btn: 'Активировать спец ключ',
+    cab_post_title: 'Создать публикацию', cab_post_title_label: 'Заголовок поста', cab_post_text_label: 'Текст сообщения',
+    cab_post_btn: 'Опубликовать', cab_downloads_title: 'Загрузка лоадера',
+    cab_downloads_desc: 'Последняя стабильная сборка клиента под Fabric.',
+    cab_downloads_btn: '📥 Скачать RunClient.exe',
+    cab_mod_sub_title: 'Запросы на покупку подписок / тарифов', cab_mod_sub_none: 'Нет активных запросов.',
+    cab_mod_hwid_title: 'Заявки на сброс HWID (139 ₽)', cab_mod_hwid_none: 'Нет активных заявок.',
+    cab_mod_tickets_title: 'Тикеты пользователей', cab_mod_tickets_none: 'Нет активных вопросов.',
+    cab_cap_title: '🛠️ Настройка возможностей пользователя (Поиск по нику)',
+    cab_cap_search_label: 'Ник пользователя', cab_cap_search_btn: 'Найти',
+    cab_roles_title: '👑 Управление ролями и их возможностями',
+    cab_roles_desc: 'Создавайте кастомные роли и настраивайте доступы.',
+    cab_roles_create: 'Создать роль',
+    cab_gold_title: '🔥 Золотая лихорадка',
+    cab_gold_desc: 'Настройка временного события, в течение которого пользователи могут открыть кейс бесплатно 1 раз.',
+    cab_gold_duration_label: 'Длительность (минуты)',
+    cab_gold_limit_label: 'Количество человек',
+    cab_gold_start: 'Начать золотую лихорадку',
+    cab_gold_status_label: 'Статус:',
+    cab_gold_time_label: 'Осталось:',
+    cab_gold_used_label: 'Использовали:',
+    cab_admin_title: '⚙️ Панель Владельца',
+    cab_admin_sub_type_label: 'Тип подписки для генерации',
+    cab_admin_gen_sub_btn: 'Сгенерировать ключ',
+    cab_admin_gen_hwid_btn: 'Сгенерировать ключ сброса HWID',
+    cab_admin_special_title: '🔑 Генерация спец ключа',
+    cab_admin_special_role_label: 'Роль для спец ключа',
+    cab_admin_special_uses_label: 'Количество использований',
+    cab_admin_special_gen_btn: 'Сгенерировать спец ключ'
     },
-    en: {
-        currency: '$',
-        currency_name: 'USD',
-        nav_home: 'Home',
-        nav_tariffs: 'Tariffs',
-        nav_reviews: 'Reviews',
-        nav_help: 'Help',
-        nav_faq: 'FAQ',
-        nav_support: 'Support',
-        hero_desc: 'TriggerBot, AimAssist, ESP and other legit features for comfortable gaming without ban risk.',
-        hero_btn_buy: 'Choose subscription',
-        hero_btn_cabinet: 'Dashboard',
-        ecosystem: 'LEGIT ECOSYSTEM',
-        ecosystem_title: 'Client for those who value fair play',
-        ecosystem_desc: 'RunClient provides only legit features that improve your game without breaking rules. TriggerBot, AimAssist and ESP work discreetly and safely.',
-        live_status: 'LIVE STATUS',
-        live_title: 'Ready to play',
-        live_desc: 'All features are tested and work on popular servers. Constant updates and support.',
-        features_title: 'Legit Features',
-        features_desc: 'Everything for comfortable and safe gameplay',
-        feature1_title: 'TriggerBot',
-        feature1_desc: 'Automatic shot when aiming at enemy. Adjustable delay and hit zone.',
-        feature2_title: 'AimAssist',
-        feature2_desc: 'Smooth aim assist. Adjustable sensitivity and field of view for natural aiming.',
-        feature3_title: 'ESP',
-        feature3_desc: 'Visualization of players, items and mobs through walls. Customizable colors and filters.',
-        detail1_title: 'Interface & Controls',
-        detail1_desc: 'Customizable ClickGUI, convenient keybinds and intuitive settings. Quick access to all features.',
-        detail1_list1: 'Modular ClickGUI',
-        detail1_list2: 'Hotkey configuration',
-        detail1_list3: 'Config saving',
-        detail2_title: 'Security',
-        detail2_desc: 'Anti-cheat bypass and masking algorithms. Regular updates to stay current.',
-        detail2_list1: 'Bypass modern anti-cheats',
-        detail2_list2: 'Anonymous operation',
-        detail2_list3: '24/7 support',
-        servers_title: 'Supported Servers',
-        servers_sub: 'Proven work on popular servers',
-        server1: 'Stable operation',
-        server2: 'Full compatibility',
-        server3: 'Maximum performance',
-        store_title: 'SUBSCRIBE STORE',
-        store_desc: 'Choose access period to RunClient. All options are pre-orders and appear in your dashboard.',
-        store_note: 'Important:',
-        store_note_text: 'After placing an order, the request will appear in the store system.',
-        tariffs_access: 'Access to RunClient',
-        tariff1_name: '1 month',
-        tariff1_feat1: '30 days access',
-        tariff1_feat2: 'All legit modules',
-        tariff1_feat3: 'Updates',
-        tariff2_name: '3 months',
-        tariff2_feat1: '90 days access',
-        tariff2_feat2: 'All legit modules',
-        tariff2_feat3: 'Priority support',
-        tariff3_name: 'Lifetime',
-        tariff3_feat1: 'Permanent access',
-        tariff3_feat2: 'All legit modules',
-        tariff3_feat3: 'Exclusive role',
-        popular: 'BEST DEAL',
-        buy_btn: 'Order',
-        additional: 'Additional service',
-        hwid_reset: 'HWID Reset',
-        hwid_feat1: 'Request via cabinet',
-        hwid_feat2: 'Moderator processing',
-        hwid_btn: 'Request reset',
-        reviews_title: 'User Reviews',
-        reviews_sub: 'Share your experience or see other players\' opinions.',
-        review_form_title: 'Leave a review',
-        review_nick: 'Your nickname',
-        review_rating: 'Rating (stars)',
-        review_text_label: 'Review text',
-        review_submit: 'Publish review',
-        help_title: 'Help Center',
-        help_sub: 'Frequently asked questions and guides.',
-        help_q1: 'How to launch the client?',
-        help_a1: 'Download the loader from your dashboard, launch it and log in with your account with an active subscription.',
-        help_q2: 'What to do when changing PC (HWID error)?',
-        help_a2: 'Submit a HWID reset request for 139 rubles or activate a special key.',
-        faq_title: 'FAQ',
-        faq_sub: 'Short about purchase, version and cabinet.',
-        faq_q1: 'What version is supported?',
-        faq_a1: 'RunClient is designed for Minecraft 1.21.4 Fabric.',
-        faq_q2: 'Where does the pre-order appear?',
-        faq_a2: 'After registration, the request is saved in the "My orders" section.',
-        faq_q3: 'Can I choose a different period?',
-        faq_a3: 'Three options are available: 1 month, 3 months and lifetime.',
-        faq_q4: 'What to do with HWID issue?',
-        faq_a4: 'Submit a HWID reset request in the purchases section.',
-        support_title: 'Support',
-        support_sub: 'Have problems? Create a ticket, answers will come to your dashboard.',
-        ticket_new: 'New ticket',
-        ticket_subject_label: 'Subject',
-        ticket_message_label: 'Problem description',
-        ticket_send: 'Send question',
-        auth_no_account: 'No account?',
-        auth_register_link: 'Register',
-        auth_email_label: 'Email or login',
-        auth_password_label: 'Password',
-        auth_forgot: 'Forgot password?',
-        auth_error: 'Invalid login or password.',
-        auth_login_btn: 'Login',
-        reg_username_label: 'Choose a nickname',
-        reg_password_label: 'Choose a password',
-        reg_email_label: 'Email (optional)',
-        reg_btn: 'Register',
-        cab_account: 'Account',
-        cab_sub: 'Subscription',
-        cab_reg: 'Registration',
-        cab_access: 'Access',
-        cab_uid: 'UID',
-        cab_actions: 'Actions',
-        cab_download: '📥 Download RunClient',
-        cab_home: '🏠 Home',
-        cab_orders: '📦 My orders',
-        cab_tickets: '💬 My tickets',
-        cab_keys: '🔑 Activate keys',
-        cab_post: '📝 Create post',
-        cab_downloads: '📥 Downloads',
-        cab_moderation: '🛡️ Moderation',
-        cab_capabilities: '🛠️ User settings',
-        cab_roles: '👑 Role management',
-        cab_goldrush: '🔥 Gold Rush',
-        cab_admin: '⚙️ Owner Panel',
-        cab_logout: 'Logout',
-        cab_status_title: 'Subscription status',
-        cab_status_none: 'NO ACTIVE SUBSCRIPTION',
-        cab_status_desc: 'Purchase a subscription in the "Tariffs" section or activate a key.',
-        cab_orders_title: 'History and Orders',
-        cab_orders_none: 'You have no active subscriptions yet.',
-        cab_tickets_title: 'My tickets and support replies',
-        cab_tickets_none: 'You haven\'t sent any questions yet.',
-        cab_key_sub_title: 'Activate subscription key',
-        cab_key_sub_btn: 'Activate subscription',
-        cab_key_hwid_title: 'Activate HWID reset key',
-        cab_key_hwid_btn: 'Reset HWID with key',
-        cab_key_special_title: 'Activate special key',
-        cab_key_special_btn: 'Activate special key',
-        cab_post_title: 'Create publication',
-        cab_post_title_label: 'Post title',
-        cab_post_text_label: 'Message text',
-        cab_post_btn: 'Publish',
-        cab_downloads_title: 'Download loader',
-        cab_downloads_desc: 'Latest stable client build for Fabric.',
-        cab_downloads_btn: '📥 Download RunClient.exe',
-        cab_mod_sub_title: 'Subscription purchase requests',
-        cab_mod_sub_none: 'No active requests.',
-        cab_mod_hwid_title: 'HWID reset requests (139 ₽)',
-        cab_mod_hwid_none: 'No active requests.',
-        cab_mod_tickets_title: 'User tickets',
-        cab_mod_tickets_none: 'No active questions.',
-        cab_cap_title: '🛠️ User capabilities setup (Search by nickname)',
-        cab_cap_search_label: 'User nickname',
-        cab_cap_search_btn: 'Search',
-        cab_roles_title: '👑 Role management and permissions',
-        cab_roles_desc: 'Create custom roles and configure accesses.',
-        cab_roles_create: 'Create role',
-        cab_gold_title: '🔥 Gold Rush',
-        cab_gold_desc: 'Set up a temporary event during which users can open a case for free 1 time.',
-        cab_gold_duration_label: 'Duration (minutes)',
-        cab_gold_limit_label: 'Number of people',
-        cab_gold_start: 'Start Gold Rush',
-        cab_gold_status_label: 'Status:',
-        cab_gold_time_label: 'Left:',
-        cab_gold_used_label: 'Used:',
-        cab_admin_title: '⚙️ Owner Panel',
-        cab_admin_sub_type_label: 'Subscription type for generation',
-        cab_admin_gen_sub_btn: 'Generate key',
-        cab_admin_gen_hwid_btn: 'Generate HWID reset key',
-        cab_admin_special_title: '🔑 Special key generation',
-        cab_admin_special_role_label: 'Role for special key',
-        cab_admin_special_uses_label: 'Number of uses',
-        cab_admin_special_gen_btn: 'Generate special key'
+    en: { currency: '$', currency_name: 'USD', nav_home: 'Home', nav_tariffs: 'Tariffs', nav_reviews: 'Reviews', nav_help: 'Help', nav_faq: 'FAQ', nav_support: 'Support',
+    hero_desc: 'TriggerBot, AimAssist, ESP and other legit features for comfortable gaming without ban risk.',
+    hero_btn_buy: 'Choose subscription', hero_btn_cabinet: 'Dashboard',
+    ecosystem: 'LEGIT ECOSYSTEM',
+    ecosystem_title: 'Client for those who value fair play',
+    ecosystem_desc: 'RunClient provides only legit features that improve your game without breaking rules. TriggerBot, AimAssist and ESP work discreetly and safely.',
+    live_status: 'LIVE STATUS', live_title: 'Ready to play',
+    live_desc: 'All features are tested and work on popular servers. Constant updates and support.',
+    features_title: 'Legit Features', features_desc: 'Everything for comfortable and safe gameplay',
+    feature1_title: 'TriggerBot', feature1_desc: 'Automatic shot when aiming at enemy. Adjustable delay and hit zone.',
+    feature2_title: 'AimAssist', feature2_desc: 'Smooth aim assist. Adjustable sensitivity and field of view for natural aiming.',
+    feature3_title: 'ESP', feature3_desc: 'Visualization of players, items and mobs through walls. Customizable colors and filters.',
+    detail1_title: 'Interface & Controls', detail1_desc: 'Customizable ClickGUI, convenient keybinds and intuitive settings. Quick access to all features.',
+    detail1_list1: 'Modular ClickGUI', detail1_list2: 'Hotkey configuration', detail1_list3: 'Config saving',
+    detail2_title: 'Security', detail2_desc: 'Anti-cheat bypass and masking algorithms. Regular updates to stay current.',
+    detail2_list1: 'Bypass modern anti-cheats', detail2_list2: 'Anonymous operation', detail2_list3: '24/7 support',
+    servers_title: 'Supported Servers', servers_sub: 'Proven work on popular servers',
+    server1: 'Stable operation', server2: 'Full compatibility', server3: 'Maximum performance',
+    store_title: 'SUBSCRIBE STORE', store_desc: 'Choose access period to RunClient. All options are pre-orders and appear in your dashboard.',
+    store_note: 'Important:', store_note_text: 'After placing an order, the request will appear in the store system.',
+    tariffs_access: 'Access to RunClient', tariff1_name: '1 month', tariff1_feat1: '30 days access', tariff1_feat2: 'All legit modules', tariff1_feat3: 'Updates',
+    tariff2_name: '3 months', tariff2_feat1: '90 days access', tariff2_feat2: 'All legit modules', tariff2_feat3: 'Priority support',
+    tariff3_name: 'Lifetime', tariff3_feat1: 'Permanent access', tariff3_feat2: 'All legit modules', tariff3_feat3: 'Exclusive role',
+    popular: 'BEST DEAL', buy_btn: 'Order', additional: 'Additional service', hwid_reset: 'HWID Reset',
+    hwid_feat1: 'Request via cabinet', hwid_feat2: 'Moderator processing', hwid_btn: 'Request reset',
+    reviews_title: 'User Reviews', reviews_sub: 'Share your experience or see other players\' opinions.',
+    review_form_title: 'Leave a review', review_nick: 'Your nickname', review_rating: 'Rating (stars)',
+    review_text_label: 'Review text', review_submit: 'Publish review',
+    help_title: 'Help Center', help_sub: 'Frequently asked questions and guides.',
+    help_q1: 'How to launch the client?', help_a1: 'Download the loader from your dashboard, launch it and log in with your account with an active subscription.',
+    help_q2: 'What to do when changing PC (HWID error)?', help_a2: 'Submit a HWID reset request for 139 rubles or activate a special key.',
+    faq_title: 'FAQ', faq_sub: 'Short about purchase, version and cabinet.',
+    faq_q1: 'What version is supported?', faq_a1: 'RunClient is designed for Minecraft 1.21.4 Fabric.',
+    faq_q2: 'Where does the pre-order appear?', faq_a2: 'After registration, the request is saved in the "My orders" section.',
+    faq_q3: 'Can I choose a different period?', faq_a3: 'Three options are available: 1 month, 3 months and lifetime.',
+    faq_q4: 'What to do with HWID issue?', faq_a4: 'Submit a HWID reset request in the purchases section.',
+    support_title: 'Support', support_sub: 'Have problems? Create a ticket, answers will come to your dashboard.',
+    ticket_new: 'New ticket', ticket_subject_label: 'Subject', ticket_message_label: 'Problem description',
+    ticket_send: 'Send question', auth_no_account: 'No account?', auth_register_link: 'Register',
+    auth_email_label: 'Email or login', auth_password_label: 'Password', auth_forgot: 'Forgot password?',
+    auth_error: 'Invalid login or password.', auth_login_btn: 'Login',
+    reg_username_label: 'Choose a nickname', reg_password_label: 'Choose a password', reg_email_label: 'Email (optional)',
+    reg_btn: 'Register', cab_account: 'Account', cab_sub: 'Subscription', cab_reg: 'Registration',
+    cab_access: 'Access', cab_uid: 'UID', cab_actions: 'Actions', cab_download: '📥 Download RunClient',
+    cab_home: '🏠 Home', cab_orders: '📦 My orders', cab_tickets: '💬 My tickets',
+    cab_keys: '🔑 Activate keys', cab_post: '📝 Create post', cab_downloads: '📥 Downloads',
+    cab_moderation: '🛡️ Moderation', cab_capabilities: '🛠️ User settings',
+    cab_roles: '👑 Role management', cab_goldrush: '🔥 Gold Rush', cab_admin: '⚙️ Owner Panel',
+    cab_logout: 'Logout', cab_status_title: 'Subscription status', cab_status_none: 'NO ACTIVE SUBSCRIPTION',
+    cab_status_desc: 'Purchase a subscription in the "Tariffs" section or activate a key.',
+    cab_orders_title: 'History and Orders', cab_orders_none: 'You have no active subscriptions yet.',
+    cab_tickets_title: 'My tickets and support replies', cab_tickets_none: 'You haven\'t sent any questions yet.',
+    cab_key_sub_title: 'Activate subscription key', cab_key_sub_btn: 'Activate subscription',
+    cab_key_hwid_title: 'Activate HWID reset key', cab_key_hwid_btn: 'Reset HWID with key',
+    cab_key_special_title: 'Activate special key', cab_key_special_btn: 'Activate special key',
+    cab_post_title: 'Create publication', cab_post_title_label: 'Post title', cab_post_text_label: 'Message text',
+    cab_post_btn: 'Publish', cab_downloads_title: 'Download loader',
+    cab_downloads_desc: 'Latest stable client build for Fabric.',
+    cab_downloads_btn: '📥 Download RunClient.exe',
+    cab_mod_sub_title: 'Subscription purchase requests', cab_mod_sub_none: 'No active requests.',
+    cab_mod_hwid_title: 'HWID reset requests (139 ₽)', cab_mod_hwid_none: 'No active requests.',
+    cab_mod_tickets_title: 'User tickets', cab_mod_tickets_none: 'No active questions.',
+    cab_cap_title: '🛠️ User capabilities setup (Search by nickname)',
+    cab_cap_search_label: 'User nickname', cab_cap_search_btn: 'Search',
+    cab_roles_title: '👑 Role management and permissions',
+    cab_roles_desc: 'Create custom roles and configure accesses.',
+    cab_roles_create: 'Create role',
+    cab_gold_title: '🔥 Gold Rush',
+    cab_gold_desc: 'Set up a temporary event during which users can open a case for free 1 time.',
+    cab_gold_duration_label: 'Duration (minutes)',
+    cab_gold_limit_label: 'Number of people',
+    cab_gold_start: 'Start Gold Rush',
+    cab_gold_status_label: 'Status:',
+    cab_gold_time_label: 'Left:',
+    cab_gold_used_label: 'Used:',
+    cab_admin_title: '⚙️ Owner Panel',
+    cab_admin_sub_type_label: 'Subscription type for generation',
+    cab_admin_gen_sub_btn: 'Generate key',
+    cab_admin_gen_hwid_btn: 'Generate HWID reset key',
+    cab_admin_special_title: '🔑 Special key generation',
+    cab_admin_special_role_label: 'Role for special key',
+    cab_admin_special_uses_label: 'Number of uses',
+    cab_admin_special_gen_btn: 'Generate special key'
     },
-    ua: {
-        currency: '₴',
-        currency_name: 'грн.',
-        nav_home: 'Головна',
-        nav_tariffs: 'Тарифи',
-        nav_reviews: 'Відгуки',
-        nav_help: 'Допомога',
-        nav_faq: 'FAQ',
-        nav_support: 'Підтримка',
-        hero_desc: 'Тригер-бот, аімасист, ESP та інші легітні функції для комфортної гри без ризику бану.',
-        hero_btn_buy: 'Обрати підписку',
-        hero_btn_cabinet: 'Особистий кабінет',
-        ecosystem: 'LEGIT ECOSYSTEM',
-        ecosystem_title: 'Клієнт для тих, хто цінує чесну гру',
-        ecosystem_desc: 'RunClient надає тільки легітні функції, які покращують вашу гру, не порушуючи правил. Тригер-бот, аімасист та ESP працюють непомітно та безпечно.',
-        live_status: 'LIVE STATUS',
-        live_title: 'Готовий до гри',
-        live_desc: 'Всі функції перевірені та працюють на популярних серверах. Постійні оновлення та підтримка.',
-        features_title: 'Легітні можливості',
-        features_desc: 'Все для комфортної та безпечної гри',
-        feature1_title: 'Тригер-бот',
-        feature1_desc: 'Автоматичний постріл при наведенні на супротивника. Налаштовувана затримка та зона ураження.',
-        feature2_title: 'Аімасист',
-        feature2_desc: 'Плавне наведення на ціль. Налаштування чутливості та зони дії для природного прицілювання.',
-        feature3_title: 'ESP',
-        feature3_desc: 'Відображення гравців, предметів та мобів крізь стіни. Налаштовувані кольори та фільтри.',
-        detail1_title: 'Інтерфейс та управління',
-        detail1_desc: 'Налаштовуваний ClickGUI, зручні бінди та інтуїтивно зрозумілі налаштування. Швидкий доступ до всіх функцій.',
-        detail1_list1: 'Модульний ClickGUI',
-        detail1_list2: 'Налаштування гарячих клавіш',
-        detail1_list3: 'Збереження конфігурацій',
-        detail2_title: 'Безпека',
-        detail2_desc: 'Алгоритми маскування та обходу античитів. Регулярні оновлення для підтримки актуальності.',
-        detail2_list1: 'Обхід сучасних античитів',
-        detail2_list2: 'Анонімна робота',
-        detail2_list3: 'Цілодобова підтримка',
-        servers_title: 'Підтримувані сервери',
-        servers_sub: 'Перевірена робота на популярних серверах',
-        server1: 'Стабільна робота',
-        server2: 'Повна сумісність',
-        server3: 'Максимальна продуктивність',
-        store_title: 'SUBSCRIBE STORE',
-        store_desc: 'Виберіть термін доступу до RunClient. Всі варіанти оформлюються як передзамовлення та відображаються в особистому кабінеті.',
-        store_note: 'Важливо:',
-        store_note_text: 'Після оформлення заявка з\'явиться в системі магазину.',
-        tariffs_access: 'Доступ до RunClient',
-        tariff1_name: '1 місяць',
-        tariff1_feat1: 'Доступ на 30 днів',
-        tariff1_feat2: 'Всі легітні модулі',
-        tariff1_feat3: 'Оновлення',
-        tariff2_name: '3 місяці',
-        tariff2_feat1: 'Доступ на 90 днів',
-        tariff2_feat2: 'Всі легітні модулі',
-        tariff2_feat3: 'Пріоритетна підтримка',
-        tariff3_name: 'Назавжди',
-        tariff3_feat1: 'Постійний доступ',
-        tariff3_feat2: 'Всі легітні модулі',
-        tariff3_feat3: 'Ексклюзивна роль',
-        popular: 'ВИГІДНО',
-        buy_btn: 'Оформити',
-        additional: 'Додаткова послуга',
-        hwid_reset: 'Скидання HWID',
-        hwid_feat1: 'Заявка через кабінет',
-        hwid_feat2: 'Обробка модератором',
-        hwid_btn: 'Запросити скидання',
-        reviews_title: 'Відгуки користувачів',
-        reviews_sub: 'Поділіться своїм враженням або подивіться думки інших гравців.',
-        review_form_title: 'Залишити відгук',
-        review_nick: 'Ваш нік',
-        review_rating: 'Оцінка (зірки)',
-        review_text_label: 'Текст відгуку',
-        review_submit: 'Опублікувати відгук',
-        help_title: 'Центр допомоги',
-        help_sub: 'Часті запитання та керівництва.',
-        help_q1: 'Як запустити клієнт?',
-        help_a1: 'Завантажте лоадер в особистому кабінеті, запустіть та увійдіть під своїм обліковим записом з активною підпискою.',
-        help_q2: 'Що робити при зміні ПК (помилка HWID)?',
-        help_a2: 'Оформіть заявку на скидання HWID за 139 гривень або активуйте спеціальний ключ.',
-        faq_title: 'Часті запитання',
-        faq_sub: 'Коротко про покупку, версію та кабінет.',
-        faq_q1: 'Яка версія підтримується?',
-        faq_a1: 'RunClient орієнтований на Minecraft 1.21.4 Fabric.',
-        faq_q2: 'Де з\'являється передзамовлення?',
-        faq_a2: 'Після оформлення заявка зберігається в розділі «Мої передзамовлення».',
-        faq_q3: 'Чи можна оформити інший термін?',
-        faq_a3: 'Доступні три варіанти: 1 місяць, 3 місяці та назавжди.',
-        faq_q4: 'Що робити з проблемою HWID?',
-        faq_a4: 'Оформіть заявку на скидання HWID в розділі покупок.',
-        support_title: 'Технічна підтримка',
-        support_sub: 'Виникли проблеми? Створіть тікет, відповіді прийдуть в особистий кабінет.',
-        ticket_new: 'Нове звернення',
-        ticket_subject_label: 'Тема звернення',
-        ticket_message_label: 'Опис проблеми',
-        ticket_send: 'Відправити питання',
-        auth_no_account: 'Немає акаунта?',
-        auth_register_link: 'Реєстрація',
-        auth_email_label: 'Email або логін',
-        auth_password_label: 'пароль',
-        auth_forgot: 'Забули пароль?',
-        auth_error: 'Введено невірний логін або пароль.',
-        auth_login_btn: 'Увійти',
-        reg_username_label: 'Придумайте нікнейм',
-        reg_password_label: 'Придумайте пароль',
-        reg_email_label: 'Email (необов\'язково)',
-        reg_btn: 'Зареєструватися',
-        cab_account: 'Акаунт',
-        cab_sub: 'Підписка',
-        cab_reg: 'Реєстрація',
-        cab_access: 'Доступ',
-        cab_uid: 'UID',
-        cab_actions: 'Дії',
-        cab_download: '📥 Завантажити RunClient',
-        cab_home: '🏠 Головна',
-        cab_orders: '📦 Мої передзамовлення',
-        cab_tickets: '💬 Мої тікети',
-        cab_keys: '🔑 Активація ключів',
-        cab_post: '📝 Створити пост',
-        cab_downloads: '📥 Завантаження',
-        cab_moderation: '🛡️ Модерація',
-        cab_capabilities: '🛠️ Налаштування можливостей',
-        cab_roles: '👑 Управління ролями',
-        cab_goldrush: '🔥 Золота лихоманка',
-        cab_admin: '⚙️ Панель Власника',
-        cab_logout: 'Вийти',
-        cab_status_title: 'Статус підписки',
-        cab_status_none: 'НЕМАЄ АКТИВНОЇ ПІДПИСКИ',
-        cab_status_desc: 'Придбайте підписку в розділі «Тарифи» або активуйте ключ.',
-        cab_orders_title: 'Історія та Підписки / Заявки',
-        cab_orders_none: 'У вас поки немає активних підписок.',
-        cab_tickets_title: 'Мої тікети та відповіді підтримки',
-        cab_tickets_none: 'Ви ще не надсилали питання.',
-        cab_key_sub_title: 'Активація ключа підписки',
-        cab_key_sub_btn: 'Активувати підписку',
-        cab_key_hwid_title: 'Активація ключа скидання HWID',
-        cab_key_hwid_btn: 'Скинути HWID ключем',
-        cab_key_special_title: 'Активація спец ключа',
-        cab_key_special_btn: 'Активувати спец ключ',
-        cab_post_title: 'Створити публікацію',
-        cab_post_title_label: 'Заголовок поста',
-        cab_post_text_label: 'Текст повідомлення',
-        cab_post_btn: 'Опублікувати',
-        cab_downloads_title: 'Завантаження лоадера',
-        cab_downloads_desc: 'Остання стабільна збірка клієнта під Fabric.',
-        cab_downloads_btn: '📥 Завантажити RunClient.exe',
-        cab_mod_sub_title: 'Запити на покупку підписок / тарифів',
-        cab_mod_sub_none: 'Немає активних запитів.',
-        cab_mod_hwid_title: 'Заявки на скидання HWID (139 ₴)',
-        cab_mod_hwid_none: 'Немає активних заявок.',
-        cab_mod_tickets_title: 'Тікети користувачів',
-        cab_mod_tickets_none: 'Немає активних питань.',
-        cab_cap_title: '🛠️ Налаштування можливостей користувача (Пошук по ніку)',
-        cab_cap_search_label: 'Нік користувача',
-        cab_cap_search_btn: 'Знайти',
-        cab_roles_title: '👑 Управління ролями та їх можливостями',
-        cab_roles_desc: 'Створюйте кастомні ролі та налаштовуйте доступи.',
-        cab_roles_create: 'Створити роль',
-        cab_gold_title: '🔥 Золота лихоманка',
-        cab_gold_desc: 'Налаштування тимчасової події, протягом якої користувачі можуть відкрити кейс безкоштовно 1 раз.',
-        cab_gold_duration_label: 'Тривалість (хвилини)',
-        cab_gold_limit_label: 'Кількість людей',
-        cab_gold_start: 'Почати золоту лихоманку',
-        cab_gold_status_label: 'Статус:',
-        cab_gold_time_label: 'Залишилось:',
-        cab_gold_used_label: 'Використали:',
-        cab_admin_title: '⚙️ Панель Власника',
-        cab_admin_sub_type_label: 'Тип підписки для генерації',
-        cab_admin_gen_sub_btn: 'Згенерувати ключ',
-        cab_admin_gen_hwid_btn: 'Згенерувати ключ скидання HWID',
-        cab_admin_special_title: '🔑 Генерація спец ключа',
-        cab_admin_special_role_label: 'Роль для спец ключа',
-        cab_admin_special_uses_label: 'Кількість використань',
-        cab_admin_special_gen_btn: 'Згенерувати спец ключ'
+    ua: { currency: '₴', currency_name: 'грн.', nav_home: 'Головна', nav_tariffs: 'Тарифи', nav_reviews: 'Відгуки', nav_help: 'Допомога', nav_faq: 'FAQ', nav_support: 'Підтримка',
+    hero_desc: 'Тригер-бот, аімасист, ESP та інші легітні функції для комфортної гри без ризику бану.',
+    hero_btn_buy: 'Обрати підписку', hero_btn_cabinet: 'Особистий кабінет',
+    ecosystem: 'LEGIT ECOSYSTEM',
+    ecosystem_title: 'Клієнт для тих, хто цінує чесну гру',
+    ecosystem_desc: 'RunClient надає тільки легітні функції, які покращують вашу гру, не порушуючи правил. Тригер-бот, аімасист та ESP працюють непомітно та безпечно.',
+    live_status: 'LIVE STATUS', live_title: 'Готовий до гри',
+    live_desc: 'Всі функції перевірені та працюють на популярних серверах. Постійні оновлення та підтримка.',
+    features_title: 'Легітні можливості', features_desc: 'Все для комфортної та безпечної гри',
+    feature1_title: 'Тригер-бот', feature1_desc: 'Автоматичний постріл при наведенні на супротивника. Налаштовувана затримка та зона ураження.',
+    feature2_title: 'Аімасист', feature2_desc: 'Плавне наведення на ціль. Налаштування чутливості та зони дії для природного прицілювання.',
+    feature3_title: 'ESP', feature3_desc: 'Відображення гравців, предметів та мобів крізь стіни. Налаштовувані кольори та фільтри.',
+    detail1_title: 'Інтерфейс та управління', detail1_desc: 'Налаштовуваний ClickGUI, зручні бінди та інтуїтивно зрозумілі налаштування. Швидкий доступ до всіх функцій.',
+    detail1_list1: 'Модульний ClickGUI', detail1_list2: 'Налаштування гарячих клавіш', detail1_list3: 'Збереження конфігурацій',
+    detail2_title: 'Безпека', detail2_desc: 'Алгоритми маскування та обходу античитів. Регулярні оновлення для підтримки актуальності.',
+    detail2_list1: 'Обхід сучасних античитів', detail2_list2: 'Анонімна робота', detail2_list3: 'Цілодобова підтримка',
+    servers_title: 'Підтримувані сервери', servers_sub: 'Перевірена робота на популярних серверах',
+    server1: 'Стабільна робота', server2: 'Повна сумісність', server3: 'Максимальна продуктивність',
+    store_title: 'SUBSCRIBE STORE', store_desc: 'Виберіть термін доступу до RunClient. Всі варіанти оформлюються як передзамовлення та відображаються в особистому кабінеті.',
+    store_note: 'Важливо:', store_note_text: 'Після оформлення заявка з\'явиться в системі магазину.',
+    tariffs_access: 'Доступ до RunClient', tariff1_name: '1 місяць', tariff1_feat1: 'Доступ на 30 днів', tariff1_feat2: 'Всі легітні модулі', tariff1_feat3: 'Оновлення',
+    tariff2_name: '3 місяці', tariff2_feat1: 'Доступ на 90 днів', tariff2_feat2: 'Всі легітні модулі', tariff2_feat3: 'Пріоритетна підтримка',
+    tariff3_name: 'Назавжди', tariff3_feat1: 'Постійний доступ', tariff3_feat2: 'Всі легітні модулі', tariff3_feat3: 'Ексклюзивна роль',
+    popular: 'ВИГІДНО', buy_btn: 'Оформити', additional: 'Додаткова послуга', hwid_reset: 'Скидання HWID',
+    hwid_feat1: 'Заявка через кабінет', hwid_feat2: 'Обробка модератором', hwid_btn: 'Запросити скидання',
+    reviews_title: 'Відгуки користувачів', reviews_sub: 'Поділіться своїм враженням або подивіться думки інших гравців.',
+    review_form_title: 'Залишити відгук', review_nick: 'Ваш нік', review_rating: 'Оцінка (зірки)',
+    review_text_label: 'Текст відгуку', review_submit: 'Опублікувати відгук',
+    help_title: 'Центр допомоги', help_sub: 'Часті запитання та керівництва.',
+    help_q1: 'Як запустити клієнт?', help_a1: 'Завантажте лоадер в особистому кабінеті, запустіть та увійдіть під своїм обліковим записом з активною підпискою.',
+    help_q2: 'Що робити при зміні ПК (помилка HWID)?', help_a2: 'Оформіть заявку на скидання HWID за 139 гривень або активуйте спеціальний ключ.',
+    faq_title: 'Часті запитання', faq_sub: 'Коротко про покупку, версію та кабінет.',
+    faq_q1: 'Яка версія підтримується?', faq_a1: 'RunClient орієнтований на Minecraft 1.21.4 Fabric.',
+    faq_q2: 'Де з\'являється передзамовлення?', faq_a2: 'Після оформлення заявка зберігається в розділі «Мої передзамовлення».',
+    faq_q3: 'Чи можна оформити інший термін?', faq_a3: 'Доступні три варіанти: 1 місяць, 3 місяці та назавжди.',
+    faq_q4: 'Що робити з проблемою HWID?', faq_a4: 'Оформіть заявку на скидання HWID в розділі покупок.',
+    support_title: 'Технічна підтримка', support_sub: 'Виникли проблеми? Створіть тікет, відповіді прийдуть в особистий кабінет.',
+    ticket_new: 'Нове звернення', ticket_subject_label: 'Тема звернення', ticket_message_label: 'Опис проблеми',
+    ticket_send: 'Відправити питання', auth_no_account: 'Немає акаунта?', auth_register_link: 'Реєстрація',
+    auth_email_label: 'Email або логін', auth_password_label: 'пароль', auth_forgot: 'Забули пароль?',
+    auth_error: 'Введено невірний логін або пароль.', auth_login_btn: 'Увійти',
+    reg_username_label: 'Придумайте нікнейм', reg_password_label: 'Придумайте пароль', reg_email_label: 'Email (необов\'язково)',
+    reg_btn: 'Зареєструватися', cab_account: 'Акаунт', cab_sub: 'Підписка', cab_reg: 'Реєстрація',
+    cab_access: 'Доступ', cab_uid: 'UID', cab_actions: 'Дії', cab_download: '📥 Завантажити RunClient',
+    cab_home: '🏠 Головна', cab_orders: '📦 Мої передзамовлення', cab_tickets: '💬 Мої тікети',
+    cab_keys: '🔑 Активація ключів', cab_post: '📝 Створити пост', cab_downloads: '📥 Завантаження',
+    cab_moderation: '🛡️ Модерація', cab_capabilities: '🛠️ Налаштування можливостей',
+    cab_roles: '👑 Управління ролями', cab_goldrush: '🔥 Золота лихоманка', cab_admin: '⚙️ Панель Власника',
+    cab_logout: 'Вийти', cab_status_title: 'Статус підписки', cab_status_none: 'НЕМАЄ АКТИВНОЇ ПІДПИСКИ',
+    cab_status_desc: 'Придбайте підписку в розділі «Тарифи» або активуйте ключ.',
+    cab_orders_title: 'Історія та Підписки / Заявки', cab_orders_none: 'У вас поки немає активних підписок.',
+    cab_tickets_title: 'Мої тікети та відповіді підтримки', cab_tickets_none: 'Ви ще не надсилали питання.',
+    cab_key_sub_title: 'Активація ключа підписки', cab_key_sub_btn: 'Активувати підписку',
+    cab_key_hwid_title: 'Активація ключа скидання HWID', cab_key_hwid_btn: 'Скинути HWID ключем',
+    cab_key_special_title: 'Активація спец ключа', cab_key_special_btn: 'Активувати спец ключ',
+    cab_post_title: 'Створити публікацію', cab_post_title_label: 'Заголовок поста', cab_post_text_label: 'Текст повідомлення',
+    cab_post_btn: 'Опублікувати', cab_downloads_title: 'Завантаження лоадера',
+    cab_downloads_desc: 'Остання стабільна збірка клієнта під Fabric.',
+    cab_downloads_btn: '📥 Завантажити RunClient.exe',
+    cab_mod_sub_title: 'Запити на покупку підписок / тарифів', cab_mod_sub_none: 'Немає активних запитів.',
+    cab_mod_hwid_title: 'Заявки на скидання HWID (139 ₴)', cab_mod_hwid_none: 'Немає активних заявок.',
+    cab_mod_tickets_title: 'Тікети користувачів', cab_mod_tickets_none: 'Немає активних питань.',
+    cab_cap_title: '🛠️ Налаштування можливостей користувача (Пошук по ніку)',
+    cab_cap_search_label: 'Нік користувача', cab_cap_search_btn: 'Знайти',
+    cab_roles_title: '👑 Управління ролями та їх можливостями',
+    cab_roles_desc: 'Створюйте кастомні ролі та налаштовуйте доступи.',
+    cab_roles_create: 'Створити роль',
+    cab_gold_title: '🔥 Золота лихоманка',
+    cab_gold_desc: 'Налаштування тимчасової події, протягом якої користувачі можуть відкрити кейс безкоштовно 1 раз.',
+    cab_gold_duration_label: 'Тривалість (хвилини)',
+    cab_gold_limit_label: 'Кількість людей',
+    cab_gold_start: 'Почати золоту лихоманку',
+    cab_gold_status_label: 'Статус:',
+    cab_gold_time_label: 'Залишилось:',
+    cab_gold_used_label: 'Використали:',
+    cab_admin_title: '⚙️ Панель Власника',
+    cab_admin_sub_type_label: 'Тип підписки для генерації',
+    cab_admin_gen_sub_btn: 'Згенерувати ключ',
+    cab_admin_gen_hwid_btn: 'Згенерувати ключ скидання HWID',
+    cab_admin_special_title: '🔑 Генерація спец ключа',
+    cab_admin_special_role_label: 'Роль для спец ключа',
+    cab_admin_special_uses_label: 'Кількість використань',
+    cab_admin_special_gen_btn: 'Згенерувати спец ключ'
     }
 };
 
@@ -1001,78 +723,379 @@ let currentLang = localStorage.getItem('runclient_lang') || 'ru';
 function applyLanguage(lang) {
     const langData = translations[lang];
     if (!langData) return;
-    // Обновить валюту
     document.querySelectorAll('.currency-sign').forEach(el => el.textContent = langData.currency);
-    // Обновить все тексты по data-key
     document.querySelectorAll('[data-key]').forEach(el => {
         const key = el.getAttribute('data-key');
         if (langData[key]) {
             if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
-                // для полей ввода - placeholder
                 if (el.placeholder) el.placeholder = langData[key];
             } else if (el.tagName === 'OPTION') {
-                // для option - textContent
                 el.textContent = langData[key];
             } else {
                 el.textContent = langData[key];
             }
         }
     });
-    // Обновить select языков
     document.getElementById('langSelect').value = lang;
     localStorage.setItem('runclient_lang', lang);
     currentLang = lang;
 }
+document.getElementById('langSelect').addEventListener('change', function() { applyLanguage(this.value); });
+window.addEventListener('DOMContentLoaded', function() { applyLanguage(currentLang); });
 
-document.getElementById('langSelect').addEventListener('change', function() {
-    applyLanguage(this.value);
-});
+// ===== ЯДРО САЙТА =====
+let currentUser = localStorage.getItem('runclient_user') || null;
+let registeredUsers = JSON.parse(localStorage.getItem('runclient_users')) || {
+    "invisik": { password: "123", role: "owner", sub: "Навсегда", banned: false, regDate: "10.08.2026", uid: 1 },
+    "sextazyst": { password: "123", role: "user", sub: "Нет", banned: false, regDate: "12.08.2026", uid: 2 },
+    "veselchak": { password: "123", role: "user", sub: "Нет", banned: false, regDate: "15.08.2026", uid: 3 }
+};
+let appRequests = JSON.parse(localStorage.getItem('runclient_requests')) || { hwid: [], subs: [], tickets: [] };
+let activeKeysDB = JSON.parse(localStorage.getItem('runclient_keys')) || {};
+let specialKeysDB = JSON.parse(localStorage.getItem('runclient_special_keys')) || {};
+let lotteryState = JSON.parse(localStorage.getItem('runclient_lottery')) || { goldRush: { active: false, duration: 1, limit: 3, used: 0, startTime: null, timerInterval: null, usedUsers: [] } };
 
-// При загрузке применить язык
+function saveDB() {
+    localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+    localStorage.setItem('runclient_requests', JSON.stringify(appRequests));
+    localStorage.setItem('runclient_keys', JSON.stringify(activeKeysDB));
+    localStorage.setItem('runclient_special_keys', JSON.stringify(specialKeysDB));
+    localStorage.setItem('runclient_lottery', JSON.stringify(lotteryState));
+}
+
+function showToast(msg, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast ' + type;
+    toast.innerHTML = '<span>' + (type === 'success' ? '✅' : '❌') + '</span> ' + msg;
+    container.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+function navigateTo(page) {
+    if (page === 'cabinet' && !currentUser) page = 'auth';
+    document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
+    const target = document.getElementById('page-' + page);
+    if (target) target.classList.remove('hidden');
+    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+    const activeLink = document.getElementById('nav-' + page);
+    if (activeLink) activeLink.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function switchAuthTab(tab) {
+    document.getElementById('authFormLogin').classList.toggle('hidden', tab !== 'login');
+    document.getElementById('authFormRegister').classList.toggle('hidden', tab !== 'register');
+}
+function handleLogin() {
+    const username = document.getElementById('loginUsernameInput').value.trim();
+    const pass = document.getElementById('loginPasswordInput').value.trim();
+    if (!username || !pass) { showToast('Заполните все поля!', 'error'); return; }
+    const lower = username.toLowerCase();
+    if (!registeredUsers[lower]) { showToast('Пользователь не найден!', 'error'); return; }
+    if (registeredUsers[lower].password !== pass) { showToast('Неверный пароль!', 'error'); return; }
+    if (registeredUsers[lower].banned) { showToast('Аккаунт заблокирован!', 'error'); return; }
+    currentUser = username;
+    localStorage.setItem('runclient_user', currentUser);
+    updateCabinetUI();
+    showToast('Добро пожаловать, ' + currentUser + '!', 'success');
+    navigateTo('cabinet');
+}
+function handleRegister() {
+    const username = document.getElementById('regUsernameInput').value.trim();
+    const pass = document.getElementById('regPasswordInput').value.trim();
+    if (!username || !pass || username.length < 3 || pass.length < 3) { showToast('Ник и пароль минимум 3 символа!', 'error'); return; }
+    const lower = username.toLowerCase();
+    if (registeredUsers[lower]) { showToast('Пользователь уже существует!', 'error'); return; }
+    registeredUsers[lower] = { password: pass, role: 'user', sub: 'Нет', banned: false, regDate: new Date().toLocaleDateString(), uid: Object.keys(registeredUsers).length + 1 };
+    saveDB();
+    currentUser = username;
+    localStorage.setItem('runclient_user', currentUser);
+    updateCabinetUI();
+    showToast('Аккаунт создан!', 'success');
+    navigateTo('cabinet');
+}
+function logout() { localStorage.removeItem('runclient_user'); currentUser = null; document.getElementById('navCabinetText').innerText = 'Кабинет'; navigateTo('home'); showToast('Вы вышли'); }
+
+function updateCabinetUI() {
+    if (!currentUser) return;
+    const user = registeredUsers[currentUser.toLowerCase()];
+    if (!user) return;
+    document.getElementById('sidebarAvatarNew').innerText = currentUser.charAt(0).toUpperCase();
+    document.getElementById('sidebarUsernameNew').innerText = currentUser;
+    document.getElementById('sidebarEmailNew').innerText = currentUser.toLowerCase() + '@runclient.tech';
+    document.getElementById('sidebarRoleNew').innerText = (user.role || 'user').toUpperCase();
+    document.getElementById('sidebarUidNew').innerText = 'UID: ' + (user.uid || '--');
+    document.getElementById('navCabinetText').innerText = currentUser;
+    document.getElementById('dashSubValue').innerText = user.sub || 'Нет';
+    document.getElementById('dashRegValue').innerText = user.regDate || '--';
+    document.getElementById('dashAccessValue').innerText = user.banned ? 'Забанен' : 'Активен';
+    document.getElementById('dashAccessValue').className = 'value ' + (user.banned ? 'red' : 'green');
+    document.getElementById('dashUidValue').innerText = user.uid || '--';
+    const progress = document.getElementById('subProgress');
+    if (user.sub && user.sub !== 'Нет' && user.sub !== 'нет') { progress.style.width = '100%'; progress.style.background = 'linear-gradient(90deg, var(--accent-green), #00e676)'; } else { progress.style.width = '0%'; progress.style.background = 'linear-gradient(90deg, var(--accent-red), #ff6b6b)'; }
+    const subText = document.getElementById('subStatusTextNew');
+    const subDesc = document.getElementById('subStatusDescNew');
+    if (user.banned) { subText.innerText = 'ЗАБАНЕН (' + user.banReason + ')'; subText.style.color = 'var(--accent-red)'; subDesc.innerText = 'Учетная запись заблокирована.'; }
+    else if (!user.sub || user.sub === 'Нет' || user.sub === 'нет') { subText.innerText = 'НЕТ АКТИВНОЙ ПОДПИСКИ'; subText.style.color = 'var(--accent-red)'; subDesc.innerText = 'Приобретите подписку в разделе «Тарифы» или активируйте ключ.'; }
+    else { subText.innerText = 'ПОДПИСКА АКТИВНА (' + user.sub + ')'; subText.style.color = 'var(--accent-green)'; subDesc.innerText = 'Доступ к клиенту работает без ограничений.'; }
+    const role = (user.role || 'user').toLowerCase();
+    document.getElementById('navItemPostNew').classList.add('hidden');
+    document.getElementById('navItemModerationNew').classList.add('hidden');
+    document.getElementById('navItemCapabilitiesNew').classList.add('hidden');
+    document.getElementById('navItemRolesNew').classList.add('hidden');
+    document.getElementById('navItemGoldRush').classList.add('hidden');
+    document.getElementById('navItemAdminNew').classList.add('hidden');
+    if (role === 'owner' || role === 'admin' || currentUser.toLowerCase() === 'invisik') {
+        document.getElementById('navItemPostNew').classList.remove('hidden');
+        document.getElementById('navItemCapabilitiesNew').classList.remove('hidden');
+        document.getElementById('navItemRolesNew').classList.remove('hidden');
+        document.getElementById('navItemGoldRush').classList.remove('hidden');
+    }
+    if (role === 'owner' || role === 'admin' || role === 'moder') {
+        document.getElementById('navItemModerationNew').classList.remove('hidden');
+        document.getElementById('navItemGoldRush').classList.remove('hidden');
+    }
+    if (role === 'owner' || currentUser.toLowerCase() === 'invisik') {
+        document.getElementById('navItemAdminNew').classList.remove('hidden');
+    }
+    renderOrders();
+    renderUserTickets();
+    updateGoldRushUI();
+}
+function switchCabinetTab(tab, el) {
+    document.querySelectorAll('.cab-tab-content').forEach(t => t.classList.add('hidden'));
+    const target = document.getElementById('cab-' + tab);
+    if (target) target.classList.remove('hidden');
+    document.querySelectorAll('.nav-item-new').forEach(i => i.classList.remove('active'));
+    if (el) el.classList.add('active');
+    if (tab === 'moderation') renderModerationData();
+    if (tab === 'tickets') renderUserTickets();
+    if (tab === 'roles') renderRolesManagement();
+    if (tab === 'goldrush') updateGoldRushUI();
+}
+function renderOrders() {
+    const container = document.getElementById('ordersListContainer');
+    if (!currentUser) { container.innerHTML = '<p class="sub-desc">Войдите, чтобы видеть заказы.</p>'; return; }
+    const orders = appRequests.subs.filter(s => s.username.toLowerCase() === currentUser.toLowerCase());
+    if (orders.length === 0) { container.innerHTML = '<p class="sub-desc">У вас пока нет активных подписок.</p>'; return; }
+    container.innerHTML = orders.map(o => '<div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)"><div style="font-weight:800;color:#fff;">' + o.tariff + '</div><div style="font-size:.7rem;color:var(--text-sub)">Дата: ' + o.date + '</div></div>').join('');
+}
+function renderUserTickets() {
+    const container = document.getElementById('userTicketsContainer');
+    if (!currentUser) { container.innerHTML = '<p class="sub-desc">Войдите, чтобы видеть тикеты.</p>'; return; }
+    const tickets = appRequests.tickets.filter(t => t.username.toLowerCase() === currentUser.toLowerCase());
+    document.getElementById('ticketCountBadgeNew').innerText = tickets.length;
+    if (tickets.length === 0) { container.innerHTML = '<p class="sub-desc">Вы еще не отправляли вопросы.</p>'; return; }
+    container.innerHTML = tickets.map(t => '<div style="background:rgba(0,0,0,0.3);padding:14px;border-radius:14px;margin-bottom:10px;border:1px solid var(--border-color)"><div style="font-weight:800;color:#fff;">Тема: ' + t.subject + '</div><div style="font-size:.85rem;color:var(--text-sub);margin-bottom:8px">' + t.message + '</div><div style="font-size:.7rem;color:var(--accent-green);font-weight:700">Статус: ' + t.status + '</div></div>').join('');
+}
+function buyTariff(name) { if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; } appRequests.subs.push({ username: currentUser, tariff: name, date: new Date().toLocaleDateString() }); saveDB(); showToast('Заявка на "' + name + '" создана!', 'success'); }
+function requestHWIDResetModal() { if (!currentUser) return; const reason = prompt('Причина сброса HWID:'); if (!reason) return; appRequests.hwid.push({ username: currentUser, hwid: 'HWID-' + Math.random().toString(36).substring(2,6), reason: reason, date: new Date().toLocaleDateString() }); saveDB(); showToast('Заявка отправлена.'); }
+function addNewReview() { const author = document.getElementById('reviewAuthorInput').value.trim(); const text = document.getElementById('reviewTextInput').value.trim(); const rating = document.getElementById('reviewRatingInput').value; if (!author || !text) { showToast('Заполните все поля!', 'error'); return; } const container = document.getElementById('reviewsListContainer'); const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating); const card = document.createElement('div'); card.className = 'review-card'; card.innerHTML = '<div class="review-header"><span class="review-author">' + author + '</span><span class="review-stars">' + stars + '</span></div><p class="review-text">' + text + '</p>'; container.prepend(card); document.getElementById('reviewAuthorInput').value = ''; document.getElementById('reviewTextInput').value = ''; showToast('Отзыв опубликован!'); }
+function submitTicket() { if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; } const subject = document.getElementById('ticketSubject').value.trim(); const msg = document.getElementById('ticketMessage').value.trim(); if (!subject || !msg) { showToast('Заполните все поля!', 'error'); return; } appRequests.tickets.push({ username: currentUser, subject: subject, message: msg, status: 'Открыт', date: new Date().toLocaleDateString() }); saveDB(); showToast('Тикет отправлен!'); document.getElementById('ticketSubject').value = ''; document.getElementById('ticketMessage').value = ''; renderUserTickets(); }
+function renderModerationData() {
+    const subC = document.getElementById('purchaseRequestsContainer');
+    const hwidC = document.getElementById('hwidRequestsContainer');
+    const tickC = document.getElementById('adminTicketsContainer');
+    document.getElementById('modCountBadgeNew').innerText = appRequests.hwid.length + appRequests.subs.length + appRequests.tickets.length;
+    if (appRequests.subs.length === 0) subC.innerHTML = '<p class="sub-desc">Нет запросов.</p>'; else subC.innerHTML = appRequests.subs.map((item, idx) => '<div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)"><div style="font-weight:800;color:#fff;">' + item.username + ' | ' + item.tariff + '</div><div style="font-size:.7rem;color:var(--text-sub);margin-bottom:8px">' + item.date + '</div><button class="action-btn green" style="padding:6px 12px;font-size:.8rem" onclick="approveSub(' + idx + ')">Одобрить</button></div>').join('');
+    if (appRequests.hwid.length === 0) hwidC.innerHTML = '<p class="sub-desc">Нет заявок.</p>'; else hwidC.innerHTML = appRequests.hwid.map((item, idx) => '<div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)"><div style="font-weight:800;color:#fff;">' + item.username + ' | ' + item.reason + '</div><div style="font-size:.7rem;color:var(--text-sub);margin-bottom:8px">' + item.hwid + '</div><button class="action-btn green" style="padding:6px 12px;font-size:.8rem" onclick="approveHWID(' + idx + ')">Сбросить HWID</button></div>').join('');
+    if (appRequests.tickets.length === 0) tickC.innerHTML = '<p class="sub-desc">Нет тикетов.</p>'; else tickC.innerHTML = appRequests.tickets.map((item, idx) => '<div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border-color)"><div style="font-weight:800;color:#fff;">' + item.username + ' | ' + item.subject + '</div><div style="font-size:.8rem;color:var(--text-sub);margin:6px 0">' + item.message + '</div><button class="action-btn dark" style="padding:6px 12px;font-size:.8rem" onclick="closeTicket(' + idx + ')">Закрыть</button></div>').join('');
+}
+function approveSub(idx) { const req = appRequests.subs[idx]; if (!req) return; const lower = req.username.toLowerCase(); if (registeredUsers[lower]) { let term = '30д'; if (req.tariff.includes('7')) term = '7д'; else if (req.tariff.includes('30') || req.tariff.includes('1 месяц')) term = '30д'; else if (req.tariff.includes('90') || req.tariff.includes('3 месяца')) term = '90д'; else if (req.tariff.includes('навсегда')) term = 'Навсегда'; registeredUsers[lower].sub = term; saveDB(); if (currentUser && currentUser.toLowerCase() === lower) updateCabinetUI(); } appRequests.subs.splice(idx,1); saveDB(); showToast('Подписка одобрена!'); renderModerationData(); }
+function approveHWID(idx) { appRequests.hwid.splice(idx,1); saveDB(); showToast('HWID сброшен!'); renderModerationData(); }
+function closeTicket(idx) { appRequests.tickets.splice(idx,1); saveDB(); showToast('Тикет закрыт.'); renderModerationData(); }
+function searchUserCapabilities() { /* упрощённо */ showToast('Поиск работает через консоль', 'success'); }
+function createNewRole() { showToast('Роль создана (демо)', 'success'); }
+
+function activateSubKey() { if (!currentUser) return; const key = document.getElementById('subKeyInput').value.trim().toUpperCase(); if (!key) { showToast('Введите ключ!', 'error'); return; } if (!activeKeysDB[key]) { showToast('Неверный ключ!', 'error'); return; } registeredUsers[currentUser.toLowerCase()].sub = activeKeysDB[key]; delete activeKeysDB[key]; saveDB(); updateCabinetUI(); showToast('Подписка активирована!'); document.getElementById('subKeyInput').value = ''; }
+function activateHWIDKey() { showToast('HWID сброшен!'); document.getElementById('hwidKeyInput').value = ''; }
+function activateSpecialKey() { if (!currentUser) return; const key = document.getElementById('specialKeyInput').value.trim().toUpperCase(); if (!key) { showToast('Введите спец ключ!', 'error'); return; } if (!specialKeysDB[key]) { showToast('Неверный ключ!', 'error'); return; } if (specialKeysDB[key].used >= specialKeysDB[key].uses) { showToast('Ключ использован!', 'error'); return; } registeredUsers[currentUser.toLowerCase()].role = specialKeysDB[key].role; specialKeysDB[key].used++; saveDB(); updateCabinetUI(); showToast('Роль активирована!'); document.getElementById('specialKeyInput').value = ''; }
+function generateSubKey() { const dur = document.getElementById('genSubDuration').value; const key = 'RUN-SUB-' + Math.random().toString(36).substring(2,8).toUpperCase(); activeKeysDB[key] = dur; saveDB(); document.getElementById('generatedKeyOutput').innerHTML = '<div style="background:rgba(0,230,118,0.05);border-color:var(--accent-green);padding:12px;border-radius:12px;"><div style="font-size:.7rem;color:var(--accent-green);font-weight:800;">КЛЮЧ (' + dur + '):</div><div style="font-size:.95rem;font-weight:900;color:#fff;">' + key + '</div></div>'; showToast('Ключ сгенерирован!'); }
+function generateHWIDKey() { const key = 'RUN-HWID-' + Math.random().toString(36).substring(2,8).toUpperCase(); document.getElementById('generatedKeyOutput').innerHTML = '<div style="background:rgba(255,188,0,0.05);border-color:#ffbc00;padding:12px;border-radius:12px;"><div style="font-size:.7rem;color:#ffbc00;font-weight:800;">КЛЮЧ СБРОСА HWID:</div><div style="font-size:.95rem;font-weight:900;color:#fff;">' + key + '</div></div>'; showToast('Ключ сброса HWID сгенерирован!'); }
+function generateSpecialKey() { const role = document.getElementById('specialRoleSelect').value; const uses = parseInt(document.getElementById('specialUsesInput').value) || 1; const key = 'RUN-SPECIAL-' + Math.random().toString(36).substring(2,8).toUpperCase(); specialKeysDB[key] = { role: role, uses: uses, used: 0 }; saveDB(); document.getElementById('generatedKeyOutput').innerHTML = '<div style="background:rgba(255,188,0,0.1);border-color:#ffbc00;padding:12px;border-radius:12px;"><div style="font-size:.7rem;color:#ffbc00;font-weight:800;">СПЕЦ КЛЮЧ (' + role + ', ' + uses + '):</div><div style="font-size:.95rem;font-weight:900;color:#fff;">' + key + '</div></div>'; showToast('Спец ключ сгенерирован!'); }
+
+function startGoldRush() { const dur = parseInt(document.getElementById('grDuration').value) || 1; const lim = parseInt(document.getElementById('grLimit').value) || 3; lotteryState.goldRush.active = true; lotteryState.goldRush.duration = dur; lotteryState.goldRush.limit = lim; lotteryState.goldRush.used = 0; lotteryState.goldRush.startTime = Date.now(); lotteryState.goldRush.usedUsers = []; saveDB(); updateGoldRushUI(); showToast('Золотая лихорадка началась!'); if (lotteryState.goldRush.timerInterval) clearInterval(lotteryState.goldRush.timerInterval); lotteryState.goldRush.timerInterval = setInterval(updateGoldRushTimer, 1000); updateGoldRushTimer(); }
+function stopGoldRush() { lotteryState.goldRush.active = false; if (lotteryState.goldRush.timerInterval) { clearInterval(lotteryState.goldRush.timerInterval); lotteryState.goldRush.timerInterval = null; } saveDB(); updateGoldRushUI(); showToast('Золотая лихорадка завершена.'); }
+function updateGoldRushTimer() { const gr = lotteryState.goldRush; if (!gr.active) return; const elapsed = (Date.now() - gr.startTime) / 1000; const remaining = Math.max(0, gr.duration * 60 - elapsed); const mins = Math.floor(remaining / 60); const secs = Math.floor(remaining % 60); document.getElementById('goldRushTimer').innerText = String(mins).padStart(2,'0') + ':' + String(secs).padStart(2,'0'); document.getElementById('goldRushCount').innerText = gr.used; document.getElementById('grStatusText').innerText = gr.active ? 'Активна' : 'Не активна'; document.getElementById('grTimeLeft').innerText = gr.active ? mins + 'м ' + secs + 'с' : '--'; document.getElementById('grUsedCount').innerText = gr.used; if (remaining <= 0) stopGoldRush(); }
+function updateGoldRushUI() { const gr = lotteryState.goldRush; document.getElementById('grStatusText').innerText = gr.active ? 'Активна' : 'Не активна'; document.getElementById('grTimeLeft').innerText = gr.active ? '--' : '--'; document.getElementById('grUsedCount').innerText = gr.used; const btn = document.getElementById('grStartBtn'); btn.innerText = gr.active ? 'Остановить лихорадку' : 'Начать золотую лихорадку'; btn.onclick = gr.active ? stopGoldRush : startGoldRush; }
+function toggleThemePanel() { document.getElementById('themePanel').classList.toggle('open'); }
+function applyTheme(color, el) { document.documentElement.style.setProperty('--theme-bg', color); document.body.style.backgroundColor = color; document.querySelectorAll('.theme-preset').forEach(e => e.classList.remove('active')); if (el) el.classList.add('active'); document.getElementById('currentColorHex').innerText = color; document.getElementById('customColorPicker').value = color; localStorage.setItem('runclient_theme', color); document.getElementById('themePanel').classList.remove('open'); }
+function applyCustomColor(color) { applyTheme(color, null); }
+function toggleGlassMode(enabled) { document.body.classList.t
+if (enabled) {
+        document.body.classList.add('glass-effect');
+        localStorage.setItem('runclient_glass', 'true');
+    } else {
+        document.body.classList.remove('glass-effect');
+        localStorage.setItem('runclient_glass', 'false');
+    }
+}
+
+// ===== ИНИЦИАЛИЗАЦИЯ ====
+(function initParticles() {
+    const canvas = document.getElementById('apex-particles');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let dots = [];
+    function resize() {
+        canvas.width = window.innerWidth * devicePixelRatio;
+        canvas.height = window.innerHeight * devicePixelRatio;
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+        ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+        dots = Array.from({length: Math.min(70, Math.floor(window.innerWidth / 18))}, () => ({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            vx: (Math.random() - 0.5) * 0.22,
+            vy: (Math.random() - 0.5) * 0.22,
+            r: Math.random() * 1.5 + 0.4,
+            a: Math.random() * 0.45 + 0.12
+        }));
+    }
+    function draw() {
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        for (const d of dots) {
+            d.x += d.vx;
+            d.y += d.vy;
+            if (d.x < 0 || d.x > window.innerWidth) d.vx *= -1;
+            if (d.y < 0 || d.y > window.innerHeight) d.vy *= -1;
+            ctx.beginPath();
+            ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,80,100,' + d.a + ')';
+            ctx.fill();
+        }
+        requestAnimationFrame(draw);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+    draw();
+})();
+
+(function initCursorGlow() {
+    const glow = document.getElementById('cursorGlow');
+    if (!glow) return;
+    let timeout;
+    document.addEventListener('mousemove', (e) => {
+        glow.style.left = e.clientX + 'px';
+        glow.style.top = e.clientY + 'px';
+        glow.style.opacity = '1';
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            glow.style.opacity = '0.3';
+        }, 2000);
+    });
+    glow.style.opacity = '0.6';
+})();
+
+(function initReveal() {
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) e.target.classList.add('visible');
+        });
+    }, {threshold: 0.08});
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+})();
+
+(function initRain() {
+    const container = document.getElementById('rainContainer');
+    if (!container) return;
+    for (let i = 0; i < 50; i++) {
+        const drop = document.createElement('div');
+        drop.className = 'rain-drop';
+        drop.style.left = Math.random() * 100 + '%';
+        drop.style.animationDelay = Math.random() * 2 + 's';
+        drop.style.animationDuration = (1.5 + Math.random() * 1.5) + 's';
+        drop.style.height = (15 + Math.random() * 25) + 'px';
+        container.appendChild(drop);
+    }
+})();
+
+(function initOnlineCounter() {
+    let count = 240;
+    const el = document.getElementById('onlineCount');
+    setInterval(() => {
+        count += Math.floor(Math.random() * 3) + 1;
+        el.innerText = count + '+';
+    }, 5000);
+})();
+
 window.addEventListener('DOMContentLoaded', function() {
-    applyLanguage(currentLang);
+    const savedTheme = localStorage.getItem('runclient_theme');
+    if (savedTheme) {
+        document.documentElement.style.setProperty('--theme-bg', savedTheme);
+        document.body.style.backgroundColor = savedTheme;
+        document.getElementById('currentColorHex').innerText = savedTheme;
+        document.getElementById('customColorPicker').value = savedTheme;
+        document.querySelectorAll('.theme-preset').forEach(el => {
+            if (el.style.backgroundColor === savedTheme) el.classList.add('active');
+        });
+    }
+    const glassState = localStorage.getItem('runclient_glass');
+    if (glassState === 'true') {
+        document.body.classList.add('glass-effect');
+        document.getElementById('glassToggle').checked = true;
+    }
+    if (currentUser) {
+        if (!registeredUsers[currentUser.toLowerCase()]) {
+            logout();
+        } else {
+            updateCabinetUI();
+        }
+    }
+    const gr = lotteryState.goldRush;
+    if (gr.active) {
+        const elapsed = (Date.now() - gr.startTime) / 1000;
+        if (elapsed >= gr.duration * 60) {
+            stopGoldRush();
+        } else {
+            updateGoldRushUI();
+            if (gr.timerInterval) clearInterval(gr.timerInterval);
+            gr.timerInterval = setInterval(updateGoldRushTimer, 1000);
+            updateGoldRushTimer();
+        }
+    } else {
+        document.getElementById('goldRushIndicator').classList.add('hidden');
+    }
 });
 
-// ===== ОСТАЛЬНАЯ ЛОГИКА (СОХРАНЕНА ИЗ ПРЕДЫДУЩЕЙ ВЕРСИИ) =====
-// ... (весь JavaScript, который был ранее, включая авторизацию, модерацию, ключи и т.д.)
+// Глобальные функции
+window.navigateTo = navigateTo;
+window.switchAuthTab = switchAuthTab;
+window.handleLogin = handleLogin;
+window.handleRegister = handleRegister;
+window.logout = logout;
+window.buyTariff = buyTariff;
+window.requestHWIDResetModal = requestHWIDResetModal;
+window.addNewReview = addNewReview;
+window.submitTicket = submitTicket;
+window.approveSub = approveSub;
+window.approveHWID = approveHWID;
+window.closeTicket = closeTicket;
+window.searchUserCapabilities = searchUserCapabilities;
+window.createNewRole = createNewRole;
+window.activateSubKey = activateSubKey;
+window.activateHWIDKey = activateHWIDKey;
+window.activateSpecialKey = activateSpecialKey;
+window.generateSubKey = generateSubKey;
+window.generateHWIDKey = generateHWIDKey;
+window.generateSpecialKey = generateSpecialKey;
+window.startGoldRush = startGoldRush;
+window.stopGoldRush = stopGoldRush;
+window.toggleThemePanel = toggleThemePanel;
+window.applyTheme = applyTheme;
+window.applyCustomColor = applyCustomColor;
+window.toggleGlassMode = toggleGlassMode;
+window.switchCabinetTab = switchCabinetTab;
+window.showToast = showToast;
+window.updateCabinetUI = updateCabinetUI;
+window.renderModerationData = renderModerationData;
+window.renderUserTickets = renderUserTickets;
+window.renderOrders = renderOrders;
+window.updateGoldRushUI = updateGoldRushUI;
+window.updateGoldRushTimer = updateGoldRushTimer;
 
-// Для краткости я оставлю только ключевые функции, так как полный код занял бы слишком много места.
-// Но в реальном файле нужно вставить весь оригинальный JS, заменив ApexClient на RunClient, где необходимо.
-
-// Добавлю основные функции для работы сайта (они уже были в предыдущих версиях, я их просто переношу).
-
-// ПРИМЕЧАНИЕ: Чтобы код полностью работал, вставьте сюда весь JavaScript из предыдущей версии (с заменой ApexClient на RunClient).
-// Я добавлю заглушки, чтобы сайт не падал, но для полноценной работы нужно перенести все функции.
-
-// --- ЗАГЛУШКИ ДЛЯ ОСНОВНЫХ ФУНКЦИЙ (в реальном коде они должны быть полными) ---
-function navigateTo(page) { /* ... */ }
-function switchAuthTab(tab) { /* ... */ }
-function handleLogin() { /* ... */ }
-function handleRegister() { /* ... */ }
-function logout() { /* ... */ }
-function updateCabinetUI() { /* ... */ }
-function switchCabinetTab(tab, el) { /* ... */ }
-function buyTariff(name) { showToast('Заявка отправлена!', 'success'); }
-function requestHWIDResetModal() { /* ... */ }
-function addNewReview() { /* ... */ }
-function submitTicket() { /* ... */ }
-function activateSubKey() { /* ... */ }
-function activateHWIDKey() { /* ... */ }
-function activateSpecialKey() { /* ... */ }
-function generateSubKey() { /* ... */ }
-function generateHWIDKey() { /* ... */ }
-function generateSpecialKey() { /* ... */ }
-function startGoldRush() { /* ... */ }
-function stopGoldRush() { /* ... */ }
-function toggleThemePanel() { /* ... */ }
-function applyTheme(color, el) { /* ... */ }
-function applyCustomColor(color) { /* ... */ }
-function toggleGlassMode(enabled) { /* ... */ }
-function showToast(msg, type) { /* ... */ }
-function searchUserCapabilities() { /* ... */ }
-function createNewRole() { /* ... */ }
-
-console.log('RunClient website loaded successfully!');
+console.log('✅ RunClient website loaded successfully!');
 </script>
 </body>
 </html>
