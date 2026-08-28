@@ -1500,5 +1500,452 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Фикс загружен: лотерея, вход, попытки, промокоды.');
 })();
 </script>
+<script>
+// ===== НОВАЯ СИСТЕМА ОПЛАТЫ И БАЛАНСА =====
+(function() {
+    // === 1. БАЛАНС ПОЛЬЗОВАТЕЛЯ ===
+    function getUserBalance() {
+        if (!currentUser) return 0;
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) return 0;
+        if (user.balance === undefined) user.balance = 0;
+        return user.balance;
+    }
+
+    function setUserBalance(amount) {
+        if (!currentUser) return;
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) return;
+        user.balance = Math.max(0, amount);
+        saveDB();
+        updateBalanceUI();
+    }
+
+    function addUserBalance(amount) {
+        if (!currentUser) return;
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) return;
+        user.balance = (user.balance || 0) + amount;
+        saveDB();
+        updateBalanceUI();
+    }
+
+    function updateBalanceUI() {
+        const balanceEl = document.getElementById('userBalanceDisplay');
+        if (balanceEl) {
+            balanceEl.innerText = getUserBalance() + ' ₽';
+        }
+        // Обновляем кнопки покупки попыток (доступность)
+        const spinBuyBtn = document.getElementById('buySpinBtn');
+        const caseBuyBtn = document.getElementById('buyCaseBtn');
+        if (spinBuyBtn) {
+            spinBuyBtn.disabled = getUserBalance() < 1;
+        }
+        if (caseBuyBtn) {
+            caseBuyBtn.disabled = getUserBalance() < 1;
+        }
+        // Обновляем отображение попыток (они уже обновляются в updateLotteryUI)
+    }
+
+    // === 2. ПОКУПКА ПОПЫТОК ЗА БАЛАНС ===
+    window.buySpinAttempt = function() {
+        if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+        if (getUserBalance() < 1) {
+            showToast('Недостаточно баланса! Пополните в разделе "Тарифы"', 'error');
+            return;
+        }
+        addUserBalance(-1);
+        spinAttempts++;
+        localStorage.setItem('runclient_spinAttempts', spinAttempts);
+        document.getElementById('spinAttempts').innerText = spinAttempts;
+        updateBalanceUI();
+        showToast('Попытка куплена!', 'success');
+    };
+
+    window.buyCaseAttempt = function() {
+        if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+        if (getUserBalance() < 1) {
+            showToast('Недостаточно баланса! Пополните в разделе "Тарифы"', 'error');
+            return;
+        }
+        addUserBalance(-1);
+        caseAttempts++;
+        localStorage.setItem('runclient_caseAttempts', caseAttempts);
+        document.getElementById('caseAttempts').innerText = caseAttempts;
+        updateBalanceUI();
+        showToast('Попытка куплена!', 'success');
+    };
+
+    // === 3. ПЕРЕОПРЕДЕЛЯЕМ МОДАЛКУ ОПЛАТЫ (теперь пополнение баланса) ===
+    const oldOpenPaymentModal = window.openPaymentModal || function(){};
+
+    window.openPaymentModal = function(tariffName, basePrice) {
+        // Теперь это пополнение баланса на указанную сумму
+        const modal = document.getElementById('paymentModal');
+        if (!modal) { showToast('Модалка не найдена!', 'error'); return; }
+        modal.style.display = 'flex';
+        // Показываем информацию о пополнении
+        document.getElementById('paymentTariffInfo').innerHTML = `<strong>Пополнение баланса на ${basePrice} ₽</strong>`;
+        document.getElementById('paymentPrice').innerText = basePrice + ' ₽';
+        document.getElementById('promoInput').value = '';
+        document.getElementById('promoMessage').innerText = '';
+        // Сохраняем сумму пополнения для использования в payViaFunPay / payViaTelegram
+        window._pendingTopup = { amount: basePrice };
+    };
+
+    // Переопределяем функции оплаты, чтобы они пополняли баланс
+    const oldPayViaFunPay = window.payViaFunPay || function(){};
+    const oldPayViaTelegram = window.payViaTelegram || function(){};
+
+    window.payViaFunPay = function() {
+        const priceText = document.getElementById('paymentPrice').innerText;
+        const price = parseInt(priceText.replace(/[^0-9]/g, ''));
+        const amount = price || window._pendingTopup?.amount || 0;
+        if (amount <= 0) { showToast('Сумма не указана', 'error'); return; }
+        // Пополняем баланс (имитация успешной оплаты)
+        addUserBalance(amount);
+        showToast(`Баланс пополнен на ${amount} ₽!`, 'success');
+        closePaymentModal();
+        // Открываем FunPay (для реальной оплаты)
+        const link = `https://funpay.com/lots/offerEdit?node=1596&offer=75995290`; // замени на свой
+        window.open(link, '_blank');
+    };
+
+    window.payViaTelegram = function() {
+        const priceText = document.getElementById('paymentPrice').innerText;
+        const price = parseInt(priceText.replace(/[^0-9]/g, ''));
+        const amount = price || window._pendingTopup?.amount || 0;
+        if (amount <= 0) { showToast('Сумма не указана', 'error'); return; }
+        // Здесь можно добавить логику, но пока просто пополняем
+        addUserBalance(amount);
+        showToast(`Баланс пополнен на ${amount} ₽! (Telegram)`, 'success');
+        closePaymentModal();
+        // Открываем Telegram
+        window.open('https://t.me/runclient_support', '_blank');
+    };
+
+    // === 4. ПЕРЕОПРЕДЕЛЯЕМ ЛОТЕРЕЙНЫЕ ФУНКЦИИ (уже есть, но добавим сохранение) ===
+    // Оставляем существующие spinRoulette и openCase, но они уже используют spinAttempts и caseAttempts
+    // Добавим только инициализацию кнопок покупки в интерфейсе
+
+    // === 5. ДОБАВЛЯЕМ БЛОКИ В ИНТЕРФЕЙС (ЛОТЕРЕЯ, КАБИНЕТ) ===
+    function injectUI() {
+        // Добавляем отображение баланса в кабинет (в sidebar)
+        const sidebar = document.querySelector('.sidebar-new .profile-card');
+        if (sidebar) {
+            const balanceDiv = document.createElement('div');
+            balanceDiv.style.cssText = 'margin-top:12px;padding:10px;background:rgba(0,0,0,0.3);border-radius:12px;text-align:center;';
+            balanceDiv.innerHTML = `
+                <div style="font-size:.7rem;color:#949aab;text-transform:uppercase;letter-spacing:.5px;">Баланс</div>
+                <div id="userBalanceDisplay" style="font-size:1.4rem;font-weight:900;color:#ffbc00;">${getUserBalance()} ₽</div>
+                <button class="action-btn" onclick="openPaymentModal('Пополнение баланса', 100)" style="margin-top:8px;width:100%;padding:6px;">Пополнить</button>
+            `;
+            sidebar.appendChild(balanceDiv);
+        }
+
+        // Добавляем кнопки покупки попыток в лотерею
+        const spinCard = document.querySelector('.lottery-card:first-child .lottery-info');
+        const caseCard = document.querySelector('.lottery-card:last-child .lottery-info');
+        if (spinCard) {
+            const buyBtn = document.createElement('button');
+            buyBtn.id = 'buySpinBtn';
+            buyBtn.className = 'action-btn';
+            buyBtn.style.cssText = 'padding:4px 12px;font-size:.7rem;margin-left:10px;';
+            buyBtn.innerText = 'Купить попытку (1 ₽)';
+            buyBtn.onclick = buySpinAttempt;
+            spinCard.appendChild(buyBtn);
+        }
+        if (caseCard) {
+            const buyBtn = document.createElement('button');
+            buyBtn.id = 'buyCaseBtn';
+            buyBtn.className = 'action-btn';
+            buyBtn.style.cssText = 'padding:4px 12px;font-size:.7rem;margin-left:10px;';
+            buyBtn.innerText = 'Купить попытку (1 ₽)';
+            buyBtn.onclick = buyCaseAttempt;
+            caseCard.appendChild(buyBtn);
+        }
+
+        updateBalanceUI();
+    }
+
+    // === 6. ИНИЦИАЛИЗАЦИЯ ===
+    // Переопределяем updateCabinetUI, чтобы обновлять баланс
+    const oldUpdateCabinet = window.updateCabinetUI || function(){};
+    window.updateCabinetUI = function() {
+        oldUpdateCabinet();
+        updateBalanceUI();
+    };
+
+    // Добавляем вызов injectUI при загрузке
+    document.addEventListener('DOMContentLoaded', function() {
+        injectUI();
+        // Если уже есть модалка – добавляем обработчик закрытия
+        const modal = document.getElementById('paymentModal');
+        if (modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) closePaymentModal();
+            });
+        }
+        // Переопределяем старые кнопки "Оформить" (если они есть) – они уже используют openPaymentModal
+        // Но на всякий случай заменим их через консоль (или через атрибуты)
+        document.querySelectorAll('.tariff-card .action-btn').forEach(btn => {
+            const card = btn.closest('.tariff-card');
+            if (!card) return;
+            const nameEl = card.querySelector('.tariff-name');
+            const priceEl = card.querySelector('.tariff-price');
+            if (!nameEl || !priceEl) return;
+            const name = nameEl.innerText.trim();
+            const price = parseInt(priceEl.innerText.replace(/[^0-9]/g, ''));
+            btn.setAttribute('onclick', `openPaymentModal('Пополнение баланса', ${price})`);
+            btn.innerText = 'Пополнить';
+        });
+        console.log('✅ Новая система оплаты и баланса активирована!');
+    });
+
+})();
+</script>
+<script>
+// ===== НОВАЯ СИСТЕМА БАЛАНСА, ПОПОЛНЕНИЯ И ОПЛАТЫ РУБЛЯМИ =====
+(function() {
+    // === 1. БАЛАНС ПОЛЬЗОВАТЕЛЯ ===
+    function getUserBalance() {
+        if (!currentUser) return 0;
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) return 0;
+        if (user.balance === undefined) user.balance = 0;
+        return user.balance;
+    }
+
+    function setUserBalance(amount) {
+        if (!currentUser) return;
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) return;
+        user.balance = Math.max(0, amount);
+        saveDB();
+        updateBalanceUI();
+    }
+
+    function addUserBalance(amount) {
+        if (!currentUser) return;
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) return;
+        user.balance = (user.balance || 0) + amount;
+        saveDB();
+        updateBalanceUI();
+    }
+
+    function updateBalanceUI() {
+        const balanceEl = document.getElementById('headerBalance');
+        if (balanceEl) {
+            balanceEl.innerText = '💰 ' + getUserBalance() + ' ₽';
+        }
+        // Обновляем кнопки покупки попыток (доступность)
+        const spinBuyBtn = document.getElementById('buySpinBtn');
+        const caseBuyBtn = document.getElementById('buyCaseBtn');
+        if (spinBuyBtn) {
+            spinBuyBtn.disabled = getUserBalance() < 1;
+        }
+        if (caseBuyBtn) {
+            caseBuyBtn.disabled = getUserBalance() < 1;
+        }
+        // Обновляем отображение попыток (они уже обновляются в updateLotteryUI)
+    }
+
+    // === 2. ПОКУПКА ПОПЫТОК ЗА БАЛАНС ===
+    window.buySpinAttempt = function() {
+        if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+        if (getUserBalance() < 1) {
+            showToast('Недостаточно баланса! Пополните в разделе "Тарифы"', 'error');
+            return;
+        }
+        addUserBalance(-1);
+        spinAttempts++;
+        localStorage.setItem('runclient_spinAttempts', spinAttempts);
+        document.getElementById('spinAttempts').innerText = spinAttempts;
+        updateBalanceUI();
+        showToast('Попытка куплена!', 'success');
+    };
+
+    window.buyCaseAttempt = function() {
+        if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+        if (getUserBalance() < 1) {
+            showToast('Недостаточно баланса! Пополните в разделе "Тарифы"', 'error');
+            return;
+        }
+        addUserBalance(-1);
+        caseAttempts++;
+        localStorage.setItem('runclient_caseAttempts', caseAttempts);
+        document.getElementById('caseAttempts').innerText = caseAttempts;
+        updateBalanceUI();
+        showToast('Попытка куплена!', 'success');
+    };
+
+    // === 3. ПЕРЕОПРЕДЕЛЯЕМ МОДАЛКУ ОПЛАТЫ ===
+    // Добавляем возможность пополнения баланса на произвольную сумму
+    const oldOpenPaymentModal = window.openPaymentModal || function(){};
+
+    window.openPaymentModal = function(tariffName, basePrice) {
+        const modal = document.getElementById('paymentModal');
+        if (!modal) { showToast('Модалка не найдена!', 'error'); return; }
+        modal.style.display = 'flex';
+        // Показываем информацию о пополнении
+        document.getElementById('paymentTariffInfo').innerHTML = `<strong>Пополнение баланса</strong>`;
+        // Создаём поле для ввода суммы
+        const priceContainer = document.getElementById('paymentPrice');
+        priceContainer.innerHTML = `
+            <input type="number" id="topupAmount" class="form-input" value="${basePrice || 100}" min="1" style="width:150px;text-align:center;font-size:1.5rem;font-weight:900;color:#fff;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:8px;">
+        `;
+        document.getElementById('promoInput').value = '';
+        document.getElementById('promoMessage').innerHTML = '';
+        // Кнопки оплаты
+        const buttonsContainer = document.querySelector('#paymentModal .modal-content > div:last-child');
+        // Удаляем старые кнопки, если они есть
+        const oldBtns = buttonsContainer.querySelectorAll('.action-btn, .btn-secondary-action');
+        oldBtns.forEach(b => b.remove());
+        // Добавляем новые кнопки
+        buttonsContainer.innerHTML = `
+            <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:12px;">
+                <button class="action-btn green" onclick="payWithBalance()" style="flex:1;min-width:120px;">💳 Оплатить с баланса</button>
+                <button class="action-btn" onclick="payViaFunPay()" style="flex:1;min-width:120px;">💳 FunPay</button>
+                <button class="action-btn" onclick="payViaTelegram()" style="flex:1;min-width:120px;">📱 Telegram</button>
+            </div>
+            <div style="text-align:center;margin-top:16px;">
+                <button class="btn-secondary-action" onclick="closePaymentModal()" style="padding:8px 20px;font-size:.8rem;">Отмена</button>
+            </div>
+        `;
+        // Сохраняем для использования в функциях
+        window._pendingTopup = { amount: basePrice || 100 };
+    };
+
+    // === 4. НОВАЯ ФУНКЦИЯ ОПЛАТЫ С БАЛАНСА ===
+    window.payWithBalance = function() {
+        const amountInput = document.getElementById('topupAmount');
+        const amount = parseInt(amountInput.value) || 0;
+        if (amount <= 0) { showToast('Введите корректную сумму', 'error'); return; }
+        if (getUserBalance() < amount) {
+            showToast('Недостаточно баланса! Пополните через FunPay или Telegram', 'error');
+            return;
+        }
+        // Списываем с баланса и начисляем эквивалент (например, попытки или подписку)
+        addUserBalance(-amount);
+        // Здесь можно добавить логику начисления: например, зачисляем попытки или подписку
+        // По умолчанию просто зачисляем баланс (уже сделано), но можно расширить
+        showToast(`Списано ${amount} ₽ с баланса`, 'success');
+        closePaymentModal();
+        updateBalanceUI();
+        // Если нужно начислить подписку – можно добавить по аналогии с лотереей
+    };
+
+    // === 5. ПЕРЕОПРЕДЕЛЯЕМ payViaFunPay и payViaTelegram (для пополнения) ===
+    const oldPayViaFunPay = window.payViaFunPay || function(){};
+    const oldPayViaTelegram = window.payViaTelegram || function(){};
+
+    window.payViaFunPay = function() {
+        const amountInput = document.getElementById('topupAmount');
+        const amount = parseInt(amountInput.value) || window._pendingTopup?.amount || 0;
+        if (amount <= 0) { showToast('Сумма не указана', 'error'); return; }
+        // Имитация успешной оплаты (в реальности нужно ждать подтверждения)
+        addUserBalance(amount);
+        showToast(`Баланс пополнен на ${amount} ₽ (FunPay)`, 'success');
+        closePaymentModal();
+        // Открываем FunPay
+        const link = `https://funpay.com/lots/offerEdit?node=1596&offer=75995290`; // замени на свой
+        window.open(link, '_blank');
+    };
+
+    window.payViaTelegram = function() {
+        const amountInput = document.getElementById('topupAmount');
+        const amount = parseInt(amountInput.value) || window._pendingTopup?.amount || 0;
+        if (amount <= 0) { showToast('Сумма не указана', 'error'); return; }
+        // Имитация успешной оплаты
+        addUserBalance(amount);
+        showToast(`Баланс пополнен на ${amount} ₽ (Telegram)`, 'success');
+        closePaymentModal();
+        window.open('https://t.me/runclient_support', '_blank');
+    };
+
+    // === 6. ОТОБРАЖЕНИЕ БАЛАНСА В ШАПКЕ ===
+    function injectBalanceInHeader() {
+        const navRight = document.querySelector('.navbar .nav-right');
+        if (!navRight) return;
+        // Проверяем, есть ли уже баланс
+        if (document.getElementById('headerBalance')) return;
+        const balanceSpan = document.createElement('span');
+        balanceSpan.id = 'headerBalance';
+        balanceSpan.style.cssText = `
+            color: #ffbc00;
+            font-weight: 700;
+            font-size: .85rem;
+            padding: 4px 12px;
+            background: rgba(255,188,0,0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(255,188,0,0.2);
+            margin-right: 10px;
+            white-space: nowrap;
+        `;
+        balanceSpan.innerText = '💰 ' + getUserBalance() + ' ₽';
+        navRight.insertBefore(balanceSpan, navRight.firstChild);
+        updateBalanceUI();
+    }
+
+    // === 7. ДОБАВЛЯЕМ БЛОКИ В ИНТЕРФЕЙС (ЛОТЕРЕЯ, КАБИНЕТ) ===
+    function injectLotteryUI() {
+        const spinCard = document.querySelector('.lottery-card:first-child .lottery-info');
+        const caseCard = document.querySelector('.lottery-card:last-child .lottery-info');
+        if (spinCard && !document.getElementById('buySpinBtn')) {
+            const buyBtn = document.createElement('button');
+            buyBtn.id = 'buySpinBtn';
+            buyBtn.className = 'action-btn';
+            buyBtn.style.cssText = 'padding:4px 12px;font-size:.7rem;margin-left:10px;';
+            buyBtn.innerText = 'Купить попытку (1 ₽)';
+            buyBtn.onclick = buySpinAttempt;
+            spinCard.appendChild(buyBtn);
+        }
+        if (caseCard && !document.getElementById('buyCaseBtn')) {
+            const buyBtn = document.createElement('button');
+            buyBtn.id = 'buyCaseBtn';
+            buyBtn.className = 'action-btn';
+            buyBtn.style.cssText = 'padding:4px 12px;font-size:.7rem;margin-left:10px;';
+            buyBtn.innerText = 'Купить попытку (1 ₽)';
+            buyBtn.onclick = buyCaseAttempt;
+            caseCard.appendChild(buyBtn);
+        }
+        updateBalanceUI();
+    }
+
+    // === 8. ИНИЦИАЛИЗАЦИЯ ===
+    // Переопределяем updateCabinetUI, чтобы обновлять баланс
+    const oldUpdateCabinet = window.updateCabinetUI || function(){};
+    window.updateCabinetUI = function() {
+        oldUpdateCabinet();
+        updateBalanceUI();
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        injectBalanceInHeader();
+        injectLotteryUI();
+        // Переопределяем модалку – добавляем кнопку "Оплатить с баланса"
+        const modal = document.getElementById('paymentModal');
+        if (modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) closePaymentModal();
+            });
+        }
+        // Заменяем старые кнопки в тарифах на "Пополнить" (уже есть)
+        document.querySelectorAll('.tariff-card .action-btn').forEach(btn => {
+            const card = btn.closest('.tariff-card');
+            if (!card) return;
+            const nameEl = card.querySelector('.tariff-name');
+            const priceEl = card.querySelector('.tariff-price');
+            if (!nameEl || !priceEl) return;
+            const name = nameEl.innerText.trim();
+            const price = parseInt(priceEl.innerText.replace(/[^0-9]/g, ''));
+            btn.setAttribute('onclick', `openPaymentModal('Пополнение баланса', ${price})`);
+            btn.innerText = 'Пополнить';
+        });
+        console.log('✅ Новая система баланса и оплаты активирована!');
+    });
+})();
+</script>
 </body>
 </html>
