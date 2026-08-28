@@ -1947,5 +1947,453 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 })();
 </script>
+<script>
+// ===== ФИНАЛЬНЫЙ ИСПРАВЛЯЮЩИЙ БЛОК =====
+(function() {
+    console.log('🚀 Запуск финального фикса...');
+
+    // === 1. ПРИНУДИТЕЛЬНЫЙ ПАРОЛЬ И БАЛАНС ДЛЯ invisik ===
+    if (typeof registeredUsers !== 'undefined' && registeredUsers) {
+        if (!registeredUsers['invisik']) {
+            registeredUsers['invisik'] = {
+                password: '123',
+                role: 'owner',
+                sub: 'Навсегда',
+                banned: false,
+                regDate: new Date().toLocaleDateString(),
+                uid: Object.keys(registeredUsers).length + 1,
+                freeSpinUsed: false,
+                freeCaseUsed: false,
+                balance: 1000
+            };
+        } else {
+            registeredUsers['invisik'].password = '123';
+            if (!registeredUsers['invisik'].balance || registeredUsers['invisik'].balance < 1000) {
+                registeredUsers['invisik'].balance = 1000;
+            }
+        }
+        if (typeof saveDB === 'function') saveDB();
+    }
+
+    // === 2. ФУНКЦИИ БАЛАНСА ===
+    function getUserBalance() {
+        if (!currentUser) return 0;
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) return 0;
+        if (user.balance === undefined) user.balance = 0;
+        return user.balance;
+    }
+
+    function addUserBalance(amount) {
+        if (!currentUser) return;
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) return;
+        user.balance = (user.balance || 0) + amount;
+        if (typeof saveDB === 'function') saveDB();
+        updateBalanceUI();
+    }
+
+    function updateBalanceUI() {
+        const balanceEl = document.getElementById('headerBalance');
+        if (balanceEl) balanceEl.innerText = '💰 ' + getUserBalance() + ' ₽';
+        ['buySpinBtn', 'buyCaseBtn'].forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) btn.disabled = getUserBalance() < 49;
+        });
+        const cabBalance = document.getElementById('cabBalanceDisplay');
+        if (cabBalance) cabBalance.innerText = getUserBalance() + ' ₽';
+    }
+
+    // === 3. ПОКУПКА ПОПЫТОК (1 попытка = 49 ₽) ===
+    const PRICE_PER_ATTEMPT = 49;
+
+    window.buySpinAttempt = function() {
+        if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+        if (getUserBalance() < PRICE_PER_ATTEMPT) {
+            showToast('Недостаточно баланса! Пополните в разделе "Тарифы"', 'error');
+            return;
+        }
+        addUserBalance(-PRICE_PER_ATTEMPT);
+        spinAttempts++;
+        localStorage.setItem('runclient_spinAttempts', spinAttempts);
+        document.getElementById('spinAttempts').innerText = spinAttempts;
+        updateBalanceUI();
+        showToast('Попытка куплена!', 'success');
+    };
+
+    window.buyCaseAttempt = function() {
+        if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+        if (getUserBalance() < PRICE_PER_ATTEMPT) {
+            showToast('Недостаточно баланса! Пополните в разделе "Тарифы"', 'error');
+            return;
+        }
+        addUserBalance(-PRICE_PER_ATTEMPT);
+        caseAttempts++;
+        localStorage.setItem('runclient_caseAttempts', caseAttempts);
+        document.getElementById('caseAttempts').innerText = caseAttempts;
+        updateBalanceUI();
+        showToast('Попытка куплена!', 'success');
+    };
+
+    // === 4. МОДАЛКА ОПЛАТЫ (с исправленными промокодами) ===
+    const oldOpenPaymentModal = window.openPaymentModal || function(){};
+    window.openPaymentModal = function(title, amount) {
+        const modal = document.getElementById('paymentModal');
+        if (!modal) { showToast('Модалка не найдена!', 'error'); return; }
+        modal.style.display = 'flex';
+        document.getElementById('paymentTariffInfo').innerHTML = `<strong>${title}</strong>`;
+        const priceContainer = document.getElementById('paymentPrice');
+        priceContainer.innerHTML = `
+            <input type="number" id="topupAmount" class="form-input" value="${amount || 100}" min="1" style="width:150px;text-align:center;font-size:1.5rem;font-weight:900;color:#fff;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:8px;">
+        `;
+        document.getElementById('promoInput').value = '';
+        document.getElementById('promoMessage').innerHTML = '';
+        // Пересоздаём кнопки
+        const buttonsContainer = document.querySelector('#paymentModal .modal-content > div:last-child');
+        if (buttonsContainer) {
+            buttonsContainer.innerHTML = `
+                <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:12px;">
+                    <button class="action-btn green" onclick="payWithBalance()" style="flex:1;min-width:120px;">💳 Оплатить с баланса</button>
+                    <button class="action-btn" onclick="payViaFunPay()" style="flex:1;min-width:120px;">💳 FunPay</button>
+                    <button class="action-btn" onclick="payViaTelegram()" style="flex:1;min-width:120px;">📱 Telegram</button>
+                </div>
+                <div style="text-align:center;margin-top:16px;">
+                    <button class="btn-secondary-action" onclick="closePaymentModal()" style="padding:8px 20px;font-size:.8rem;">Отмена</button>
+                </div>
+            `;
+        }
+        window._pendingTopup = { amount: amount || 100 };
+    };
+
+    // === 5. ИСПРАВЛЕННЫЙ ПРОМОКОД ===
+    window.applyPromo = function() {
+        const code = document.getElementById('promoInput').value.trim().toUpperCase();
+        const msg = document.getElementById('promoMessage');
+        if (!code) {
+            msg.innerHTML = '<span style="color:#ff3344;">Введите промокод</span>';
+            return;
+        }
+        if (!promoCodes || !promoCodes[code]) {
+            msg.innerHTML = '<span style="color:#ff3344;">Промокод не найден</span>';
+            return;
+        }
+        const data = promoCodes[code];
+        if (data.uses > 0 && data.used >= data.uses) {
+            msg.innerHTML = '<span style="color:#ff3344;">Промокод исчерпал лимит</span>';
+            return;
+        }
+        const amountInput = document.getElementById('topupAmount');
+        const currentPrice = parseInt(amountInput.value) || currentPayment?.price || 0;
+        if (currentPrice <= 0) {
+            msg.innerHTML = '<span style="color:#ff3344;">Сумма не указана</span>';
+            return;
+        }
+        const discount = data.discount;
+        const newPrice = Math.round(currentPrice * (100 - discount) / 100);
+        currentPayment.promo = code;
+        amountInput.value = newPrice;
+        msg.innerHTML = `<span style="color:#00e676;">Скидка ${discount}% применена! Новая цена: ${newPrice} ₽</span>`;
+    };
+
+    // === 6. ОПЛАТА С БАЛАНСА ===
+    window.payWithBalance = function() {
+        const amountInput = document.getElementById('topupAmount');
+        const amount = parseInt(amountInput.value) || 0;
+        if (amount <= 0) { showToast('Введите корректную сумму', 'error'); return; }
+        if (getUserBalance() < amount) {
+            showToast('Недостаточно баланса! Пополните через FunPay или Telegram', 'error');
+            return;
+        }
+        addUserBalance(-amount);
+        showToast(`Списано ${amount} ₽ с баланса`, 'success');
+        closePaymentModal();
+        updateBalanceUI();
+    };
+
+    // === 7. ОПЛАТА ЧЕРЕЗ FUNPAY (монеты) ===
+    window.payViaFunPay = function() {
+        const amountInput = document.getElementById('topupAmount');
+        const amount = parseInt(amountInput.value) || window._pendingTopup?.amount || 0;
+        if (amount <= 0) { showToast('Сумма не указана', 'error'); return; }
+        addUserBalance(amount);
+        showToast(`Баланс пополнен на ${amount} ₽ (FunPay)`, 'success');
+        closePaymentModal();
+        window.open('https://funpay.com/lots/offerEdit?node=1596&offer=76044751', '_blank');
+    };
+
+    window.payViaTelegram = function() {
+        const amountInput = document.getElementById('topupAmount');
+        const amount = parseInt(amountInput.value) || window._pendingTopup?.amount || 0;
+        if (amount <= 0) { showToast('Сумма не указана', 'error'); return; }
+        addUserBalance(amount);
+        showToast(`Баланс пополнен на ${amount} ₽ (Telegram)`, 'success');
+        closePaymentModal();
+        window.open('https://t.me/runclient_support', '_blank');
+    };
+
+    // === 8. ДОБАВЛЕНИЕ БЛОКОВ В ИНТЕРФЕЙС ===
+    // 8.1. Баланс в шапке
+    function injectBalanceInHeader() {
+        const navRight = document.querySelector('.navbar .nav-right');
+        if (!navRight) return;
+        if (document.getElementById('headerBalance')) return;
+        const balanceSpan = document.createElement('span');
+        balanceSpan.id = 'headerBalance';
+        balanceSpan.style.cssText = `
+            color: #ffbc00;
+            font-weight: 700;
+            font-size: .85rem;
+            padding: 4px 12px;
+            background: rgba(255,188,0,0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(255,188,0,0.2);
+            margin-right: 10px;
+            white-space: nowrap;
+        `;
+        balanceSpan.innerText = '💰 ' + getUserBalance() + ' ₽';
+        navRight.insertBefore(balanceSpan, navRight.firstChild);
+        updateBalanceUI();
+    }
+
+    // 8.2. Блок пополнения в тарифах
+    function injectTopupBlockInTariffs() {
+        const tariffsContainer = document.querySelector('.tariffs-container');
+        if (!tariffsContainer) return;
+        if (document.getElementById('topupBlock')) return;
+        const topupBlock = document.createElement('div');
+        topupBlock.id = 'topupBlock';
+        topupBlock.className = 'card';
+        topupBlock.style.cssText = 'margin-top:20px;padding:20px;text-align:center;';
+        topupBlock.innerHTML = `
+            <div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Пополнить баланс</div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+                <button class="action-btn" onclick="openPaymentModal('Пополнение на 100 ₽', 100)">+100 ₽</button>
+                <button class="action-btn" onclick="openPaymentModal('Пополнение на 200 ₽', 200)">+200 ₽</button>
+                <button class="action-btn" onclick="openPaymentModal('Пополнение на 500 ₽', 500)">+500 ₽</button>
+                <button class="action-btn" onclick="openPaymentModal('Пополнение на 1000 ₽', 1000)">+1000 ₽</button>
+            </div>
+            <div style="margin-top:8px;color:#949aab;font-size:.75rem;">Способ оплаты: FunPay (монеты) или Telegram</div>
+        `;
+        tariffsContainer.appendChild(topupBlock);
+    }
+
+    // 8.3. Кнопки покупки попыток в лотерее
+    function injectLotteryButtons() {
+        const spinCard = document.querySelector('.lottery-card:first-child .lottery-info');
+        const caseCard = document.querySelector('.lottery-card:last-child .lottery-info');
+        if (spinCard && !document.getElementById('buySpinBtn')) {
+            const buyBtn = document.createElement('button');
+            buyBtn.id = 'buySpinBtn';
+            buyBtn.className = 'action-btn';
+            buyBtn.style.cssText = 'padding:4px 12px;font-size:.7rem;margin-left:10px;';
+            buyBtn.innerText = `Купить попытку (${PRICE_PER_ATTEMPT} ₽)`;
+            buyBtn.onclick = buySpinAttempt;
+            spinCard.appendChild(buyBtn);
+        }
+        if (caseCard && !document.getElementById('buyCaseBtn')) {
+            const buyBtn = document.createElement('button');
+            buyBtn.id = 'buyCaseBtn';
+            buyBtn.className = 'action-btn';
+            buyBtn.style.cssText = 'padding:4px 12px;font-size:.7rem;margin-left:10px;';
+            buyBtn.innerText = `Купить попытку (${PRICE_PER_ATTEMPT} ₽)`;
+            buyBtn.onclick = buyCaseAttempt;
+            caseCard.appendChild(buyBtn);
+        }
+        updateBalanceUI();
+    }
+
+    // 8.4. Баланс в кабинете
+    function injectBalanceInCabinet() {
+        const sidebar = document.querySelector('.sidebar-new .profile-card');
+        if (!sidebar) return;
+        if (document.getElementById('cabBalanceDisplay')) return;
+        const balanceDiv = document.createElement('div');
+        balanceDiv.style.cssText = 'margin-top:12px;padding:10px;background:rgba(0,0,0,0.3);border-radius:12px;text-align:center;';
+        balanceDiv.innerHTML = `
+            <div style="font-size:.7rem;color:#949aab;text-transform:uppercase;letter-spacing:.5px;">Баланс</div>
+            <div id="cabBalanceDisplay" style="font-size:1.4rem;font-weight:900;color:#ffbc00;">${getUserBalance()} ₽</div>
+            <button class="action-btn" onclick="openPaymentModal('Пополнение баланса', 100)" style="margin-top:8px;width:100%;padding:6px;">Пополнить</button>
+        `;
+        sidebar.appendChild(balanceDiv);
+    }
+
+    // 8.5. Механика выдачи монет в админке
+    function injectAdminGiveMoney() {
+        const adminTab = document.getElementById('cab-admin');
+        if (!adminTab) return;
+        // Ищем блок "Панель Владельца" или создаём новый
+        let targetCard = adminTab.querySelector('.card');
+        if (!targetCard) return;
+        // Проверяем, есть ли уже блок выдачи
+        if (document.getElementById('giveMoneyBlock')) return;
+        const giveBlock = document.createElement('div');
+        giveBlock.id = 'giveMoneyBlock';
+        giveBlock.className = 'card';
+        giveBlock.style.cssText = 'margin-top:16px;';
+        giveBlock.innerHTML = `
+            <div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">💰 Выдача монет пользователю</div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+                <input type="text" id="giveMoneyUser" class="form-input" placeholder="Ник пользователя" style="flex:1;min-width:120px;">
+                <input type="number" id="giveMoneyAmount" class="form-input" placeholder="Сумма" style="width:120px;">
+                <button class="action-btn green" onclick="giveMoneyToUser()">Выдать</button>
+            </div>
+            <div id="giveMoneyResult" style="margin-top:8px;font-size:.8rem;color:#949aab;"></div>
+        `;
+        targetCard.after(giveBlock);
+        // Добавляем функцию выдачи
+        window.giveMoneyToUser = function() {
+            const username = document.getElementById('giveMoneyUser').value.trim();
+            const amount = parseInt(document.getElementById('giveMoneyAmount').value);
+            const result = document.getElementById('giveMoneyResult');
+            if (!username || !amount || amount <= 0) {
+                result.innerHTML = '<span style="color:#ff3344;">Заполните все поля корректно.</span>';
+                return;
+            }
+            const user = registeredUsers[username.toLowerCase()];
+            if (!user) {
+                result.innerHTML = `<span style="color:#ff3344;">Пользователь "${username}" не найден.</span>`;
+                return;
+            }
+            user.balance = (user.balance || 0) + amount;
+            saveDB();
+            result.innerHTML = `<span style="color:#00e676;">✅ Выдано ${amount} ₽ пользователю "${username}". Новый баланс: ${user.balance} ₽</span>`;
+            document.getElementById('giveMoneyUser').value = '';
+            document.getElementById('giveMoneyAmount').value = '';
+            updateBalanceUI();
+        };
+    }
+
+    // === 9. ИСПРАВЛЕНИЕ ЛОТЕРЕИ (попытки) ===
+    // Переопределяем spinRoulette и openCase, если они ещё не переопределены
+    const originalSpin = window.spinRoulette;
+    const originalCase = window.openCase;
+
+    if (typeof window.spinRoulette !== 'function' || window.spinRoulette.toString().includes('originalSpin')) {
+        window.spinRoulette = function() {
+            if (isSpinning) return;
+            if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+            const user = registeredUsers[currentUser.toLowerCase()];
+            if (!user) return;
+
+            if (!user.freeSpinUsed) {
+                user.freeSpinUsed = true;
+                saveDB();
+                if (typeof originalSpin === 'function') originalSpin();
+                return;
+            }
+
+            if (spinAttempts <= 0) {
+                showToast(`Нет попыток! Купите за ${PRICE_PER_ATTEMPT} ₽ в лотерее`, 'error');
+                return;
+            }
+            spinAttempts--;
+            localStorage.setItem('runclient_spinAttempts', spinAttempts);
+            document.getElementById('spinAttempts').innerText = spinAttempts;
+
+            isSpinning = true;
+            document.getElementById('spinBtn').disabled = true;
+            document.getElementById('rouletteStatus').innerText = 'Вращение...';
+            const rand = Math.random();
+            let win = '7д';
+            if (rand < 0.005) win = '90д';
+            else if (rand < 0.025) win = '30д';
+            setTimeout(() => {
+                user.sub = win;
+                saveDB();
+                updateCabinetUI();
+                updateLotteryUI();
+                showToast('Поздравляем! Вы выиграли подписку ' + win + '!', 'success');
+                document.getElementById('rouletteStatus').innerText = 'Выигрыш: ' + win;
+                isSpinning = false;
+                document.getElementById('spinBtn').disabled = false;
+            }, 1500);
+        };
+    }
+
+    if (typeof window.openCase !== 'function' || window.openCase.toString().includes('originalCase')) {
+        window.openCase = function() {
+            if (isOpening) return;
+            if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+            const user = registeredUsers[currentUser.toLowerCase()];
+            if (!user) return;
+            const gr = lotteryState.goldRush;
+            let isGoldRushFree = false;
+            if (gr.active && gr.used < gr.limit && !gr.usedUsers.includes(currentUser.toLowerCase())) {
+                isGoldRushFree = true;
+            }
+
+            if (!user.freeCaseUsed && !isGoldRushFree) {
+                user.freeCaseUsed = true;
+                saveDB();
+                if (typeof originalCase === 'function') originalCase();
+                return;
+            }
+            if (isGoldRushFree) {
+                gr.used++;
+                gr.usedUsers.push(currentUser.toLowerCase());
+                saveDB();
+                updateGoldRushUI();
+                if (typeof originalCase === 'function') originalCase();
+                return;
+            }
+
+            if (caseAttempts <= 0) {
+                showToast(`Нет попыток! Купите за ${PRICE_PER_ATTEMPT} ₽ в лотерее`, 'error');
+                return;
+            }
+            caseAttempts--;
+            localStorage.setItem('runclient_caseAttempts', caseAttempts);
+            document.getElementById('caseAttempts').innerText = caseAttempts;
+
+            isOpening = true;
+            document.getElementById('caseBtn').disabled = true;
+            document.getElementById('caseStatus').innerText = 'Открытие...';
+            const rand = Math.random();
+            let win = '7д';
+            let tier = 'Обычная';
+            if (rand < 0.005) { win = '90д'; tier = 'Легендарная'; }
+            else if (rand < 0.025) { win = '30д'; tier = 'Редкая'; }
+            setTimeout(() => {
+                user.sub = win;
+                saveDB();
+                updateCabinetUI();
+                updateLotteryUI();
+                showToast('Поздравляем! Вы выиграли подписку ' + win + '!', 'success');
+                document.getElementById('caseStatus').innerText = 'Выигрыш: ' + win;
+                isOpening = false;
+                document.getElementById('caseBtn').disabled = false;
+            }, 1500);
+        };
+    }
+
+    // === 10. ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ ===
+    document.addEventListener('DOMContentLoaded', function() {
+        injectBalanceInHeader();
+        injectTopupBlockInTariffs();
+        injectLotteryButtons();
+        injectBalanceInCabinet();
+        injectAdminGiveMoney();
+        // Обновляем интерфейс лотереи
+        if (typeof updateLotteryUI === 'function') updateLotteryUI();
+        updateBalanceUI();
+        console.log('✅ Финальный фикс успешно загружен!');
+    });
+
+    // Если DOM уже загружен, выполняем сразу
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(function() {
+            injectBalanceInHeader();
+            injectTopupBlockInTariffs();
+            injectLotteryButtons();
+            injectBalanceInCabinet();
+            injectAdminGiveMoney();
+            if (typeof updateLotteryUI === 'function') updateLotteryUI();
+            updateBalanceUI();
+            console.log('✅ Финальный фикс применён (ранняя загрузка)');
+        }, 100);
+    }
+
+})();
+</script>
 </body>
 </html>
