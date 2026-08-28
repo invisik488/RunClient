@@ -2395,5 +2395,224 @@ document.addEventListener('DOMContentLoaded', function() {
 
 })();
 </script>
+<script>
+// ===== ИСПРАВЛЕНИЕ ЦЕНЫ И ШАНСОВ ЛОТЕРЕИ =====
+(function() {
+    console.log('🔄 Запуск фикса цены и шансов...');
+
+    // 1. Устанавливаем цену попытки = 49 ₽
+    const PRICE_PER_ATTEMPT = 49;
+
+    // 2. Переопределяем функции spinRoulette и openCase с новыми шансами
+    // Сохраняем оригинальные, если они есть, но переопределяем полностью
+    window.spinRoulette = function() {
+        if (isSpinning) return;
+        if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) return;
+
+        // Бесплатная попытка (если ещё не использована)
+        if (!user.freeSpinUsed) {
+            user.freeSpinUsed = true;
+            saveDB();
+            // Продолжаем с вращением, но бесплатно
+        } else {
+            // Проверяем платные попытки
+            if (spinAttempts <= 0) {
+                showToast(`Нет попыток! Купите за ${PRICE_PER_ATTEMPT} ₽ в лотерее`, 'error');
+                return;
+            }
+            spinAttempts--;
+            localStorage.setItem('runclient_spinAttempts', spinAttempts);
+            document.getElementById('spinAttempts').innerText = spinAttempts;
+        }
+
+        // Анимация вращения
+        isSpinning = true;
+        document.getElementById('spinBtn').disabled = true;
+        document.getElementById('rouletteStatus').innerText = 'Вращение...';
+
+        // Новые шансы: 7д – 60%, 30д – 30%, 90д – 10%
+        const rand = Math.random();
+        let win;
+        if (rand < 0.60) win = '7д';
+        else if (rand < 0.90) win = '30д';
+        else win = '90д';
+
+        setTimeout(() => {
+            user.sub = win;
+            saveDB();
+            updateCabinetUI();
+            updateLotteryUI();
+            showToast('Поздравляем! Вы выиграли подписку ' + win + '!', 'success');
+            document.getElementById('rouletteStatus').innerText = 'Выигрыш: ' + win;
+            isSpinning = false;
+            document.getElementById('spinBtn').disabled = false;
+        }, 1500);
+    };
+
+    window.openCase = function() {
+        if (isOpening) return;
+        if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) return;
+
+        const gr = lotteryState.goldRush;
+        let isGoldRushFree = false;
+        if (gr.active && gr.used < gr.limit && !gr.usedUsers.includes(currentUser.toLowerCase())) {
+            isGoldRushFree = true;
+        }
+
+        // Бесплатная попытка (если ещё не использована или золотая лихорадка)
+        if (!user.freeCaseUsed && !isGoldRushFree) {
+            user.freeCaseUsed = true;
+            saveDB();
+        } else if (isGoldRushFree) {
+            gr.used++;
+            gr.usedUsers.push(currentUser.toLowerCase());
+            saveDB();
+            updateGoldRushUI();
+        } else {
+            // Платная попытка
+            if (caseAttempts <= 0) {
+                showToast(`Нет попыток! Купите за ${PRICE_PER_ATTEMPT} ₽ в лотерее`, 'error');
+                return;
+            }
+            caseAttempts--;
+            localStorage.setItem('runclient_caseAttempts', caseAttempts);
+            document.getElementById('caseAttempts').innerText = caseAttempts;
+        }
+
+        isOpening = true;
+        document.getElementById('caseBtn').disabled = true;
+        document.getElementById('caseStatus').innerText = 'Открытие...';
+
+        // Те же шансы для кейса
+        const rand = Math.random();
+        let win, tier;
+        if (rand < 0.60) { win = '7д'; tier = 'Обычная'; }
+        else if (rand < 0.90) { win = '30д'; tier = 'Редкая'; }
+        else { win = '90д'; tier = 'Легендарная'; }
+
+        setTimeout(() => {
+            user.sub = win;
+            saveDB();
+            updateCabinetUI();
+            updateLotteryUI();
+            showToast('Поздравляем! Вы выиграли подписку ' + win + '!', 'success');
+            document.getElementById('caseStatus').innerText = 'Выигрыш: ' + win;
+            isOpening = false;
+            document.getElementById('caseBtn').disabled = false;
+        }, 1500);
+    };
+
+    // 3. Добавляем / обновляем кнопки покупки попыток
+    function injectOrUpdateButtons() {
+        // Ищем контейнеры с информацией о попытках
+        const spinInfo = document.querySelector('.lottery-card:first-child .lottery-info');
+        const caseInfo = document.querySelector('.lottery-card:last-child .lottery-info');
+
+        // Функция для создания кнопки
+        function createBuyButton(attemptType) {
+            const btn = document.createElement('button');
+            btn.id = attemptType === 'spin' ? 'buySpinBtn' : 'buyCaseBtn';
+            btn.className = 'action-btn';
+            btn.style.cssText = 'padding:4px 12px;font-size:.7rem;margin-left:10px;';
+            btn.innerText = `Купить попытку (${PRICE_PER_ATTEMPT} ₽)`;
+            btn.onclick = attemptType === 'spin' ? buySpinAttempt : buyCaseAttempt;
+            return btn;
+        }
+
+        // Удаляем старые кнопки, если есть
+        document.querySelectorAll('#buySpinBtn, #buyCaseBtn').forEach(el => el.remove());
+
+        if (spinInfo) {
+            const newBtn = createBuyButton('spin');
+            spinInfo.appendChild(newBtn);
+        }
+        if (caseInfo) {
+            const newBtn = createBuyButton('case');
+            caseInfo.appendChild(newBtn);
+        }
+
+        // Обновляем функции покупки (на случай, если они уже были)
+        window.buySpinAttempt = function() {
+            if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+            if (getUserBalance() < PRICE_PER_ATTEMPT) {
+                showToast(`Недостаточно баланса! Пополните в разделе "Тарифы" (нужно ${PRICE_PER_ATTEMPT} ₽)`, 'error');
+                return;
+            }
+            addUserBalance(-PRICE_PER_ATTEMPT);
+            spinAttempts++;
+            localStorage.setItem('runclient_spinAttempts', spinAttempts);
+            document.getElementById('spinAttempts').innerText = spinAttempts;
+            updateBalanceUI();
+            showToast('Попытка куплена!', 'success');
+        };
+
+        window.buyCaseAttempt = function() {
+            if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+            if (getUserBalance() < PRICE_PER_ATTEMPT) {
+                showToast(`Недостаточно баланса! Пополните в разделе "Тарифы" (нужно ${PRICE_PER_ATTEMPT} ₽)`, 'error');
+                return;
+            }
+            addUserBalance(-PRICE_PER_ATTEMPT);
+            caseAttempts++;
+            localStorage.setItem('runclient_caseAttempts', caseAttempts);
+            document.getElementById('caseAttempts').innerText = caseAttempts;
+            updateBalanceUI();
+            showToast('Попытка куплена!', 'success');
+        };
+
+        // Обновляем UI баланса (чтобы кнопки блокировались при недостатке)
+        updateBalanceUI();
+    }
+
+    // 4. Вспомогательные функции баланса (если их нет)
+    function getUserBalance() {
+        if (!currentUser) return 0;
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) return 0;
+        if (user.balance === undefined) user.balance = 0;
+        return user.balance;
+    }
+
+    function addUserBalance(amount) {
+        if (!currentUser) return;
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) return;
+        user.balance = (user.balance || 0) + amount;
+        if (typeof saveDB === 'function') saveDB();
+        updateBalanceUI();
+    }
+
+    function updateBalanceUI() {
+        const balanceEl = document.getElementById('headerBalance');
+        if (balanceEl) balanceEl.innerText = '💰 ' + getUserBalance() + ' ₽';
+        ['buySpinBtn', 'buyCaseBtn'].forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) btn.disabled = getUserBalance() < PRICE_PER_ATTEMPT;
+        });
+        const cabBalance = document.getElementById('cabBalanceDisplay');
+        if (cabBalance) cabBalance.innerText = getUserBalance() + ' ₽';
+    }
+
+    // 5. Запуск при загрузке
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        injectOrUpdateButtons();
+        // Также обновляем отображение попыток
+        if (typeof updateLotteryUI === 'function') updateLotteryUI();
+        updateBalanceUI();
+        console.log(`✅ Цена попытки установлена: ${PRICE_PER_ATTEMPT} ₽, шансы обновлены.`);
+    } else {
+        document.addEventListener('DOMContentLoaded', function() {
+            injectOrUpdateButtons();
+            if (typeof updateLotteryUI === 'function') updateLotteryUI();
+            updateBalanceUI();
+            console.log(`✅ Цена попытки установлена: ${PRICE_PER_ATTEMPT} ₽, шансы обновлены.`);
+        });
+    }
+})();
+</script>
 </body>
 </html>
