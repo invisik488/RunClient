@@ -3149,5 +3149,232 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Экстренный фикс установлен. Проверь консоль при нажатии "Оплатить".');
 })();
 </script>
+<script>
+// ===== ПОЛНОСТЬЮ НОВАЯ СИСТЕМА ПРОМОКОДОВ (с сохранением) =====
+(function() {
+    console.log('🔄 Запуск системы промокодов...');
+
+    // === 1. ИНИЦИАЛИЗАЦИЯ ПРОМОКОДОВ ===
+    // Загружаем из localStorage или создаём пустой объект
+    if (typeof window.promoCodes === 'undefined') {
+        const saved = localStorage.getItem('runclient_promocodes');
+        window.promoCodes = saved ? JSON.parse(saved) : {};
+        console.log('📦 Промокоды загружены:', window.promoCodes);
+    }
+
+    // === 2. ФУНКЦИЯ СОХРАНЕНИЯ ===
+    window.savePromoCodes = function() {
+        try {
+            localStorage.setItem('runclient_promocodes', JSON.stringify(window.promoCodes));
+            console.log('✅ Промокоды сохранены:', window.promoCodes);
+            return true;
+        } catch (e) {
+            console.error('❌ Ошибка сохранения промокодов:', e);
+            return false;
+        }
+    };
+
+    // === 3. ФУНКЦИЯ СОЗДАНИЯ ПРОМОКОДА ===
+    window.createPromo = function() {
+        console.log('🔄 createPromo вызвана');
+        if (!currentUser) {
+            showToast('Войдите в аккаунт!', 'error');
+            return;
+        }
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (user?.role !== 'owner' && user?.role !== 'admin') {
+            showToast('Доступ запрещён!', 'error');
+            return;
+        }
+
+        const codeInput = document.getElementById('newPromoCode');
+        const discountInput = document.getElementById('newPromoDiscount');
+        const usesInput = document.getElementById('newPromoUses');
+
+        if (!codeInput || !discountInput || !usesInput) {
+            showToast('Поля для промокода не найдены!', 'error');
+            return;
+        }
+
+        const code = codeInput.value.trim().toUpperCase();
+        const discount = parseInt(discountInput.value);
+        const uses = parseInt(usesInput.value) || 0;
+
+        if (!code) {
+            showToast('Введите код промокода!', 'error');
+            return;
+        }
+        if (isNaN(discount) || discount < 1 || discount > 99) {
+            showToast('Скидка должна быть от 1 до 99%!', 'error');
+            return;
+        }
+
+        if (window.promoCodes[code]) {
+            showToast('Промокод уже существует!', 'error');
+            return;
+        }
+
+        // Создаём промокод
+        window.promoCodes[code] = {
+            discount: discount,
+            uses: uses,
+            used: 0,
+            created: new Date().toISOString()
+        };
+
+        // Сохраняем
+        const saved = window.savePromoCodes();
+        if (saved) {
+            // Обновляем отображение
+            if (typeof window.renderPromoCodes === 'function') {
+                window.renderPromoCodes();
+            } else {
+                // Если renderPromoCodes не определена, создаём её
+                window.renderPromoCodes();
+            }
+            showToast(`Промокод "${code}" создан! (скидка ${discount}%)`, 'success');
+            codeInput.value = '';
+            discountInput.value = '';
+            usesInput.value = '';
+        } else {
+            showToast('Ошибка сохранения промокода!', 'error');
+        }
+        console.log('📦 Текущие промокоды:', window.promoCodes);
+    };
+
+    // === 4. ФУНКЦИЯ УДАЛЕНИЯ ПРОМОКОДА ===
+    window.deletePromo = function(code) {
+        if (!currentUser) return;
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (user?.role !== 'owner' && user?.role !== 'admin') {
+            showToast('Доступ запрещён!', 'error');
+            return;
+        }
+        if (!window.promoCodes[code]) {
+            showToast('Промокод не найден', 'error');
+            return;
+        }
+        if (confirm(`Удалить промокод "${code}"?`)) {
+            delete window.promoCodes[code];
+            window.savePromoCodes();
+            if (typeof window.renderPromoCodes === 'function') {
+                window.renderPromoCodes();
+            }
+            showToast(`Промокод "${code}" удалён`, 'success');
+        }
+    };
+
+    // === 5. ФУНКЦИЯ ОТОБРАЖЕНИЯ ПРОМОКОДОВ ===
+    window.renderPromoCodes = function() {
+        const container = document.getElementById('promoListContainer');
+        if (!container) {
+            console.warn('⚠️ Контейнер promoListContainer не найден');
+            return;
+        }
+        const entries = Object.entries(window.promoCodes);
+        if (entries.length === 0) {
+            container.innerHTML = '<p style="color:#949aab;">Нет созданных промокодов.</p>';
+            return;
+        }
+        container.innerHTML = entries.map(([code, data]) => `
+            <div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;border:1px solid rgba(255,255,255,0.08);">
+                <div>
+                    <span style="font-weight:800;color:#fff;">${code}</span>
+                    <span style="color:#ffbc00;margin-left:10px;">-${data.discount}%</span>
+                    <span style="color:#949aab;margin-left:10px;">Использовано: ${data.used} / ${data.uses === 0 ? '∞' : data.uses}</span>
+                    <span style="color:#666;margin-left:10px;font-size:.7rem;">${new Date(data.created).toLocaleDateString()}</span>
+                </div>
+                <button class="action-btn" style="padding:2px 12px;font-size:.7rem;background:#666;" onclick="window.deletePromo('${code}')">Удалить</button>
+            </div>
+        `).join('');
+        console.log('📋 Промокоды отображены');
+    };
+
+    // === 6. ПРОВЕРЯЕМ, ЧТО БЛОК УПРАВЛЕНИЯ ПРОМОКОДАМИ СУЩЕСТВУЕТ ===
+    function ensurePromoBlock() {
+        const adminTab = document.getElementById('cab-admin');
+        if (!adminTab) return;
+        if (document.getElementById('promoBlock')) return;
+
+        const promoBlock = document.createElement('div');
+        promoBlock.id = 'promoBlock';
+        promoBlock.className = 'card';
+        promoBlock.style.marginTop = '16px';
+        promoBlock.innerHTML = `
+            <div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px;">🎫 Управление промокодами</div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+                <input type="text" id="newPromoCode" class="form-input" placeholder="Код" style="flex:1;min-width:100px;">
+                <input type="number" id="newPromoDiscount" class="form-input" placeholder="Скидка %" style="width:100px;">
+                <input type="number" id="newPromoUses" class="form-input" placeholder="Лимит" style="width:100px;">
+                <button class="action-btn green" onclick="window.createPromo()">Создать</button>
+            </div>
+            <div id="promoListContainer"></div>
+        `;
+        adminTab.appendChild(promoBlock);
+        // Рендерим промокоды
+        window.renderPromoCodes();
+        console.log('✅ Блок управления промокодами добавлен');
+    }
+
+    // === 7. ПРИМЕНЕНИЕ ПРОМОКОДА В МОДАЛКЕ (для совместимости) ===
+    window.applyPromo = function() {
+        const code = document.getElementById('promoInput')?.value.trim().toUpperCase();
+        const msg = document.getElementById('promoMessage');
+        if (!code) {
+            if (msg) msg.innerHTML = '<span style="color:#ff3344;">Введите промокод</span>';
+            return;
+        }
+        if (!window.promoCodes || !window.promoCodes[code]) {
+            if (msg) msg.innerHTML = '<span style="color:#ff3344;">Промокод не найден</span>';
+            return;
+        }
+        const data = window.promoCodes[code];
+        if (data.uses > 0 && data.used >= data.uses) {
+            if (msg) msg.innerHTML = '<span style="color:#ff3344;">Промокод исчерпал лимит</span>';
+            return;
+        }
+        const amountInput = document.getElementById('topupAmount');
+        if (!amountInput) return;
+        const currentPrice = parseInt(amountInput.value) || 0;
+        if (currentPrice <= 0) {
+            if (msg) msg.innerHTML = '<span style="color:#ff3344;">Сумма не указана</span>';
+            return;
+        }
+        const discount = data.discount;
+        const newPrice = Math.round(currentPrice * (100 - discount) / 100);
+        amountInput.value = newPrice;
+        if (msg) msg.innerHTML = `<span style="color:#00e676;">Скидка ${discount}% применена! Новая цена: ${newPrice} ₽</span>`;
+        console.log(`✅ Промокод ${code} применён, скидка ${discount}%, новая цена ${newPrice}`);
+    };
+
+    // === 8. ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ ===
+    document.addEventListener('DOMContentLoaded', function() {
+        ensurePromoBlock();
+        // Если пользователь админ/овнер – рендерим промокоды
+        if (currentUser) {
+            const user = registeredUsers[currentUser.toLowerCase()];
+            if (user && (user.role === 'owner' || user.role === 'admin')) {
+                window.renderPromoCodes();
+            }
+        }
+        console.log('✅ Система промокодов инициализирована');
+    });
+
+    // Если DOM уже загружен
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(function() {
+            ensurePromoBlock();
+            if (currentUser) {
+                const user = registeredUsers[currentUser.toLowerCase()];
+                if (user && (user.role === 'owner' || user.role === 'admin')) {
+                    window.renderPromoCodes();
+                }
+            }
+        }, 200);
+    }
+
+    console.log('✅ Система промокодов загружена!');
+})();
+</script>
 </body>
 </html>
