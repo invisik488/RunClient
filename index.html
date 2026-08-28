@@ -1308,5 +1308,197 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+<script>
+// ===== ПОЛНЫЙ ФИКС (вставь этот блок в конец перед </body>) =====
+(function() {
+    // 1. Принудительный пароль для invisik (123)
+    if (typeof registeredUsers !== 'undefined' && registeredUsers && registeredUsers['invisik']) {
+        registeredUsers['invisik'].password = '123';
+        if (typeof saveDB === 'function') saveDB();
+    }
+
+    // 2. Восстанавливаем попытки из localStorage (если переменные не определены, создаём)
+    if (typeof spinAttempts === 'undefined') {
+        window.spinAttempts = parseInt(localStorage.getItem('runclient_spinAttempts')) || 1;
+        window.caseAttempts = parseInt(localStorage.getItem('runclient_caseAttempts')) || 1;
+    } else {
+        spinAttempts = parseInt(localStorage.getItem('runclient_spinAttempts')) || 1;
+        caseAttempts = parseInt(localStorage.getItem('runclient_caseAttempts')) || 1;
+    }
+
+    // 3. Инициализация секторов рулетки
+    function initRouletteFix() {
+        const track = document.getElementById('rouletteTrack');
+        if (!track) return;
+        if (track.children.length > 0) return;
+        const segments = ['7д', '30д', '90д', '7д', '30д', '90д', '7д', '30д', '90д', '7д', '30д', '90д', '7д', '30д', '90д', '7д', '30д', '90д'];
+        track.innerHTML = segments.map(s => 
+            `<div style="background:rgba(255,255,255,0.08);padding:6px 14px;border-radius:6px;font-size:14px;font-weight:700;color:#fff;white-space:nowrap;border:1px solid rgba(255,255,255,0.1);">${s}</div>`
+        ).join('');
+    }
+
+    // 4. Сохраняем оригинальные функции (если есть)
+    const originalSpin = window.spinRoulette;
+    const originalCase = window.openCase;
+
+    // 5. Переопределяем spinRoulette с сохранением попыток
+    window.spinRoulette = function() {
+        if (isSpinning) return;
+        if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) return;
+
+        // Бесплатная попытка
+        if (!user.freeSpinUsed) {
+            user.freeSpinUsed = true;
+            saveDB();
+            if (typeof originalSpin === 'function') originalSpin();
+            return;
+        }
+
+        // Платная попытка
+        if (spinAttempts <= 0) {
+            showToast('Нет попыток! Купите за 1₽ в разделе "Тарифы"', 'error');
+            return;
+        }
+        spinAttempts--;
+        localStorage.setItem('runclient_spinAttempts', spinAttempts);
+        document.getElementById('spinAttempts').innerText = spinAttempts;
+
+        if (typeof originalSpin === 'function') originalSpin();
+        else {
+            // fallback, если оригинальной функции нет
+            isSpinning = true;
+            document.getElementById('spinBtn').disabled = true;
+            document.getElementById('rouletteStatus').innerText = 'Вращение...';
+            const rand = Math.random();
+            let win = '7д';
+            if (rand < 0.005) win = '90д';
+            else if (rand < 0.025) win = '30д';
+            setTimeout(() => {
+                user.sub = win;
+                saveDB();
+                updateCabinetUI();
+                updateLotteryUI();
+                showToast('Поздравляем! Вы выиграли подписку ' + win + '!', 'success');
+                document.getElementById('rouletteStatus').innerText = 'Выигрыш: ' + win;
+                isSpinning = false;
+                document.getElementById('spinBtn').disabled = false;
+            }, 1500);
+        }
+    };
+
+    // 6. Переопределяем openCase с сохранением попыток и поддержкой золотой лихорадки
+    window.openCase = function() {
+        if (isOpening) return;
+        if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) return;
+        const gr = lotteryState.goldRush;
+        let isGoldRushFree = false;
+        if (gr.active && gr.used < gr.limit && !gr.usedUsers.includes(currentUser.toLowerCase())) {
+            isGoldRushFree = true;
+        }
+
+        if (!user.freeCaseUsed && !isGoldRushFree) {
+            user.freeCaseUsed = true;
+            saveDB();
+            if (typeof originalCase === 'function') originalCase();
+            return;
+        }
+        if (isGoldRushFree) {
+            gr.used++;
+            gr.usedUsers.push(currentUser.toLowerCase());
+            saveDB();
+            updateGoldRushUI();
+            if (typeof originalCase === 'function') originalCase();
+            return;
+        }
+
+        // Платная попытка
+        if (caseAttempts <= 0) {
+            showToast('Нет попыток! Купите за 1₽ в разделе "Тарифы"', 'error');
+            return;
+        }
+        caseAttempts--;
+        localStorage.setItem('runclient_caseAttempts', caseAttempts);
+        document.getElementById('caseAttempts').innerText = caseAttempts;
+
+        if (typeof originalCase === 'function') originalCase();
+        else {
+            isOpening = true;
+            document.getElementById('caseBtn').disabled = true;
+            document.getElementById('caseStatus').innerText = 'Открытие...';
+            const rand = Math.random();
+            let win = '7д';
+            let tier = 'Обычная';
+            if (rand < 0.005) { win = '90д'; tier = 'Легендарная'; }
+            else if (rand < 0.025) { win = '30д'; tier = 'Редкая'; }
+            setTimeout(() => {
+                user.sub = win;
+                saveDB();
+                updateCabinetUI();
+                updateLotteryUI();
+                showToast('Поздравляем! Вы выиграли подписку ' + win + '!', 'success');
+                document.getElementById('caseStatus').innerText = 'Выигрыш: ' + win;
+                isOpening = false;
+                document.getElementById('caseBtn').disabled = false;
+            }, 1500);
+        }
+    };
+
+    // 7. Добавляем цены на попытки в лотерейные карточки (если их ещё нет)
+    function addPricesToLottery() {
+        const spinInfo = document.querySelector('.lottery-card:first-child .lottery-info');
+        if (spinInfo && !spinInfo.innerHTML.includes('1₽')) {
+            spinInfo.innerHTML += ' <span style="color:#ffbc00;font-weight:700;margin-left:10px;">💰 1 попытка = 1₽</span>';
+        }
+        const caseInfo = document.querySelector('.lottery-card:last-child .lottery-info');
+        if (caseInfo && !caseInfo.innerHTML.includes('1₽')) {
+            caseInfo.innerHTML += ' <span style="color:#ffbc00;font-weight:700;margin-left:10px;">💰 1 попытка = 1₽</span>';
+        }
+    }
+
+    // 8. Инициализация при загрузке DOM
+    document.addEventListener('DOMContentLoaded', function() {
+        initRouletteFix();
+        addPricesToLottery();
+        document.getElementById('spinAttempts').innerText = spinAttempts;
+        document.getElementById('caseAttempts').innerText = caseAttempts;
+        if (currentUser) {
+            updateLotteryUI();
+        }
+    });
+
+    // 9. Переопределяем switchCabinetTab, чтобы при переходе в админку рендерить промокоды
+    const originalSwitch = window.switchCabinetTab;
+    if (originalSwitch) {
+        window.switchCabinetTab = function(tab, el) {
+            originalSwitch(tab, el);
+            if (tab === 'admin') {
+                const user = registeredUsers[currentUser?.toLowerCase()];
+                if (user && (user.role === 'owner' || user.role === 'admin')) {
+                    if (typeof renderPromoCodes === 'function') renderPromoCodes();
+                }
+            }
+        };
+    }
+
+    // 10. Заглушки на случай, если функции промокодов не определены (они уже есть в твоём коде, но на всякий случай)
+    if (typeof createPromo === 'undefined') {
+        window.createPromo = function() {
+            showToast('Функция createPromo не определена. Проверьте код.', 'error');
+        };
+    }
+    if (typeof renderPromoCodes === 'undefined') {
+        window.renderPromoCodes = function() {
+            const container = document.getElementById('promoListContainer');
+            if (container) container.innerHTML = '<p style="color:#949aab;">Система промокодов не инициализирована.</p>';
+        };
+    }
+
+    console.log('✅ Фикс загружен: лотерея, вход, попытки, промокоды.');
+})();
+</script>
 </body>
 </html>
