@@ -3949,5 +3949,132 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('💡 Чтобы изменить шансы – отредактируй CHANCE_7D, CHANCE_30D, CHANCE_90D в этом блоке.');
 })();
 </script>
+<script>
+// ===== ФИКС: ОБНОВЛЕНИЕ СЧЁТЧИКА ИСПОЛЬЗОВАНИЙ ПРОМОКОДА =====
+(function() {
+    console.log('🔄 Исправление счётчика промокодов...');
+
+    // Переопределяем processPaymentModal
+    const oldProcess = window.processPaymentModal;
+    window.processPaymentModal = function() {
+        console.log('✅ processPaymentModal вызвана (исправленная)');
+        const amountInput = document.getElementById('topupAmount');
+        const amount = parseInt(amountInput?.value) || 0;
+        if (amount <= 0) { showToast('Введите корректную сумму', 'error'); return; }
+
+        const method = document.querySelector('input[name="paymentMethod"]:checked');
+        if (!method) { showToast('Выберите способ оплаты', 'error'); return; }
+        const selected = method.value;
+
+        if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) { showToast('Пользователь не найден!', 'error'); return; }
+
+        // Функции баланса
+        function getUserBalance() {
+            if (user.balance === undefined) user.balance = 0;
+            return user.balance;
+        }
+        function addUserBalance(amount) {
+            user.balance = (user.balance || 0) + amount;
+            if (typeof saveDB === 'function') saveDB();
+            else localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+            if (typeof updateBalanceUI === 'function') updateBalanceUI();
+            console.log('Новый баланс:', user.balance);
+        }
+
+        // === НОВОЕ: обрабатываем промокод ===
+        let promoUsed = false;
+        if (window._currentPromo && window.promoCodes && window.promoCodes[window._currentPromo]) {
+            const promoCode = window._currentPromo;
+            const promoData = window.promoCodes[promoCode];
+            // Проверяем лимит
+            if (promoData.uses === 0 || promoData.used < promoData.uses) {
+                // Увеличиваем счётчик использований
+                promoData.used++;
+                // Сохраняем промокоды
+                if (typeof savePromoCodes === 'function') {
+                    savePromoCodes();
+                } else {
+                    localStorage.setItem('runclient_promocodes', JSON.stringify(window.promoCodes));
+                }
+                // Обновляем отображение промокодов
+                if (typeof renderPromoCodes === 'function') {
+                    renderPromoCodes();
+                }
+                promoUsed = true;
+                console.log(`✅ Промокод ${promoCode} использован (${promoData.used}/${promoData.uses === 0 ? '∞' : promoData.uses})`);
+            } else {
+                showToast('Промокод исчерпал лимит использований', 'error');
+                return;
+            }
+        }
+
+        const tariffInfo = document.getElementById('paymentTariffInfo').innerText;
+        const isSubscription = tariffInfo.includes('месяц') || tariffInfo.includes('Навсегда') || tariffInfo.includes('HWID');
+
+        if (selected === 'balance') {
+            if (getUserBalance() < amount) {
+                showToast('Недостаточно баланса!', 'error');
+                return;
+            }
+            addUserBalance(-amount);
+
+            if (isSubscription) {
+                let subName = '';
+                if (tariffInfo.includes('1 месяц')) subName = '1 месяц';
+                else if (tariffInfo.includes('3 месяца')) subName = '3 месяца';
+                else if (tariffInfo.includes('Навсегда')) subName = 'Навсегда';
+                else if (tariffInfo.includes('HWID')) {
+                    showToast('Заявка на сброс HWID создана!', 'success');
+                    window.closePaymentModal();
+                    if (typeof updateCabinetUI === 'function') updateCabinetUI();
+                    return;
+                }
+                if (subName) {
+                    user.sub = subName;
+                    if (typeof saveDB === 'function') saveDB();
+                    showToast(`Подписка "${subName}" активирована!`, 'success');
+                    if (typeof updateCabinetUI === 'function') updateCabinetUI();
+                }
+            } else {
+                showToast(`Баланс пополнен на ${amount} ₽`, 'success');
+            }
+            window.closePaymentModal();
+            if (typeof updateBalanceUI === 'function') updateBalanceUI();
+            if (typeof updateLotteryUI === 'function') updateLotteryUI();
+
+        } else if (selected === 'funpay') {
+            addUserBalance(amount);
+            showToast(`Баланс пополнен на ${amount} ₽ (FunPay)`, 'success');
+            window.closePaymentModal();
+            window.open('https://funpay.com/lots/offerEdit?node=1596&offer=76044751', '_blank');
+
+        } else if (selected === 'telegram') {
+            addUserBalance(amount);
+            showToast(`Баланс пополнен на ${amount} ₽ (Telegram)`, 'success');
+            window.closePaymentModal();
+            window.open('https://t.me/runclient_support', '_blank');
+
+        } else {
+            showToast('Неизвестный способ оплаты', 'error');
+        }
+
+        // Если промокод был использован, обновляем интерфейс
+        if (promoUsed) {
+            // Дополнительно обновляем список промокодов, если он виден
+            if (typeof renderPromoCodes === 'function') {
+                renderPromoCodes();
+            }
+        }
+
+        // Сбрасываем применённый промокод
+        window._currentPromo = null;
+        console.log('✅ Операция завершена, промокод обработан');
+    };
+
+    console.log('✅ Счётчик промокодов теперь обновляется после оплаты');
+})();
+</script>
 </body>
 </html>
