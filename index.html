@@ -4421,5 +4421,140 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 })();
 </script>
+<script>
+// ===== ДОБАВЛЯЕМ "СПАСИБО ЗА ОПЛАТУ" В МОДАЛКЕ =====
+(function() {
+    console.log('🔄 Добавляем благодарность после оплаты...');
+
+    // Функция показа благодарности
+    function showThankYou(message) {
+        const modal = document.getElementById('paymentModal');
+        if (!modal) return;
+        // Находим контейнер с содержимым (второй div внутри модалки)
+        const contentDiv = modal.querySelector('.modal-content > div:last-child');
+        if (!contentDiv) return;
+        // Сохраняем оригинальное содержимое, чтобы потом восстановить (но не обязательно, т.к. openPaymentModal перестраивает)
+        // Заменяем на благодарность
+        contentDiv.innerHTML = `
+            <div style="text-align:center;padding:20px 0;">
+                <div style="font-size:4rem;margin-bottom:16px;">🎉</div>
+                <h2 style="color:#00e676;font-weight:800;font-size:1.8rem;">Спасибо за оплату!</h2>
+                <p style="color:#949aab;margin-top:8px;">${message || 'Ваш заказ успешно обработан.'}</p>
+                <p style="color:#666;font-size:.8rem;margin-top:20px;">Закрывается через 3 секунды...</p>
+            </div>
+        `;
+        // Через 3 секунды закрываем модалку
+        setTimeout(() => {
+            window.closePaymentModal();
+        }, 3000);
+    }
+
+    // Переопределяем processPaymentModal
+    const oldProcess = window.processPaymentModal;
+    window.processPaymentModal = function() {
+        console.log('✅ processPaymentModal вызвана (с благодарностью)');
+        const amountInput = document.getElementById('topupAmount');
+        const amount = parseInt(amountInput?.value) || 0;
+        if (amount <= 0) { showToast('Введите корректную сумму', 'error'); return; }
+
+        const method = document.querySelector('input[name="paymentMethod"]:checked');
+        if (!method) { showToast('Выберите способ оплаты', 'error'); return; }
+        const selected = method.value;
+
+        if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) { showToast('Пользователь не найден!', 'error'); return; }
+
+        function getUserBalance() {
+            if (user.balance === undefined) user.balance = 0;
+            return user.balance;
+        }
+        function addUserBalance(amount) {
+            user.balance = (user.balance || 0) + amount;
+            if (typeof saveDB === 'function') saveDB();
+            else localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+            if (typeof updateBalanceUI === 'function') updateBalanceUI();
+            console.log('Новый баланс:', user.balance);
+        }
+
+        // Обработка промокода
+        let promoUsed = false;
+        if (window._currentPromo && window.promoCodes && window.promoCodes[window._currentPromo]) {
+            const promoCode = window._currentPromo;
+            const promoData = window.promoCodes[promoCode];
+            if (promoData.uses === 0 || promoData.used < promoData.uses) {
+                promoData.used++;
+                if (typeof savePromoCodes === 'function') savePromoCodes();
+                else localStorage.setItem('runclient_promocodes', JSON.stringify(window.promoCodes));
+                if (typeof renderPromoCodes === 'function') renderPromoCodes();
+                promoUsed = true;
+            } else {
+                showToast('Промокод исчерпал лимит', 'error');
+                return;
+            }
+        }
+
+        const tariffInfo = document.getElementById('paymentTariffInfo').innerText;
+        const isSubscription = tariffInfo.includes('месяц') || tariffInfo.includes('Навсегда') || tariffInfo.includes('HWID');
+
+        if (selected === 'balance') {
+            if (getUserBalance() < amount) {
+                showToast('Недостаточно баланса!', 'error');
+                return;
+            }
+            addUserBalance(-amount);
+
+            if (isSubscription) {
+                let subName = '';
+                if (tariffInfo.includes('1 месяц')) subName = '1 месяц';
+                else if (tariffInfo.includes('3 месяца')) subName = '3 месяца';
+                else if (tariffInfo.includes('Навсегда')) subName = 'Навсегда';
+                else if (tariffInfo.includes('HWID')) {
+                    showToast('Заявка на сброс HWID создана!', 'success');
+                    showThankYou('Заявка на сброс HWID отправлена!');
+                    return;
+                }
+                if (subName) {
+                    user.sub = subName;
+                    if (typeof saveDB === 'function') saveDB();
+                    // Показываем благодарность
+                    showThankYou(`Подписка "${subName}" активирована!`);
+                    if (typeof updateCabinetUI === 'function') updateCabinetUI();
+                    return;
+                }
+            } else {
+                // Пополнение баланса
+                showThankYou(`Баланс пополнен на ${amount} ₽`);
+                return;
+            }
+            // Если ничего не сработало, закрываем
+            window.closePaymentModal();
+
+        } else if (selected === 'funpay') {
+            addUserBalance(amount);
+            showThankYou(`Баланс пополнен на ${amount} ₽ (FunPay)`);
+            // Открываем FunPay в новой вкладке
+            window.open('https://funpay.com/lots/offerEdit?node=1596&offer=76044751', '_blank');
+
+        } else if (selected === 'telegram') {
+            addUserBalance(amount);
+            showThankYou(`Баланс пополнен на ${amount} ₽ (Telegram)`);
+            window.open('https://t.me/runclient_support', '_blank');
+
+        } else {
+            showToast('Неизвестный способ оплаты', 'error');
+        }
+
+        // Если промокод был использован, обновляем интерфейс
+        if (promoUsed) {
+            if (typeof renderPromoCodes === 'function') renderPromoCodes();
+        }
+        window._currentPromo = null;
+        console.log('✅ Операция завершена, промокод обработан');
+    };
+
+    console.log('✅ Благодарность после оплаты добавлена!');
+})();
+</script>
 </body>
 </html>
