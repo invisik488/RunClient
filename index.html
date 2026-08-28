@@ -3376,5 +3376,62 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Система промокодов загружена!');
 })();
 </script>
+<script>
+// ===== ИСПРАВЛЕНИЕ: БАЛАНС БОЛЬШЕ НЕ СБРАСЫВАЕТСЯ =====
+(function() {
+    console.log('🔄 Исправление баланса...');
+
+    // Проверяем, что registeredUsers существует
+    if (typeof registeredUsers !== 'undefined' && registeredUsers) {
+        // Для invisik: если баланс вообще не существует – устанавливаем 1000
+        // Если баланс уже есть – НЕ ТРОГАЕМ (даже если меньше 1000)
+        if (registeredUsers['invisik']) {
+            if (registeredUsers['invisik'].balance === undefined) {
+                registeredUsers['invisik'].balance = 1000;
+                console.log('✅ invisik: баланс установлен (1000)');
+            } else {
+                console.log('✅ invisik: баланс уже есть, не трогаем (', registeredUsers['invisik'].balance, ')');
+            }
+            // Также пароль принудительно ставим 123
+            registeredUsers['invisik'].password = '123';
+        } else {
+            // Если пользователя invisik нет – создаём
+            registeredUsers['invisik'] = {
+                password: '123',
+                role: 'owner',
+                sub: 'Навсегда',
+                banned: false,
+                regDate: new Date().toLocaleDateString(),
+                uid: Object.keys(registeredUsers).length + 1,
+                freeSpinUsed: false,
+                freeCaseUsed: false,
+                balance: 1000
+            };
+            console.log('✅ invisik создан с балансом 1000');
+        }
+        // Сохраняем изменения
+        if (typeof saveDB === 'function') {
+            saveDB();
+        } else {
+            localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+        }
+    }
+
+    // Также обновляем функцию обновления UI, чтобы она не сбрасывала баланс
+    const oldUpdateBalanceUI = window.updateBalanceUI;
+    if (oldUpdateBalanceUI) {
+        window.updateBalanceUI = function() {
+            oldUpdateBalanceUI();
+            // Дополнительно можно вывести текущий баланс в консоль
+            if (currentUser) {
+                const user = registeredUsers[currentUser.toLowerCase()];
+                if (user) console.log('💰 Текущий баланс:', user.balance);
+            }
+        };
+    }
+
+    console.log('✅ Баланс теперь не сбрасывается при обновлении');
+})();
+</script>
 </body>
 </html>
