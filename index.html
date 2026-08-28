@@ -3006,5 +3006,148 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Фикс промокодов и оплаты подписки активирован!');
 })();
 </script>
+<script>
+// ===== ЭКСТРЕННЫЙ ФИКС СПИСАНИЯ =====
+(function() {
+    console.log('🔄 Экстренный фикс списания...');
+
+    // === 1. ГАРАНТИРУЕМ НАЛИЧИЕ saveDB ===
+    if (typeof saveDB === 'undefined') {
+        window.saveDB = function() {
+            if (typeof registeredUsers !== 'undefined') {
+                localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+                console.log('✅ saveDB вызвана, данные сохранены');
+            }
+        };
+        console.log('✅ saveDB добавлена');
+    }
+
+    // === 2. ПЕРЕОПРЕДЕЛЯЕМ processPaymentModal ===
+    window.processPaymentModal = function() {
+        console.log('✅ processPaymentModal вызвана');
+        const amountInput = document.getElementById('topupAmount');
+        const amount = parseInt(amountInput?.value) || 0;
+        console.log('Сумма:', amount);
+        if (amount <= 0) { showToast('Введите корректную сумму', 'error'); return; }
+
+        const method = document.querySelector('input[name="paymentMethod"]:checked');
+        if (!method) { showToast('Выберите способ оплаты', 'error'); return; }
+        const selected = method.value;
+        console.log('Способ:', selected);
+
+        if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) { showToast('Пользователь не найден!', 'error'); return; }
+
+        // Функции баланса
+        function getUserBalance() {
+            if (user.balance === undefined) user.balance = 0;
+            return user.balance;
+        }
+        function addUserBalance(amount) {
+            user.balance = (user.balance || 0) + amount;
+            // ПРИНУДИТЕЛЬНО СОХРАНЯЕМ
+            if (typeof saveDB === 'function') saveDB();
+            else {
+                // fallback
+                localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+                console.log('✅ Сохранено через localStorage');
+            }
+            if (typeof updateBalanceUI === 'function') updateBalanceUI();
+            console.log('Новый баланс:', user.balance);
+        }
+
+        const tariffInfo = document.getElementById('paymentTariffInfo').innerText;
+        const isSubscription = tariffInfo.includes('месяц') || tariffInfo.includes('Навсегда') || tariffInfo.includes('HWID');
+        console.log('Это подписка?', isSubscription);
+
+        if (selected === 'balance') {
+            const currentBalance = getUserBalance();
+            console.log('Текущий баланс:', currentBalance);
+            if (currentBalance < amount) {
+                showToast('Недостаточно баланса!', 'error');
+                return;
+            }
+            // СПИСЫВАЕМ
+            addUserBalance(-amount);
+            console.log('Списано', amount);
+
+            if (isSubscription) {
+                let subName = '';
+                if (tariffInfo.includes('1 месяц')) subName = '1 месяц';
+                else if (tariffInfo.includes('3 месяца')) subName = '3 месяца';
+                else if (tariffInfo.includes('Навсегда')) subName = 'Навсегда';
+                else if (tariffInfo.includes('HWID')) {
+                    showToast('Заявка на сброс HWID создана!', 'success');
+                    window.closePaymentModal();
+                    if (typeof updateCabinetUI === 'function') updateCabinetUI();
+                    return;
+                }
+                if (subName) {
+                    user.sub = subName;
+                    if (typeof saveDB === 'function') saveDB();
+                    showToast(`Подписка "${subName}" активирована!`, 'success');
+                    if (typeof updateCabinetUI === 'function') updateCabinetUI();
+                }
+            } else {
+                showToast(`Баланс пополнен на ${amount} ₽`, 'success');
+            }
+            window.closePaymentModal();
+            if (typeof updateBalanceUI === 'function') updateBalanceUI();
+            if (typeof updateLotteryUI === 'function') updateLotteryUI();
+        } else if (selected === 'funpay') {
+            addUserBalance(amount);
+            showToast(`Баланс пополнен на ${amount} ₽ (FunPay)`, 'success');
+            window.closePaymentModal();
+            window.open('https://funpay.com/lots/offerEdit?node=1596&offer=76044751', '_blank');
+        } else if (selected === 'telegram') {
+            addUserBalance(amount);
+            showToast(`Баланс пополнен на ${amount} ₽ (Telegram)`, 'success');
+            window.closePaymentModal();
+            window.open('https://t.me/runclient_support', '_blank');
+        } else {
+            showToast('Неизвестный способ оплаты', 'error');
+        }
+    };
+
+    // === 3. ПЕРЕПРИВЯЗЫВАЕМ КНОПКУ "Оплатить" ===
+    document.addEventListener('DOMContentLoaded', function() {
+        const payBtn = document.querySelector('#paymentModal .action-btn.green');
+        if (payBtn) {
+            payBtn.onclick = window.processPaymentModal;
+            console.log('✅ Кнопка "Оплатить" перепривязана');
+        }
+        // Обновляем кнопки тарифов
+        document.querySelectorAll('.tariff-card .action-btn').forEach(btn => {
+            const card = btn.closest('.tariff-card');
+            if (!card) return;
+            const nameEl = card.querySelector('.tariff-name');
+            const priceEl = card.querySelector('.tariff-price');
+            if (!nameEl || !priceEl) return;
+            const name = nameEl.innerText.trim();
+            const price = parseInt(priceEl.innerText.replace(/[^0-9]/g, ''));
+            btn.setAttribute('onclick', `openPaymentModal('${name} — ${price} ₽', ${price})`);
+            btn.innerText = 'Оформить';
+        });
+        // Явно проверяем, что registeredUsers и saveDB доступны
+        console.log('registeredUsers:', typeof registeredUsers);
+        console.log('saveDB:', typeof saveDB);
+        console.log('currentUser:', currentUser);
+    });
+
+    // Выполняем сразу, если DOM уже загружен
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(function() {
+            const payBtn = document.querySelector('#paymentModal .action-btn.green');
+            if (payBtn) {
+                payBtn.onclick = window.processPaymentModal;
+                console.log('✅ Кнопка "Оплатить" перепривязана (ранняя загрузка)');
+            }
+        }, 100);
+    }
+
+    console.log('✅ Экстренный фикс установлен. Проверь консоль при нажатии "Оплатить".');
+})();
+</script>
 </body>
 </html>
