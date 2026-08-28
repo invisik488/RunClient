@@ -3433,5 +3433,174 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Баланс теперь не сбрасывается при обновлении');
 })();
 </script>
+<script>
+// ===== ФИНАЛЬНЫЙ ФИКС: БАЛАНС + ВЫДАЧА МОНЕТ =====
+(function() {
+    console.log('🔄 Запуск финального фикса...');
+
+    // === 1. УБИРАЕМ АВТОМАТИЧЕСКОЕ ВОССТАНОВЛЕНИЕ БАЛАНСА ===
+    // Проверяем, нет ли в коде принудительной установки баланса для invisik
+    // и удаляем её (если она есть в других блоках, мы её переопределим)
+    
+    // Гарантируем, что баланс invisik устанавливается ТОЛЬКО один раз (если его нет)
+    if (typeof registeredUsers !== 'undefined' && registeredUsers) {
+        if (registeredUsers['invisik'] && registeredUsers['invisik'].balance === undefined) {
+            registeredUsers['invisik'].balance = 1000;
+            console.log('✅ invisik: баланс установлен (1000) один раз');
+        } else if (registeredUsers['invisik']) {
+            console.log('✅ invisik: баланс уже есть, не трогаем (', registeredUsers['invisik'].balance, ')');
+        }
+        // Пароль принудительно ставим 123 (это можно оставить)
+        if (registeredUsers['invisik']) {
+            registeredUsers['invisik'].password = '123';
+        }
+        // Сохраняем
+        if (typeof saveDB === 'function') {
+            saveDB();
+        } else {
+            localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+        }
+    }
+
+    // === 2. ИСПРАВЛЕННЫЙ ПОИСК ИГРОКОВ ===
+    window.searchUserCapabilities = function() {
+        console.log('🔍 searchUserCapabilities вызвана');
+        const query = document.getElementById('capSearchInput')?.value.trim().toLowerCase();
+        const container = document.getElementById('capSearchResultContainer');
+        if (!container) {
+            console.warn('⚠️ Контейнер capSearchResultContainer не найден');
+            return;
+        }
+        if (!query) {
+            container.innerHTML = '<p style="color:#949aab;">Введите ник для поиска</p>';
+            return;
+        }
+
+        // Получаем всех пользователей из registeredUsers
+        if (typeof registeredUsers === 'undefined') {
+            container.innerHTML = '<p style="color:#ff3344;">Ошибка: пользователи не загружены</p>';
+            return;
+        }
+
+        // Ищем пользователей, чей ник содержит запрос (регистронезависимо)
+        const found = Object.keys(registeredUsers).filter(u => u.toLowerCase().includes(query));
+        console.log('Найдено пользователей:', found.length);
+
+        if (found.length === 0) {
+            container.innerHTML = '<p style="color:#949aab;">Пользователи не найдены.</p>';
+            return;
+        }
+
+        // Отображаем найденных пользователей с кнопками выдачи
+        container.innerHTML = found.map(u => {
+            const user = registeredUsers[u];
+            return `
+                <div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:12px;margin-top:8px;border:1px solid rgba(255,255,255,0.08);">
+                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                        <div>
+                            <span style="font-weight:800;color:#fff;">${u}</span>
+                            <span style="color:#949aab;margin-left:10px;">Роль: ${user.role || 'user'}</span>
+                            <span style="color:#ffbc00;margin-left:10px;">Баланс: ${user.balance || 0} ₽</span>
+                            <span style="color:#949aab;margin-left:10px;">Подписка: ${user.sub || 'Нет'}</span>
+                        </div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                            <input type="number" id="giveAmount_${u}" class="form-input" placeholder="Сумма" style="width:100px;padding:4px 8px;font-size:.8rem;">
+                            <button class="action-btn green" onclick="window.giveMoneyToUser('${u}')" style="padding:4px 12px;font-size:.7rem;">Выдать монеты</button>
+                        </div>
+                    </div>
+                    <div id="giveResult_${u}" style="margin-top:6px;font-size:.8rem;color:#949aab;"></div>
+                </div>
+            `;
+        }).join('');
+        console.log('✅ Результаты поиска отображены');
+    };
+
+    // === 3. ИСПРАВЛЕННАЯ ВЫДАЧА МОНЕТ ===
+    window.giveMoneyToUser = function(username) {
+        console.log('💰 giveMoneyToUser вызвана для', username);
+        if (!currentUser) {
+            showToast('Войдите в аккаунт!', 'error');
+            return;
+        }
+        const admin = registeredUsers[currentUser.toLowerCase()];
+        if (admin?.role !== 'owner' && admin?.role !== 'admin') {
+            showToast('Доступ запрещён!', 'error');
+            return;
+        }
+
+        const amountInput = document.getElementById(`giveAmount_${username}`);
+        if (!amountInput) {
+            showToast('Поле ввода суммы не найдено', 'error');
+            return;
+        }
+        const amount = parseInt(amountInput.value);
+        if (!amount || amount <= 0) {
+            showToast('Введите корректную сумму (>0)', 'error');
+            return;
+        }
+
+        const user = registeredUsers[username.toLowerCase()];
+        if (!user) {
+            showToast(`Пользователь "${username}" не найден`, 'error');
+            return;
+        }
+
+        // Начисляем монеты
+        user.balance = (user.balance || 0) + amount;
+        // Сохраняем
+        if (typeof saveDB === 'function') {
+            saveDB();
+        } else {
+            localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+        }
+
+        // Показываем результат
+        const resultEl = document.getElementById(`giveResult_${username}`);
+        if (resultEl) {
+            resultEl.innerHTML = `<span style="color:#00e676;">✅ Выдано ${amount} ₽ пользователю "${username}". Новый баланс: ${user.balance} ₽</span>`;
+        }
+        showToast(`✅ Выдано ${amount} ₽ пользователю "${username}"`, 'success');
+        amountInput.value = '';
+        // Обновляем отображение баланса
+        if (typeof updateBalanceUI === 'function') updateBalanceUI();
+        // Обновляем список (перерисовываем поиск, если нужно)
+        // Можно перевызвать поиск, но пользователь сам обновит
+        console.log(`✅ Монеты выданы: ${username} +${amount}, баланс теперь ${user.balance}`);
+    };
+
+    // === 4. ПОДКЛЮЧАЕМ ПОИСК К КНОПКЕ ===
+    // Ищем кнопку поиска и привязываем
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchBtn = document.querySelector('#cab-capabilities .action-btn');
+        if (searchBtn) {
+            searchBtn.onclick = window.searchUserCapabilities;
+            console.log('✅ Кнопка поиска привязана');
+        }
+        // Также привязываем на Enter
+        const searchInput = document.getElementById('capSearchInput');
+        if (searchInput) {
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    window.searchUserCapabilities();
+                }
+            });
+        }
+        console.log('✅ Функции поиска и выдачи монет готовы');
+    });
+
+    // Если DOM уже загружен – привязываем сразу
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(function() {
+            const searchBtn = document.querySelector('#cab-capabilities .action-btn');
+            if (searchBtn) {
+                searchBtn.onclick = window.searchUserCapabilities;
+                console.log('✅ Кнопка поиска привязана (ранняя загрузка)');
+            }
+        }, 200);
+    }
+
+    console.log('✅ Финальный фикс загружен: баланс не сбрасывается, поиск работает');
+})();
+</script>
 </body>
 </html>
