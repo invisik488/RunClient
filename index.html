@@ -4076,5 +4076,46 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Счётчик промокодов теперь обновляется после оплаты');
 })();
 </script>
+<style>
+/* ===== ФОН ДЛЯ СТРАНИЦЫ АВТОРИЗАЦИИ ===== */
+#page-auth {
+    background-image: url('images/fon.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    position: relative;
+    min-height: 100vh;
+}
+
+/* Затемнение поверх фона, чтобы текст читался */
+#page-auth::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6); /* затемнение 60% */
+    z-index: 0;
+}
+
+/* Контейнер с формой должен быть поверх затемнения */
+#page-auth > div {
+    position: relative;
+    z-index: 1;
+}
+
+/* Стиль формы – как на сайте Дельты (полупрозрачная, с размытием) */
+#page-auth .auth-form-container {
+    background: rgba(14, 16, 24, 0.75);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 28px;
+    padding: 40px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+}
+</style>
 </body>
 </html>
