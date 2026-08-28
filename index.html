@@ -3602,5 +3602,130 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Финальный фикс загружен: баланс не сбрасывается, поиск работает');
 })();
 </script>
+<script>
+// ===== НАСТРОЙКА ШАНСОВ ЛОТЕРЕИ =====
+(function() {
+    console.log('🎲 Настройка шансов лотереи...');
+
+    // === 1. ЗАДАЁМ ШАНСЫ ПО УМОЛЧАНИЮ (40% 7д, 35% 30д, 25% 90д) ===
+    let chance7d = 40;
+    let chance30d = 35;
+    let chance90d = 25; // оставшиеся 25%
+
+    // === 2. ФУНКЦИЯ ДЛЯ ИЗМЕНЕНИЯ ШАНСОВ (в консоли) ===
+    window.setLotteryChances = function(c7, c30, c90) {
+        const sum = c7 + c30 + c90;
+        if (sum !== 100) {
+            console.warn('⚠️ Сумма процентов должна быть 100! Сейчас:', sum);
+            return;
+        }
+        chance7d = c7;
+        chance30d = c30;
+        chance90d = c90;
+        console.log(`✅ Шансы обновлены: 7д=${c7}%, 30д=${c30}%, 90д=${c90}%`);
+    };
+
+    // === 3. ФУНКЦИЯ ВЫБОРА ВЫИГРЫША ПО ШАНСАМ ===
+    function getRandomWin() {
+        const rand = Math.random() * 100;
+        if (rand < chance7d) return '7д';
+        if (rand < chance7d + chance30d) return '30д';
+        return '90д';
+    }
+
+    // === 4. ПЕРЕОПРЕДЕЛЯЕМ spinRoulette и openCase ===
+    const originalSpin = window.spinRoulette;
+    const originalCase = window.openCase;
+
+    window.spinRoulette = function() {
+        if (isSpinning) return;
+        if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) return;
+
+        if (!user.freeSpinUsed) {
+            user.freeSpinUsed = true;
+            saveDB();
+        } else {
+            if (spinAttempts <= 0) {
+                showToast(`Нет попыток! Купите за ${PRICE_PER_ATTEMPT || 49} ₽ в лотерее`, 'error');
+                return;
+            }
+            spinAttempts--;
+            localStorage.setItem('runclient_spinAttempts', spinAttempts);
+            document.getElementById('spinAttempts').innerText = spinAttempts;
+        }
+
+        isSpinning = true;
+        document.getElementById('spinBtn').disabled = true;
+        document.getElementById('rouletteStatus').innerText = 'Вращение...';
+
+        const win = getRandomWin(); // новый выигрыш
+
+        setTimeout(() => {
+            user.sub = win;
+            saveDB();
+            updateCabinetUI();
+            updateLotteryUI();
+            showToast(`Поздравляем! Вы выиграли подписку ${win}!`, 'success');
+            document.getElementById('rouletteStatus').innerText = 'Выигрыш: ' + win;
+            isSpinning = false;
+            document.getElementById('spinBtn').disabled = false;
+        }, 1500);
+    };
+
+    window.openCase = function() {
+        if (isOpening) return;
+        if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) return;
+
+        const gr = lotteryState.goldRush;
+        let isGoldRushFree = false;
+        if (gr.active && gr.used < gr.limit && !gr.usedUsers.includes(currentUser.toLowerCase())) {
+            isGoldRushFree = true;
+        }
+
+        if (!user.freeCaseUsed && !isGoldRushFree) {
+            user.freeCaseUsed = true;
+            saveDB();
+        } else if (isGoldRushFree) {
+            gr.used++;
+            gr.usedUsers.push(currentUser.toLowerCase());
+            saveDB();
+            updateGoldRushUI();
+        } else {
+            if (caseAttempts <= 0) {
+                showToast(`Нет попыток! Купите за ${PRICE_PER_ATTEMPT || 49} ₽ в лотерее`, 'error');
+                return;
+            }
+            caseAttempts--;
+            localStorage.setItem('runclient_caseAttempts', caseAttempts);
+            document.getElementById('caseAttempts').innerText = caseAttempts;
+        }
+
+        isOpening = true;
+        document.getElementById('caseBtn').disabled = true;
+        document.getElementById('caseStatus').innerText = 'Открытие...';
+
+        const win = getRandomWin();
+        const tier = win === '90д' ? 'Легендарная' : win === '30д' ? 'Редкая' : 'Обычная';
+
+        setTimeout(() => {
+            user.sub = win;
+            saveDB();
+            updateCabinetUI();
+            updateLotteryUI();
+            showToast(`Поздравляем! Вы выиграли подписку ${win}!`, 'success');
+            document.getElementById('caseStatus').innerText = 'Выигрыш: ' + win;
+            isOpening = false;
+            document.getElementById('caseBtn').disabled = false;
+        }, 1500);
+    };
+
+    console.log(`✅ Шансы установлены: 7д=${chance7d}%, 30д=${chance30d}%, 90д=${chance90d}%`);
+    console.log('💡 Чтобы изменить шансы, введи в консоль: setLotteryChances(40, 35, 25)');
+})();
+</script>
 </body>
 </html>
