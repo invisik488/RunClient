@@ -1041,5 +1041,119 @@ window.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+// ===== ФИКС ПРОБЛЕМ (вставь это в самое начало script) =====
+
+// 1. Восстанавливаем попытки из localStorage
+let spinAttempts = parseInt(localStorage.getItem('runclient_spinAttempts')) || 1;
+let caseAttempts = parseInt(localStorage.getItem('runclient_caseAttempts')) || 1;
+
+// 2. Принудительно ставим пароль invisik = 123 (если он существует)
+if (registeredUsers && registeredUsers['invisik']) {
+    registeredUsers['invisik'].password = '123';
+    saveDB(); // сохраняем в localStorage
+}
+
+// 3. Добавляем отображение секторов рулетки (если функция ещё не объявлена)
+function initRouletteFix() {
+    const track = document.getElementById('rouletteTrack');
+    if (!track) return;
+    // Если сектора уже есть – не пересоздаём
+    if (track.children.length > 0) return;
+    const segments = ['7д', '30д', '90д', '7д', '30д', '90д', '7д', '30д', '90д', '7д', '30д', '90д', '7д', '30д', '90д', '7д', '30д', '90д'];
+    track.innerHTML = segments.map(s => 
+        `<div style="background:rgba(255,255,255,0.08);padding:6px 14px;border-radius:6px;font-size:14px;font-weight:700;color:#fff;white-space:nowrap;border:1px solid rgba(255,255,255,0.1);">${s}</div>`
+    ).join('');
+}
+
+// 4. Переопределяем spinRoulette и openCase с сохранением попыток и ценами
+// (сохраняем старые функции, чтобы не потерять логику)
+const originalSpin = window.spinRoulette;
+const originalCase = window.openCase;
+
+window.spinRoulette = function() {
+    // вызываем оригинальную, но перед этим проверяем попытки
+    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+    const user = registeredUsers[currentUser.toLowerCase()];
+    if (!user) return;
+
+    // Бесплатная попытка
+    if (!user.freeSpinUsed) {
+        user.freeSpinUsed = true;
+        saveDB();
+        // вызываем оригинальную логику (она сама обработает)
+        if (typeof originalSpin === 'function') originalSpin();
+        return;
+    }
+
+    // Платная попытка
+    if (spinAttempts <= 0) {
+        showToast('Нет попыток! Купите за 1₽ в разделе "Тарифы"', 'error');
+        return;
+    }
+    spinAttempts--;
+    localStorage.setItem('runclient_spinAttempts', spinAttempts);
+    document.getElementById('spinAttempts').innerText = spinAttempts;
+
+    // вызываем оригинальную (она сделает вращение)
+    if (typeof originalSpin === 'function') originalSpin();
+};
+
+window.openCase = function() {
+    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+    const user = registeredUsers[currentUser.toLowerCase()];
+    if (!user) return;
+
+    // Бесплатная попытка или золотая лихорадка
+    const gr = lotteryState.goldRush;
+    let isGoldRushFree = false;
+    if (gr.active && gr.used < gr.limit && !gr.usedUsers.includes(currentUser.toLowerCase())) {
+        isGoldRushFree = true;
+    }
+    if (!user.freeCaseUsed && !isGoldRushFree) {
+        user.freeCaseUsed = true;
+        saveDB();
+        if (typeof originalCase === 'function') originalCase();
+        return;
+    }
+    if (isGoldRushFree) {
+        gr.used++;
+        gr.usedUsers.push(currentUser.toLowerCase());
+        saveDB();
+        updateGoldRushUI();
+        if (typeof originalCase === 'function') originalCase();
+        return;
+    }
+
+    // Платная попытка
+    if (caseAttempts <= 0) {
+        showToast('Нет попыток! Купите за 1₽ в разделе "Тарифы"', 'error');
+        return;
+    }
+    caseAttempts--;
+    localStorage.setItem('runclient_caseAttempts', caseAttempts);
+    document.getElementById('caseAttempts').innerText = caseAttempts;
+
+    if (typeof originalCase === 'function') originalCase();
+};
+
+// 5. Добавляем цены на попытки в интерфейс (если их нет)
+document.addEventListener('DOMContentLoaded', function() {
+    // Добавляем цены в лотерейные карточки
+    const spinInfo = document.querySelector('.lottery-card:first-child .lottery-info');
+    if (spinInfo && !spinInfo.innerHTML.includes('1₽')) {
+        spinInfo.innerHTML += ' <span style="color:#ffbc00;font-weight:700;margin-left:10px;">💰 1 попытка = 1₽</span>';
+    }
+    const caseInfo = document.querySelector('.lottery-card:last-child .lottery-info');
+    if (caseInfo && !caseInfo.innerHTML.includes('1₽')) {
+        caseInfo.innerHTML += ' <span style="color:#ffbc00;font-weight:700;margin-left:10px;">💰 1 попытка = 1₽</span>';
+    }
+
+    // Запускаем инициализацию рулетки
+    initRouletteFix();
+
+    // Обновляем отображение попыток
+    document.getElementById('spinAttempts').innerText = spinAttempts;
+    document.getElementById('caseAttempts').innerText = caseAttempts;
+});
 </body>
 </html>
