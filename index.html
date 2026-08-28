@@ -4117,5 +4117,215 @@ document.addEventListener('DOMContentLoaded', function() {
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
 }
 </style>
+<!-- ===== СТРАНИЦА АВТОРИЗАЦИИ (Delta Client стиль) ===== -->
+<div id="page-auth" class="page-section hidden" style="
+    background: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=1920&q=80') center/cover fixed;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 20px;
+    margin: 0;
+    width: 100%;
+">
+    <!-- Затемнение -->
+    <div style="
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.65);
+        backdrop-filter: blur(4px);
+    "></div>
+    
+    <!-- Форма -->
+    <div style="
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 420px;
+    ">
+        <div style="
+            background: rgba(14, 16, 24, 0.88);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+            padding: 40px 32px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        ">
+            <!-- Логотип -->
+            <div style="text-align: center; margin-bottom: 28px;">
+                <div style="
+                    width: 80px;
+                    height: 80px;
+                    margin: 0 auto 16px;
+                    background: linear-gradient(135deg, #ff3344, #cc0022);
+                    border-radius: 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 36px;
+                    font-weight: 900;
+                    color: #fff;
+                    box-shadow: 0 8px 30px rgba(255, 51, 68, 0.35);
+                ">R</div>
+                <div style="font-size: 2rem; font-weight: 900; color: #fff; letter-spacing: -0.5px;">
+                    Run<span style="color: #ff3344;">Client</span>
+                </div>
+                <div style="color: #949aab; font-size: .85rem; margin-top: 4px;">
+                    Легитный чит для Minecraft
+                </div>
+            </div>
+
+            <!-- Переключение вкладок -->
+            <div style="display: flex; gap: 8px; background: rgba(255,255,255,0.04); border-radius: 16px; padding: 4px; margin-bottom: 24px;">
+                <button id="authTabLoginBtn" onclick="switchAuthTab('login')" style="
+                    flex: 1;
+                    padding: 10px;
+                    border: none;
+                    border-radius: 12px;
+                    background: #ff3344;
+                    color: #fff;
+                    font-weight: 700;
+                    font-size: .85rem;
+                    cursor: pointer;
+                    transition: .3s;
+                ">Вход</button>
+                <button id="authTabRegisterBtn" onclick="switchAuthTab('register')" style="
+                    flex: 1;
+                    padding: 10px;
+                    border: none;
+                    border-radius: 12px;
+                    background: transparent;
+                    color: #949aab;
+                    font-weight: 700;
+                    font-size: .85rem;
+                    cursor: pointer;
+                    transition: .3s;
+                ">Регистрация</button>
+            </div>
+
+            <!-- Форма входа -->
+            <div id="authFormLogin">
+                <div class="form-group">
+                    <label style="color: #949aab; font-size: .7rem; text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 6px;">
+                        <span style="margin-right: 6px;">👤</span> Логин или Email
+                    </label>
+                    <input type="text" id="loginUsernameInput" class="form-input" placeholder="Ваш логин" style="
+                        width: 100%;
+                        background: rgba(0,0,0,0.4);
+                        border: 1px solid rgba(255,255,255,0.06);
+                        border-radius: 14px;
+                        padding: 14px 16px;
+                        color: #fff;
+                        font-size: .9rem;
+                        outline: none;
+                        transition: .3s;
+                    ">
+                </div>
+                <div class="form-group">
+                    <label style="color: #949aab; font-size: .7rem; text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 6px;">
+                        <span style="margin-right: 6px;">🔒</span> Пароль
+                    </label>
+                    <input type="password" id="loginPasswordInput" class="form-input" placeholder="••••••••" style="
+                        width: 100%;
+                        background: rgba(0,0,0,0.4);
+                        border: 1px solid rgba(255,255,255,0.06);
+                        border-radius: 14px;
+                        padding: 14px 16px;
+                        color: #fff;
+                        font-size: .9rem;
+                        outline: none;
+                        transition: .3s;
+                    ">
+                </div>
+                <div style="text-align: right; font-size: .75rem; color: #949aab; margin-bottom: 20px; cursor: pointer;">
+                    Забыли пароль?
+                </div>
+                <button onclick="handleLogin()" style="
+                    width: 100%;
+                    padding: 14px;
+                    background: linear-gradient(135deg, #ff3344, #cc0022);
+                    border: none;
+                    border-radius: 14px;
+                    color: #fff;
+                    font-weight: 800;
+                    font-size: 1rem;
+                    cursor: pointer;
+                    box-shadow: 0 6px 25px rgba(255, 51, 68, 0.35);
+                    transition: .3s;
+                ">Войти →</button>
+            </div>
+
+            <!-- Форма регистрации -->
+            <div id="authFormRegister" class="hidden">
+                <div class="form-group">
+                    <label style="color: #949aab; font-size: .7rem; text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 6px;">
+                        <span style="margin-right: 6px;">👤</span> Никнейм
+                    </label>
+                    <input type="text" id="regUsernameInput" class="form-input" placeholder="Ваш ник..." style="
+                        width: 100%;
+                        background: rgba(0,0,0,0.4);
+                        border: 1px solid rgba(255,255,255,0.06);
+                        border-radius: 14px;
+                        padding: 14px 16px;
+                        color: #fff;
+                        font-size: .9rem;
+                        outline: none;
+                        transition: .3s;
+                    ">
+                </div>
+                <div class="form-group">
+                    <label style="color: #949aab; font-size: .7rem; text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 6px;">
+                        <span style="margin-right: 6px;">🔒</span> Пароль
+                    </label>
+                    <input type="password" id="regPasswordInput" class="form-input" placeholder="Надежный пароль..." style="
+                        width: 100%;
+                        background: rgba(0,0,0,0.4);
+                        border: 1px solid rgba(255,255,255,0.06);
+                        border-radius: 14px;
+                        padding: 14px 16px;
+                        color: #fff;
+                        font-size: .9rem;
+                        outline: none;
+                        transition: .3s;
+                    ">
+                </div>
+                <div class="form-group">
+                    <label style="color: #949aab; font-size: .7rem; text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 6px;">
+                        <span style="margin-right: 6px;">📧</span> Email (необязательно)
+                    </label>
+                    <input type="email" id="regEmailInput" class="form-input" placeholder="example@mail.com" style="
+                        width: 100%;
+                        background: rgba(0,0,0,0.4);
+                        border: 1px solid rgba(255,255,255,0.06);
+                        border-radius: 14px;
+                        padding: 14px 16px;
+                        color: #fff;
+                        font-size: .9rem;
+                        outline: none;
+                        transition: .3s;
+                    ">
+                </div>
+                <button onclick="handleRegister()" style="
+                    width: 100%;
+                    padding: 14px;
+                    background: linear-gradient(135deg, #00e676, #00c853);
+                    border: none;
+                    border-radius: 14px;
+                    color: #000;
+                    font-weight: 800;
+                    font-size: 1rem;
+                    cursor: pointer;
+                    box-shadow: 0 6px 25px rgba(0, 230, 118, 0.35);
+                    transition: .3s;
+                    margin-bottom: 12px;
+                ">Зарегистрироваться →</button>
+                <div style="text-align: center;">
+                    <span style="color: #ff3344; cursor: pointer; font-weight: 600; font-size: .85rem;" onclick="switchAuthTab('login')">← Назад к входу</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
