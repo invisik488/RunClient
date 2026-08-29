@@ -5792,5 +5792,183 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Исправление поиска пользователя активировано');
 })();
 </script>
+<script>
+// ===== ИСПРАВЛЕННЫЙ ПОИСК (по части ника) =====
+(function() {
+    console.log('🔄 Исправление поиска пользователя (частичный поиск)...');
+
+    // Переопределяем processPaymentModal
+    window.processPaymentModal = function() {
+        console.log('✅ processPaymentModal вызвана (поиск по части)');
+        const amountInput = document.getElementById('topupAmount');
+        const amount = parseInt(amountInput?.value) || 0;
+        if (amount <= 0) { showToast('Введите корректную сумму', 'error'); return; }
+
+        const recipientInput = document.getElementById('recipientNick');
+        let recipientNick = recipientInput ? recipientInput.value.trim() : '';
+        let targetUser = null;
+        let targetUsername = currentUser;
+
+        // Функция поиска (сначала точное совпадение, потом частичное)
+        function findUserByNick(nick) {
+            if (!nick) return null;
+            const lowerNick = nick.toLowerCase().trim();
+            // 1. Точное совпадение
+            for (const [key, user] of Object.entries(registeredUsers)) {
+                if (key.toLowerCase() === lowerNick) {
+                    return { username: key, user: user };
+                }
+            }
+            // 2. Частичное совпадение (если ник содержит введённую строку)
+            for (const [key, user] of Object.entries(registeredUsers)) {
+                if (key.toLowerCase().includes(lowerNick)) {
+                    return { username: key, user: user };
+                }
+            }
+            return null;
+        }
+
+        if (recipientNick) {
+            const found = findUserByNick(recipientNick);
+            if (!found) {
+                const userList = Object.keys(registeredUsers).join(', ');
+                showToast(`Пользователь "${recipientNick}" не найден. Доступны: ${userList}`, 'error');
+                console.log('🔍 Доступные пользователи:', Object.keys(registeredUsers));
+                return;
+            }
+            targetUser = found.user;
+            targetUsername = found.username;
+        } else {
+            if (!currentUser) { showToast('Войдите в аккаунт', 'error'); return; }
+            targetUser = registeredUsers[currentUser.toLowerCase()];
+            targetUsername = currentUser;
+        }
+
+        if (!targetUser) {
+            showToast('Ошибка: получатель не определён', 'error');
+            return;
+        }
+
+        const method = document.querySelector('input[name="paymentMethod"]:checked');
+        if (!method) { showToast('Выберите способ оплаты', 'error'); return; }
+        const selected = method.value;
+
+        function addToTarget(amount) {
+            if (!targetUser) return false;
+            targetUser.balance = (targetUser.balance || 0) + amount;
+            localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+            if (typeof saveDB === 'function') saveDB();
+            if (typeof updateBalanceUI === 'function') updateBalanceUI();
+            console.log(`💰 ${targetUsername} +${amount} ₽ (теперь ${targetUser.balance})`);
+            return true;
+        }
+
+        function spendFromCurrent(amount) {
+            if (!currentUser) { showToast('Войдите в аккаунт', 'error'); return false; }
+            const user = registeredUsers[currentUser.toLowerCase()];
+            if (!user) return false;
+            if (user.balance === undefined) user.balance = 0;
+            if (user.balance < amount) {
+                showToast('Недостаточно средств на балансе!', 'error');
+                return false;
+            }
+            user.balance -= amount;
+            localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+            if (typeof saveDB === 'function') saveDB();
+            if (typeof updateBalanceUI === 'function') updateBalanceUI();
+            console.log(`💰 ${currentUser} -${amount} ₽ (осталось ${user.balance})`);
+            return true;
+        }
+
+        // Промокод
+        if (window._currentPromo && window.promoCodes && window.promoCodes[window._currentPromo]) {
+            const promoData = window.promoCodes[window._currentPromo];
+            if (promoData.uses === 0 || promoData.used < promoData.uses) {
+                promoData.used++;
+                if (typeof savePromoCodes === 'function') savePromoCodes();
+                else localStorage.setItem('runclient_promocodes', JSON.stringify(window.promoCodes));
+                if (typeof renderPromoCodes === 'function') renderPromoCodes();
+            } else {
+                showToast('Промокод исчерпал лимит', 'error');
+                return;
+            }
+        }
+
+        const tariffInfo = document.getElementById('paymentTariffInfo').innerText;
+        const isSubscription = tariffInfo.includes('месяц') || tariffInfo.includes('Навсегда') || tariffInfo.includes('HWID');
+
+        if (selected === 'balance') {
+            if (!spendFromCurrent(amount)) return;
+            if (!addToTarget(amount)) return;
+            if (isSubscription) {
+                let subName = '';
+                if (tariffInfo.includes('1 месяц')) subName = '1 месяц';
+                else if (tariffInfo.includes('3 месяца')) subName = '3 месяца';
+                else if (tariffInfo.includes('Навсегда')) subName = 'Навсегда';
+                else if (tariffInfo.includes('HWID')) {
+                    showThankYou('Заявка на сброс HWID отправлена!');
+                    return;
+                }
+                if (subName) {
+                    targetUser.sub = subName;
+                    localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+                    if (typeof saveDB === 'function') saveDB();
+                    if (typeof updateCabinetUI === 'function') updateCabinetUI();
+                    showThankYou(`Подписка "${subName}" активирована для ${targetUsername}!`);
+                    return;
+                }
+            } else {
+                showThankYou(`Баланс ${targetUsername} пополнен на ${amount} ₽`);
+            }
+        } else if (selected === 'funpay') {
+            if (!addToTarget(amount)) return;
+            showThankYou(`Баланс ${targetUsername} пополнен на ${amount} ₽ (FunPay)`);
+            setTimeout(() => window.open('https://funpay.com/lots/offerEdit?node=1596&offer=76044751', '_blank'), 1000);
+        } else if (selected === 'telegram') {
+            if (!addToTarget(amount)) return;
+            showThankYou(`Баланс ${targetUsername} пополнен на ${amount} ₽ (Telegram)`);
+            setTimeout(() => window.open('https://t.me/runclient_support', '_blank'), 1000);
+        } else {
+            showToast('Неизвестный способ оплаты', 'error');
+        }
+
+        window._currentPromo = null;
+        console.log('✅ Операция завершена');
+    };
+
+    // Функция благодарности
+    if (typeof window.showThankYou !== 'function') {
+        window.showThankYou = function(message) {
+            const modal = document.getElementById('paymentModal');
+            if (!modal) return;
+            const content = modal.querySelector('.modal-content');
+            if (!content) return;
+            content.innerHTML = `
+                <div style="text-align:center;padding:20px 0;">
+                    <div style="font-size:4rem;margin-bottom:16px;">🎉</div>
+                    <h2 style="color:#00e676;font-weight:800;font-size:1.8rem;">Спасибо за оплату!</h2>
+                    <p style="color:#949aab;margin-top:8px;font-size:1rem;">${message || 'Ваш заказ успешно обработан.'}</p>
+                    <p style="color:#666;font-size:.8rem;margin-top:20px;">Закрывается через 3 секунды...</p>
+                </div>
+            `;
+            setTimeout(() => {
+                modal.style.display = 'none';
+                if (typeof window.rebuildModal === 'function') window.rebuildModal();
+            }, 3000);
+        };
+    }
+
+    // Привязываем кнопку
+    document.addEventListener('DOMContentLoaded', function() {
+        const payBtn = document.getElementById('payBtn');
+        if (payBtn) {
+            payBtn.onclick = window.processPaymentModal;
+            console.log('✅ Кнопка Оплатить привязана (поиск по части)');
+        }
+    });
+
+    console.log('✅ Исправление поиска по части ника активировано');
+})();
+</script>
 </body>
 </html>
