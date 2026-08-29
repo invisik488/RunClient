@@ -5410,5 +5410,85 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('💡 Команда для установки баланса: setBalance(1000)');
 })();
 </script>
+// ===== ПЕРЕХВАТ БАЛАНСА (УБИРАЕТ ВОССТАНОВЛЕНИЕ) =====
+(function() {
+    // Сохраняем оригинальный метод getItem
+    const originalGetItem = localStorage.getItem;
+    const originalSetItem = localStorage.setItem;
+
+    // Перехватываем чтение пользователей
+    localStorage.getItem = function(key) {
+        if (key === 'runclient_users') {
+            let data = originalGetItem.call(localStorage, key);
+            if (data) {
+                try {
+                    const users = JSON.parse(data);
+                    // Восстанавливаем баланс из резервной копии, если она есть
+                    const backup = originalGetItem.call(localStorage, 'runclient_balance_backup');
+                    if (backup) {
+                        try {
+                            const backupData = JSON.parse(backup);
+                            for (const [username, balance] of Object.entries(backupData)) {
+                                if (users[username]) {
+                                    users[username].balance = balance;
+                                }
+                            }
+                            console.log('✅ Баланс восстановлен из резервной копии');
+                        } catch (e) {}
+                    }
+                    return JSON.stringify(users);
+                } catch (e) {
+                    return data;
+                }
+            }
+        }
+        return originalGetItem.call(localStorage, key);
+    };
+
+    // Перехватываем запись пользователей, чтобы сохранять резервную копию баланса
+    localStorage.setItem = function(key, value) {
+        if (key === 'runclient_users') {
+            try {
+                const users = JSON.parse(value);
+                const backup = {};
+                for (const [username, user] of Object.entries(users)) {
+                    if (user.balance !== undefined) {
+                        backup[username] = user.balance;
+                    }
+                }
+                // Сохраняем резервную копию
+                originalSetItem.call(localStorage, 'runclient_balance_backup', JSON.stringify(backup));
+                console.log('💾 Резервная копия баланса сохранена');
+            } catch (e) {}
+        }
+        return originalSetItem.call(localStorage, key, value);
+    };
+
+    // Также при загрузке страницы сразу восстанавливаем баланс из резервной копии
+    // (это сработает после того, как registeredUsers будет загружен)
+    const restoreBalance = function() {
+        const backup = localStorage.getItem('runclient_balance_backup');
+        if (backup && typeof registeredUsers !== 'undefined' && registeredUsers) {
+            try {
+                const backupData = JSON.parse(backup);
+                for (const [username, balance] of Object.entries(backupData)) {
+                    if (registeredUsers[username]) {
+                        registeredUsers[username].balance = balance;
+                    }
+                }
+                console.log('✅ Баланс восстановлен при загрузке');
+            } catch (e) {}
+        }
+    };
+
+    // Выполняем восстановление после того, как registeredUsers определён
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(restoreBalance, 50);
+    } else {
+        document.addEventListener('DOMContentLoaded', restoreBalance);
+    }
+
+    console.log('🔄 Перехват баланса активирован');
+})();
 </body>
 </html>
