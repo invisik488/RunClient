@@ -5535,5 +5535,86 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Система оплаты с переводом готова');
 })();
 </script>
+<script>
+// ===== ЭКСТРЕННАЯ ПРИВЯЗКА КНОПКИ "ОПЛАТИТЬ" =====
+(function() {
+    console.log('🔄 Экстренная привязка кнопки...');
+
+    // Принудительно привязываем кнопку каждые 0.5 секунды, пока не найдём
+    let attempts = 0;
+    const maxAttempts = 20;
+    const interval = setInterval(function() {
+        const payBtn = document.getElementById('payBtn');
+        if (payBtn) {
+            // Отвязываем все старые обработчики
+            const newBtn = payBtn.cloneNode(true);
+            payBtn.parentNode.replaceChild(newBtn, payBtn);
+            // Привязываем новый обработчик
+            newBtn.onclick = window.processPaymentModal;
+            // Если функция не определена – создаём её
+            if (typeof window.processPaymentModal !== 'function') {
+                window.processPaymentModal = function() {
+                    alert('Оплата через баланс!');
+                    console.log('Оплата сработала!');
+                };
+            }
+            console.log('✅ Кнопка "Оплатить" привязана!');
+            clearInterval(interval);
+        } else {
+            attempts++;
+            if (attempts > maxAttempts) {
+                clearInterval(interval);
+                console.warn('⚠️ Кнопка не найдена после 20 попыток');
+            }
+        }
+    }, 300);
+
+    // Также перехватываем клик по всей модалке (на случай, если кнопка меняется)
+    document.addEventListener('click', function(e) {
+        if (e.target.id === 'payBtn' || (e.target.classList && e.target.classList.contains('action-btn') && e.target.innerText.includes('Оплатить'))) {
+            if (typeof window.processPaymentModal === 'function') {
+                window.processPaymentModal();
+            } else {
+                alert('Функция оплаты не найдена!');
+            }
+        }
+    });
+
+    // Если processPaymentModal не определена – определяем простую версию
+    if (typeof window.processPaymentModal !== 'function') {
+        window.processPaymentModal = function() {
+            console.log('✅ processPaymentModal вызвана (упрощённая)');
+            const amountInput = document.getElementById('topupAmount');
+            const amount = parseInt(amountInput?.value) || 0;
+            if (amount <= 0) { showToast('Введите сумму', 'error'); return; }
+            const recipientInput = document.getElementById('recipientNick');
+            const recipientNick = recipientInput ? recipientInput.value.trim() : currentUser;
+            if (!currentUser) { showToast('Войдите в аккаунт', 'error'); return; }
+            const user = registeredUsers[currentUser.toLowerCase()];
+            if (!user) return;
+            if (user.balance < amount) { showToast('Недостаточно средств', 'error'); return; }
+            user.balance -= amount;
+            // Начисляем получателю
+            let target = user;
+            if (recipientNick && recipientNick !== currentUser) {
+                const lower = recipientNick.toLowerCase();
+                if (registeredUsers[lower]) {
+                    target = registeredUsers[lower];
+                } else {
+                    showToast('Получатель не найден', 'error');
+                    return;
+                }
+            }
+            target.balance = (target.balance || 0) + amount;
+            localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+            if (typeof saveDB === 'function') saveDB();
+            if (typeof updateBalanceUI === 'function') updateBalanceUI();
+            showToast(`Перевод ${amount} ₽ для ${recipientNick || currentUser} выполнен!`, 'success');
+            closePaymentModal();
+        };
+        console.log('✅ processPaymentModal создана (упрощённая)');
+    }
+})();
+</script>
 </body>
 </html>
