@@ -5239,5 +5239,176 @@ document.addEventListener('DOMContentLoaded', function() {
 
 })();
 </script>
+<script>
+// ===== ЖЁСТКОЕ ИСПРАВЛЕНИЕ БАЛАНСА =====
+(function() {
+    console.log('🔄 Жёсткое исправление баланса...');
+
+    // === 1. УБИРАЕМ АВТО-ВОССТАНОВЛЕНИЕ ===
+    // Перехватываем загрузку пользователей и убираем принудительную установку
+    const oldGetItem = localStorage.getItem;
+    localStorage.getItem = function(key) {
+        const value = oldGetItem.call(localStorage, key);
+        if (key === 'runclient_users') {
+            try {
+                const users = JSON.parse(value);
+                // Убираем принудительную установку баланса для invisik
+                if (users && users['invisik']) {
+                    // Если баланс не определён – ставим 1000 (только один раз)
+                    if (users['invisik'].balance === undefined) {
+                        users['invisik'].balance = 1000;
+                        // Сохраняем обратно
+                        oldGetItem.call(localStorage, 'runclient_users');
+                        localStorage.setItem('runclient_users', JSON.stringify(users));
+                        console.log('✅ invisik баланс установлен (1000) – только один раз');
+                    } else {
+                        console.log('✅ invisik баланс уже есть, не трогаем (', users['invisik'].balance, ')');
+                    }
+                }
+                return JSON.stringify(users);
+            } catch (e) {
+                return value;
+            }
+        }
+        return value;
+    };
+
+    // === 2. ПРИНУДИТЕЛЬНОЕ СПИСАНИЕ ===
+    window.forceSpend = function(amount) {
+        if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return false; }
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) { showToast('Пользователь не найден!', 'error'); return false; }
+        if (user.balance === undefined) user.balance = 0;
+        if (user.balance < amount) {
+            showToast('Недостаточно средств!', 'error');
+            return false;
+        }
+        user.balance -= amount;
+        // СОХРАНЯЕМ ВСЮДУ
+        localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+        if (typeof saveDB === 'function') saveDB();
+        if (typeof updateBalanceUI === 'function') updateBalanceUI();
+        console.log(`💰 Списано ${amount} ₽, осталось: ${user.balance}`);
+        return true;
+    };
+
+    // === 3. ПЕРЕОПРЕДЕЛЯЕМ ВСЕ ФУНКЦИИ ОПЛАТЫ ===
+    const oldProcess = window.processPaymentModal;
+    window.processPaymentModal = function() {
+        console.log('✅ processPaymentModal вызвана (новая)');
+        const amountInput = document.getElementById('topupAmount');
+        const amount = parseInt(amountInput?.value) || 0;
+        if (amount <= 0) { showToast('Введите сумму', 'error'); return; }
+        const method = document.querySelector('input[name="paymentMethod"]:checked');
+        const selected = method ? method.value : 'balance';
+
+        if (selected === 'balance') {
+            // Списываем через принудительную функцию
+            if (window.forceSpend(amount)) {
+                const titleEl = document.getElementById('paymentTariffInfo');
+                if (titleEl) {
+                    const text = titleEl.innerText;
+                    if (text.includes('месяц') || text.includes('Навсегда')) {
+                        const user = registeredUsers[currentUser.toLowerCase()];
+                        let subName = '';
+                        if (text.includes('1 месяц')) subName = '1 месяц';
+                        else if (text.includes('3 месяца')) subName = '3 месяца';
+                        else if (text.includes('Навсегда')) subName = 'Навсегда';
+                        if (subName) {
+                            user.sub = subName;
+                            localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+                            if (typeof saveDB === 'function') saveDB();
+                            if (typeof updateCabinetUI === 'function') updateCabinetUI();
+                            showToast(`Подписка "${subName}" активирована!`, 'success');
+                        }
+                    } else {
+                        showToast(`Баланс пополнен на ${amount} ₽`, 'success');
+                    }
+                }
+                closePaymentModal();
+                if (typeof updateBalanceUI === 'function') updateBalanceUI();
+            }
+        } else if (selected === 'funpay') {
+            // Пополнение через FunPay
+            const user = registeredUsers[currentUser.toLowerCase()];
+            user.balance = (user.balance || 0) + amount;
+            localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+            if (typeof saveDB === 'function') saveDB();
+            if (typeof updateBalanceUI === 'function') updateBalanceUI();
+            showToast(`Баланс пополнен на ${amount} ₽ (FunPay)`, 'success');
+            closePaymentModal();
+            window.open('https://funpay.com/lots/offerEdit?node=1596&offer=76044751', '_blank');
+        } else if (selected === 'telegram') {
+            const user = registeredUsers[currentUser.toLowerCase()];
+            user.balance = (user.balance || 0) + amount;
+            localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+            if (typeof saveDB === 'function') saveDB();
+            if (typeof updateBalanceUI === 'function') updateBalanceUI();
+            showToast(`Баланс пополнен на ${amount} ₽ (Telegram)`, 'success');
+            closePaymentModal();
+            window.open('https://t.me/runclient_support', '_blank');
+        } else {
+            showToast('Неизвестный способ', 'error');
+        }
+    };
+
+    // === 4. ПЕРЕОПРЕДЕЛЯЕМ ПОКУПКУ ТАРИФОВ ===
+    const oldBuyTariff = window.buyTariff;
+    window.buyTariff = function(name) {
+        const priceMatch = name.match(/(\d+)/);
+        const price = priceMatch ? parseInt(priceMatch[0]) : 0;
+        if (price === 0) { showToast('Цена не определена', 'error'); return; }
+        if (window.forceSpend(price)) {
+            const user = registeredUsers[currentUser.toLowerCase()];
+            let subName = '';
+            if (name.includes('1 месяц')) subName = '1 месяц';
+            else if (name.includes('3 месяца')) subName = '3 месяца';
+            else if (name.includes('Навсегда')) subName = 'Навсегда';
+            else if (name.includes('HWID')) {
+                showToast('Заявка на сброс HWID создана!', 'success');
+                return;
+            }
+            if (subName) {
+                user.sub = subName;
+                localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+                if (typeof saveDB === 'function') saveDB();
+                if (typeof updateCabinetUI === 'function') updateCabinetUI();
+                showToast(`Подписка "${subName}" активирована!`, 'success');
+            }
+        }
+    };
+
+    // === 5. КОМАНДА ДЛЯ СБРОСА БАЛАНСА (если нужно) ===
+    window.setBalance = function(amount) {
+        if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) return;
+        user.balance = amount;
+        localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+        if (typeof saveDB === 'function') saveDB();
+        if (typeof updateBalanceUI === 'function') updateBalanceUI();
+        showToast(`Баланс установлен на ${amount} ₽`, 'success');
+        console.log(`💰 Баланс ${currentUser}: ${amount}`);
+    };
+
+    // === 6. ПРИВЯЗКА КНОПКИ "ОПЛАТИТЬ" ===
+    document.addEventListener('DOMContentLoaded', function() {
+        const payBtn = document.getElementById('payBtn');
+        if (payBtn) {
+            payBtn.onclick = window.processPaymentModal;
+            console.log('✅ Кнопка Оплатить привязана');
+        } else {
+            // Если кнопка появится позже
+            setTimeout(function() {
+                const payBtn2 = document.getElementById('payBtn');
+                if (payBtn2) payBtn2.onclick = window.processPaymentModal;
+            }, 500);
+        }
+    });
+
+    console.log('✅ Жёсткое исправление баланса активировано!');
+    console.log('💡 Команда для установки баланса: setBalance(1000)');
+})();
+</script>
 </body>
 </html>
