@@ -5970,5 +5970,88 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Исправление поиска по части ника активировано');
 })();
 </script>
+<script>
+// ===== ПРИНУДИТЕЛЬНОЕ СОХРАНЕНИЕ ПОЛЬЗОВАТЕЛЯ ПРИ РЕГИСТРАЦИИ =====
+(function() {
+    console.log('🔄 Фикс регистрации пользователей...');
+
+    // Сохраняем оригинальную функцию
+    const oldHandleRegister = window.handleRegister;
+
+    // Переопределяем handleRegister
+    window.handleRegister = function() {
+        console.log('✅ handleRegister вызвана (исправленная)');
+
+        const username = document.getElementById('regUsernameInput').value.trim();
+        const pass = document.getElementById('regPasswordInput').value.trim();
+        const email = document.getElementById('regEmailInput').value.trim();
+
+        if (!username || !pass || username.length < 3 || pass.length < 3) {
+            showToast('Ник и пароль минимум 3 символа!', 'error');
+            return;
+        }
+
+        const lower = username.toLowerCase();
+        // Проверяем, есть ли пользователь уже в registeredUsers
+        if (registeredUsers[lower]) {
+            showToast('Пользователь уже существует!', 'error');
+            return;
+        }
+
+        // Создаём пользователя
+        registeredUsers[lower] = {
+            password: pass,
+            role: 'user',
+            sub: 'Нет',
+            banned: false,
+            regDate: new Date().toLocaleDateString(),
+            uid: Object.keys(registeredUsers).length + 1,
+            freeSpinUsed: false,
+            freeCaseUsed: false,
+            balance: 0,
+            email: email || ''
+        };
+
+        // ПРИНУДИТЕЛЬНО СОХРАНЯЕМ
+        localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+        if (typeof saveDB === 'function') saveDB();
+
+        // Обновляем глобальную переменную (если она есть)
+        if (typeof window.registeredUsers === 'undefined') {
+            window.registeredUsers = registeredUsers;
+        }
+
+        // Логиним пользователя
+        currentUser = username;
+        localStorage.setItem('runclient_user', currentUser);
+
+        // Обновляем интерфейс
+        if (typeof updateCabinetUI === 'function') updateCabinetUI();
+        if (typeof updateLotteryUI === 'function') updateLotteryUI();
+
+        showToast('Аккаунт создан! Добро пожаловать, ' + username + '!', 'success');
+        navigateTo('cabinet');
+
+        console.log('✅ Пользователь зарегистрирован:', username);
+        console.log('📋 Все пользователи:', Object.keys(registeredUsers));
+    };
+
+    // Также переопределяем поиск, чтобы он всегда использовал актуальный registeredUsers
+    const oldFindUser = window.findUserByNick;
+    window.findUserByNick = function(nick) {
+        if (!nick) return null;
+        const lowerNick = nick.toLowerCase().trim();
+        // Используем актуальный registeredUsers
+        for (const [key, user] of Object.entries(registeredUsers)) {
+            if (key.toLowerCase() === lowerNick || key.toLowerCase().includes(lowerNick)) {
+                return { username: key, user: user };
+            }
+        }
+        return null;
+    };
+
+    console.log('✅ Фикс регистрации активирован');
+})();
+</script>
 </body>
 </html>
