@@ -5491,4 +5491,300 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('🔄 Перехват баланса активирован');
 })();
 </body>
+<script>
+// ===== ПОЛНАЯ СИСТЕМА ОПЛАТЫ С ПЕРЕВОДОМ ДРУГИМ ПОЛЬЗОВАТЕЛЯМ =====
+(function() {
+    console.log('🔄 Загрузка новой системы оплаты...');
+
+    // === 1. ПРИНУДИТЕЛЬНОЕ СОХРАНЕНИЕ БАЛАНСА (чтобы не возвращался) ===
+    // Перехватываем сохранение пользователей
+    const originalSetItem = localStorage.setItem;
+    localStorage.setItem = function(key, value) {
+        if (key === 'runclient_users') {
+            try {
+                const users = JSON.parse(value);
+                // Сохраняем резервную копию балансов
+                const backup = {};
+                for (const [username, user] of Object.entries(users)) {
+                    if (user.balance !== undefined) {
+                        backup[username] = user.balance;
+                    }
+                }
+                originalSetItem.call(localStorage, 'runclient_balance_backup', JSON.stringify(backup));
+                console.log('💾 Резервная копия баланса сохранена');
+            } catch (e) {}
+        }
+        originalSetItem.call(localStorage, key, value);
+    };
+
+    // Восстанавливаем баланс из резервной копии при загрузке
+    function restoreBalance() {
+        const backup = localStorage.getItem('runclient_balance_backup');
+        if (backup && typeof registeredUsers !== 'undefined' && registeredUsers) {
+            try {
+                const backupData = JSON.parse(backup);
+                for (const [username, balance] of Object.entries(backupData)) {
+                    if (registeredUsers[username]) {
+                        registeredUsers[username].balance = balance;
+                    }
+                }
+                console.log('✅ Баланс восстановлен из резервной копии');
+            } catch (e) {}
+        }
+    }
+
+    // === 2. МОДАЛКА ОПЛАТЫ ===
+    window.rebuildModal = function() {
+        const modal = document.getElementById('paymentModal');
+        if (!modal) return;
+        modal.innerHTML = `
+            <div class="modal-content" style="background:rgba(14,16,24,0.95);border:1px solid rgba(255,255,255,0.1);border-radius:28px;padding:30px;max-width:480px;width:90%;box-shadow:0 25px 60px rgba(0,0,0,0.9);">
+                <h2 style="color:#fff;margin-bottom:20px;text-align:center;">Оформление заказа</h2>
+                <div id="paymentTariffInfo" style="color:#949aab;text-align:center;margin-bottom:20px;"></div>
+                <div class="form-group">
+                    <label style="color:#949aab;font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;">Сумма (₽)</label>
+                    <input type="number" id="topupAmount" class="form-input" value="100" min="1" style="text-align:center;font-size:1.2rem;font-weight:700;color:#fff;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:10px;">
+                </div>
+                <div class="form-group">
+                    <label style="color:#949aab;font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;">👤 Ник получателя (оставьте пустым для себя)</label>
+                    <input type="text" id="recipientNick" class="form-input" placeholder="Ник пользователя" style="width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px 16px;color:#fff;font-size:.9rem;outline:none;transition:.3s;">
+                </div>
+                <div style="display:flex;gap:12px;margin-bottom:20px;">
+                    <input type="text" id="promoInput" class="form-input" placeholder="Промокод" style="flex:1;">
+                    <button class="action-btn" onclick="applyPromo()" style="width:auto;">Применить</button>
+                </div>
+                <div id="promoMessage" style="font-size:.8rem;text-align:center;margin-bottom:12px;"></div>
+                <div style="margin-bottom:20px;">
+                    <div style="color:#949aab;font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Способ оплаты</div>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+                        <label style="display:flex;align-items:center;gap:6px;color:#fff;cursor:pointer;background:rgba(255,255,255,0.05);padding:6px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);">
+                            <input type="radio" name="paymentMethod" value="balance" checked> 💳 Рубли (с баланса)
+                        </label>
+                        <label style="display:flex;align-items:center;gap:6px;color:#fff;cursor:pointer;background:rgba(255,255,255,0.05);padding:6px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);">
+                            <input type="radio" name="paymentMethod" value="funpay"> 💳 FunPay
+                        </label>
+                        <label style="display:flex;align-items:center;gap:6px;color:#fff;cursor:pointer;background:rgba(255,255,255,0.05);padding:6px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);">
+                            <input type="radio" name="paymentMethod" value="telegram"> 📱 Telegram
+                        </label>
+                    </div>
+                </div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+                    <button id="payBtn" class="action-btn green" style="flex:1;min-width:120px;font-size:1rem;padding:14px;">✅ Оплатить</button>
+                </div>
+                <div style="text-align:center;margin-top:16px;">
+                    <button class="btn-secondary-action" onclick="closePaymentModal()" style="padding:8px 20px;font-size:.8rem;">Отмена</button>
+                </div>
+            </div>
+        `;
+        const payBtn = document.getElementById('payBtn');
+        if (payBtn) {
+            payBtn.onclick = window.processPaymentModal;
+        }
+        // Очищаем поле получателя
+        const recipientInput = document.getElementById('recipientNick');
+        if (recipientInput) recipientInput.value = '';
+    };
+
+    // === 3. ПРОЦЕСС ОПЛАТЫ ===
+    window.processPaymentModal = function() {
+        console.log('✅ processPaymentModal вызвана');
+        const amountInput = document.getElementById('topupAmount');
+        const amount = parseInt(amountInput?.value) || 0;
+        if (amount <= 0) { showToast('Введите корректную сумму', 'error'); return; }
+
+        // Определяем получателя
+        const recipientInput = document.getElementById('recipientNick');
+        const recipientNick = recipientInput ? recipientInput.value.trim() : '';
+        let targetUser = null;
+        let targetUsername = currentUser;
+
+        if (recipientNick) {
+            const lower = recipientNick.toLowerCase();
+            if (!registeredUsers[lower]) {
+                showToast('Пользователь не найден', 'error');
+                return;
+            }
+            targetUser = registeredUsers[lower];
+            targetUsername = recipientNick;
+        } else {
+            if (!currentUser) { showToast('Войдите в аккаунт', 'error'); return; }
+            targetUser = registeredUsers[currentUser.toLowerCase()];
+            targetUsername = currentUser;
+        }
+
+        const method = document.querySelector('input[name="paymentMethod"]:checked');
+        if (!method) { showToast('Выберите способ оплаты', 'error'); return; }
+        const selected = method.value;
+
+        // Функция начисления
+        function addToTarget(amount) {
+            if (!targetUser) return false;
+            targetUser.balance = (targetUser.balance || 0) + amount;
+            // СОХРАНЯЕМ ВСЕГДА
+            localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+            if (typeof saveDB === 'function') saveDB();
+            if (typeof updateBalanceUI === 'function') updateBalanceUI();
+            console.log(`💰 ${targetUsername} +${amount} ₽`);
+            return true;
+        }
+
+        // Функция списания
+        function spendFromCurrent(amount) {
+            if (!currentUser) { showToast('Войдите в аккаунт', 'error'); return false; }
+            const user = registeredUsers[currentUser.toLowerCase()];
+            if (!user) return false;
+            if (user.balance === undefined) user.balance = 0;
+            if (user.balance < amount) {
+                showToast('Недостаточно средств на балансе!', 'error');
+                return false;
+            }
+            user.balance -= amount;
+            localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+            if (typeof saveDB === 'function') saveDB();
+            if (typeof updateBalanceUI === 'function') updateBalanceUI();
+            console.log(`💰 ${currentUser} -${amount} ₽`);
+            return true;
+        }
+
+        // Промокод
+        if (window._currentPromo && window.promoCodes && window.promoCodes[window._currentPromo]) {
+            const promoData = window.promoCodes[window._currentPromo];
+            if (promoData.uses === 0 || promoData.used < promoData.uses) {
+                promoData.used++;
+                if (typeof savePromoCodes === 'function') savePromoCodes();
+                else localStorage.setItem('runclient_promocodes', JSON.stringify(window.promoCodes));
+                if (typeof renderPromoCodes === 'function') renderPromoCodes();
+            } else {
+                showToast('Промокод исчерпал лимит', 'error');
+                return;
+            }
+        }
+
+        const tariffInfo = document.getElementById('paymentTariffInfo').innerText;
+        const isSubscription = tariffInfo.includes('месяц') || tariffInfo.includes('Навсегда') || tariffInfo.includes('HWID');
+
+        if (selected === 'balance') {
+            if (!spendFromCurrent(amount)) return;
+            if (!addToTarget(amount)) return;
+            if (isSubscription) {
+                let subName = '';
+                if (tariffInfo.includes('1 месяц')) subName = '1 месяц';
+                else if (tariffInfo.includes('3 месяца')) subName = '3 месяца';
+                else if (tariffInfo.includes('Навсегда')) subName = 'Навсегда';
+                else if (tariffInfo.includes('HWID')) {
+                    showThankYou('Заявка на сброс HWID отправлена!');
+                    return;
+                }
+                if (subName) {
+                    targetUser.sub = subName;
+                    localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+                    if (typeof saveDB === 'function') saveDB();
+                    if (typeof updateCabinetUI === 'function') updateCabinetUI();
+                    showThankYou(`Подписка "${subName}" активирована для ${targetUsername}!`);
+                    return;
+                }
+            } else {
+                showThankYou(`Баланс ${targetUsername} пополнен на ${amount} ₽`);
+            }
+        } else if (selected === 'funpay') {
+            if (!addToTarget(amount)) return;
+            showThankYou(`Баланс ${targetUsername} пополнен на ${amount} ₽ (FunPay)`);
+            setTimeout(() => window.open('https://funpay.com/lots/offerEdit?node=1596&offer=76044751', '_blank'), 1000);
+        } else if (selected === 'telegram') {
+            if (!addToTarget(amount)) return;
+            showThankYou(`Баланс ${targetUsername} пополнен на ${amount} ₽ (Telegram)`);
+            setTimeout(() => window.open('https://t.me/runclient_support', '_blank'), 1000);
+        } else {
+            showToast('Неизвестный способ оплаты', 'error');
+        }
+
+        window._currentPromo = null;
+        console.log('✅ Операция завершена');
+    };
+
+    // === 4. БЛАГОДАРНОСТЬ ===
+    window.showThankYou = function(message) {
+        const modal = document.getElementById('paymentModal');
+        if (!modal) return;
+        const content = modal.querySelector('.modal-content');
+        if (!content) return;
+        content.innerHTML = `
+            <div style="text-align:center;padding:20px 0;">
+                <div style="font-size:4rem;margin-bottom:16px;">🎉</div>
+                <h2 style="color:#00e676;font-weight:800;font-size:1.8rem;">Спасибо за оплату!</h2>
+                <p style="color:#949aab;margin-top:8px;font-size:1rem;">${message || 'Ваш заказ успешно обработан.'}</p>
+                <p style="color:#666;font-size:.8rem;margin-top:20px;">Закрывается через 3 секунды...</p>
+            </div>
+        `;
+        setTimeout(() => {
+            modal.style.display = 'none';
+            window.rebuildModal();
+        }, 3000);
+    };
+
+    // === 5. ОТКРЫТИЕ/ЗАКРЫТИЕ ===
+    const oldOpen = window.openPaymentModal;
+    window.openPaymentModal = function(title, amount) {
+        const modal = document.getElementById('paymentModal');
+        if (!modal) return;
+        window.rebuildModal();
+        modal.style.display = 'flex';
+        document.getElementById('paymentTariffInfo').innerHTML = `<strong>${title}</strong>`;
+        document.getElementById('topupAmount').value = amount || 100;
+        document.getElementById('promoInput').value = '';
+        document.getElementById('promoMessage').innerHTML = '';
+        document.getElementById('recipientNick').value = '';
+        const balanceRadio = document.querySelector('input[name="paymentMethod"][value="balance"]');
+        if (balanceRadio) balanceRadio.checked = true;
+        window._currentPromo = null;
+        setTimeout(function() {
+            const payBtn = document.getElementById('payBtn');
+            if (payBtn) payBtn.onclick = window.processPaymentModal;
+        }, 50);
+    };
+
+    window.closePaymentModal = function() {
+        const modal = document.getElementById('paymentModal');
+        if (modal) modal.style.display = 'none';
+    };
+
+    // === 6. ИНИЦИАЛИЗАЦИЯ ===
+    document.addEventListener('DOMContentLoaded', function() {
+        // Восстанавливаем баланс
+        restoreBalance();
+        // Перестраиваем модалку
+        const modal = document.getElementById('paymentModal');
+        if (modal) {
+            window.rebuildModal();
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) closePaymentModal();
+            });
+        }
+        // Привязываем кнопку
+        setTimeout(function() {
+            const payBtn = document.getElementById('payBtn');
+            if (payBtn) payBtn.onclick = window.processPaymentModal;
+        }, 200);
+        console.log('✅ Новая система оплаты загружена');
+    });
+
+    // Если DOM уже загружен
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(function() {
+            restoreBalance();
+            const modal = document.getElementById('paymentModal');
+            if (modal) {
+                window.rebuildModal();
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) closePaymentModal();
+                });
+            }
+            const payBtn = document.getElementById('payBtn');
+            if (payBtn) payBtn.onclick = window.processPaymentModal;
+        }, 300);
+    }
+
+    console.log('✅ Система оплаты с переводом готова');
+})();
+</script>
 </html>
