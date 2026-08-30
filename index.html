@@ -6552,7 +6552,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let activeKeysDB = JSON.parse(localStorage.getItem('run_keys')) || {};
     let currentSelectedItem = null;
 
-    function openPaymentModal(itemName, price) {
+    window.openPaymentModal = function(itemName, price) {
         currentSelectedItem = { name: itemName, price: price };
         const titleEl = document.getElementById('pay-title');
         const descEl = document.getElementById('pay-desc');
@@ -6569,7 +6569,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (modal) modal.classList.remove('hidden');
     }
 
-    function startPaymentProcess() {
+    window.startPaymentProcess = function() {
         const step1 = document.getElementById('pay-step-1');
         const stepLoad = document.getElementById('pay-step-loading');
         const stepSucc = document.getElementById('pay-step-success');
@@ -6606,7 +6606,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000);
     }
 
-    function clearGlobalBalance() {
+    window.clearGlobalBalance = function() {
         if(confirm('Точно обнулить баланс у ВСЕХ пользователей сайта?')) {
             currentUser.balance = 0;
             currentUser.subActive = false;
@@ -6615,7 +6615,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function deleteAccount() {
+    window.deleteAccount = function() {
         if(confirm('Удалить аккаунт?')) {
             localStorage.removeItem('run_user');
             showToast('Аккаунт удален', 'success');
