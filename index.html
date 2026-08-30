@@ -6623,5 +6623,464 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 </script>
+<script>
+// ===== НОВАЯ ПОЛНАЯ СИСТЕМА =====
+(function() {
+    console.log('🔄 Загрузка новой системы...');
+
+    // === 1. СТАБИЛЬНАЯ БАЗА (localStorage) ===
+    function loadDB() {
+        if (typeof registeredUsers === 'undefined') {
+            window.registeredUsers = JSON.parse(localStorage.getItem('runclient_users')) || {};
+        }
+        if (typeof promoCodes === 'undefined') {
+            window.promoCodes = JSON.parse(localStorage.getItem('runclient_promocodes')) || {};
+        }
+        if (typeof marketLots === 'undefined') {
+            window.marketLots = JSON.parse(localStorage.getItem('runclient_market_lots')) || {};
+        }
+        if (typeof marketReviews === 'undefined') {
+            window.marketReviews = JSON.parse(localStorage.getItem('runclient_market_reviews')) || {};
+        }
+        if (typeof activeKeysDB === 'undefined') {
+            window.activeKeysDB = JSON.parse(localStorage.getItem('runclient_keys')) || {};
+        }
+        // Ключи для системы "купленный код"
+        if (typeof purchaseKeys === 'undefined') {
+            window.purchaseKeys = JSON.parse(localStorage.getItem('runclient_purchase_keys')) || {};
+        }
+    }
+    loadDB();
+
+    // Функция сохранения всех данных
+    function saveAll() {
+        localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+        localStorage.setItem('runclient_promocodes', JSON.stringify(promoCodes));
+        localStorage.setItem('runclient_market_lots', JSON.stringify(marketLots));
+        localStorage.setItem('runclient_market_reviews', JSON.stringify(marketReviews));
+        localStorage.setItem('runclient_keys', JSON.stringify(activeKeysDB));
+        localStorage.setItem('runclient_purchase_keys', JSON.stringify(purchaseKeys));
+        if (typeof saveDB === 'function') saveDB();
+        console.log('💾 Все данные сохранены');
+    }
+
+    // === 2. КНОПКА УДАЛЕНИЯ АККАУНТА ===
+    function addDeleteAccountButton() {
+        const logoutBtn = document.querySelector('.btn-logout-new');
+        if (!logoutBtn || document.getElementById('deleteAccountBtn')) return;
+        const deleteBtn = document.createElement('button');
+        deleteBtn.id = 'deleteAccountBtn';
+        deleteBtn.className = 'btn-logout-new';
+        deleteBtn.style.cssText = 'margin-top:8px;color:#ff3344;border-color:#ff3344;';
+        deleteBtn.innerText = '🗑️ Удалить аккаунт';
+        deleteBtn.onclick = function() {
+            if (!currentUser) { showToast('Вы не авторизованы', 'error'); return; }
+            if (confirm('Удалить аккаунт ' + currentUser + '? Это НЕОБРАТИМО!')) {
+                const lower = currentUser.toLowerCase();
+                if (registeredUsers[lower]) {
+                    delete registeredUsers[lower];
+                    saveAll();
+                    localStorage.removeItem('runclient_user');
+                    currentUser = null;
+                    showToast('Аккаунт удалён', 'success');
+                    navigateTo('home');
+                    if (typeof updateCabinetUI === 'function') updateCabinetUI();
+                }
+            }
+        };
+        logoutBtn.parentNode.insertBefore(deleteBtn, logoutBtn.nextSibling);
+    }
+
+    // === 3. КНОПКА ОЧИСТКИ ВСЕХ БАЛАНСОВ (в админ-панели) ===
+    function addResetBalancesButton() {
+        const adminTab = document.getElementById('cab-admin');
+        if (!adminTab || document.getElementById('resetBalancesBtn')) return;
+        const resetBtn = document.createElement('button');
+        resetBtn.id = 'resetBalancesBtn';
+        resetBtn.className = 'action-btn';
+        resetBtn.style.cssText = 'margin-top:12px;background:#ff3344;';
+        resetBtn.innerText = '🔄 Обнулить все балансы';
+        resetBtn.onclick = function() {
+            if (!currentUser) { showToast('Войдите в аккаунт', 'error'); return; }
+            const user = registeredUsers[currentUser.toLowerCase()];
+            if (!user || (user.role !== 'owner' && user.role !== 'admin')) {
+                showToast('Доступ запрещён', 'error');
+                return;
+            }
+            if (confirm('Обнулить ВСЕ балансы у всех пользователей? Это НЕОБРАТИМО!')) {
+                for (const key in registeredUsers) {
+                    registeredUsers[key].balance = 0;
+                }
+                saveAll();
+                showToast('✅ Все балансы обнулены', 'success');
+                if (typeof updateBalanceUI === 'function') updateBalanceUI();
+            }
+        };
+        // Вставляем после первого .card
+        const firstCard = adminTab.querySelector('.card');
+        if (firstCard) {
+            const wrapper = document.createElement('div');
+            wrapper.style.marginTop = '12px';
+            wrapper.appendChild(resetBtn);
+            firstCard.after(wrapper);
+        } else {
+            adminTab.appendChild(resetBtn);
+        }
+    }
+
+    // === 4. НОВАЯ МОДАЛКА ОПЛАТЫ (без изменения цены, с ключами) ===
+    window.rebuildModal = function() {
+        const modal = document.getElementById('paymentModal');
+        if (!modal) return;
+        modal.innerHTML = `
+            <div class="modal-content" style="background:rgba(14,16,24,0.95);border:1px solid rgba(255,255,255,0.1);border-radius:28px;padding:30px;max-width:480px;width:90%;box-shadow:0 25px 60px rgba(0,0,0,0.9);">
+                <h2 style="color:#fff;margin-bottom:20px;text-align:center;">Оформление заказа</h2>
+                <div id="paymentTariffInfo" style="color:#949aab;text-align:center;margin-bottom:20px;"></div>
+                <div class="form-group">
+                    <label style="color:#949aab;font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;">Сумма (₽)</label>
+                    <input type="number" id="topupAmount" class="form-input" value="100" min="1" readonly style="text-align:center;font-size:1.2rem;font-weight:700;color:#fff;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:10px;cursor:not-allowed;opacity:0.6;">
+                </div>
+                <div style="display:flex;gap:12px;margin-bottom:20px;">
+                    <input type="text" id="promoInput" class="form-input" placeholder="Промокод" style="flex:1;">
+                    <button class="action-btn" onclick="applyPromo()" style="width:auto;">Применить</button>
+                </div>
+                <div id="promoMessage" style="font-size:.8rem;text-align:center;margin-bottom:12px;"></div>
+                <div style="margin-bottom:20px;">
+                    <div style="color:#949aab;font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Способ оплаты</div>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+                        <label style="display:flex;align-items:center;gap:6px;color:#fff;cursor:pointer;background:rgba(255,255,255,0.05);padding:6px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);">
+                            <input type="radio" name="paymentMethod" value="balance" checked> 💳 Рубли (с баланса)
+                        </label>
+                        <label style="display:flex;align-items:center;gap:6px;color:#fff;cursor:pointer;background:rgba(255,255,255,0.05);padding:6px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);">
+                            <input type="radio" name="paymentMethod" value="funpay"> 💳 FunPay
+                        </label>
+                        <label style="display:flex;align-items:center;gap:6px;color:#fff;cursor:pointer;background:rgba(255,255,255,0.05);padding:6px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);">
+                            <input type="radio" name="paymentMethod" value="telegram"> 📱 Telegram
+                        </label>
+                    </div>
+                </div>
+                <!-- Переключатель "для себя" / "для друга" -->
+                <div style="margin-bottom:20px;">
+                    <div style="color:#949aab;font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Тип покупки</div>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+                        <label style="display:flex;align-items:center;gap:6px;color:#fff;cursor:pointer;background:rgba(255,255,255,0.05);padding:6px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);">
+                            <input type="radio" name="purchaseType" value="self" checked> 👤 Для себя
+                        </label>
+                        <label style="display:flex;align-items:center;gap:6px;color:#fff;cursor:pointer;background:rgba(255,255,255,0.05);padding:6px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);">
+                            <input type="radio" name="purchaseType" value="friend"> 🎁 Для друга (ключ)
+                        </label>
+                    </div>
+                </div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+                    <button id="payBtn" class="action-btn green" style="flex:1;min-width:120px;font-size:1rem;padding:14px;">✅ Оплатить</button>
+                </div>
+                <div style="text-align:center;margin-top:16px;">
+                    <button class="btn-secondary-action" onclick="closePaymentModal()" style="padding:8px 20px;font-size:.8rem;">Отмена</button>
+                </div>
+            </div>
+        `;
+        // Добавляем анимацию загрузки (скрыта по умолчанию)
+        const content = modal.querySelector('.modal-content');
+        const loadingDiv = document.createElement('div');
+        loadingDiv.id = 'loadingAnimation';
+        loadingDiv.style.cssText = 'display:none;text-align:center;padding:20px 0;';
+        loadingDiv.innerHTML = `
+            <div style="display:inline-block;width:50px;height:50px;border:4px solid rgba(255,255,255,0.1);border-top:4px solid #ff3344;border-radius:50%;animation:spin 1s linear infinite;"></div>
+            <p style="color:#949aab;margin-top:12px;">Ожидаем оплату...</p>
+        `;
+        // Добавляем стиль для анимации
+        if (!document.getElementById('spinnerStyle')) {
+            const style = document.createElement('style');
+            style.id = 'spinnerStyle';
+            style.textContent = `@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`;
+            document.head.appendChild(style);
+        }
+        // Вставляем после paymentTariffInfo
+        const tariffInfo = document.getElementById('paymentTariffInfo');
+        if (tariffInfo) {
+            tariffInfo.after(loadingDiv);
+        }
+        // Привязываем кнопку
+        const payBtn = document.getElementById('payBtn');
+        if (payBtn) {
+            payBtn.onclick = window.processPaymentModal;
+        }
+        // Устанавливаем фиксированную цену (readonly уже есть)
+    };
+
+    // === 5. ЛОГИКА ОПЛАТЫ (с ключами и анимацией) ===
+    window.processPaymentModal = function() {
+        console.log('✅ processPaymentModal вызвана');
+        const amountInput = document.getElementById('topupAmount');
+        const amount = parseInt(amountInput?.value) || 0;
+        if (amount <= 0) { showToast('Введите сумму', 'error'); return; }
+
+        // Проверяем способ оплаты
+        const method = document.querySelector('input[name="paymentMethod"]:checked');
+        if (!method) { showToast('Выберите способ оплаты', 'error'); return; }
+        const selected = method.value;
+
+        // Проверяем тип покупки (для себя или для друга)
+        const purchaseType = document.querySelector('input[name="purchaseType"]:checked');
+        const isForFriend = purchaseType && purchaseType.value === 'friend';
+
+        // Показываем анимацию загрузки
+        const loadingDiv = document.getElementById('loadingAnimation');
+        if (loadingDiv) loadingDiv.style.display = 'block';
+        const payBtn = document.getElementById('payBtn');
+        if (payBtn) payBtn.disabled = true;
+
+        // Имитация оплаты (задержка)
+        setTimeout(function() {
+            // Скрываем анимацию
+            if (loadingDiv) loadingDiv.style.display = 'none';
+            if (payBtn) payBtn.disabled = false;
+
+            // Обработка оплаты
+            let success = false;
+            let message = '';
+
+            if (selected === 'balance') {
+                // С баланса
+                if (!currentUser) { showToast('Войдите в аккаунт', 'error'); return; }
+                const user = registeredUsers[currentUser.toLowerCase()];
+                if (!user) { showToast('Пользователь не найден', 'error'); return; }
+                if ((user.balance || 0) < amount) {
+                    showToast('Недостаточно баланса', 'error');
+                    return;
+                }
+                user.balance -= amount;
+                success = true;
+                message = `Списано ${amount} ₽ с баланса`;
+            } else if (selected === 'funpay' || selected === 'telegram') {
+                // Имитация пополнения
+                if (!currentUser) { showToast('Войдите в аккаунт', 'error'); return; }
+                const user = registeredUsers[currentUser.toLowerCase()];
+                if (!user) { showToast('Пользователь не найден', 'error'); return; }
+                user.balance = (user.balance || 0) + amount;
+                success = true;
+                message = `Баланс пополнен на ${amount} ₽ через ${selected === 'funpay' ? 'FunPay' : 'Telegram'}`;
+                // Открываем ссылку
+                if (selected === 'funpay') {
+                    window.open('https://funpay.com/lots/offerEdit?node=1596&offer=76044751', '_blank');
+                } else {
+                    window.open('https://t.me/runclient_support', '_blank');
+                }
+            } else {
+                showToast('Неизвестный способ', 'error');
+                return;
+            }
+
+            if (success) {
+                // Если покупка для друга – генерируем ключ
+                if (isForFriend) {
+                    const key = generatePurchaseKey(amount);
+                    showThankYou(`🎉 Оплата прошла! Ваш ключ: ${key}\nКлюч действителен 1 час. Активируйте в разделе "Активация ключей".`);
+                    // Сохраняем ключ в базу
+                    purchaseKeys[key] = {
+                        amount: amount,
+                        created: Date.now(),
+                        expires: Date.now() + 3600000, // 1 час
+                        used: false,
+                        type: 'balance'
+                    };
+                    saveAll();
+                } else {
+                    // Для себя – сразу начисляем (уже начислено в логике)
+                    showThankYou(`✅ ${message}`);
+                }
+                saveAll();
+                if (typeof updateBalanceUI === 'function') updateBalanceUI();
+                if (typeof updateCabinetUI === 'function') updateCabinetUI();
+            }
+        }, 2000); // задержка 2 секунды
+    };
+
+    // === 6. ГЕНЕРАЦИЯ КЛЮЧЕЙ ===
+    function generatePurchaseKey(amount) {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let key = '';
+        for (let i = 0; i < 12; i++) {
+            key += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return 'KEY-' + key;
+    }
+
+    // === 7. АКТИВАЦИЯ КЛЮЧЕЙ (в разделе ключей) ===
+    // Дополняем activateSubKey, чтобы обрабатывать и ключи покупок
+    const oldActivate = window.activateSubKey;
+    window.activateSubKey = function() {
+        const keyInput = document.getElementById('subKeyInput');
+        if (!keyInput) return;
+        const key = keyInput.value.trim().toUpperCase();
+        if (!key) { showToast('Введите ключ', 'error'); return; }
+
+        // Проверяем сначала ключи покупок
+        if (purchaseKeys && purchaseKeys[key]) {
+            const data = purchaseKeys[key];
+            if (data.used) { showToast('Ключ уже использован', 'error'); return; }
+            if (Date.now() > data.expires) { showToast('Ключ истёк', 'error'); return; }
+            // Активируем – начисляем баланс
+            if (!currentUser) { showToast('Войдите в аккаунт', 'error'); return; }
+            const user = registeredUsers[currentUser.toLowerCase()];
+            if (!user) { showToast('Пользователь не найден', 'error'); return; }
+            user.balance = (user.balance || 0) + data.amount;
+            data.used = true;
+            saveAll();
+            showToast(`✅ Ключ активирован! Получено ${data.amount} ₽`, 'success');
+            if (typeof updateBalanceUI === 'function') updateBalanceUI();
+            if (typeof updateCabinetUI === 'function') updateCabinetUI();
+            keyInput.value = '';
+            return;
+        }
+
+        // Если не ключ покупки – пробуем стандартную активацию (подписка и т.д.)
+        if (typeof oldActivate === 'function') {
+            oldActivate();
+        } else {
+            showToast('Неверный ключ', 'error');
+        }
+    };
+
+    // === 8. СИСТЕМА ТЕМ ===
+    function initThemeSystem() {
+        // Проверяем, есть ли уже переключатель
+        if (document.getElementById('themeToggleBtn')) return;
+        const navRight = document.querySelector('.navbar .nav-right');
+        if (!navRight) return;
+        const themeBtn = document.createElement('button');
+        themeBtn.id = 'themeToggleBtn';
+        themeBtn.className = 'btn-cabinet';
+        themeBtn.style.cssText = 'margin-left:10px;background:rgba(255,255,255,0.1);color:#fff;';
+        themeBtn.innerText = '🌓';
+        themeBtn.onclick = function() {
+            document.body.classList.toggle('dark-theme');
+            document.body.classList.toggle('light-theme');
+            const theme = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
+            localStorage.setItem('runclient_theme', theme);
+        };
+        // Применяем сохранённую тему
+        const savedTheme = localStorage.getItem('runclient_theme') || 'dark';
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-theme');
+        } else {
+            document.body.classList.add('dark-theme');
+        }
+        // Добавляем стили для тем
+        if (!document.getElementById('themeStyles')) {
+            const style = document.createElement('style');
+            style.id = 'themeStyles';
+            style.textContent = `
+                .dark-theme { background: #040508; color: #fff; }
+                .light-theme { background: #f0f2f5; color: #000; }
+                .light-theme .navbar { background: rgba(255,255,255,0.85); border-color: rgba(0,0,0,0.1); }
+                .light-theme .card { background: rgba(255,255,255,0.9); border-color: rgba(0,0,0,0.1); }
+                .light-theme .profile-card { background: rgba(255,255,255,0.9); }
+                .light-theme .account-block { background: rgba(0,0,0,0.05); }
+                .light-theme .form-input { background: #fff; color: #000; border-color: #ccc; }
+                .light-theme .form-input::placeholder { color: #999; }
+                .light-theme .tariff-card { background: rgba(255,255,255,0.9); }
+                .light-theme .lottery-card { background: rgba(255,255,255,0.9); }
+                .light-theme .stat-card { background: rgba(255,255,255,0.9); }
+                .light-theme .feature-card { background: rgba(255,255,255,0.9); }
+                .light-theme .detail-box { background: rgba(255,255,255,0.9); }
+                .light-theme .server-card { background: rgba(255,255,255,0.9); }
+                .light-theme .faq-item { background: rgba(255,255,255,0.9); }
+                .light-theme .toast { background: rgba(255,255,255,0.95); color: #000; border-color: #ddd; }
+                .light-theme .action-btn { color: #fff; }
+                .light-theme .nav-link { color: #333; }
+                .light-theme .nav-link:hover { background: rgba(0,0,0,0.05); }
+            `;
+            document.head.appendChild(style);
+        }
+        navRight.insertBefore(themeBtn, navRight.firstChild);
+    }
+
+    // === 9. ИНИЦИАЛИЗАЦИЯ ===
+    document.addEventListener('DOMContentLoaded', function() {
+        addDeleteAccountButton();
+        addResetBalancesButton();
+        // Перестраиваем модалку
+        const modal = document.getElementById('paymentModal');
+        if (modal) {
+            window.rebuildModal();
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) closePaymentModal();
+            });
+        }
+        // Инициализируем тему
+        initThemeSystem();
+        // Привязываем кнопку оплаты (если перестроилась)
+        setTimeout(function() {
+            const payBtn = document.getElementById('payBtn');
+            if (payBtn) payBtn.onclick = window.processPaymentModal;
+        }, 200);
+        console.log('✅ Новая система загружена');
+    });
+
+    // Если DOM уже загружен
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(function() {
+            addDeleteAccountButton();
+            addResetBalancesButton();
+            const modal = document.getElementById('paymentModal');
+            if (modal) {
+                window.rebuildModal();
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) closePaymentModal();
+                });
+            }
+            initThemeSystem();
+            const payBtn = document.getElementById('payBtn');
+            if (payBtn) payBtn.onclick = window.processPaymentModal;
+        }, 300);
+    }
+
+    // === 10. ОБНОВЛЯЕМ openPaymentModal для совместимости ===
+    const oldOpen = window.openPaymentModal;
+    window.openPaymentModal = function(title, amount) {
+        const modal = document.getElementById('paymentModal');
+        if (!modal) return;
+        window.rebuildModal();
+        modal.style.display = 'flex';
+        document.getElementById('paymentTariffInfo').innerHTML = `<strong>${title}</strong>`;
+        document.getElementById('topupAmount').value = amount || 100;
+        document.getElementById('promoInput').value = '';
+        document.getElementById('promoMessage').innerHTML = '';
+        // Сбрасываем выбор на "Для себя"
+        const selfRadio = document.querySelector('input[name="purchaseType"][value="self"]');
+        if (selfRadio) selfRadio.checked = true;
+        const balanceRadio = document.querySelector('input[name="paymentMethod"][value="balance"]');
+        if (balanceRadio) balanceRadio.checked = true;
+        window._currentPromo = null;
+        setTimeout(function() {
+            const payBtn = document.getElementById('payBtn');
+            if (payBtn) payBtn.onclick = window.processPaymentModal;
+        }, 50);
+    };
+
+    // === 11. ФУНКЦИЯ БЛАГОДАРНОСТИ ===
+    window.showThankYou = function(message) {
+        const modal = document.getElementById('paymentModal');
+        if (!modal) return;
+        const content = modal.querySelector('.modal-content');
+        if (!content) return;
+        content.innerHTML = `
+            <div style="text-align:center;padding:20px 0;">
+                <div style="font-size:4rem;margin-bottom:16px;">🎉</div>
+                <h2 style="color:#00e676;font-weight:800;font-size:1.8rem;">Спасибо за оплату!</h2>
+                <p style="color:#949aab;margin-top:8px;font-size:1rem;white-space:pre-line;">${message || 'Ваш заказ успешно обработан.'}</p>
+                <p style="color:#666;font-size:.8rem;margin-top:20px;">Закрывается через 5 секунд...</p>
+            </div>
+        `;
+        setTimeout(() => {
+            modal.style.display = 'none';
+            window.rebuildModal();
+        }, 5000);
+    };
+
+    console.log('✅ ВСЕ СИСТЕМЫ АКТИВИРОВАНЫ');
+})();
+</script>
 </body>
 </html>
