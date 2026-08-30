@@ -6539,6 +6539,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <script>
     function showToast(text, type='success') {
         const container = document.getElementById('toast-container');
+        if (!container) return;
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
         toast.style.cssText = `background: #151821; border: 1px solid rgba(255,255,255,0.08); border-left: 4px solid ${type==='success'?'#00e676':'#ff3344'}; padding: 14px 22px; border-radius: 12px; color: #fff; font-size: 13px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.5);`;
@@ -6553,36 +6554,54 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function openPaymentModal(itemName, price) {
         currentSelectedItem = { name: itemName, price: price };
-        document.getElementById('pay-title').innerText = `Покупка: ${itemName}`;
-        document.getElementById('pay-desc').innerText = `Стоимость: ${price} ₽`;
-        document.getElementById('pay-step-1').classList.remove('hidden');
-        document.getElementById('pay-step-loading').classList.add('hidden');
-        document.getElementById('pay-step-success').classList.add('hidden');
-        document.getElementById('payment-modal').classList.remove('hidden');
+        const titleEl = document.getElementById('pay-title');
+        const descEl = document.getElementById('pay-desc');
+        const step1 = document.getElementById('pay-step-1');
+        const stepLoad = document.getElementById('pay-step-loading');
+        const stepSucc = document.getElementById('pay-step-success');
+        const modal = document.getElementById('payment-modal');
+
+        if (titleEl) titleEl.innerText = `Покупка: ${itemName}`;
+        if (descEl) descEl.innerText = `Стоимость: ${price} ₽`;
+        if (step1) step1.classList.remove('hidden');
+        if (stepLoad) stepLoad.classList.add('hidden');
+        if (stepSucc) stepSucc.classList.add('hidden');
+        if (modal) modal.classList.remove('hidden');
     }
 
     function startPaymentProcess() {
-        document.getElementById('pay-step-1').classList.add('hidden');
-        document.getElementById('pay-step-loading').classList.remove('hidden');
+        const step1 = document.getElementById('pay-step-1');
+        const stepLoad = document.getElementById('pay-step-loading');
+        const stepSucc = document.getElementById('pay-step-success');
+        
+        if (step1) step1.classList.add('hidden');
+        if (stepLoad) stepLoad.classList.remove('hidden');
 
         setTimeout(() => {
-            document.getElementById('pay-step-loading').classList.add('hidden');
-            document.getElementById('pay-step-success').classList.remove('hidden');
+            if (stepLoad) stepLoad.classList.add('hidden');
+            if (stepSucc) stepSucc.classList.remove('hidden');
 
-            const isForFriend = document.getElementById('for-friend-check').checked;
+            const friendCheck = document.getElementById('for-friend-check');
+            const isForFriend = friendCheck ? friendCheck.checked : false;
             
             if (isForFriend) {
                 const key = 'RUN-' + Math.random().toString(36).substr(2, 4).toUpperCase() + '-' + Math.random().toString(36).substr(2, 4).toUpperCase();
                 const expireTime = Date.now() + 3600000;
                 
-                activeKeysDB[key] = { item: currentSelectedItem.name, expiresAt: expireTime };
+                activeKeysDB[key] = { item: currentSelectedItem ? currentSelectedItem.name : 'Товар', expiresAt: expireTime };
                 localStorage.setItem('run_keys', JSON.stringify(activeKeysDB));
 
-                document.getElementById('pay-success-msg').innerHTML = `Товар отправлен в виде ключа для друга!<br><br>Ваш ключ: <b style="color:#fff; font-size:1.1rem;">${key}</b><br><small style="color:#ff3344;">Действует ровно 1 час!</small>`;
+                const msgEl = document.getElementById('pay-success-msg');
+                if (msgEl) {
+                    msgEl.innerHTML = `Товар отправлен в виде ключа для друга!<br><br>Ваш ключ: <b style="color:#fff; font-size:1.1rem;">${key}</b><br><small style="color:#ff3344;">Действует ровно 1 час!</small>`;
+                }
             } else {
                 currentUser.subActive = true;
                 localStorage.setItem('run_user', JSON.stringify(currentUser));
-                document.getElementById('pay-success-msg').innerText = `Подписка "${currentSelectedItem.name}" успешно активирована на ваш аккаунт!`;
+                const msgEl = document.getElementById('pay-success-msg');
+                if (msgEl) {
+                    msgEl.innerText = `Подписка "${currentSelectedItem ? currentSelectedItem.name : ''}" успешно активирована на ваш аккаунт!`;
+                }
             }
         }, 3000);
     }
