@@ -8048,5 +8048,294 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Все исправления применены');
 })();
 </script>
+<script>
+// ===== ИСПРАВЛЕНИЕ: ТОВАР ТОЛЬКО ПОСЛЕ ОПЛАТЫ =====
+(function() {
+    console.log('🔄 Установка строгого контроля оплаты...');
+
+    // === 1. ПОЛНОСТЬЮ ПЕРЕОПРЕДЕЛЯЕМ processPaymentModal ===
+    window.processPaymentModal = function() {
+        console.log('✅ processPaymentModal (строгая версия)');
+
+        // Получаем сумму
+        const amountInput = document.getElementById('topupAmount');
+        const amount = parseInt(amountInput?.value) || 0;
+        if (amount <= 0) {
+            showToast('Введите корректную сумму', 'error');
+            return;
+        }
+
+        // Получаем способ оплаты
+        const method = document.querySelector('input[name="paymentMethod"]:checked');
+        if (!method) {
+            showToast('Выберите способ оплаты', 'error');
+            return;
+        }
+        const selected = method.value;
+
+        // Получаем тип покупки (для себя или для друга)
+        const purchaseType = document.querySelector('input[name="purchaseType"]:checked');
+        const isForFriend = purchaseType && purchaseType.value === 'friend';
+
+        // Проверяем авторизацию
+        if (!currentUser) {
+            showToast('Войдите в аккаунт', 'error');
+            return;
+        }
+        const user = registeredUsers[currentUser.toLowerCase()];
+        if (!user) {
+            showToast('Пользователь не найден', 'error');
+            return;
+        }
+
+        // Получаем информацию о товаре
+        const tariffInfo = document.getElementById('paymentTariffInfo').innerText;
+        const isSubscription = tariffInfo.includes('месяц') || tariffInfo.includes('Навсегда');
+        let productType = 'balance';
+        let subName = '';
+        if (isSubscription) {
+            productType = 'subscription';
+            if (tariffInfo.includes('1 месяц')) subName = '1 месяц';
+            else if (tariffInfo.includes('3 месяца')) subName = '3 месяца';
+            else if (tariffInfo.includes('Навсегда')) subName = 'Навсегда';
+        }
+
+        // === ЭТАП 1: ПРОВЕРКА И СПИСАНИЕ (ТОЛЬКО ДЛЯ balance) ===
+        if (selected === 'balance') {
+            // Проверяем баланс
+            if ((user.balance || 0) < amount) {
+                showToast('Недостаточно средств на балансе!', 'error');
+                return;
+            }
+            // СПИСЫВАЕМ ДЕНЬГИ СРАЗУ
+            user.balance -= amount;
+            saveAll();
+            if (typeof updateBalanceUI === 'function') updateBalanceUI();
+            console.log(`💰 Списано ${amount} ₽ с баланса. Остаток: ${user.balance}`);
+        }
+
+        // === ЭТАП 2: ПОКАЗЫВАЕМ АНИМАЦИЮ ЗАГРУЗКИ ===
+        const loadingDiv = document.getElementById('loadingAnimation');
+        if (loadingDiv) loadingDiv.style.display = 'block';
+        const payBtn = document.getElementById('payBtn');
+        if (payBtn) payBtn.disabled = true;
+
+        // === ЭТАП 3: ИМИТАЦИЯ ОБРАБОТКИ ПЛАТЕЖА (для funpay/telegram) ===
+        setTimeout(function() {
+            // Скрываем анимацию
+            if (loadingDiv) loadingDiv.style.display = 'none';
+            if (payBtn) payBtn.disabled = false;
+
+            // Обработка FunPay и Telegram (пополнение баланса)
+            if (selected === 'funpay' || selected === 'telegram') {
+                // Пополняем баланс
+                user.balance = (user.balance || 0) + amount;
+                saveAll();
+                if (typeof updateBalanceUI === 'function') updateBalanceUI();
+                console.log(`💰 Баланс пополнен на ${amount} ₽ через ${selected}. Новый баланс: ${user.balance}`);
+
+                // Открываем ссылку
+                if (selected === 'funpay') {
+                    let link = '';
+                    if (tariffInfo.includes('1 месяц')) link = 'https://funpay.com/lots/offerEdit?node=1544&offer=76212095';
+                    else if (tariffInfo.includes('3 месяца')) link = 'https://funpay.com/lots/offerEdit?node=1544&offer=76212321';
+                    else if (tariffInfo.includes('Навсегда')) link = 'https://funpay.com/lots/offerEdit?node=1544&offer=76212399';
+                    else link = 'https://funpay.com/lots/offerEdit?node=1596&offer=76044751';
+                    window.open(link, '_blank');
+                } else {
+                    window.open('https://t.me/runclient_support', '_blank');
+                }
+            }
+
+            // === ЭТАП 4: ВЫДАЧА ТОВАРА (ТОЛЬКО ПОСЛЕ УСПЕШНОЙ ОПЛАТЫ) ===
+            // Для balance – деньги уже списаны, но товар ещё не выдан
+            // Для funpay/telegram – баланс пополнен, товар можно выдавать
+
+            if (isForFriend) {
+                // Для друга – генерируем ключ
+                const key = generatePurchaseKey();
+                purchaseKeys[key] = {
+                    amount: amount,
+                    type: productType,
+                    subName: subName,
+                    created: Date.now(),
+                    expires: Date.now() + 3600000,
+                    used: false
+                };
+                saveAll();
+                const thankMsg = `🎁 Ключ для друга: ${key}\nДействителен 1 час. Активируйте в разделе "Активация ключей".`;
+                showThankYou(thankMsg);
+            } else {
+                // Для себя – выдаём товар сразу
+                if (productType === 'subscription' && subName) {
+                    user.sub = subName;
+                    saveAll();
+                    if (typeof updateCabinetUI === 'function') updateCabinetUI();
+                    showThankYou(`✅ Подписка "${subName}" активирована!`);
+                } else {
+                    // Пополнение баланса (уже выполнено)
+                    showThankYou(`✅ Баланс пополнен на ${amount} ₽`);
+                }
+            }
+
+            // Обновляем интерфейс
+            if (typeof updateBalanceUI === 'function') updateBalanceUI();
+            if (typeof updateCabinetUI === 'function') updateCabinetUI();
+
+        }, 2000); // 2 секунды задержки (имитация обработки платежа)
+    };
+
+    // === 2. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ===
+    function generatePurchaseKey() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let key = '';
+        for (let i = 0; i < 12; i++) {
+            key += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return 'KEY-' + key;
+    }
+
+    // === 3. АКТИВАЦИЯ КЛЮЧА ===
+    const oldActivate = window.activateSubKey;
+    window.activateSubKey = function() {
+        const keyInput = document.getElementById('subKeyInput');
+        if (!keyInput) return;
+        const key = keyInput.value.trim().toUpperCase();
+        if (!key) { showToast('Введите ключ', 'error'); return; }
+
+        if (purchaseKeys && purchaseKeys[key]) {
+            const data = purchaseKeys[key];
+            if (data.used) { showToast('Ключ уже использован', 'error'); return; }
+            if (Date.now() > data.expires) { showToast('Ключ истёк', 'error'); return; }
+
+            if (!currentUser) { showToast('Войдите в аккаунт', 'error'); return; }
+            const user = registeredUsers[currentUser.toLowerCase()];
+            if (!user) { showToast('Пользователь не найден', 'error'); return; }
+
+            if (data.type === 'subscription' && data.subName) {
+                user.sub = data.subName;
+                showToast(`✅ Подписка "${data.subName}" активирована!`, 'success');
+            } else {
+                user.balance = (user.balance || 0) + (data.amount || 0);
+                showToast(`✅ Получено ${data.amount || 0} ₽ на баланс`, 'success');
+            }
+
+            data.used = true;
+            saveAll();
+            if (typeof updateBalanceUI === 'function') updateBalanceUI();
+            if (typeof updateCabinetUI === 'function') updateCabinetUI();
+            keyInput.value = '';
+            return;
+        }
+
+        if (typeof oldActivate === 'function') {
+            oldActivate();
+        } else {
+            showToast('Неверный ключ', 'error');
+        }
+    };
+
+    // === 4. ФУНКЦИЯ БЛАГОДАРНОСТИ (с кнопкой копирования) ===
+    window.showThankYou = function(message) {
+        const modal = document.getElementById('paymentModal');
+        if (!modal) return;
+        const content = modal.querySelector('.modal-content');
+        if (!content) return;
+
+        const keyMatch = message.match(/KEY-[A-Z0-9]+/);
+        const key = keyMatch ? keyMatch[0] : '';
+
+        let cleanMessage = message;
+        if (key) {
+            cleanMessage = cleanMessage.replace(/KEY-[A-Z0-9]+/, '').replace(/Действителен 1 час\. Активируйте в разделе "Активация ключей"\./, '').trim();
+        }
+
+        let keyHtml = '';
+        if (key) {
+            keyHtml = `
+                <div style="background:rgba(0,0,0,0.3);border:1px solid #ffbc00;border-radius:12px;padding:16px;margin:16px 0;">
+                    <div style="color:#ffbc00;font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.5px;">🎁 Ваш ключ:</div>
+                    <div style="font-size:1.6rem;font-weight:900;color:#fff;font-family:monospace;word-break:break-all;margin:8px 0;">${key}</div>
+                    <button onclick="copyToClipboard('${key}')" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:8px 20px;color:#fff;font-weight:600;cursor:pointer;transition:.3s;font-size:.9rem;">
+                        📋 Скопировать ключ
+                    </button>
+                    <div style="color:#949aab;font-size:.75rem;margin-top:8px;">Действителен 1 час. Активируйте в разделе "Активация ключей".</div>
+                </div>
+            `;
+        }
+
+        content.innerHTML = `
+            <div style="text-align:center;padding:20px 0;">
+                <div style="font-size:4rem;margin-bottom:16px;">🎉</div>
+                <h2 style="color:#00e676;font-weight:800;font-size:1.8rem;">Спасибо за оплату!</h2>
+                <p style="color:#949aab;margin-top:8px;font-size:1rem;white-space:pre-line;">${cleanMessage || 'Ваш заказ успешно обработан.'}</p>
+                ${keyHtml}
+                <p style="color:#666;font-size:.8rem;margin-top:20px;">Закрывается через 5 секунд...</p>
+            </div>
+        `;
+
+        if (key) {
+            showToast(`🎁 Ключ: ${key}`, 'success');
+        }
+
+        setTimeout(() => {
+            modal.style.display = 'none';
+            if (typeof window.rebuildModal === 'function') window.rebuildModal();
+        }, 5000);
+    };
+
+    // === 5. ФУНКЦИЯ КОПИРОВАНИЯ ===
+    function copyToClipboard(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('✅ Ключ скопирован!', 'success');
+            }).catch(() => {
+                fallbackCopy(text);
+            });
+        } else {
+            fallbackCopy(text);
+        }
+    }
+
+    function fallbackCopy(text) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showToast('✅ Ключ скопирован!', 'success');
+        } catch (e) {
+            showToast('❌ Не удалось скопировать', 'error');
+        }
+        document.body.removeChild(textarea);
+    }
+
+    window.copyToClipboard = copyToClipboard;
+
+    // === 6. saveAll ===
+    if (typeof window.saveAll === 'undefined') {
+        window.saveAll = function() {
+            localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+            localStorage.setItem('runclient_promocodes', JSON.stringify(promoCodes));
+            localStorage.setItem('runclient_market_lots', JSON.stringify(marketLots));
+            localStorage.setItem('runclient_market_reviews', JSON.stringify(marketReviews));
+            localStorage.setItem('runclient_keys', JSON.stringify(activeKeysDB));
+            localStorage.setItem('runclient_purchase_keys', JSON.stringify(purchaseKeys));
+            if (typeof saveDB === 'function') saveDB();
+            console.log('💾 Все данные сохранены');
+        };
+    }
+
+    // === 7. ИНИЦИАЛИЗАЦИЯ purchaseKeys ===
+    if (typeof window.purchaseKeys === 'undefined') {
+        window.purchaseKeys = JSON.parse(localStorage.getItem('runclient_purchase_keys')) || {};
+    }
+
+    console.log('✅ Строгий контроль оплаты установлен');
+})();
+</script>
 </body>
 </html>
