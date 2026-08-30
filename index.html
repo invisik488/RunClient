@@ -7082,5 +7082,175 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ ВСЕ СИСТЕМЫ АКТИВИРОВАНЫ');
 })();
 </script>
+<script>
+// ===== ИСПРАВЛЕНИЕ СИСТЕМЫ КЛЮЧЕЙ (ПОДПИСКА ВМЕСТО ДЕНЕГ) =====
+(function() {
+    console.log('🔄 Исправление ключей для друга...');
+
+    // === 1. ПЕРЕОПРЕДЕЛЯЕМ processPaymentModal ===
+    const oldProcess = window.processPaymentModal;
+    window.processPaymentModal = function() {
+        console.log('✅ processPaymentModal (исправленная)');
+        const amountInput = document.getElementById('topupAmount');
+        const amount = parseInt(amountInput?.value) || 0;
+        if (amount <= 0) { showToast('Введите сумму', 'error'); return; }
+
+        const method = document.querySelector('input[name="paymentMethod"]:checked');
+        if (!method) { showToast('Выберите способ оплаты', 'error'); return; }
+        const selected = method.value;
+
+        const purchaseType = document.querySelector('input[name="purchaseType"]:checked');
+        const isForFriend = purchaseType && purchaseType.value === 'friend';
+
+        // Показываем анимацию загрузки
+        const loadingDiv = document.getElementById('loadingAnimation');
+        if (loadingDiv) loadingDiv.style.display = 'block';
+        const payBtn = document.getElementById('payBtn');
+        if (payBtn) payBtn.disabled = true;
+
+        setTimeout(function() {
+            if (loadingDiv) loadingDiv.style.display = 'none';
+            if (payBtn) payBtn.disabled = false;
+
+            let success = false;
+            let message = '';
+            let productType = 'balance'; // balance или subscription
+            let subName = '';
+
+            // Определяем тип товара (подписка или баланс)
+            const tariffInfo = document.getElementById('paymentTariffInfo').innerText;
+            const isSubscription = tariffInfo.includes('месяц') || tariffInfo.includes('Навсегда');
+            if (isSubscription) {
+                productType = 'subscription';
+                if (tariffInfo.includes('1 месяц')) subName = '1 месяц';
+                else if (tariffInfo.includes('3 месяца')) subName = '3 месяца';
+                else if (tariffInfo.includes('Навсегда')) subName = 'Навсегда';
+            }
+
+            if (selected === 'balance') {
+                if (!currentUser) { showToast('Войдите в аккаунт', 'error'); return; }
+                const user = registeredUsers[currentUser.toLowerCase()];
+                if (!user) { showToast('Пользователь не найден', 'error'); return; }
+                if ((user.balance || 0) < amount) {
+                    showToast('Недостаточно баланса', 'error');
+                    return;
+                }
+                user.balance -= amount;
+                success = true;
+                message = `Списано ${amount} ₽ с баланса`;
+            } else if (selected === 'funpay' || selected === 'telegram') {
+                if (!currentUser) { showToast('Войдите в аккаунт', 'error'); return; }
+                const user = registeredUsers[currentUser.toLowerCase()];
+                if (!user) { showToast('Пользователь не найден', 'error'); return; }
+                user.balance = (user.balance || 0) + amount;
+                success = true;
+                message = `Баланс пополнен на ${amount} ₽ через ${selected === 'funpay' ? 'FunPay' : 'Telegram'}`;
+                if (selected === 'funpay') {
+                    window.open('https://funpay.com/lots/offerEdit?node=1596&offer=76044751', '_blank');
+                } else {
+                    window.open('https://t.me/runclient_support', '_blank');
+                }
+            } else {
+                showToast('Неизвестный способ', 'error');
+                return;
+            }
+
+            if (success) {
+                if (isForFriend) {
+                    // Генерируем ключ с указанием типа товара
+                    const key = generatePurchaseKey();
+                    // Сохраняем в базу
+                    purchaseKeys[key] = {
+                        amount: amount,
+                        type: productType,
+                        subName: subName,
+                        created: Date.now(),
+                        expires: Date.now() + 3600000, // 1 час
+                        used: false
+                    };
+                    saveAll();
+                    showThankYou(`🎁 Ключ для друга: ${key}\nДействителен 1 час. Активируйте в разделе "Активация ключей".`);
+                } else {
+                    // Для себя – применяем сразу
+                    if (productType === 'subscription' && subName) {
+                        const user = registeredUsers[currentUser.toLowerCase()];
+                        if (user) {
+                            user.sub = subName;
+                            saveAll();
+                            if (typeof updateCabinetUI === 'function') updateCabinetUI();
+                            showThankYou(`✅ Подписка "${subName}" активирована!`);
+                        } else {
+                            showThankYou(`✅ ${message}`);
+                        }
+                    } else {
+                        // Пополнение баланса (уже начислено)
+                        showThankYou(`✅ ${message}`);
+                    }
+                }
+                saveAll();
+                if (typeof updateBalanceUI === 'function') updateBalanceUI();
+                if (typeof updateCabinetUI === 'function') updateCabinetUI();
+            }
+        }, 2000);
+    };
+
+    // === 2. ПЕРЕОПРЕДЕЛЯЕМ activateSubKey (для активации ключей друга) ===
+    const oldActivate = window.activateSubKey;
+    window.activateSubKey = function() {
+        const keyInput = document.getElementById('subKeyInput');
+        if (!keyInput) return;
+        const key = keyInput.value.trim().toUpperCase();
+        if (!key) { showToast('Введите ключ', 'error'); return; }
+
+        // Проверяем ключи покупок (для друга)
+        if (purchaseKeys && purchaseKeys[key]) {
+            const data = purchaseKeys[key];
+            if (data.used) { showToast('Ключ уже использован', 'error'); return; }
+            if (Date.now() > data.expires) { showToast('Ключ истёк', 'error'); return; }
+
+            if (!currentUser) { showToast('Войдите в аккаунт', 'error'); return; }
+            const user = registeredUsers[currentUser.toLowerCase()];
+            if (!user) { showToast('Пользователь не найден', 'error'); return; }
+
+            // Активируем в зависимости от типа
+            if (data.type === 'subscription' && data.subName) {
+                // Выдаём подписку
+                user.sub = data.subName;
+                showToast(`✅ Подписка "${data.subName}" активирована!`, 'success');
+            } else {
+                // Начисляем деньги на баланс
+                user.balance = (user.balance || 0) + (data.amount || 0);
+                showToast(`✅ Получено ${data.amount || 0} ₽ на баланс`, 'success');
+            }
+
+            data.used = true;
+            saveAll();
+            if (typeof updateBalanceUI === 'function') updateBalanceUI();
+            if (typeof updateCabinetUI === 'function') updateCabinetUI();
+            keyInput.value = '';
+            return;
+        }
+
+        // Если не ключ покупки – пробуем стандартную активацию (подписка и т.д.)
+        if (typeof oldActivate === 'function') {
+            oldActivate();
+        } else {
+            showToast('Неверный ключ', 'error');
+        }
+    };
+
+    // === 3. ГЕНЕРАЦИЯ КЛЮЧА (без изменений) ===
+    function generatePurchaseKey() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let key = '';
+        for (let i = 0; i < 12; i++) {
+            key += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return 'KEY-' + key;
+    }
+
+    console.log('✅ Исправление ключей для друга применено');
+})();
+</script>
 </body>
 </html>
