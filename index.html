@@ -936,5 +936,815 @@
         });
     })();
     </script>
+<!-- ===== ДОБАВЛЯЕМ ВСЁ НУЖНОЕ (баланс, лотерея, кабинет, вход, оплата, админка) ===== -->
+<style>
+    /* Дополнительные стили (не конфликтуют с основными) */
+    .balance-display {
+        background: rgba(255, 188, 0, 0.12);
+        border: 1px solid rgba(255, 188, 0, 0.25);
+        border-radius: 20px;
+        padding: 4px 14px;
+        color: #ffbc00;
+        font-weight: 700;
+        font-size: .9rem;
+        margin-right: 10px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: default;
+        white-space: nowrap;
+    }
+    .balance-display i { font-size: 1rem; }
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.7);
+        z-index: 9999;
+        backdrop-filter: blur(8px);
+        justify-content: center;
+        align-items: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+        background: rgba(14,16,24,0.95);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 28px;
+        padding: 30px;
+        max-width: 480px;
+        width: 90%;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.9);
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    .modal-box h2 { color: #fff; margin-bottom: 20px; text-align: center; }
+    .modal-box .form-group { margin-bottom: 18px; }
+    .modal-box label {
+        display: block;
+        font-size: .7rem;
+        color: #949aab;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        font-weight: 700;
+    }
+    .modal-box input {
+        width: 100%;
+        background: rgba(0,0,0,0.4);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 14px;
+        padding: 12px 16px;
+        color: #fff;
+        font-size: .9rem;
+        outline: none;
+        transition: .3s;
+    }
+    .modal-box input:focus {
+        border-color: #ff3344;
+        box-shadow: 0 0 15px rgba(255,51,68,0.35);
+    }
+    .modal-box .action-btn {
+        background: #ff3344;
+        color: #fff;
+        border: none;
+        padding: 12px 18px;
+        border-radius: 14px;
+        font-weight: 800;
+        font-size: .85rem;
+        cursor: pointer;
+        transition: .3s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        width: 100%;
+    }
+    .modal-box .action-btn.green { background: #00e676; color: #000; }
+    .modal-box .action-btn:hover { transform: translateY(-2px); }
+    .modal-box .btn-secondary {
+        background: rgba(255,255,255,0.06);
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.08);
+        padding: 10px 20px;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: .8rem;
+        cursor: pointer;
+        transition: .3s;
+        margin-top: 12px;
+    }
+    .modal-box .btn-secondary:hover { background: rgba(255,255,255,0.12); }
+    .modal-tabs {
+        display: flex;
+        gap: 8px;
+        background: rgba(255,255,255,0.04);
+        border-radius: 16px;
+        padding: 4px;
+        margin-bottom: 24px;
+    }
+    .modal-tabs button {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 12px;
+        background: transparent;
+        color: #949aab;
+        font-weight: 700;
+        font-size: .85rem;
+        cursor: pointer;
+        transition: .3s;
+    }
+    .modal-tabs button.active {
+        background: #ff3344;
+        color: #fff;
+    }
+    .radio-group {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin: 10px 0;
+    }
+    .radio-group label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #fff;
+        cursor: pointer;
+        background: rgba(255,255,255,0.05);
+        padding: 6px 14px;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.1);
+        font-weight: 600;
+    }
+    .radio-group label input { width: auto; margin-right: 4px; }
+    .code-display {
+        background: rgba(0,0,0,0.3);
+        border: 1px solid #ffbc00;
+        border-radius: 12px;
+        padding: 16px;
+        margin: 12px 0;
+    }
+    .code-display .label { color: #ffbc00; font-weight: 700; font-size: .8rem; text-transform: uppercase; }
+    .code-display .code { font-size: 1.4rem; font-weight: 900; color: #fff; font-family: monospace; }
+    .code-display .expire { color: #949aab; font-size: .8rem; }
+    .lottery-section { margin: 60px 0; }
+    .lottery-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+    .lottery-card {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 20px;
+        padding: 28px;
+        backdrop-filter: blur(12px);
+    }
+    .lottery-card h3 {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .lottery-card h3 .badge {
+        background: rgba(255,51,68,0.15);
+        color: #ff3344;
+        font-size: .7rem;
+        font-weight: 700;
+        padding: 4px 12px;
+        border-radius: 20px;
+        border: 1px solid rgba(255,51,68,0.2);
+    }
+    .lottery-track {
+        height: 60px;
+        overflow: hidden;
+        background: rgba(255,255,255,0.03);
+        border-radius: 12px;
+        margin-bottom: 12px;
+        border: 1px solid rgba(255,255,255,0.05);
+        position: relative;
+    }
+    .lottery-track-inner {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 10px;
+        height: 100%;
+        white-space: nowrap;
+    }
+    .lottery-segment {
+        background: rgba(255,255,255,0.08);
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.1);
+        flex-shrink: 0;
+    }
+    .lottery-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: .85rem;
+        color: #949aab;
+        margin-top: 10px;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .lottery-info .attempts { color: #fff; font-weight: 700; }
+    .lottery-info .buy-btn {
+        background: #ff3344;
+        color: #fff;
+        border: none;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: .7rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: .3s;
+    }
+    .lottery-info .buy-btn:hover { transform: scale(1.05); }
+    .lottery-info .buy-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .hidden { display: none !important; }
+    .dashboard {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 24px;
+        margin-top: 40px;
+    }
+    .dashboard-sidebar {
+        background: rgba(255,255,255,0.04);
+        border-radius: 20px;
+        padding: 20px;
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+    .dashboard-sidebar .profile { text-align: center; margin-bottom: 20px; }
+    .dashboard-sidebar .profile .avatar {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ff3344, #cc0022);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: 900;
+        color: #fff;
+        margin: 0 auto 10px;
+        box-shadow: 0 0 30px rgba(255,51,68,0.3);
+    }
+    .dashboard-sidebar .profile .name { font-size: 1.1rem; font-weight: 800; color: #fff; }
+    .dashboard-sidebar .profile .role { font-size: .8rem; color: #ff3344; font-weight: 700; }
+    .dashboard-sidebar .profile .balance { margin-top: 8px; color: #ffbc00; font-weight: 700; }
+    .dashboard-sidebar .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: 12px;
+        color: #949aab;
+        font-weight: 700;
+        font-size: .85rem;
+        cursor: pointer;
+        transition: .3s;
+        margin-bottom: 4px;
+    }
+    .dashboard-sidebar .nav-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .dashboard-sidebar .nav-item.active { background: rgba(255,51,68,0.12); color: #ff3344; }
+    .dashboard-content {
+        background: rgba(255,255,255,0.04);
+        border-radius: 20px;
+        padding: 24px;
+        border: 1px solid rgba(255,255,255,0.06);
+        min-height: 400px;
+    }
+    .dashboard-content .tab-pane { display: none; }
+    .dashboard-content .tab-pane.active { display: block; }
+    @media(max-width: 850px) {
+        .lottery-grid { grid-template-columns: 1fr; }
+        .dashboard { grid-template-columns: 1fr; }
+    }
+    @media(max-width: 560px) {
+        .balance-display { font-size: .75rem; padding: 2px 10px; }
+        .modal-box { padding: 20px; }
+    }
+</style>
+
+<!-- БЛОК ЛОТЕРЕИ (скрыт по умолчанию) -->
+<section id="lottery" class="lottery-section" style="max-width:1100px; margin:40px auto; padding:0 20px; display:none;">
+    <h2 style="text-align:center; font-size:2.5rem; font-weight:900; color:#fff; margin-bottom:40px;">
+        🎰 Лотерея <span style="color:#ff3344;">Колесо</span>
+    </h2>
+    <div class="lottery-grid">
+        <div class="lottery-card">
+            <h3>🎡 Рулетка <span class="badge" id="spinBadge">бесплатно</span></h3>
+            <div class="lottery-track">
+                <div class="lottery-track-inner" id="spinTrackInner"></div>
+            </div>
+            <button class="btn-primary" id="spinBtn" onclick="spinRoulette()" style="width:100%;">Крутить</button>
+            <div class="lottery-info">
+                <span>7д 30% · 30д 12% · 90д 5%</span>
+                <span class="attempts">Попыток: <span id="spinAttempts">1</span></span>
+                <button class="buy-btn" id="buySpinBtn" onclick="buySpinAttempt()">Купить (1 ₽)</button>
+            </div>
+        </div>
+        <div class="lottery-card">
+            <h3>📦 Кейс <span class="badge" id="caseBadge">бесплатно</span></h3>
+            <div class="lottery-track">
+                <div class="lottery-track-inner" id="caseTrackInner"></div>
+            </div>
+            <button class="btn-primary" id="caseBtn" onclick="openCase()" style="width:100%;">Открыть</button>
+            <div class="lottery-info">
+                <span>7д 30% · 30д 12% · 90д 5%</span>
+                <span class="attempts">Попыток: <span id="caseAttempts">1</span></span>
+                <button class="buy-btn" id="buyCaseBtn" onclick="buyCaseAttempt()">Купить (1 ₽)</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- БЛОК КАБИНЕТА (скрыт) -->
+<section id="cabinet" class="hidden" style="max-width:1100px; margin:40px auto; padding:0 20px;">
+    <div class="dashboard">
+        <div class="dashboard-sidebar">
+            <div class="profile">
+                <div class="avatar" id="cabAvatar">R</div>
+                <div class="name" id="cabUsername">Пользователь</div>
+                <div class="role" id="cabRole">user</div>
+                <div class="balance" id="cabBalance">0 ₽</div>
+            </div>
+            <div class="nav-item active" data-tab="dashboard-home">🏠 Главная</div>
+            <div class="nav-item" data-tab="dashboard-orders">📦 Мои заказы</div>
+            <div class="nav-item" data-tab="dashboard-tickets">💬 Тикеты</div>
+            <div class="nav-item" data-tab="dashboard-admin" id="adminTabNav" style="display:none;">⚙️ Админка</div>
+            <div class="nav-item" onclick="logout()">🚪 Выйти</div>
+        </div>
+        <div class="dashboard-content">
+            <div class="tab-pane active" id="dashboard-home">
+                <h3 style="color:#fff;">Главная</h3>
+                <p style="color:#949aab;">Добро пожаловать, <span id="dashUsername">Пользователь</span>!</p>
+                <p style="color:#949aab;">Баланс: <strong id="dashBalanceDisplay">0 ₽</strong></p>
+                <p style="color:#949aab;">Подписка: <span id="dashSubDisplay">Нет</span></p>
+            </div>
+            <div class="tab-pane" id="dashboard-orders">
+                <h3 style="color:#fff;">Мои заказы</h3>
+                <div id="ordersList"><p style="color:#949aab;">Нет заказов.</p></div>
+            </div>
+            <div class="tab-pane" id="dashboard-tickets">
+                <h3 style="color:#fff;">Тикеты</h3>
+                <div id="ticketsList"><p style="color:#949aab;">Нет тикетов.</p></div>
+            </div>
+            <div class="tab-pane" id="dashboard-admin">
+                <h3 style="color:#fff;">Админ-панель</h3>
+                <div id="adminContent">
+                    <p style="color:#949aab;">Вы админ.</p>
+                    <button class="btn-primary" onclick="generateCode()" style="margin-top:10px;">Сгенерировать код (5 мин)</button>
+                    <div id="generatedCodeDisplay" style="margin-top:12px;"></div>
+                    <hr style="border-color:rgba(255,255,255,0.1); margin:20px 0;">
+                    <button class="btn-secondary" onclick="resetAllBalances()">Обнулить балансы</button>
+                    <button class="btn-secondary" onclick="removeAllSubscriptions()" style="margin-left:10px;">Снять подписки</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- МОДАЛКА ВХОДА / РЕГИСТРАЦИИ -->
+<div class="modal-overlay" id="authModal">
+    <div class="modal-box">
+        <h2 id="authModalTitle">Вход в аккаунт</h2>
+        <div class="modal-tabs">
+            <button class="active" onclick="switchAuthTab('login', this)">Вход</button>
+            <button onclick="switchAuthTab('register', this)">Регистрация</button>
+        </div>
+        <div id="authFormLogin">
+            <div class="form-group"><label>Логин</label><input type="text" id="loginUsername" placeholder="Введите логин"></div>
+            <div class="form-group"><label>Пароль</label><input type="password" id="loginPassword" placeholder="Введите пароль"></div>
+            <button class="action-btn green" onclick="handleLogin()">Войти</button>
+        </div>
+        <div id="authFormRegister" style="display:none;">
+            <div class="form-group"><label>Никнейм</label><input type="text" id="regUsername" placeholder="Придумайте ник"></div>
+            <div class="form-group"><label>Пароль</label><input type="password" id="regPassword" placeholder="Придумайте пароль"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="regEmail" placeholder="example@mail.com"></div>
+            <button class="action-btn green" onclick="handleRegister()">Зарегистрироваться</button>
+        </div>
+        <button class="btn-secondary" onclick="closeAuthModal()" style="width:100%;">Закрыть</button>
+    </div>
+</div>
+
+<!-- МОДАЛКА ОПЛАТЫ -->
+<div class="modal-overlay" id="paymentModal">
+    <div class="modal-box">
+        <h2>Оплата</h2>
+        <div id="paymentInfo" style="text-align:center; color:#949aab; margin-bottom:20px;"></div>
+        <div class="form-group"><label>Сумма (₽)</label><input type="number" id="paymentAmount" readonly style="cursor:not-allowed; opacity:0.7;"></div>
+        <div class="form-group">
+            <label>Способ оплаты</label>
+            <div class="radio-group">
+                <label><input type="radio" name="payMethod" value="balance" checked> Баланс</label>
+                <label><input type="radio" name="payMethod" value="funpay"> FunPay</label>
+            </div>
+        </div>
+        <div class="form-group" id="paymentCodeGroup" style="display:none;">
+            <label>Введите код</label>
+            <input type="text" id="paymentCodeInput" placeholder="KEY-XXXX">
+        </div>
+        <button class="action-btn green" id="payBtn" onclick="processPayment()">Оплатить</button>
+        <button class="btn-secondary" onclick="closePaymentModal()" style="width:100%;">Отмена</button>
+    </div>
+</div>
+
+<script>
+// ===== ВСЯ ЛОГИКА (НЕ ТРОГАЕТ ОСТАЛЬНЫЕ СКРИПТЫ) =====
+(function() {
+    // === ДАННЫЕ ===
+    if (!localStorage.getItem('runclient_users')) {
+        const defaultUsers = {
+            "invisik": { password: "123", role: "owner", sub: "Навсегда", banned: false, regDate: "2026-09-02", uid: 1, freeSpinUsed: false, freeCaseUsed: false, balance: 1000 },
+            "user": { password: "123", role: "user", sub: "Нет", banned: false, regDate: "2026-09-02", uid: 2, freeSpinUsed: false, freeCaseUsed: false, balance: 100 }
+        };
+        localStorage.setItem('runclient_users', JSON.stringify(defaultUsers));
+    }
+    let users = JSON.parse(localStorage.getItem('runclient_users'));
+    let currentUser = localStorage.getItem('runclient_user') || null;
+    let spinAttempts = parseInt(localStorage.getItem('runclient_spinAttempts')) || 1;
+    let caseAttempts = parseInt(localStorage.getItem('runclient_caseAttempts')) || 1;
+    let codes = JSON.parse(localStorage.getItem('runclient_codes')) || {};
+    let orders = JSON.parse(localStorage.getItem('runclient_orders')) || [];
+    let tickets = JSON.parse(localStorage.getItem('runclient_tickets')) || [];
+
+    function saveAll() {
+        localStorage.setItem('runclient_users', JSON.stringify(users));
+        localStorage.setItem('runclient_spinAttempts', spinAttempts.toString());
+        localStorage.setItem('runclient_caseAttempts', caseAttempts.toString());
+        localStorage.setItem('runclient_codes', JSON.stringify(codes));
+        localStorage.setItem('runclient_orders', JSON.stringify(orders));
+        localStorage.setItem('runclient_tickets', JSON.stringify(tickets));
+    }
+
+    function findUser(nick) {
+        const lower = nick.toLowerCase();
+        for (let key in users) {
+            if (key.toLowerCase() === lower) return { username: key, user: users[key] };
+        }
+        return null;
+    }
+
+    function updateBalanceUI() {
+        const bal = currentUser ? (users[currentUser.toLowerCase()]?.balance || 0) : 0;
+        document.getElementById('balanceAmount').textContent = bal;
+        document.getElementById('cabBalance').textContent = bal + ' ₽';
+        document.getElementById('dashBalanceDisplay').textContent = bal + ' ₽';
+        const spinBtn = document.getElementById('buySpinBtn');
+        const caseBtn = document.getElementById('buyCaseBtn');
+        if (spinBtn) spinBtn.disabled = (bal < 1);
+        if (caseBtn) caseBtn.disabled = (bal < 1);
+    }
+
+    function updateCabinetUI() {
+        if (!currentUser) { document.getElementById('cabinet').classList.add('hidden'); return; }
+        const user = users[currentUser.toLowerCase()];
+        if (!user) return;
+        document.getElementById('cabUsername').textContent = currentUser;
+        document.getElementById('cabRole').textContent = user.role || 'user';
+        document.getElementById('cabAvatar').textContent = currentUser.charAt(0).toUpperCase();
+        document.getElementById('dashUsername').textContent = currentUser;
+        document.getElementById('dashSubDisplay').textContent = user.sub || 'Нет';
+        updateBalanceUI();
+        const isAdmin = user.role === 'admin' || user.role === 'owner';
+        document.getElementById('adminTabNav').style.display = isAdmin ? 'block' : 'none';
+        const userOrders = orders.filter(o => o.username === currentUser);
+        document.getElementById('ordersList').innerHTML = userOrders.length ? userOrders.map(o => `<div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:8px;"><strong>${o.product}</strong> - ${o.status}</div>`).join('') : '<p style="color:#949aab;">Нет заказов.</p>';
+        const userTickets = tickets.filter(t => t.username === currentUser);
+        document.getElementById('ticketsList').innerHTML = userTickets.length ? userTickets.map(t => `<div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:8px;"><strong>${t.subject}</strong> - ${t.status}</div>`).join('') : '<p style="color:#949aab;">Нет тикетов.</p>';
+    }
+
+    // === ДОБАВЛЯЕМ НАВИГАЦИЮ И БАЛАНС ===
+    function addNavAndBalance() {
+        const navCenter = document.querySelector('.nav-center');
+        if (!navCenter) return;
+        // Добавляем ссылку на лотерею, если её нет
+        if (!document.getElementById('navLotteryLink')) {
+            const lotteryLink = document.createElement('a');
+            lotteryLink.href = '#';
+            lotteryLink.className = 'nav-link';
+            lotteryLink.id = 'navLotteryLink';
+            lotteryLink.textContent = 'Лотерея';
+            lotteryLink.onclick = function(e) {
+                e.preventDefault();
+                navigateTo('lottery');
+            };
+            // Вставляем перед "Кабинет" или в конец
+            const cabinetLink = document.getElementById('navCabinetLink');
+            if (cabinetLink) {
+                navCenter.insertBefore(lotteryLink, cabinetLink);
+            } else {
+                navCenter.appendChild(lotteryLink);
+            }
+        }
+        // Добавляем ссылку на кабинет, если её нет
+        if (!document.getElementById('navCabinetLink')) {
+            const cabinetLink = document.createElement('a');
+            cabinetLink.href = '#';
+            cabinetLink.className = 'nav-link';
+            cabinetLink.id = 'navCabinetLink';
+            cabinetLink.textContent = 'Кабинет';
+            cabinetLink.onclick = function(e) {
+                e.preventDefault();
+                navigateTo('cabinet');
+            };
+            navCenter.appendChild(cabinetLink);
+        }
+
+        // Добавляем баланс в шапку
+        const navRight = document.querySelector('.navbar .nav-right');
+        if (navRight && !document.getElementById('headerBalance')) {
+            const balanceSpan = document.createElement('span');
+            balanceSpan.id = 'headerBalance';
+            balanceSpan.className = 'balance-display';
+            balanceSpan.innerHTML = '<i class="fas fa-coins"></i> <span id="balanceAmount">0</span> ₽';
+            const themeToggle = document.querySelector('.theme-toggle');
+            if (themeToggle) {
+                navRight.insertBefore(balanceSpan, themeToggle);
+            } else {
+                navRight.insertBefore(balanceSpan, navRight.firstChild);
+            }
+        }
+    }
+
+    // === НАВИГАЦИЯ ===
+    function navigateTo(section) {
+        const home = document.getElementById('home');
+        const overview = document.getElementById('overview');
+        const pricing = document.getElementById('pricing');
+        const faq = document.getElementById('faq');
+        const lottery = document.getElementById('lottery');
+        const cabinet = document.getElementById('cabinet');
+
+        // Скрываем все основные блоки
+        if (home) home.style.display = 'none';
+        if (overview) overview.style.display = 'none';
+        if (pricing) pricing.style.display = 'none';
+        if (faq) faq.style.display = 'none';
+        if (lottery) lottery.style.display = 'none';
+        if (cabinet) cabinet.classList.add('hidden');
+
+        // Показываем нужный
+        if (section === 'home') {
+            if (home) home.style.display = 'block';
+            if (overview) overview.style.display = 'block';
+            if (pricing) pricing.style.display = 'block';
+            if (faq) faq.style.display = 'block';
+        } else if (section === 'lottery') {
+            if (lottery) lottery.style.display = 'block';
+        } else if (section === 'cabinet') {
+            if (cabinet) cabinet.classList.remove('hidden');
+            updateCabinetUI();
+        }
+        // Обновляем активные ссылки
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        const linkMap = {
+            'home': 'navHomeLink',
+            'lottery': 'navLotteryLink',
+            'cabinet': 'navCabinetLink'
+        };
+        const activeId = linkMap[section];
+        if (activeId) {
+            const activeEl = document.getElementById(activeId);
+            if (activeEl) activeEl.classList.add('active');
+        }
+    }
+
+    // === АВТОРИЗАЦИЯ ===
+    function openAuthModal() { document.getElementById('authModal').classList.add('active'); }
+    function closeAuthModal() { document.getElementById('authModal').classList.remove('active'); }
+    function switchAuthTab(tab, btn) {
+        document.querySelectorAll('.modal-tabs button').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        document.getElementById('authFormLogin').style.display = (tab === 'login') ? 'block' : 'none';
+        document.getElementById('authFormRegister').style.display = (tab === 'register') ? 'block' : 'none';
+        document.getElementById('authModalTitle').textContent = (tab === 'login') ? 'Вход в аккаунт' : 'Регистрация';
+    }
+    function handleLogin() {
+        const username = document.getElementById('loginUsername').value.trim();
+        const pass = document.getElementById('loginPassword').value.trim();
+        if (!username || !pass) { alert('Заполните все поля'); return; }
+        const found = findUser(username);
+        if (!found) { alert('Пользователь не найден'); return; }
+        if (found.user.password !== pass) { alert('Неверный пароль'); return; }
+        if (found.user.banned) { alert('Аккаунт заблокирован'); return; }
+        currentUser = found.username;
+        localStorage.setItem('runclient_user', currentUser);
+        closeAuthModal();
+        document.getElementById('authBtn').textContent = currentUser;
+        document.getElementById('regBtn').style.display = 'none';
+        updateCabinetUI();
+        updateBalanceUI();
+        alert('Добро пожаловать, ' + currentUser + '!');
+        navigateTo('cabinet');
+    }
+    function handleRegister() {
+        const username = document.getElementById('regUsername').value.trim();
+        const pass = document.getElementById('regPassword').value.trim();
+        if (!username || !pass || username.length < 3 || pass.length < 3) {
+            alert('Ник и пароль минимум 3 символа');
+            return;
+        }
+        if (findUser(username)) { alert('Пользователь уже существует'); return; }
+        users[username.toLowerCase()] = {
+            password: pass,
+            role: 'user',
+            sub: 'Нет',
+            banned: false,
+            regDate: new Date().toISOString(),
+            uid: Object.keys(users).length + 1,
+            freeSpinUsed: false,
+            freeCaseUsed: false,
+            balance: 100,
+            email: document.getElementById('regEmail').value.trim() || ''
+        };
+        saveAll();
+        alert('Аккаунт создан! Теперь войдите.');
+        switchAuthTab('login', document.querySelector('.modal-tabs button'));
+        document.getElementById('loginUsername').value = username;
+    }
+
+    // === ОПЛАТА ===
+    let currentPayment = { product: '', amount: 0 };
+    function openPaymentModal(product, amount) {
+        if (!currentUser) { alert('Сначала войдите в аккаунт'); return; }
+        currentPayment.product = product;
+        currentPayment.amount = amount;
+        document.getElementById('paymentInfo').textContent = `Покупка: ${product} - ${amount} ₽`;
+        document.getElementById('paymentAmount').value = amount;
+        document.getElementById('paymentCodeInput').value = '';
+        document.getElementById('paymentCodeGroup').style.display = 'none';
+        document.querySelector('input[name="payMethod"][value="balance"]').checked = true;
+        document.getElementById('paymentModal').classList.add('active');
+    }
+    function closePaymentModal() { document.getElementById('paymentModal').classList.remove('active'); }
+    document.querySelectorAll('input[name="payMethod"]').forEach(el => {
+        el.addEventListener('change', function() {
+            document.getElementById('paymentCodeGroup').style.display = (this.value === 'funpay') ? 'block' : 'none';
+        });
+    });
+    function processPayment() {
+        const method = document.querySelector('input[name="payMethod"]:checked').value;
+        const amount = parseInt(document.getElementById('paymentAmount').value);
+        const user = users[currentUser.toLowerCase()];
+        if (!user) { alert('Ошибка пользователя'); return; }
+        if (method === 'balance') {
+            if ((user.balance || 0) < amount) { alert('Недостаточно баланса'); return; }
+            user.balance -= amount;
+            user.sub = currentPayment.product.includes('месяц') ? currentPayment.product : (currentPayment.product === 'Навсегда' ? 'Навсегда' : 'Нет');
+            orders.push({ username: currentUser, product: currentPayment.product, status: 'Завершён', date: new Date().toISOString() });
+            saveAll();
+            updateCabinetUI();
+            updateBalanceUI();
+            alert('Покупка успешна!');
+            closePaymentModal();
+            return;
+        }
+        if (method === 'funpay') {
+            const code = document.getElementById('paymentCodeInput').value.trim().toUpperCase();
+            if (!code) { alert('Введите код!'); return; }
+            if (codes[code]) {
+                const data = codes[code];
+                if (data.used) { alert('Код уже использован'); return; }
+                if (Date.now() > data.expires) { alert('Код истёк'); return; }
+                if (data.type === 'subscription') { user.sub = data.subName || '1 месяц'; }
+                else { user.balance = (user.balance || 0) + (data.amount || 0); }
+                data.used = true;
+                orders.push({ username: currentUser, product: currentPayment.product, status: 'Завершён по коду', date: new Date().toISOString() });
+                saveAll();
+                updateCabinetUI();
+                updateBalanceUI();
+                alert('Оплата по коду успешна!');
+                closePaymentModal();
+            } else { alert('Неверный код!'); }
+            return;
+        }
+    }
+
+    // === АДМИН ===
+    function generateCode() {
+        if (!currentUser) { alert('Войдите как админ'); return; }
+        const user = users[currentUser.toLowerCase()];
+        if (user.role !== 'admin' && user.role !== 'owner') { alert('Доступ запрещён'); return; }
+        const key = 'KEY-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+        codes[key] = { type: 'subscription', subName: '1 месяц', amount: 149, expires: Date.now() + 5*60*1000, used: false };
+        saveAll();
+        document.getElementById('generatedCodeDisplay').innerHTML = `
+            <div class="code-display">
+                <div class="label">Одноразовый код (5 мин):</div>
+                <div class="code">${key}</div>
+                <div class="expire">Истекает: ${new Date(codes[key].expires).toLocaleTimeString()}</div>
+            </div>
+        `;
+    }
+    function resetAllBalances() {
+        if (!currentUser) return;
+        const user = users[currentUser.toLowerCase()];
+        if (user.role !== 'owner') { alert('Только владелец'); return; }
+        if (confirm('Обнулить ВСЕ балансы?')) { for (let key in users) users[key].balance = 0; saveAll(); updateCabinetUI(); alert('Все балансы обнулены.'); }
+    }
+    function removeAllSubscriptions() {
+        if (!currentUser) return;
+        const user = users[currentUser.toLowerCase()];
+        if (user.role !== 'owner') { alert('Только владелец'); return; }
+        if (confirm('Снять ВСЕ подписки?')) { for (let key in users) users[key].sub = 'Нет'; saveAll(); updateCabinetUI(); alert('Все подписки сняты.'); }
+    }
+
+    // === ЛОТЕРЕЯ ===
+    function getWin() {
+        const rand = Math.random() * 100;
+        if (rand < 30) return '7д';
+        if (rand < 42) return '30д';
+        if (rand < 47) return '90д';
+        return '7д';
+    }
+    function initLottery() {
+        const segments = ['7д','30д','90д','7д','30д','90д','7д','30д','90д'];
+        ['spinTrackInner', 'caseTrackInner'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = segments.map(s => `<div class="lottery-segment">${s}</div>`).join('');
+        });
+    }
+    // Вызываем инициализацию после загрузки DOM
+    setTimeout(initLottery, 100);
+    function spinRoulette() {
+        if (!currentUser) { alert('Войдите в аккаунт'); return; }
+        const user = users[currentUser.toLowerCase()];
+        if (!user.freeSpinUsed) { user.freeSpinUsed = true; saveAll(); }
+        else { if (spinAttempts <= 0) { alert('Нет попыток!'); return; } spinAttempts--; localStorage.setItem('runclient_spinAttempts', spinAttempts); document.getElementById('spinAttempts').textContent = spinAttempts; }
+        const win = getWin(); user.sub = win; saveAll(); updateCabinetUI(); alert('🎉 Вы выиграли: ' + win);
+    }
+    function openCase() {
+        if (!currentUser) { alert('Войдите в аккаунт'); return; }
+        const user = users[currentUser.toLowerCase()];
+        if (!user.freeCaseUsed) { user.freeCaseUsed = true; saveAll(); }
+        else { if (caseAttempts <= 0) { alert('Нет попыток!'); return; } caseAttempts--; localStorage.setItem('runclient_caseAttempts', caseAttempts); document.getElementById('caseAttempts').textContent = caseAttempts; }
+        const win = getWin(); user.sub = win; saveAll(); updateCabinetUI(); alert('🎉 Вы выиграли: ' + win);
+    }
+    function buySpinAttempt() {
+        if (!currentUser) { alert('Войдите'); return; }
+        const user = users[currentUser.toLowerCase()];
+        if ((user.balance || 0) < 1) { alert('Недостаточно баланса'); return; }
+        user.balance -= 1; spinAttempts++; localStorage.setItem('runclient_spinAttempts', spinAttempts); document.getElementById('spinAttempts').textContent = spinAttempts; saveAll(); updateBalanceUI();
+    }
+    function buyCaseAttempt() {
+        if (!currentUser) { alert('Войдите'); return; }
+        const user = users[currentUser.toLowerCase()];
+        if ((user.balance || 0) < 1) { alert('Недостаточно баланса'); return; }
+        user.balance -= 1; caseAttempts++; localStorage.setItem('runclient_caseAttempts', caseAttempts); document.getElementById('caseAttempts').textContent = caseAttempts; saveAll(); updateBalanceUI();
+    }
+
+    // === ВЫХОД ===
+    function logout() {
+        currentUser = null;
+        localStorage.removeItem('runclient_user');
+        document.getElementById('authBtn').textContent = 'Вход';
+        document.getElementById('regBtn').style.display = 'inline-flex';
+        updateCabinetUI();
+        updateBalanceUI();
+        navigateTo('home');
+    }
+
+    // === ИНИЦИАЛИЗАЦИЯ ===
+    document.addEventListener('DOMContentLoaded', function() {
+        // Добавляем навигацию и баланс
+        addNavAndBalance();
+
+        // Привязываем кнопки входа
+        const authBtn = document.getElementById('authBtn');
+        if (authBtn) authBtn.onclick = function(e) { e.preventDefault(); openAuthModal(); };
+        const regBtn = document.getElementById('regBtn');
+        if (regBtn) regBtn.onclick = function(e) { e.preventDefault(); openAuthModal(); switchAuthTab('register', document.querySelector('.modal-tabs button:last-child')); };
+
+        // Закрытие модалок по клику на фон
+        document.getElementById('authModal').addEventListener('click', function(e) { if (e.target === this) closeAuthModal(); });
+        document.getElementById('paymentModal').addEventListener('click', function(e) { if (e.target === this) closePaymentModal(); });
+
+        // Инициализация, если пользователь уже залогинен
+        if (currentUser) {
+            document.getElementById('authBtn').textContent = currentUser;
+            document.getElementById('regBtn').style.display = 'none';
+            updateCabinetUI();
+        }
+        document.getElementById('spinAttempts').textContent = spinAttempts;
+        document.getElementById('caseAttempts').textContent = caseAttempts;
+        updateBalanceUI();
+
+        // По умолчанию показываем главную
+        navigateTo('home');
+
+        console.log('✅ Все фичи добавлены!');
+    });
+})();
+</script>
 </body>
 </html>
