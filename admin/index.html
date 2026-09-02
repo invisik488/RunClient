@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ToshibaDLC - Admin</title>
+<script>
+(function () {
+  var t = localStorage.getItem('theme') || 'dark';
+  document.documentElement.className = t + '-theme';
+})();
+</script>
+<link rel="stylesheet" href="../css/styles.css@v=6.css">
+<link rel="stylesheet" href="css/admin.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="../assets/local.js"></script>
+</head>
+<body>
+<script>
+(function () {
+  var t = localStorage.getItem('theme') || 'dark';
+  document.body.className = t + '-theme';
+})();
+</script>
+<div class="bg-overlay"></div>
+
+<header class="navbar">
+  <div class="nav-left">
+    <a href="../index.html" class="btn-primary logo-btn"><i data-lucide="box" class="icon-sm"></i><span data-config-text="clientName">ToshibaDLC</span></a>
+  </div>
+  <nav class="nav-center">
+    <div class="nav-indicator"></div>
+    <a href="../index.html" class="nav-link"><i data-lucide="home" class="icon-xs"></i> Home</a>
+    <a href="../buy/index.html" class="nav-link"><i data-lucide="shopping-bag" class="icon-xs"></i> Buy</a>
+    <a href="../profile/index.html" class="nav-link"><i data-lucide="user" class="icon-xs"></i> Profile</a>
+    <a href="../admin/index.html" class="nav-link active" style="color:var(--primary)"><i data-lucide="shield" class="icon-xs"></i> Admin</a>
+  </nav>
+  <div class="nav-right">
+    <button id="themeToggle" class="btn-secondary blur-panel" style="padding:9px 12px;border-radius:10px;cursor:pointer;"><i data-lucide="moon" class="icon-sm"></i></button>
+  </div>
+</header>
+
+<main class="admin-wrap">
+  <div class="admin-head">
+    <h1><i data-lucide="shield" style="color:var(--primary)"></i> Панель управления <span class="badge-admin">ADMIN</span></h1>
+    <button id="logoutBtn" class="mini-btn danger"><i data-lucide="log-out" class="icon-xxs"></i> Выйти</button>
+  </div>
+
+  <div class="admin-tabs">
+    <button class="admin-tab active" data-tab="dashboard"><i data-lucide="layout-dashboard" class="icon-xxs"></i> Дашборд</button>
+    <button class="admin-tab" data-tab="users"><i data-lucide="users" class="icon-xxs"></i> Пользователи</button>
+    <button class="admin-tab" data-tab="settings"><i data-lucide="settings" class="icon-xxs"></i> Настройки</button>
+  </div>
+
+  <section id="tab-dashboard" class="admin-panel active">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label"><i data-lucide="users" class="icon-xs"></i> Всего пользователей</div><div class="stat-value primary" id="statUsers">0</div></div>
+      <div class="stat-card"><div class="stat-label"><i data-lucide="user-check" class="icon-xs"></i> С активной подпиской</div><div class="stat-value" id="statActive">0</div></div>
+      <div class="stat-card"><div class="stat-label"><i data-lucide="user-x" class="icon-xs"></i> Заблокировано</div><div class="stat-value" id="statBanned">0</div></div>
+      <div class="stat-card"><div class="stat-label"><i data-lucide="star" class="icon-xs"></i> Администраторы</div><div class="stat-value" id="statAdmins">0</div></div>
+    </div>
+    <div class="admin-card">
+      <h3><i data-lucide="activity" class="icon-xs" style="color:var(--primary)"></i> Последние пользователи</h3>
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Имя</th><th>Email</th><th>Роль</th><th>Подписка</th><th>Регистрация</th></tr></thead>
+          <tbody id="recentBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-users" class="admin-panel">
+    <div class="admin-card">
+      <h3><i data-lucide="users" class="icon-xs" style="color:var(--primary)"></i> Управление пользователями</h3>
+      <div class="search-box"><input type="text" id="userSearch" placeholder="Поиск по имени или email..."></div>
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Имя</th><th>Email</th><th>Роль</th><th>Статус</th><th>Подписка</th><th>HWID</th><th>Действия</th></tr></thead>
+          <tbody id="usersBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-settings" class="admin-panel">
+    <div class="admin-card">
+      <h3><i data-lucide="settings" class="icon-xs" style="color:var(--primary)"></i> Настройки сайта</h3>
+      <div class="settings-form">
+        <div class="field"><label>Название клиента</label><input type="text" id="setClientName"></div>
+        <div class="field"><label>Короткое имя</label><input type="text" id="setShortName"></div>
+        <div class="field"><label>Версия</label><input type="text" id="setVersion"></div>
+        <div class="field"><label>Discord</label><input type="text" id="setDiscord"></div>
+        <div class="field"><label>Telegram</label><input type="text" id="setTelegram"></div>
+        <button class="btn-save" id="saveSettings">Сохранить настройки</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  var cur = window.getCurrentUser ? window.getCurrentUser() : null;
+  if (!cur || cur.role !== 'Admin') {
+    if (window.showToast) window.showToast('Ошибка доступа', 'Только для администраторов', 'error');
+    setTimeout(function () { window.location.href = '../login/'; }, 800);
+    return;
+  }
+
+  var api = window.tdlc.api;
+  var USERS = [];
+
+  function esc(s) { return String(s == null ? '' : s).replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  function switchTab(name) {
+    document.querySelectorAll('.admin-tab').forEach(function (b) { b.classList.toggle('active', b.dataset.tab === name); });
+    document.querySelectorAll('.admin-panel').forEach(function (p) { p.classList.toggle('active', p.id === 'tab-' + name); });
+  }
+  document.querySelectorAll('.admin-tab').forEach(function (b) {
+    b.addEventListener('click', function () { switchTab(b.dataset.tab); });
+  });
+
+  function handleAuth(res) {
+    if (res && (res.message === 'Unauthorized' || res.message === 'Forbidden')) {
+      window.showToast('Ошибка доступа', 'Сессия истекла', 'error');
+      setTimeout(function () { window.location.href = '../login/'; }, 800);
+      return false;
+    }
+    return true;
+  }
+
+  function loadStats() {
+    api('/api/admin/stats', {}).then(function (res) {
+      if (!handleAuth(res)) return;
+      if (!res.success) return;
+      document.getElementById('statUsers').textContent = res.stats.total;
+      document.getElementById('statActive').textContent = res.stats.active;
+      document.getElementById('statBanned').textContent = res.stats.banned;
+      document.getElementById('statAdmins').textContent = res.stats.admins;
+      document.getElementById('recentBody').innerHTML = res.recent.map(function (u) {
+        return '<tr><td>' + esc(u.username) + '</td><td>' + esc(u.email) + '</td>' +
+          '<td><span class="role-pill ' + esc(u.role) + '">' + esc(u.role) + '</span></td>' +
+          '<td>' + (u.hasActiveSub ? esc(u.subscriptionTill || 'Active') : '—') + '</td>' +
+          '<td>' + (u.created ? new Date(u.created * 1000).toLocaleDateString() : '—') + '</td></tr>';
+      }).join('');
+    });
+  }
+
+  function loadUsers() {
+    api('/api/admin/users', {}).then(function (res) {
+      if (!handleAuth(res)) return;
+      if (!res.success) return;
+      USERS = res.users;
+      renderUsers(document.getElementById('userSearch').value);
+    });
+  }
+
+  function renderUsers(filter) {
+    filter = (filter || '').toLowerCase();
+    var list = USERS.filter(function (u) {
+      return !filter || u.username.toLowerCase().indexOf(filter) >= 0 || (u.email || '').toLowerCase().indexOf(filter) >= 0;
+    });
+    document.getElementById('usersBody').innerHTML = list.map(function (u) {
+      var status = u.banned ? '<span class="status-dot banned">Бан</span>' : '<span class="status-dot">Активен</span>';
+      var isAdmin = u.role === 'Admin';
+      return '<tr>' +
+        '<td><b>' + esc(u.username) + '</b></td>' +
+        '<td>' + esc(u.email) + '</td>' +
+        '<td><span class="role-pill ' + esc(u.role) + '">' + esc(u.role) + '</span></td>' +
+        '<td>' + status + '</td>' +
+        '<td>' + (u.hasActiveSub ? esc(u.subscriptionTill || 'Active') : '—') + '</td>' +
+        '<td>' + (u.hwid ? esc(u.hwid) : '—') + '</td>' +
+        '<td><div class="row-actions">' +
+          '<button class="mini-btn" data-act="sub" data-u="' + esc(u.username) + '">+30 дней</button>' +
+          '<button class="mini-btn" data-act="hwid" data-u="' + esc(u.username) + '">Сброс HWID</button>' +
+          (isAdmin ? '' : '<button class="mini-btn primary" data-act="admin" data-u="' + esc(u.username) + '">В админы</button>') +
+          '<button class="mini-btn" data-act="' + (u.banned ? 'unban' : 'ban') + '" data-u="' + esc(u.username) + '">' + (u.banned ? 'Разбан' : 'Бан') + '</button>' +
+          (isAdmin ? '' : '<button class="mini-btn danger" data-act="del" data-u="' + esc(u.username) + '">Удалить</button>') +
+        '</div></td></tr>';
+    }).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--text-muted)">Ничего не найдено</td></tr>';
+  }
+
+  document.getElementById('usersBody').addEventListener('click', function (e) {
+    var btn = e.target.closest('button[data-act]');
+    if (!btn) return;
+    var act = btn.dataset.act;
+    var name = btn.dataset.u;
+    api('/api/admin/user/update', { username: name, action: act }).then(function (res) {
+      if (!handleAuth(res)) return;
+      if (res.success) {
+        window.showToast('Готово', 'Действие выполнено для ' + name, 'success');
+        loadUsers();
+        loadStats();
+      } else {
+        window.showToast('Ошибка', res.message || 'Не удалось выполнить', 'error');
+      }
+    });
+  });
+
+  document.getElementById('userSearch').addEventListener('input', function (e) { renderUsers(e.target.value); });
+
+  function loadSettings() {
+    fetch('/api/settings', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (res) {
+      if (!res.success) return;
+      var s = res.settings;
+      document.getElementById('setClientName').value = s.clientName || '';
+      document.getElementById('setShortName').value = s.shortClientName || '';
+      document.getElementById('setVersion').value = s.version || '';
+      document.getElementById('setDiscord').value = s.discord || '';
+      document.getElementById('setTelegram').value = s.telegram || '';
+    });
+  }
+
+  document.getElementById('saveSettings').addEventListener('click', function () {
+    var settings = {
+      clientName: document.getElementById('setClientName').value.trim(),
+      shortClientName: document.getElementById('setShortName').value.trim(),
+      version: document.getElementById('setVersion').value.trim(),
+      discord: document.getElementById('setDiscord').value.trim(),
+      telegram: document.getElementById('setTelegram').value.trim()
+    };
+    api('/api/admin/settings', { settings: settings }).then(function (res) {
+      if (!handleAuth(res)) return;
+      if (res.success) window.showToast('Успех', 'Настройки сохранены', 'success');
+      else window.showToast('Ошибка', res.message || 'Не удалось сохранить', 'error');
+    });
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', function () {
+    window.logoutUser();
+    window.location.href = '../login/';
+  });
+
+  var themeBtn = document.getElementById('themeToggle');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      var c = document.body.className.indexOf('light') >= 0 ? 'light' : 'dark';
+      var next = c === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('theme', next);
+      document.documentElement.className = next + '-theme';
+      document.body.className = next + '-theme';
+    });
+  }
+
+  loadStats();
+  loadUsers();
+  loadSettings();
+  if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
+})();
+</script>
+</body>
+</html>
