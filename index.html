@@ -59,7 +59,6 @@
         .form-input { width: 100%; background: #08090d; border: 1px solid var(--border-color); padding: 12px; border-radius: 12px; color: #fff; font-size: 0.85rem; margin-bottom: 12px; outline: none; }
         .form-input:focus { border-color: var(--accent-red); }
         .action-btn { background: var(--accent-green); color: #000; border: none; padding: 10px 16px; border-radius: 10px; font-weight: 800; cursor: pointer; }
-        .danger-btn { background: var(--accent-red); color: #fff; border: none; padding: 10px 16px; border-radius: 10px; font-weight: 800; cursor: pointer; }
         
         .hidden { display: none !important; }
     </style>
@@ -97,7 +96,7 @@
                         <li>Обновления</li>
                     </ul>
                 </div>
-                <button class="btn-buy" onclick="buyItem('1 месяц', 149)">Купить за 149 ₽</button>
+                <button class="btn-buy" onclick="buyItem('1 месяц')">Оформить</button>
             </div>
 
             <div class="tariff-card popular">
@@ -111,7 +110,7 @@
                         <li>Приоритетная поддержка</li>
                     </ul>
                 </div>
-                <button class="btn-buy" onclick="buyItem('3 месяца', 239)">Купить за 239 ₽</button>
+                <button class="btn-buy" onclick="buyItem('3 месяца')">Оформить</button>
             </div>
 
             <div class="tariff-card">
@@ -124,7 +123,7 @@
                         <li>Эксклюзивная роль</li>
                     </ul>
                 </div>
-                <button class="btn-buy" onclick="buyItem('Навсегда', 449)">Купить за 449 ₽</button>
+                <button class="btn-buy" onclick="buyItem('Навсегда')">Оформить</button>
             </div>
         </div>
     </div>
@@ -135,29 +134,18 @@
                 <div class="profile-box">
                     <div style="font-weight: 800; font-size: 1rem;" id="prof-name">Invisik</div>
                     <div style="font-size: 0.75rem; color: var(--accent-red); font-weight: 700;">OWNER</div>
-                    <div style="font-size: 0.8rem; color: var(--text-sub); margin-top: 6px;">Баланс: <span id="user-balance" style="color: var(--accent-green); font-weight: 700;">0</span> ₽</div>
                 </div>
                 <button class="side-btn active" onclick="switchTab('profile')">👤 Профиль</button>
-                <button class="side-btn" onclick="switchTab('lottery')">🎲 Лотерея</button>
                 <button class="side-btn" onclick="switchTab('promos')">🎟️ Промокоды</button>
-                <button class="side-btn" onclick="switchTab('admin')">⚙️ Админ-панель</button>
                 <button class="side-btn" style="margin-top:auto;" onclick="showMain()">Выйти</button>
             </div>
             
             <div class="content-area">
                 <div id="tab-profile">
                     <h3 style="margin-bottom: 14px;">Информация аккаунта</h3>
-                    <div style="color: var(--text-sub); font-size: 0.85rem; line-height: 1.8; margin-bottom: 20px;">
-                        Статус подписки: <span style="color: var(--accent-red); font-weight: 700;">Не куплена</span><br>
+                    <div style="color: var(--text-sub); font-size: 0.85rem; line-height: 1.8;">
+                        Статус подписки: <span style="color: var(--accent-green); font-weight: 700;">Активна</span><br>
                         Роль: <span style="color: #fff; font-weight: 700;">Owner</span>
-                    </div>
-                    <button class="danger-btn" onclick="deleteAccount()">Удалить аккаунт</button>
-                </div>
-
-                <div id="tab-lottery" class="hidden">
-                    <h3 style="margin-bottom: 14px;">Лотерея</h3>
-                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 30px; border-radius: 16px; text-align: center; color: var(--text-sub);">
-                        ⏳ Пока не доступно, ожидайте релиза!
                     </div>
                 </div>
 
@@ -171,12 +159,6 @@
                     <div id="owner-promos-list" style="margin-top: 20px; font-size: 0.85rem; color: var(--text-sub);">
                         Нет созданных промокодов.
                     </div>
-                </div>
-
-                <div id="tab-admin" class="hidden">
-                    <h3 style="margin-bottom: 14px;">Управление сайтом</h3>
-                    <p style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 16px;">Глобальный сброс обнулит балансы всех пользователей на этом домене.</p>
-                    <button class="danger-btn" onclick="clearGlobalBalance()">Очистить общий баланс сайта</button>
                 </div>
             </div>
         </div>
@@ -192,20 +174,10 @@
             setTimeout(() => toast.remove(), 3500);
         }
 
-        // Баланс по умолчанию строго 0 рублей при первом входе
-        let currentUser = JSON.parse(localStorage.getItem('run_user')) || { name: 'Invisik', balance: 0, subActive: false };
-
-        function updateBalanceView() {
-            document.getElementById('user-balance').innerText = currentUser.balance;
-            localStorage.setItem('run_user', JSON.stringify(currentUser));
-        }
-        updateBalanceView();
-
         function openCabinet() {
             document.getElementById('main-section').classList.add('hidden');
             document.getElementById('cabinet-section').classList.remove('hidden');
             renderPromos();
-            updateBalanceView();
         }
 
         function showMain() {
@@ -215,55 +187,19 @@
 
         function switchTab(tab) {
             document.getElementById('tab-profile').classList.add('hidden');
-            document.getElementById('tab-lottery').classList.add('hidden');
             document.getElementById('tab-promos').classList.add('hidden');
-            document.getElementById('tab-admin').classList.add('hidden');
             document.querySelectorAll('.side-btn').forEach(b => b.classList.remove('active'));
             
             if(tab === 'profile') {
                 document.getElementById('tab-profile').classList.remove('hidden');
-            } else if(tab === 'lottery') {
-                document.getElementById('tab-lottery').classList.remove('hidden');
             } else if(tab === 'promos') {
                 document.getElementById('tab-promos').classList.remove('hidden');
-            } else if(tab === 'admin') {
-                document.getElementById('tab-admin').classList.add('hidden'); // исправлено отображение
-                document.getElementById('tab-admin').classList.remove('hidden');
             }
             event.target.classList.add('active');
         }
 
-        // Фиксированная покупка без ввода левых сумм
-        function buyItem(name, price) {
-            if (currentUser.balance >= price) {
-                currentUser.balance -= price;
-                currentUser.subActive = true;
-                updateBalanceView();
-                showToast(`Успешно куплено: "${name}" за ${price} ₽`, 'success');
-            } else {
-                showToast(`Недостаточно средств! Пополните баланс.`, 'error');
-            }
-        }
-
-        // Очистка общего баланса сайта
-        function clearGlobalBalance() {
-            if(confirm('Точно обнулить баланс у ВСЕХ пользователей сайта?')) {
-                currentUser.balance = 0;
-                currentUser.subActive = false;
-                localStorage.removeItem('run_user');
-                updateBalanceView();
-                showToast('Общий баланс сайта полностью очищен!', 'success');
-            }
-        }
-
-        // Удаление аккаунта
-        function deleteAccount() {
-            if(confirm('Ты уверен, что хочешь удалить аккаунт? Все данные будут стерты.')) {
-                localStorage.removeItem('run_user');
-                localStorage.removeItem('apex_promos');
-                showToast('Аккаунт удален', 'success');
-                setTimeout(() => { location.reload(); }, 1500);
-            }
+        function buyItem(name) {
+            showToast(`Запрос на "${name}" создан!`, 'success');
         }
 
         let promosDB = JSON.parse(localStorage.getItem('apex_promos')) || {};
@@ -288,7 +224,7 @@
             delete promosDB[code];
             localStorage.setItem('apex_promos', JSON.stringify(promosDB));
             renderPromos();
-            showToast('Промокод удален', 'success');
+            showToast(`Промокод удален`, 'success');
         }
 
         function renderPromos() {
@@ -303,7 +239,7 @@
                 let p = promosDB[k];
                 html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
                     <span><b>${k}</b> (-${p.discount}%) | Использовано: ${p.used} / ${p.limit}</span>
-                    <button onclick="deletePromo('${k}')" style="background:#ff3344; color:#fff; border:none; padding:4px 10px; border-radius:6px; cursor:pointer; font-size:0.75rem;">Удалить</button>
+                    <button onclick="deletePromo('${k}')" style="background:#ff3344; color:#fff; border:none; padding:4px 10px; border-radius:6px; cursor:pointer; font-size:0.7rem;">Удалить</button>
                 </div>`;
             });
             listEl.innerHTML = html;
