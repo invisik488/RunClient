@@ -10,669 +10,291 @@
             document.documentElement.className = savedTheme + '-theme';
         })();
     </script>
-    <link rel="stylesheet" href="css/styles.css@v=6.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="assets/index-ebe2f45f.js"></script>
-    <script src="assets/local.js"></script>
     <style>
-        /* ===== ДОПОЛНИТЕЛЬНЫЕ СТИЛИ (НЕ КОНФЛИКТУЮТ) ===== */
-        .balance-display {
-            background: rgba(255, 188, 0, 0.12);
-            border: 1px solid rgba(255, 188, 0, 0.25);
-            border-radius: 20px;
-            padding: 4px 14px;
-            color: #ffbc00;
-            font-weight: 700;
-            font-size: .9rem;
-            margin-right: 10px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            cursor: default;
-            white-space: nowrap;
-        }
-        .balance-display i { font-size: 1rem; }
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 9999;
-            backdrop-filter: blur(8px);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal-box {
-            background: rgba(14,16,24,0.95);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 28px;
-            padding: 30px;
-            max-width: 480px;
-            width: 90%;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.9);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .modal-box h2 { color: #fff; margin-bottom: 20px; text-align: center; }
-        .modal-box .form-group { margin-bottom: 18px; }
-        .modal-box label {
-            display: block;
-            font-size: .7rem;
-            color: #949aab;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: .5px;
-            font-weight: 700;
-        }
-        .modal-box input {
-            width: 100%;
-            background: rgba(0,0,0,0.4);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 14px;
-            padding: 12px 16px;
-            color: #fff;
-            font-size: .9rem;
-            outline: none;
-            transition: .3s;
-        }
-        .modal-box input:focus {
-            border-color: #ff3344;
-            box-shadow: 0 0 15px rgba(255,51,68,0.35);
-        }
-        .modal-box .action-btn {
-            background: #ff3344;
-            color: #fff;
-            border: none;
-            padding: 12px 18px;
-            border-radius: 14px;
-            font-weight: 800;
-            font-size: .85rem;
-            cursor: pointer;
-            transition: .3s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            width: 100%;
-        }
-        .modal-box .action-btn.green { background: #00e676; color: #000; }
-        .modal-box .action-btn:hover { transform: translateY(-2px); }
-        .modal-box .btn-secondary {
-            background: rgba(255,255,255,0.06);
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.08);
-            padding: 10px 20px;
-            border-radius: 14px;
-            font-weight: 700;
-            font-size: .8rem;
-            cursor: pointer;
-            transition: .3s;
-            margin-top: 12px;
-        }
-        .modal-box .btn-secondary:hover { background: rgba(255,255,255,0.12); }
-        .modal-tabs {
-            display: flex;
-            gap: 8px;
-            background: rgba(255,255,255,0.04);
-            border-radius: 16px;
-            padding: 4px;
-            margin-bottom: 24px;
-        }
-        .modal-tabs button {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 12px;
-            background: transparent;
-            color: #949aab;
-            font-weight: 700;
-            font-size: .85rem;
-            cursor: pointer;
-            transition: .3s;
-        }
-        .modal-tabs button.active {
-            background: #ff3344;
-            color: #fff;
-        }
-        .radio-group {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            margin: 10px 0;
-        }
-        .radio-group label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #fff;
-            cursor: pointer;
-            background: rgba(255,255,255,0.05);
-            padding: 6px 14px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.1);
-            font-weight: 600;
-        }
-        .radio-group label input { width: auto; margin-right: 4px; }
-        .code-display {
-            background: rgba(0,0,0,0.3);
-            border: 1px solid #ffbc00;
-            border-radius: 12px;
-            padding: 16px;
-            margin: 12px 0;
-        }
-        .code-display .label { color: #ffbc00; font-weight: 700; font-size: .8rem; text-transform: uppercase; }
-        .code-display .code { font-size: 1.4rem; font-weight: 900; color: #fff; font-family: monospace; }
-        .code-display .expire { color: #949aab; font-size: .8rem; }
-        .lottery-section { margin: 60px 0; }
-        .lottery-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-        .lottery-card {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 20px;
-            padding: 28px;
-            backdrop-filter: blur(12px);
-        }
-        .lottery-card h3 {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .lottery-card h3 .badge {
-            background: rgba(255,51,68,0.15);
-            color: #ff3344;
-            font-size: .7rem;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,51,68,0.2);
-        }
-        .lottery-track {
-            height: 60px;
-            overflow: hidden;
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
-            margin-bottom: 12px;
-            border: 1px solid rgba(255,255,255,0.05);
-            position: relative;
-        }
-        .lottery-track-inner {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 0 10px;
-            height: 100%;
-            white-space: nowrap;
-        }
-        .lottery-segment {
-            background: rgba(255,255,255,0.08);
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 700;
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.1);
-            flex-shrink: 0;
-        }
-        .lottery-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: .85rem;
-            color: #949aab;
-            margin-top: 10px;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .lottery-info .attempts { color: #fff; font-weight: 700; }
-        .lottery-info .buy-btn {
-            background: #ff3344;
-            color: #fff;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: .7rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: .3s;
-        }
-        .lottery-info .buy-btn:hover { transform: scale(1.05); }
-        .lottery-info .buy-btn:disabled { opacity: .5; cursor: not-allowed; }
-        .hidden { display: none !important; }
-        .dashboard {
-            display: grid;
-            grid-template-columns: 260px 1fr;
-            gap: 24px;
-            margin-top: 40px;
-        }
-        .dashboard-sidebar {
-            background: rgba(255,255,255,0.04);
-            border-radius: 20px;
-            padding: 20px;
-            border: 1px solid rgba(255,255,255,0.06);
-        }
-        .dashboard-sidebar .profile { text-align: center; margin-bottom: 20px; }
-        .dashboard-sidebar .profile .avatar {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ff3344, #cc0022);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            font-weight: 900;
-            color: #fff;
-            margin: 0 auto 10px;
-            box-shadow: 0 0 30px rgba(255,51,68,0.3);
-        }
-        .dashboard-sidebar .profile .name { font-size: 1.1rem; font-weight: 800; color: #fff; }
-        .dashboard-sidebar .profile .role { font-size: .8rem; color: #ff3344; font-weight: 700; }
-        .dashboard-sidebar .profile .balance { margin-top: 8px; color: #ffbc00; font-weight: 700; }
-        .dashboard-sidebar .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
-            border-radius: 12px;
-            color: #949aab;
-            font-weight: 700;
-            font-size: .85rem;
-            cursor: pointer;
-            transition: .3s;
-            margin-bottom: 4px;
-        }
-        .dashboard-sidebar .nav-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
-        .dashboard-sidebar .nav-item.active { background: rgba(255,51,68,0.12); color: #ff3344; }
-        .dashboard-content {
-            background: rgba(255,255,255,0.04);
-            border-radius: 20px;
-            padding: 24px;
-            border: 1px solid rgba(255,255,255,0.06);
-            min-height: 400px;
-        }
-        .dashboard-content .tab-pane { display: none; }
-        .dashboard-content .tab-pane.active { display: block; }
-        @media(max-width: 850px) {
-            .lottery-grid { grid-template-columns: 1fr; }
-            .dashboard { grid-template-columns: 1fr; }
-        }
-        @media(max-width: 560px) {
-            .balance-display { font-size: .75rem; padding: 2px 10px; }
-            .modal-box { padding: 20px; }
-        }
+        /* ===== ОСНОВНЫЕ СТИЛИ (минимальные, твой дизайн) ===== */
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+        body{background:#0a0c14;color:#fff;font-size:14px;min-height:100vh;}
+        .hidden{display:none!important;}
+        .navbar{display:flex;justify-content:space-between;align-items:center;padding:16px 40px;background:rgba(10,12,20,0.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;z-index:100;}
+        .nav-left{display:flex;align-items:center;gap:20px;}
+        .nav-brand{font-size:1.2rem;font-weight:900;color:#fff;cursor:pointer;display:flex;align-items:center;gap:10px;}
+        .brand-icon{width:32px;height:32px;background:linear-gradient(135deg,#ff3344,#cc0022);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;box-shadow:0 0 20px rgba(255,51,68,0.3);}
+        .nav-links{display:flex;gap:4px;list-style:none;}
+        .nav-link{color:#8a8a93;padding:8px 16px;border-radius:10px;font-weight:600;font-size:.85rem;cursor:pointer;transition:.2s;}
+        .nav-link:hover,.nav-link.active{color:#fff;background:rgba(255,255,255,0.05);}
+        .nav-right{display:flex;align-items:center;gap:12px;}
+        .balance-display{background:rgba(255,188,0,0.12);border:1px solid rgba(255,188,0,0.25);border-radius:20px;padding:4px 14px;color:#ffbc00;font-weight:700;font-size:.9rem;display:inline-flex;align-items:center;gap:6px;cursor:default;white-space:nowrap;}
+        .btn{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:12px;font-weight:700;font-size:.85rem;cursor:pointer;transition:.2s;border:none;}
+        .btn-primary{background:#ff3344;color:#fff;box-shadow:0 4px 20px rgba(255,51,68,0.3);}
+        .btn-primary:hover{transform:scale(1.05);}
+        .btn-secondary{background:rgba(255,255,255,0.06);color:#fff;border:1px solid rgba(255,255,255,0.08);}
+        .btn-secondary:hover{background:rgba(255,255,255,0.12);}
+        .page-section{padding:80px 20px;max-width:1100px;margin:0 auto;}
+        .hero{text-align:center;padding:120px 20px 60px;}
+        .hero h1{font-size:3.5rem;font-weight:900;margin-bottom:16px;}
+        .hero h1 span{color:#ff3344;}
+        .hero p{color:#8a8a93;font-size:1.1rem;max-width:600px;margin:0 auto 30px;}
+        .hero-actions{display:flex;gap:12px;justify-content:center;}
+        .card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:24px;margin-bottom:16px;}
+        .form-group{margin-bottom:16px;}
+        .form-group label{display:block;font-size:.75rem;color:#8a8a93;margin-bottom:4px;text-transform:uppercase;font-weight:700;letter-spacing:.5px;}
+        .form-input{width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:12px 16px;color:#fff;font-size:.9rem;outline:none;transition:.2s;}
+        .form-input:focus{border-color:#ff3344;box-shadow:0 0 15px rgba(255,51,68,0.2);}
+        .action-btn{background:#ff3344;color:#fff;border:none;padding:12px 20px;border-radius:12px;font-weight:800;font-size:.85rem;cursor:pointer;transition:.2s;width:100%;}
+        .action-btn:hover{transform:translateY(-2px);}
+        .action-btn.green{background:#00e676;color:#000;}
+        /* Лотерея */
+        .lottery-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:30px;}
+        .lottery-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:28px;}
+        .lottery-card h3{font-size:1.2rem;font-weight:800;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+        .lottery-card h3 .badge{background:rgba(255,51,68,0.15);color:#ff3344;font-size:.7rem;font-weight:700;padding:4px 12px;border-radius:20px;border:1px solid rgba(255,51,68,0.2);}
+        .lottery-track{height:60px;overflow:hidden;background:rgba(255,255,255,0.03);border-radius:12px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.05);position:relative;}
+        .lottery-track-inner{display:flex;align-items:center;gap:10px;padding:0 10px;height:100%;white-space:nowrap;}
+        .lottery-segment{background:rgba(255,255,255,0.08);padding:6px 14px;border-radius:6px;font-size:14px;font-weight:700;color:#fff;border:1px solid rgba(255,255,255,0.1);flex-shrink:0;}
+        .lottery-info{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;color:#8a8a93;margin-top:10px;flex-wrap:wrap;gap:6px;}
+        .lottery-info .attempts{color:#fff;font-weight:700;}
+        .lottery-info .buy-btn{background:#ff3344;color:#fff;border:none;padding:4px 12px;border-radius:12px;font-size:.7rem;font-weight:700;cursor:pointer;transition:.3s;}
+        .lottery-info .buy-btn:hover{transform:scale(1.05);}
+        .lottery-info .buy-btn:disabled{opacity:.5;cursor:not-allowed;}
+        /* Кабинет */
+        .dashboard{display:grid;grid-template-columns:260px 1fr;gap:24px;margin-top:40px;}
+        .dashboard-sidebar{background:rgba(255,255,255,0.04);border-radius:20px;padding:20px;border:1px solid rgba(255,255,255,0.06);}
+        .dashboard-sidebar .profile{text-align:center;margin-bottom:20px;}
+        .dashboard-sidebar .profile .avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#ff3344,#cc0022);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:#fff;margin:0 auto 10px;box-shadow:0 0 30px rgba(255,51,68,0.3);}
+        .dashboard-sidebar .profile .name{font-size:1.1rem;font-weight:800;}
+        .dashboard-sidebar .profile .role{font-size:.8rem;color:#ff3344;font-weight:700;}
+        .dashboard-sidebar .profile .balance{margin-top:8px;color:#ffbc00;font-weight:700;}
+        .dashboard-sidebar .nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;color:#8a8a93;font-weight:700;font-size:.85rem;cursor:pointer;transition:.3s;margin-bottom:4px;}
+        .dashboard-sidebar .nav-item:hover{background:rgba(255,255,255,0.05);color:#fff;}
+        .dashboard-sidebar .nav-item.active{background:rgba(255,51,68,0.12);color:#ff3344;}
+        .dashboard-content{background:rgba(255,255,255,0.04);border-radius:20px;padding:24px;border:1px solid rgba(255,255,255,0.06);min-height:400px;}
+        .dashboard-content .tab-pane{display:none;}
+        .dashboard-content .tab-pane.active{display:block;}
+        /* Модалки */
+        .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:9999;backdrop-filter:blur(8px);justify-content:center;align-items:center;}
+        .modal-overlay.active{display:flex;}
+        .modal-box{background:rgba(14,16,24,0.95);border:1px solid rgba(255,255,255,0.1);border-radius:28px;padding:30px;max-width:480px;width:90%;box-shadow:0 25px 60px rgba(0,0,0,0.9);max-height:90vh;overflow-y:auto;}
+        .modal-box h2{color:#fff;margin-bottom:20px;text-align:center;}
+        .modal-tabs{display:flex;gap:8px;background:rgba(255,255,255,0.04);border-radius:16px;padding:4px;margin-bottom:24px;}
+        .modal-tabs button{flex:1;padding:10px;border:none;border-radius:12px;background:transparent;color:#8a8a93;font-weight:700;font-size:.85rem;cursor:pointer;transition:.3s;}
+        .modal-tabs button.active{background:#ff3344;color:#fff;}
+        .radio-group{display:flex;gap:12px;justify-content:center;margin:10px 0;}
+        .radio-group label{display:flex;align-items:center;gap:6px;color:#fff;cursor:pointer;background:rgba(255,255,255,0.05);padding:6px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);font-weight:600;}
+        .radio-group label input{width:auto;margin-right:4px;}
+        .code-display{background:rgba(0,0,0,0.3);border:1px solid #ffbc00;border-radius:12px;padding:16px;margin:12px 0;}
+        .code-display .label{color:#ffbc00;font-weight:700;font-size:.8rem;text-transform:uppercase;}
+        .code-display .code{font-size:1.4rem;font-weight:900;color:#fff;font-family:monospace;}
+        .code-display .expire{color:#8a8a93;font-size:.8rem;}
+        /* Footer */
+        .footer{max-width:1100px;margin:40px auto;padding:20px 0;border-top:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;color:#666;font-size:.8rem;}
+        @media(max-width:850px){.lottery-grid{grid-template-columns:1fr;}.dashboard{grid-template-columns:1fr;}}
+        @media(max-width:560px){.navbar{padding:12px 16px;flex-wrap:wrap;}.nav-links{display:none;}.hero h1{font-size:2.2rem;}}
     </style>
 </head>
 <body>
-    <div class="bg-overlay"></div>
+
+    <!-- ===== ШАПКА ===== -->
     <header class="navbar">
         <div class="nav-left">
-            <a href="#" class="btn-primary logo-btn" id="navHome">
-                <i data-lucide="box" class="icon-sm"></i>
+            <div class="nav-brand" onclick="navigateTo('home')">
+                <div class="brand-icon">R</div>
                 <span>RunClient</span>
-            </a>
+            </div>
+            <ul class="nav-links">
+                <li><a class="nav-link active" id="nav-home" onclick="navigateTo('home')">Главная</a></li>
+                <li><a class="nav-link" id="nav-tariffs" onclick="navigateTo('tariffs')">Тарифы</a></li>
+                <li><a class="nav-link" id="nav-lottery" onclick="navigateTo('lottery')">Лотерея</a></li>
+                <li><a class="nav-link" id="nav-cabinet" onclick="navigateTo('cabinet')">Кабинет</a></li>
+            </ul>
         </div>
-        <nav class="nav-center">
-            <div class="nav-indicator"></div>
-            <a href="#" class="nav-link active" id="navHomeLink">Home</a>
-            <a href="#" class="nav-link" id="navOverview">Overview</a>
-            <a href="#" class="nav-link" id="navPricing">Pricing</a>
-            <a href="#" class="nav-link" id="navFaq">FAQ</a>
-            <a href="#" class="nav-link" id="navLotteryLink">Lottery</a>
-            <a href="#" class="nav-link" id="navCabinetLink">Cabinet</a>
-        </nav>
         <div class="nav-right">
             <span class="balance-display" id="headerBalance">
                 <i class="fas fa-coins"></i> <span id="balanceAmount">0</span> ₽
             </span>
-            <div class="theme-toggle" id="themeToggle">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="icon-sun">
-                    <path d="M12 19c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zM12 22.96c-.55 0-1-.45-1-1v-.08c0-.55.45-1 1-1s1 .45 1 1v.08c0 .55-.45 1-1 1zm7.14-2.82c-.26 0-.51-.1-.71-.29l-.13-.13c-.39-.39-.39-1.02 0-1.41s1.02-.39 1.41 0l.13.13c.39.39.39 1.02 0 1.41-.19.19-.44.29-.7.29zM4.86 20.14c-.26 0-.51-.1-.71-.29-.39-.39-.39-1.02 0-1.41l.13-.13c.39-.39 1.02-.39 1.41 0s.39 1.02 0 1.41l-.13.13c-.19.19-.44.29-.7.29zM22 13h-.08c-.55 0-1-.45-1-1s.45-1 1-1h.08c.55 0 1 .45 1 1s-.45 1-1 1zM2.08 13H2c-.55 0-1-.45-1-1s.45-1 1-1h.08c.55 0 1 .45 1 1s-.45 1-1 1zM19.01 5.99c-.26 0-.51-.1-.71-.29-.39-.39-.39-1.02 0-1.41l.13-.13c.39-.39 1.02-.39 1.41 0s.39 1.02 0 1.41l-.13.13c-.19.19-.44.29-.7.29zM4.99 5.99c-.26 0-.51-.1-.71-.29l-.13-.13c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0l.13.13c.39.39.39 1.02 0 1.41-.19.19-.44.29-.7.29zM12 3.04c-.55 0-1-.45-1-1V2c0-.55.45-1 1-1s1 .45 1 1v.04c0 .55-.45 1-1 1z"/>
-                </svg>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="icon-moon">
-                    <path d="M21.53 15.93c-.16-.27-.61-.69-1.73-.49-.62.11-1.25.16-1.88.13-2.33-.1-4.44-1.17-5.91-2.82-1.3-1.45-2.1-3.34-2.11-5.38 0-1.14.22-2.24.67-3.28.44-1.01.13-1.53-.09-1.75-.23-.23-.77-.55-1.83-.11-4.09 1.72-6.62 5.82-6.32 10.21.3 4.13 3.2 7.66 7.04 8.99.92.32 1.89.51 2.89.55.16.01.32.01.48.01 3.35 0 6.49-1.58 8.47-4.27.67-.93.49-1.52.32-1.79z"/>
-                </svg>
-            </div>
-            <a href="#" class="btn-secondary" id="authBtn"><i class="fas fa-sign-in-alt"></i> Login</a>
-            <a href="#" class="btn-primary" id="regBtn"><i class="fas fa-user-plus"></i> Register</a>
+            <button class="btn btn-secondary" id="authBtn" onclick="openAuthModal()"><i class="fas fa-sign-in-alt"></i> Вход</button>
+            <button class="btn btn-primary" id="regBtn" onclick="openAuthModal(); switchAuthTab('register')"><i class="fas fa-user-plus"></i> Регистрация</button>
         </div>
     </header>
 
-    <main class="hero" id="home">
-        <div class="rhombus-hero"></div>
-        <div class="trusted-tiny fade-in-up">Trusted by +1.500 Players</div>
-        <div class="badge fade-in-up">
-            <div class="avatars">
-                <div class="avatar" style="background-image: url('resources/images/img_3.png');"></div>
-                <div class="avatar" style="background-image: url('resources/images/img_4.png');"></div>
-                <div class="avatar" style="background-image: url('resources/images/img_5.png');"></div>
-            </div>
-            <span class="badge-text">+1.000 Satisfied Customers</span>
-        </div>
-        <h1 class="title fade-in-up">Unleash Your <span class="cursive-text">True</span> Potential</h1>
-        <p class="subtitle fade-in-up" style="animation-delay: 0.2s;">
-            Dominate any server with one of the most advanced and undetectable client.
-        </p>
-        <div class="hero-actions fade-in-up" style="animation-delay: 0.3s;">
-            <a href="#" id="getAccessBtn" class="btn-primary btn-lg hover-scale"><i class="fas fa-shopping-cart"></i> Get Access</a>
-            <a href="#" class="btn-secondary btn-lg blur-panel hover-scale"><i class="fas fa-book-open"></i> Learn More</a>
-        </div>
-    </main>
-
-    <div class="server-marquee-container fade-in-up" style="animation-delay: 0.4s;" id="serverMarqueeContainer">
-        <div class="server-marquee" id="serverMarquee"></div>
-    </div>
-
-    <script>
-        (function() {
-            const SERVERS = [
-                { name: 'FunTime',     icon: 'https://s.namemc.com/i/204c7032f5eefaad.png', host: 'funtime.su' },
-                { name: 'SpookyTime',  icon: 'https://s.namemc.com/i/1d6fc9c4d900426c.png', host: 'mc.spookytime.su' },
-                { name: 'HolyWorld',   icon: 'https://s.namemc.com/i/087325ca7649f09c.png', host: 'mc.holyworld.me' },
-                { name: 'WhiteRise',   icon: 'https://s.namemc.com/i/94a557d1ce9ba620.png', host: 'mc.whiterise.su' },
-                { name: 'WellMine',    icon: 'https://s.namemc.com/i/e0712b33a529f1a6.png', host: 'mc.wellmine.fun' },
-                { name: 'ReallyWorld', icon: 'https://s.namemc.com/i/d3f6162643da1196.png', host: 'mc.reallyworld.ru' },
-            ];
-            const onlineCounts = {};
-            SERVERS.forEach(s => { onlineCounts[s.host] = '...'; });
-
-            function buildItem(s) {
-                return `<div class="server-item" data-host="${s.host}">` +
-                    `<img src="https://toshibadlc.space/${s.icon}" class="server-icon" onerror="this.style.display='none'"> ` +
-                    `<span class="s-name">${s.name}</span> ` +
-                    `<i data-lucide="users" class="icon-xxs text-muted"></i> ` +
-                    `<span class="text-muted server-online" data-host="${s.host}">${onlineCounts[s.host]}</span>` +
-                `</div>`;
-            }
-
-            function renderMarquee() {
-                const marquee = document.getElementById('serverMarquee');
-                if (!marquee) return;
-                let html = '';
-                for (let t = 0; t < 2; t++) {
-                    html += '<div class="marquee-track">';
-                    for (let s = 0; s < 2; s++) {
-                        SERVERS.forEach(srv => { html += buildItem(srv); });
-                    }
-                    html += '</div>';
-                }
-                marquee.innerHTML = html;
-                if (window.lucide) lucide.createIcons({ nodes: marquee.querySelectorAll('[data-lucide]') });
-            }
-
-            function updateOnlineSpans() {
-                document.querySelectorAll('.server-online').forEach(el => {
-                    const host = el.dataset.host;
-                    if (onlineCounts[host] !== undefined) el.textContent = onlineCounts[host];
-                });
-            }
-
-            async function fetchOnline(server) {
-                try {
-                    const res = await fetch(`https://api.mcstatus.io/v2/status/java/${server.host}`, { signal: AbortSignal.timeout(6000) });
-                    const data = await res.json();
-                    if (data.online && data.players) {
-                        onlineCounts[server.host] = data.players.online.toLocaleString();
-                    } else {
-                        onlineCounts[server.host] = 'off';
-                    }
-                } catch(e) {
-                    onlineCounts[server.host] = '—';
-                }
-                updateOnlineSpans();
-            }
-
-            function fetchAll() {
-                SERVERS.forEach(s => fetchOnline(s));
-            }
-
-            renderMarquee();
-            fetchAll();
-            setInterval(fetchAll, 2 * 60 * 1000);
-        })();
-    </script>
-
-    <section class="features-page fade-in-up" id="overview">
-        <div class="cards-grid">
-            <div class="card card-steps fade-in-up" style="transition-delay: 0.1s;">
-                <div class="steps-timeline">
-                    <div class="step"><div class="step-num">1</div><div class="step-label">Purchase</div></div>
-                    <div class="step-line active"></div>
-                    <div class="step"><div class="step-num">2</div><div class="step-label">Download</div></div>
-                    <div class="step-line active"></div>
-                    <div class="step active js-step" data-step="3">
-                        <div class="step-purple"><i data-lucide="play" class="icon-xs" style="color: #121214; fill: #121214;"></i></div>
-                        <div class="step-label">Launch</div>
-                    </div>
-                    <div class="step-line"></div>
-                    <div class="step dark"><div class="step-num">4</div><div class="step-label">Dominate</div></div>
-                </div>
-                <div class="card-text">
-                    <h3><i class="fas fa-hourglass-half icon-purple"></i> Get Started in 4 Simple Steps</h3>
-                    <p>Getting started is quick and effortless. Follow our simple guide, and you'll be ready to dominate in minutes.</p>
-                </div>
+    <!-- ===== ГЛАВНАЯ ===== -->
+    <section id="page-home" class="page-section">
+        <div class="hero">
+            <h1>Играй честно <br><span>с RunClient</span></h1>
+            <p>Триггер-бот, аимасист, ESP и другие легитные функции для комфортной игры без риска бана.</p>
+            <div class="hero-actions">
+                <button class="btn btn-primary" onclick="navigateTo('tariffs')"><i class="fas fa-shopping-cart"></i> Выбрать подписку</button>
+                <button class="btn btn-secondary" onclick="navigateTo('cabinet')"><i class="fas fa-user"></i> Личный кабинет</button>
             </div>
         </div>
     </section>
 
-    <section id="reviews" class="reviews-section fade-in-up">
-        <span class="trusted-text">TRUSTED BY THOUSANDS</span>
-        <div class="reviews-container">
-            <div class="reviews-marquee-box">
-                <div class="r-track">
-                    <div class="review-card"><div class="r-header"><div class="r-user"><div class="r-avatar" style="background-image: url('resources/images/img_1.png');"></div><div class="r-name">Alex M.</div></div><div class="r-rating">5 <i class="fas fa-star"></i></div></div><div class="r-text">"Relic is by far the most stable client I've used. Never been banned."</div></div>
-                    <div class="review-card"><div class="r-header"><div class="r-user"><div class="r-avatar" style="background-image: url('resources/images/img_2.png');"></div><div class="r-name">GhostUser</div></div><div class="r-rating">5 <i class="fas fa-star"></i></div></div><div class="r-text">"Insane features and smooth injection. Highly recommend!"</div></div>
-                    <div class="review-card"><div class="r-header"><div class="r-user"><div class="r-avatar" style="background-image: url('resources/images/img_3.png');"></div><div class="r-name">ProGamer99</div></div><div class="r-rating">5 <i class="fas fa-star"></i></div></div><div class="r-text">"Support team is blazing fast. The product works flawlessly on Windows 11."</div></div>
-                </div>
-            </div>
+    <!-- ===== ТАРИФЫ ===== -->
+    <section id="page-tariffs" class="page-section hidden">
+        <div style="text-align:center;margin-bottom:40px;">
+            <h1 style="font-size:2.5rem;">Выбери <span style="color:#ff3344;">тариф</span></h1>
+            <p style="color:#8a8a93;">Оплати балансом или через FunPay</p>
         </div>
-        <div class="stats-grid">
-            <div class="stat-card interactive-card">
-                <div class="stat-icon-wrapper"><i class="fas fa-users icon-purple"></i></div>
-                <div class="stat-title">Total Users</div>
-                <div class="stat-val counter" id="stat-total-users" data-target="0">0</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;">
+            <div class="card" style="text-align:center;">
+                <h3 style="color:#fff;">1 месяц</h3>
+                <p style="font-size:2rem;font-weight:900;color:#ffbc00;">149 ₽</p>
+                <button class="btn btn-primary" onclick="openPaymentModal('1 месяц',149)" style="width:100%;">Купить</button>
             </div>
-            <div class="stat-card interactive-card">
-                <div class="stat-icon-wrapper"><i class="fas fa-calendar-alt icon-purple"></i></div>
-                <div class="stat-title">Last Update Date</div>
-                <div class="stat-val" id="stat-last-update-date">—</div>
+            <div class="card" style="text-align:center;border-color:#ff3344;position:relative;">
+                <span style="position:absolute;top:-10px;right:10px;background:#ff3344;padding:2px 12px;border-radius:20px;font-size:.7rem;font-weight:700;">Выгодно</span>
+                <h3 style="color:#fff;">3 месяца</h3>
+                <p style="font-size:2rem;font-weight:900;color:#ffbc00;">239 ₽</p>
+                <button class="btn btn-primary" onclick="openPaymentModal('3 месяца',239)" style="width:100%;">Купить</button>
             </div>
-        </div>
-    </section>
-
-    <section class="cta-section fade-in-up" id="pricing">
-        <div class="cta-box interactive-card">
-            <div class="cta-left">
-                <h2>Your Victory Starts Now.</h2>
-                <p>Get instant, secure access to the one of the most powerful client on the market.<br>Join thousands of players who chose to dominate.</p>
-                <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:20px;">
-                    <div class="pricing-card" style="background:rgba(255,255,255,0.04); border-radius:16px; padding:20px; min-width:180px; flex:1; border:1px solid rgba(255,255,255,0.08);">
-                        <h3 style="color:#fff; font-weight:800;">1 Month</h3>
-                        <p style="font-size:1.8rem; font-weight:900; color:#ffbc00;">149 ₽</p>
-                        <button class="btn-primary" onclick="openPaymentModal('1 Month', 149)">Buy</button>
-                    </div>
-                    <div class="pricing-card" style="background:rgba(255,255,255,0.04); border-radius:16px; padding:20px; min-width:180px; flex:1; border:1px solid #ff3344; position:relative;">
-                        <span style="position:absolute; top:-10px; right:10px; background:#ff3344; color:#fff; padding:2px 12px; border-radius:20px; font-size:.7rem; font-weight:700;">Best</span>
-                        <h3 style="color:#fff; font-weight:800;">3 Months</h3>
-                        <p style="font-size:1.8rem; font-weight:900; color:#ffbc00;">239 ₽</p>
-                        <button class="btn-primary" onclick="openPaymentModal('3 Months', 239)">Buy</button>
-                    </div>
-                    <div class="pricing-card" style="background:rgba(255,255,255,0.04); border-radius:16px; padding:20px; min-width:180px; flex:1; border:1px solid rgba(255,255,255,0.08);">
-                        <h3 style="color:#fff; font-weight:800;">Lifetime</h3>
-                        <p style="font-size:1.8rem; font-weight:900; color:#ffbc00;">449 ₽</p>
-                        <button class="btn-primary" onclick="openPaymentModal('Lifetime', 449)">Buy</button>
-                    </div>
-                </div>
-            </div>
-            <div class="cta-right">
-                <i class="fas fa-crown crown c1"></i>
-                <i class="fas fa-crown crown c2"></i>
-                <i class="fas fa-crown crown-main"></i>
-                <i class="fas fa-crown crown c3"></i>
-                <i class="fas fa-crown crown c4"></i>
+            <div class="card" style="text-align:center;">
+                <h3 style="color:#fff;">Навсегда</h3>
+                <p style="font-size:2rem;font-weight:900;color:#ffbc00;">449 ₽</p>
+                <button class="btn btn-primary" onclick="openPaymentModal('Навсегда',449)" style="width:100%;">Купить</button>
             </div>
         </div>
     </section>
 
-    <!-- LOTTERY -->
-    <section id="lottery" class="lottery-section" style="max-width:1100px; margin:40px auto; padding:0 20px; display:none;">
-        <h2 style="text-align:center; font-size:2.5rem; font-weight:900; color:#fff; margin-bottom:40px;">
-            🎰 Lottery <span style="color:#ff3344;">Wheel</span>
-        </h2>
+    <!-- ===== ЛОТЕРЕЯ ===== -->
+    <section id="page-lottery" class="page-section hidden">
+        <div style="text-align:center;margin-bottom:40px;">
+            <h1 style="font-size:2.5rem;">🎰 Лотерея <span style="color:#ff3344;">Колесо</span></h1>
+            <p style="color:#8a8a93;">Крути рулетку или открывай кейс</p>
+        </div>
         <div class="lottery-grid">
             <div class="lottery-card">
-                <h3>🎡 Roulette <span class="badge" id="spinBadge">free</span></h3>
+                <h3>🎡 Рулетка <span class="badge" id="spinBadge">бесплатно</span></h3>
                 <div class="lottery-track">
                     <div class="lottery-track-inner" id="spinTrackInner"></div>
                 </div>
-                <button class="btn-primary" id="spinBtn" onclick="spinRoulette()" style="width:100%;">Spin</button>
+                <button class="btn btn-primary" id="spinBtn" onclick="spinRoulette()" style="width:100%;">Крутить</button>
                 <div class="lottery-info">
-                    <span>7d 30% · 30d 12% · 90d 5%</span>
-                    <span class="attempts">Attempts: <span id="spinAttempts">1</span></span>
-                    <button class="buy-btn" id="buySpinBtn" onclick="buySpinAttempt()">Buy (1 ₽)</button>
+                    <span>7д 30% · 30д 12% · 90д 5%</span>
+                    <span class="attempts">Попыток: <span id="spinAttempts">1</span></span>
+                    <button class="buy-btn" id="buySpinBtn" onclick="buySpinAttempt()">Купить (1 ₽)</button>
                 </div>
             </div>
             <div class="lottery-card">
-                <h3>📦 Case <span class="badge" id="caseBadge">free</span></h3>
+                <h3>📦 Кейс <span class="badge" id="caseBadge">бесплатно</span></h3>
                 <div class="lottery-track">
                     <div class="lottery-track-inner" id="caseTrackInner"></div>
                 </div>
-                <button class="btn-primary" id="caseBtn" onclick="openCase()" style="width:100%;">Open</button>
+                <button class="btn btn-primary" id="caseBtn" onclick="openCase()" style="width:100%;">Открыть</button>
                 <div class="lottery-info">
-                    <span>7d 30% · 30d 12% · 90d 5%</span>
-                    <span class="attempts">Attempts: <span id="caseAttempts">1</span></span>
-                    <button class="buy-btn" id="buyCaseBtn" onclick="buyCaseAttempt()">Buy (1 ₽)</button>
+                    <span>7д 30% · 30д 12% · 90д 5%</span>
+                    <span class="attempts">Попыток: <span id="caseAttempts">1</span></span>
+                    <button class="buy-btn" id="buyCaseBtn" onclick="buyCaseAttempt()">Купить (1 ₽)</button>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CABINET -->
-    <section id="cabinet" class="hidden" style="max-width:1100px; margin:40px auto; padding:0 20px;">
+    <!-- ===== КАБИНЕТ ===== -->
+    <section id="page-cabinet" class="page-section hidden">
         <div class="dashboard">
             <div class="dashboard-sidebar">
                 <div class="profile">
                     <div class="avatar" id="cabAvatar">R</div>
-                    <div class="name" id="cabUsername">User</div>
+                    <div class="name" id="cabUsername">Пользователь</div>
                     <div class="role" id="cabRole">user</div>
                     <div class="balance" id="cabBalance">0 ₽</div>
                 </div>
-                <div class="nav-item active" data-tab="dashboard-home">🏠 Home</div>
-                <div class="nav-item" data-tab="dashboard-orders">📦 My Orders</div>
-                <div class="nav-item" data-tab="dashboard-tickets">💬 Tickets</div>
-                <div class="nav-item" data-tab="dashboard-admin" id="adminTabNav" style="display:none;">⚙️ Admin</div>
-                <div class="nav-item" onclick="logout()">🚪 Logout</div>
+                <div class="nav-item active" data-tab="dashboard-home">🏠 Главная</div>
+                <div class="nav-item" data-tab="dashboard-orders">📦 Заказы</div>
+                <div class="nav-item" data-tab="dashboard-tickets">💬 Тикеты</div>
+                <div class="nav-item" data-tab="dashboard-admin" id="adminTabNav" style="display:none;">⚙️ Админка</div>
+                <div class="nav-item" onclick="logout()">🚪 Выйти</div>
             </div>
             <div class="dashboard-content">
                 <div class="tab-pane active" id="dashboard-home">
-                    <h3 style="color:#fff;">Dashboard</h3>
-                    <p style="color:#949aab;">Welcome, <span id="dashUsername">User</span>!</p>
-                    <p style="color:#949aab;">Balance: <strong id="dashBalanceDisplay">0 ₽</strong></p>
-                    <p style="color:#949aab;">Subscription: <span id="dashSubDisplay">None</span></p>
+                    <h3 style="color:#fff;">Главная</h3>
+                    <p style="color:#8a8a93;">Добро пожаловать, <span id="dashUsername">Пользователь</span>!</p>
+                    <p style="color:#8a8a93;">Баланс: <strong id="dashBalanceDisplay">0 ₽</strong></p>
+                    <p style="color:#8a8a93;">Подписка: <span id="dashSubDisplay">Нет</span></p>
                 </div>
                 <div class="tab-pane" id="dashboard-orders">
-                    <h3 style="color:#fff;">My Orders</h3>
-                    <div id="ordersList"><p style="color:#949aab;">No orders yet.</p></div>
+                    <h3 style="color:#fff;">Мои заказы</h3>
+                    <div id="ordersList"><p style="color:#8a8a93;">Нет заказов.</p></div>
                 </div>
                 <div class="tab-pane" id="dashboard-tickets">
-                    <h3 style="color:#fff;">Support Tickets</h3>
-                    <div id="ticketsList"><p style="color:#949aab;">No tickets.</p></div>
+                    <h3 style="color:#fff;">Тикеты</h3>
+                    <div id="ticketsList"><p style="color:#8a8a93;">Нет тикетов.</p></div>
                 </div>
                 <div class="tab-pane" id="dashboard-admin">
-                    <h3 style="color:#fff;">Admin Panel</h3>
+                    <h3 style="color:#fff;">Админ-панель</h3>
                     <div id="adminContent">
-                        <p style="color:#949aab;">You are admin.</p>
-                        <button class="btn-primary" onclick="generateCode()" style="margin-top:10px;">Generate One-Time Code (5 min)</button>
+                        <p style="color:#8a8a93;">Вы админ.</p>
+                        <button class="btn btn-primary" onclick="generateCode()" style="margin-top:10px;">Сгенерировать код (5 мин)</button>
                         <div id="generatedCodeDisplay" style="margin-top:12px;"></div>
-                        <hr style="border-color:rgba(255,255,255,0.1); margin:20px 0;">
-                        <button class="btn-secondary" onclick="resetAllBalances()">Reset All Balances</button>
-                        <button class="btn-secondary" onclick="removeAllSubscriptions()" style="margin-left:10px;">Remove All Subscriptions</button>
+                        <hr style="border-color:rgba(255,255,255,0.1);margin:20px 0;">
+                        <button class="btn btn-secondary" onclick="resetAllBalances()">Обнулить балансы</button>
+                        <button class="btn btn-secondary" onclick="removeAllSubscriptions()" style="margin-left:10px;">Снять подписки</button>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="footer fade-in-up" id="faq">
-        <div class="footer-content">
-            <div class="f-brand"><a href="#" class="logo-btn"><i data-lucide="box" class="icon-sm"></i><span>RunClient</span></a></div>
-            <div class="f-links">
-                <div class="f-col"><h4>Product</h4><a href="#overview">Features</a><a href="#pricing">Pricing</a><a href="#lottery">Lottery</a></div>
-                <div class="f-col"><h4>Support</h4><a href="#faq">FAQ</a><a href="#" onclick="document.getElementById('cabinet').classList.remove('hidden'); navigateTo('cabinet'); return false;">Tickets</a></div>
-                <div class="f-col"><h4>Legal</h4><a href="#">Terms</a><a href="#">Privacy</a></div>
-                <div class="f-col"><h4>Community</h4><a href="https://discord.gg/Uu9K7eYrNc">Discord</a><a href="https://t.me/SystemGuardMC">Telegram</a></div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <span>&copy; 2026 RunClient. All Rights Reserved.</span>
-            <div class="f-socials">
-                <a href="https://t.me/SystemGuardMC"><i class="fa-brands fa-telegram"></i></a>
-                <a href="https://discord.gg/Uu9K7eYrNc"><i class="fa-brands fa-discord"></i></a>
-            </div>
-        </div>
-    </footer>
-
-    <!-- МОДАЛКИ -->
+    <!-- ===== МОДАЛКА АВТОРИЗАЦИИ ===== -->
     <div class="modal-overlay" id="authModal">
         <div class="modal-box">
-            <h2 id="authModalTitle">Login</h2>
+            <h2 id="authModalTitle">Вход в аккаунт</h2>
             <div class="modal-tabs">
-                <button class="active" onclick="switchAuthTab('login', this)">Login</button>
-                <button onclick="switchAuthTab('register', this)">Register</button>
+                <button class="active" onclick="switchAuthTab('login',this)">Вход</button>
+                <button onclick="switchAuthTab('register',this)">Регистрация</button>
             </div>
             <div id="authFormLogin">
-                <div class="form-group"><label>Login</label><input type="text" id="loginUsername" placeholder="Enter login"></div>
-                <div class="form-group"><label>Password</label><input type="password" id="loginPassword" placeholder="Enter password"></div>
-                <button class="action-btn green" onclick="handleLogin()">Login</button>
+                <div class="form-group"><label>Логин</label><input type="text" id="loginUsername" class="form-input" placeholder="Ваш логин"></div>
+                <div class="form-group"><label>Пароль</label><input type="password" id="loginPassword" class="form-input" placeholder="••••••••"></div>
+                <button class="action-btn green" onclick="handleLogin()">Войти</button>
             </div>
             <div id="authFormRegister" style="display:none;">
-                <div class="form-group"><label>Nickname</label><input type="text" id="regUsername" placeholder="Choose nickname"></div>
-                <div class="form-group"><label>Password</label><input type="password" id="regPassword" placeholder="Choose password"></div>
-                <div class="form-group"><label>Email</label><input type="email" id="regEmail" placeholder="example@mail.com"></div>
-                <button class="action-btn green" onclick="handleRegister()">Register</button>
+                <div class="form-group"><label>Никнейм</label><input type="text" id="regUsername" class="form-input" placeholder="Придумайте ник"></div>
+                <div class="form-group"><label>Пароль</label><input type="password" id="regPassword" class="form-input" placeholder="Придумайте пароль"></div>
+                <div class="form-group"><label>Email</label><input type="email" id="regEmail" class="form-input" placeholder="example@mail.com"></div>
+                <button class="action-btn green" onclick="handleRegister()">Зарегистрироваться</button>
             </div>
-            <button class="btn-secondary" onclick="closeAuthModal()" style="width:100%;">Close</button>
+            <button class="btn btn-secondary" onclick="closeAuthModal()" style="width:100%;margin-top:12px;">Закрыть</button>
         </div>
     </div>
 
+    <!-- ===== МОДАЛКА ОПЛАТЫ ===== -->
     <div class="modal-overlay" id="paymentModal">
         <div class="modal-box">
-            <h2>Payment</h2>
-            <div id="paymentInfo" style="text-align:center; color:#949aab; margin-bottom:20px;"></div>
-            <div class="form-group"><label>Amount (₽)</label><input type="number" id="paymentAmount" readonly style="cursor:not-allowed; opacity:0.7;"></div>
+            <h2>Оплата</h2>
+            <div id="paymentInfo" style="text-align:center;color:#8a8a93;margin-bottom:20px;"></div>
+            <div class="form-group"><label>Сумма (₽)</label><input type="number" id="paymentAmount" class="form-input" readonly style="cursor:not-allowed;opacity:0.7;"></div>
             <div class="form-group">
-                <label>Payment Method</label>
+                <label>Способ оплаты</label>
                 <div class="radio-group">
-                    <label><input type="radio" name="payMethod" value="balance" checked> Balance</label>
+                    <label><input type="radio" name="payMethod" value="balance" checked> Баланс</label>
                     <label><input type="radio" name="payMethod" value="funpay"> FunPay</label>
                 </div>
             </div>
             <div class="form-group" id="paymentCodeGroup" style="display:none;">
-                <label>Enter Code</label>
-                <input type="text" id="paymentCodeInput" placeholder="KEY-XXXX">
+                <label>Введите код</label>
+                <input type="text" id="paymentCodeInput" class="form-input" placeholder="KEY-XXXX">
             </div>
-            <button class="action-btn green" id="payBtn" onclick="processPayment()">Pay</button>
-            <button class="btn-secondary" onclick="closePaymentModal()" style="width:100%;">Cancel</button>
+            <button class="action-btn green" id="payBtn" onclick="processPayment()">Оплатить</button>
+            <button class="btn btn-secondary" onclick="closePaymentModal()" style="width:100%;margin-top:12px;">Отмена</button>
         </div>
     </div>
 
+    <!-- ===== ПОДВАЛ ===== -->
+    <footer class="footer">
+        <span>© 2026 RunClient · Все права защищены</span>
+        <span>Сделано с ❤️</span>
+    </footer>
+
     <script>
-    // ===== ВСЯ ЛОГИКА =====
+    // ===== ВСЯ ЛОГИКА (РАБОЧАЯ) =====
     (function() {
         // === ДАННЫЕ ===
         if (!localStorage.getItem('runclient_users')) {
             const defaultUsers = {
-                "invisik": { password: "123", role: "owner", sub: "Lifetime", banned: false, regDate: "2026-09-02", uid: 1, freeSpinUsed: false, freeCaseUsed: false, balance: 1000 },
-                "user": { password: "123", role: "user", sub: "None", banned: false, regDate: "2026-09-02", uid: 2, freeSpinUsed: false, freeCaseUsed: false, balance: 100 }
+                "invisik": { password: "123", role: "owner", sub: "Навсегда", banned: false, regDate: "2026-09-02", uid: 1, freeSpinUsed: false, freeCaseUsed: false, balance: 1000 },
+                "user": { password: "123", role: "user", sub: "Нет", banned: false, regDate: "2026-09-02", uid: 2, freeSpinUsed: false, freeCaseUsed: false, balance: 100 }
             };
             localStorage.setItem('runclient_users', JSON.stringify(defaultUsers));
         }
@@ -713,71 +335,33 @@
         }
 
         function updateCabinetUI() {
-            if (!currentUser) { document.getElementById('cabinet').classList.add('hidden'); return; }
+            if (!currentUser) { document.getElementById('page-cabinet').classList.add('hidden'); return; }
             const user = users[currentUser.toLowerCase()];
             if (!user) return;
             document.getElementById('cabUsername').textContent = currentUser;
             document.getElementById('cabRole').textContent = user.role || 'user';
             document.getElementById('cabAvatar').textContent = currentUser.charAt(0).toUpperCase();
             document.getElementById('dashUsername').textContent = currentUser;
-            document.getElementById('dashSubDisplay').textContent = user.sub || 'None';
+            document.getElementById('dashSubDisplay').textContent = user.sub || 'Нет';
             updateBalanceUI();
             const isAdmin = user.role === 'admin' || user.role === 'owner';
             document.getElementById('adminTabNav').style.display = isAdmin ? 'block' : 'none';
             const userOrders = orders.filter(o => o.username === currentUser);
-            document.getElementById('ordersList').innerHTML = userOrders.length ? userOrders.map(o => `<div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:8px;"><strong>${o.product}</strong> - ${o.status}</div>`).join('') : '<p style="color:#949aab;">No orders.</p>';
+            document.getElementById('ordersList').innerHTML = userOrders.length ? userOrders.map(o => `<div style="background:rgba(255,255,255,0.05);padding:10px;border-radius:10px;margin-bottom:8px;"><strong>${o.product}</strong> - ${o.status}</div>`).join('') : '<p style="color:#8a8a93;">Нет заказов.</p>';
             const userTickets = tickets.filter(t => t.username === currentUser);
-            document.getElementById('ticketsList').innerHTML = userTickets.length ? userTickets.map(t => `<div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:8px;"><strong>${t.subject}</strong> - ${t.status}</div>`).join('') : '<p style="color:#949aab;">No tickets.</p>';
+            document.getElementById('ticketsList').innerHTML = userTickets.length ? userTickets.map(t => `<div style="background:rgba(255,255,255,0.05);padding:10px;border-radius:10px;margin-bottom:8px;"><strong>${t.subject}</strong> - ${t.status}</div>`).join('') : '<p style="color:#8a8a93;">Нет тикетов.</p>';
         }
 
         // === НАВИГАЦИЯ ===
-        function navigateToHome() {
-            document.getElementById('home').style.display = 'block';
-            document.getElementById('overview').style.display = 'block';
-            document.getElementById('pricing').style.display = 'block';
-            document.getElementById('faq').style.display = 'block';
-            document.getElementById('lottery').style.display = 'none';
-            document.getElementById('cabinet').classList.add('hidden');
+        window.navigateTo = function(page) {
+            document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
+            const target = document.getElementById('page-' + page);
+            if (target) target.classList.remove('hidden');
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            document.getElementById('navHomeLink').classList.add('active');
-        }
-
-        function navigateToLottery() {
-            document.getElementById('home').style.display = 'none';
-            document.getElementById('overview').style.display = 'none';
-            document.getElementById('pricing').style.display = 'none';
-            document.getElementById('faq').style.display = 'none';
-            document.getElementById('lottery').style.display = 'block';
-            document.getElementById('cabinet').classList.add('hidden');
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            document.getElementById('navLotteryLink').classList.add('active');
-        }
-
-        function navigateToCabinet() {
-            if (!currentUser) { alert('Please login first'); return; }
-            document.getElementById('home').style.display = 'none';
-            document.getElementById('overview').style.display = 'none';
-            document.getElementById('pricing').style.display = 'none';
-            document.getElementById('faq').style.display = 'none';
-            document.getElementById('lottery').style.display = 'none';
-            document.getElementById('cabinet').classList.remove('hidden');
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            document.getElementById('navCabinetLink').classList.add('active');
-            updateCabinetUI();
-        }
-
-        function navigateToOverview() { navigateToHome(); document.getElementById('overview').style.display = 'block'; }
-        function navigateToPricing() { navigateToHome(); document.getElementById('pricing').style.display = 'block'; }
-        function navigateToFaq() { navigateToHome(); document.getElementById('faq').style.display = 'block'; }
-
-        // === ПРИВЯЗКА НАВИГАЦИИ ===
-        document.getElementById('navHomeLink').onclick = function(e) { e.preventDefault(); navigateToHome(); };
-        document.getElementById('navOverview').onclick = function(e) { e.preventDefault(); navigateToOverview(); };
-        document.getElementById('navPricing').onclick = function(e) { e.preventDefault(); navigateToPricing(); };
-        document.getElementById('navFaq').onclick = function(e) { e.preventDefault(); navigateToFaq(); };
-        document.getElementById('navLotteryLink').onclick = function(e) { e.preventDefault(); navigateToLottery(); };
-        document.getElementById('navCabinetLink').onclick = function(e) { e.preventDefault(); navigateToCabinet(); };
-        document.getElementById('navHome').onclick = function(e) { e.preventDefault(); navigateToHome(); };
+            const active = document.getElementById('nav-' + page);
+            if (active) active.classList.add('active');
+            if (page === 'cabinet') updateCabinetUI();
+        };
 
         // === АВТОРИЗАЦИЯ ===
         function openAuthModal() { document.getElementById('authModal').classList.add('active'); }
@@ -787,38 +371,38 @@
             if (btn) btn.classList.add('active');
             document.getElementById('authFormLogin').style.display = (tab === 'login') ? 'block' : 'none';
             document.getElementById('authFormRegister').style.display = (tab === 'register') ? 'block' : 'none';
-            document.getElementById('authModalTitle').textContent = (tab === 'login') ? 'Login' : 'Register';
+            document.getElementById('authModalTitle').textContent = (tab === 'login') ? 'Вход в аккаунт' : 'Регистрация';
         }
         function handleLogin() {
             const username = document.getElementById('loginUsername').value.trim();
             const pass = document.getElementById('loginPassword').value.trim();
-            if (!username || !pass) { alert('Fill all fields'); return; }
+            if (!username || !pass) { alert('Заполните все поля'); return; }
             const found = findUser(username);
-            if (!found) { alert('User not found'); return; }
-            if (found.user.password !== pass) { alert('Wrong password'); return; }
-            if (found.user.banned) { alert('Account banned'); return; }
+            if (!found) { alert('Пользователь не найден'); return; }
+            if (found.user.password !== pass) { alert('Неверный пароль'); return; }
+            if (found.user.banned) { alert('Аккаунт заблокирован'); return; }
             currentUser = found.username;
             localStorage.setItem('runclient_user', currentUser);
             closeAuthModal();
-            document.getElementById('authBtn').textContent = currentUser;
+            document.getElementById('authBtn').innerHTML = '<i class="fas fa-user"></i> ' + currentUser;
             document.getElementById('regBtn').style.display = 'none';
             updateCabinetUI();
             updateBalanceUI();
-            alert('Welcome, ' + currentUser + '!');
-            navigateToCabinet();
+            alert('Добро пожаловать, ' + currentUser + '!');
+            navigateTo('cabinet');
         }
         function handleRegister() {
             const username = document.getElementById('regUsername').value.trim();
             const pass = document.getElementById('regPassword').value.trim();
             if (!username || !pass || username.length < 3 || pass.length < 3) {
-                alert('Nickname and password must be at least 3 characters');
+                alert('Ник и пароль минимум 3 символа');
                 return;
             }
-            if (findUser(username)) { alert('User already exists'); return; }
+            if (findUser(username)) { alert('Пользователь уже существует'); return; }
             users[username.toLowerCase()] = {
                 password: pass,
                 role: 'user',
-                sub: 'None',
+                sub: 'Нет',
                 banned: false,
                 regDate: new Date().toISOString(),
                 uid: Object.keys(users).length + 1,
@@ -828,7 +412,7 @@
                 email: document.getElementById('regEmail').value.trim() || ''
             };
             saveAll();
-            alert('Account created! Please login.');
+            alert('Аккаунт создан! Теперь войдите.');
             switchAuthTab('login', document.querySelector('.modal-tabs button'));
             document.getElementById('loginUsername').value = username;
         }
@@ -836,10 +420,10 @@
         // === ОПЛАТА ===
         let currentPayment = { product: '', amount: 0 };
         function openPaymentModal(product, amount) {
-            if (!currentUser) { alert('Please login first'); return; }
+            if (!currentUser) { alert('Сначала войдите в аккаунт'); return; }
             currentPayment.product = product;
             currentPayment.amount = amount;
-            document.getElementById('paymentInfo').textContent = `Purchase: ${product} - ${amount} ₽`;
+            document.getElementById('paymentInfo').textContent = `Покупка: ${product} - ${amount} ₽`;
             document.getElementById('paymentAmount').value = amount;
             document.getElementById('paymentCodeInput').value = '';
             document.getElementById('paymentCodeGroup').style.display = 'none';
@@ -852,83 +436,97 @@
                 document.getElementById('paymentCodeGroup').style.display = (this.value === 'funpay') ? 'block' : 'none';
             });
         });
+
         function processPayment() {
             const method = document.querySelector('input[name="payMethod"]:checked').value;
             const amount = parseInt(document.getElementById('paymentAmount').value);
             const user = users[currentUser.toLowerCase()];
-            if (!user) { alert('User error'); return; }
+            if (!user) { alert('Ошибка пользователя'); return; }
+
+            // === ТОВАР ВЫДАЁТСЯ ТОЛЬКО ПОСЛЕ УСПЕШНОЙ ОПЛАТЫ ===
             if (method === 'balance') {
-                if ((user.balance || 0) < amount) { alert('Insufficient balance'); return; }
+                // Проверка баланса
+                if ((user.balance || 0) < amount) {
+                    alert('Недостаточно баланса!');
+                    return;
+                }
+                // СПИСЫВАЕМ
                 user.balance -= amount;
-                user.sub = currentPayment.product.includes('Month') ? currentPayment.product : (currentPayment.product === 'Lifetime' ? 'Lifetime' : 'None');
-                orders.push({ username: currentUser, product: currentPayment.product, status: 'Completed', date: new Date().toISOString() });
+                // ВЫДАЁМ ТОВАР
+                user.sub = currentPayment.product.includes('месяц') ? currentPayment.product : (currentPayment.product === 'Навсегда' ? 'Навсегда' : 'Нет');
+                orders.push({ username: currentUser, product: currentPayment.product, status: 'Завершён', date: new Date().toISOString() });
                 saveAll();
                 updateCabinetUI();
                 updateBalanceUI();
-                alert('Purchase successful!');
+                alert('Покупка успешна!');
                 closePaymentModal();
                 return;
             }
+
             if (method === 'funpay') {
                 const code = document.getElementById('paymentCodeInput').value.trim().toUpperCase();
-                if (!code) { alert('Enter code!'); return; }
+                if (!code) { alert('Введите код!'); return; }
                 if (codes[code]) {
                     const data = codes[code];
-                    if (data.used) { alert('Code already used'); return; }
-                    if (Date.now() > data.expires) { alert('Code expired'); return; }
-                    if (data.type === 'subscription') { user.sub = data.subName || '1 Month'; }
-                    else { user.balance = (user.balance || 0) + (data.amount || 0); }
+                    if (data.used) { alert('Код уже использован'); return; }
+                    if (Date.now() > data.expires) { alert('Код истёк'); return; }
+                    // ВЫДАЁМ ТОВАР ПО КОДУ
+                    if (data.type === 'subscription') {
+                        user.sub = data.subName || '1 месяц';
+                    } else {
+                        user.balance = (user.balance || 0) + (data.amount || 0);
+                    }
                     data.used = true;
-                    orders.push({ username: currentUser, product: currentPayment.product, status: 'Completed via code', date: new Date().toISOString() });
+                    orders.push({ username: currentUser, product: currentPayment.product, status: 'Завершён по коду', date: new Date().toISOString() });
                     saveAll();
                     updateCabinetUI();
                     updateBalanceUI();
-                    alert('Payment via code successful!');
+                    alert('Оплата по коду успешна!');
                     closePaymentModal();
-                } else { alert('Invalid code!'); }
+                } else { alert('Неверный код!'); }
                 return;
             }
         }
 
         // === АДМИН ===
         function generateCode() {
-            if (!currentUser) { alert('Login as admin'); return; }
+            if (!currentUser) { alert('Войдите как админ'); return; }
             const user = users[currentUser.toLowerCase()];
-            if (user.role !== 'admin' && user.role !== 'owner') { alert('Access denied'); return; }
+            if (user.role !== 'admin' && user.role !== 'owner') { alert('Доступ запрещён'); return; }
             const key = 'KEY-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-            codes[key] = { type: 'subscription', subName: '1 Month', amount: 149, expires: Date.now() + 5*60*1000, used: false };
+            codes[key] = { type: 'subscription', subName: '1 месяц', amount: 149, expires: Date.now() + 5*60*1000, used: false };
             saveAll();
             document.getElementById('generatedCodeDisplay').innerHTML = `
                 <div class="code-display">
-                    <div class="label">One-Time Code (5 min):</div>
+                    <div class="label">Одноразовый код (5 мин):</div>
                     <div class="code">${key}</div>
-                    <div class="expire">Expires: ${new Date(codes[key].expires).toLocaleTimeString()}</div>
+                    <div class="expire">Истекает: ${new Date(codes[key].expires).toLocaleTimeString()}</div>
                 </div>
             `;
         }
         function resetAllBalances() {
             if (!currentUser) return;
             const user = users[currentUser.toLowerCase()];
-            if (user.role !== 'owner') { alert('Only owner'); return; }
-            if (confirm('Reset ALL balances?')) { for (let key in users) users[key].balance = 0; saveAll(); updateCabinetUI(); alert('All balances reset.'); }
+            if (user.role !== 'owner') { alert('Только владелец'); return; }
+            if (confirm('Обнулить ВСЕ балансы?')) { for (let key in users) users[key].balance = 0; saveAll(); updateCabinetUI(); alert('Все балансы обнулены.'); }
         }
         function removeAllSubscriptions() {
             if (!currentUser) return;
             const user = users[currentUser.toLowerCase()];
-            if (user.role !== 'owner') { alert('Only owner'); return; }
-            if (confirm('Remove ALL subscriptions?')) { for (let key in users) users[key].sub = 'None'; saveAll(); updateCabinetUI(); alert('All subscriptions removed.'); }
+            if (user.role !== 'owner') { alert('Только владелец'); return; }
+            if (confirm('Снять ВСЕ подписки?')) { for (let key in users) users[key].sub = 'Нет'; saveAll(); updateCabinetUI(); alert('Все подписки сняты.'); }
         }
 
         // === ЛОТЕРЕЯ ===
         function getWin() {
             const rand = Math.random() * 100;
-            if (rand < 30) return '7d';
-            if (rand < 42) return '30d';
-            if (rand < 47) return '90d';
-            return '7d';
+            if (rand < 30) return '7д';
+            if (rand < 42) return '30д';
+            if (rand < 47) return '90д';
+            return '7д';
         }
         function initLottery() {
-            const segments = ['7d','30d','90d','7d','30d','90d','7d','30d','90d'];
+            const segments = ['7д','30д','90д','7д','30д','90д','7д','30д','90д'];
             ['spinTrackInner', 'caseTrackInner'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.innerHTML = segments.map(s => `<div class="lottery-segment">${s}</div>`).join('');
@@ -936,29 +534,29 @@
         }
         initLottery();
         function spinRoulette() {
-            if (!currentUser) { alert('Login first'); return; }
+            if (!currentUser) { alert('Войдите в аккаунт'); return; }
             const user = users[currentUser.toLowerCase()];
             if (!user.freeSpinUsed) { user.freeSpinUsed = true; saveAll(); }
-            else { if (spinAttempts <= 0) { alert('No attempts!'); return; } spinAttempts--; localStorage.setItem('runclient_spinAttempts', spinAttempts); document.getElementById('spinAttempts').textContent = spinAttempts; }
-            const win = getWin(); user.sub = win; saveAll(); updateCabinetUI(); alert('🎉 You won: ' + win);
+            else { if (spinAttempts <= 0) { alert('Нет попыток!'); return; } spinAttempts--; localStorage.setItem('runclient_spinAttempts', spinAttempts); document.getElementById('spinAttempts').textContent = spinAttempts; }
+            const win = getWin(); user.sub = win; saveAll(); updateCabinetUI(); alert('🎉 Вы выиграли: ' + win);
         }
         function openCase() {
-            if (!currentUser) { alert('Login first'); return; }
+            if (!currentUser) { alert('Войдите в аккаунт'); return; }
             const user = users[currentUser.toLowerCase()];
             if (!user.freeCaseUsed) { user.freeCaseUsed = true; saveAll(); }
-            else { if (caseAttempts <= 0) { alert('No attempts!'); return; } caseAttempts--; localStorage.setItem('runclient_caseAttempts', caseAttempts); document.getElementById('caseAttempts').textContent = caseAttempts; }
-            const win = getWin(); user.sub = win; saveAll(); updateCabinetUI(); alert('🎉 You won: ' + win);
+            else { if (caseAttempts <= 0) { alert('Нет попыток!'); return; } caseAttempts--; localStorage.setItem('runclient_caseAttempts', caseAttempts); document.getElementById('caseAttempts').textContent = caseAttempts; }
+            const win = getWin(); user.sub = win; saveAll(); updateCabinetUI(); alert('🎉 Вы выиграли: ' + win);
         }
         function buySpinAttempt() {
-            if (!currentUser) { alert('Login'); return; }
+            if (!currentUser) { alert('Войдите'); return; }
             const user = users[currentUser.toLowerCase()];
-            if ((user.balance || 0) < 1) { alert('Insufficient balance'); return; }
+            if ((user.balance || 0) < 1) { alert('Недостаточно баланса'); return; }
             user.balance -= 1; spinAttempts++; localStorage.setItem('runclient_spinAttempts', spinAttempts); document.getElementById('spinAttempts').textContent = spinAttempts; saveAll(); updateBalanceUI();
         }
         function buyCaseAttempt() {
-            if (!currentUser) { alert('Login'); return; }
+            if (!currentUser) { alert('Войдите'); return; }
             const user = users[currentUser.toLowerCase()];
-            if ((user.balance || 0) < 1) { alert('Insufficient balance'); return; }
+            if ((user.balance || 0) < 1) { alert('Недостаточно баланса'); return; }
             user.balance -= 1; caseAttempts++; localStorage.setItem('runclient_caseAttempts', caseAttempts); document.getElementById('caseAttempts').textContent = caseAttempts; saveAll(); updateBalanceUI();
         }
 
@@ -966,31 +564,28 @@
         function logout() {
             currentUser = null;
             localStorage.removeItem('runclient_user');
-            document.getElementById('authBtn').textContent = 'Login';
+            document.getElementById('authBtn').innerHTML = '<i class="fas fa-sign-in-alt"></i> Вход';
             document.getElementById('regBtn').style.display = 'inline-flex';
             updateCabinetUI();
             updateBalanceUI();
-            navigateToHome();
+            navigateTo('home');
         }
 
         // === ПРИВЯЗКА КНОПОК ===
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('authBtn').onclick = function(e) { e.preventDefault(); openAuthModal(); };
-            document.getElementById('regBtn').onclick = function(e) { e.preventDefault(); openAuthModal(); switchAuthTab('register', document.querySelector('.modal-tabs button:last-child')); };
-            document.getElementById('getAccessBtn').onclick = function(e) { e.preventDefault(); navigateToPricing(); };
             document.getElementById('authModal').addEventListener('click', function(e) { if (e.target === this) closeAuthModal(); });
             document.getElementById('paymentModal').addEventListener('click', function(e) { if (e.target === this) closePaymentModal(); });
             if (currentUser) {
-                document.getElementById('authBtn').textContent = currentUser;
+                document.getElementById('authBtn').innerHTML = '<i class="fas fa-user"></i> ' + currentUser;
                 document.getElementById('regBtn').style.display = 'none';
                 updateCabinetUI();
             }
             document.getElementById('spinAttempts').textContent = spinAttempts;
             document.getElementById('caseAttempts').textContent = caseAttempts;
             updateBalanceUI();
-            document.getElementById('lottery').style.display = 'none';
-            navigateToHome();
-            console.log('✅ RunClient loaded!');
+            // По умолчанию показываем главную
+            navigateTo('home');
+            console.log('✅ RunClient загружен! (стабильная версия)');
         });
     })();
     </script>
