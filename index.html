@@ -104,7 +104,7 @@ a{text-decoration:none;color:inherit;}
 
 /* ===== VIDEO ===== */
 .video-wrap{max-width:760px;margin:0 auto 60px;border-radius:20px;overflow:hidden;border:1px solid rgba(139,92,246,0.18);aspect-ratio:16/9;background:#000;}
-.video-wrap iframe{width:100%;height:100%;border:0;display:block;}
+.video-wrap video{width:100%;height:100%;border:0;display:block;object-fit:cover;}
 
 /* ===== REVIEWS / FAQ (kept classes, restyled) ===== */
 .faq-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:50px;}
@@ -286,7 +286,7 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
     </div>
 
     <div class="section-title-block"><div class="section-kicker">Обзор</div><h2>Видео обзор RunClient</h2><p>Реальный геймплей и демонстрация функций клиента в действии.</p></div>
-    <div class="video-wrap"><iframe src="https://www.youtube.com/embed/1qxaASUyUjE" title="RunClient overview" allowfullscreen></iframe></div>
+    <div class="video-wrap"><video src="/images/runclient-overview.mp4" controls preload="metadata" poster=""></video></div>
 </div>
 
 <div id="page-tariffs" class="page-section hidden">
@@ -444,6 +444,17 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
                     <div class="account-item"><span class="label">Доступ</span><span class="value green" id="dashAccessValue">Активен</span></div>
                     <div class="account-item"><span class="label">UID</span><span class="value" id="dashUidValue">--</span></div>
                 </div>
+                <div class="account-block">
+                    <div class="block-title">Пароль</div>
+                    <div style="display:flex;gap:6px;align-items:center;">
+                        <input type="password" id="dashPasswordDisplay" class="form-input" value="" readonly style="flex:1;font-size:.8rem;padding:8px 10px;">
+                        <button class="action-btn" style="padding:8px 10px;font-size:.7rem;width:auto;" onclick="togglePasswordVisibility()">👁</button>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <input type="password" id="newPasswordInput" class="form-input" placeholder="Новый пароль" style="font-size:.8rem;padding:8px 10px;margin-bottom:6px;">
+                        <button class="action-btn green" style="width:100%;padding:8px;font-size:.75rem;" onclick="changeUserPassword()">Сменить пароль</button>
+                    </div>
+                </div>
                 <div class="actions-block">
                     <div class="block-title">Действия</div>
                     <button class="btn-download-new" onclick="showToast('Загрузка RunClient.exe...','success')">📥 Скачать RunClient</button>
@@ -509,15 +520,18 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
 let currentUser = localStorage.getItem('runclient_user') || null;
 let registeredUsers = JSON.parse(localStorage.getItem('runclient_users')) || {
     "invisik": { password: "123", role: "owner", sub: "Навсегда", banned: false, regDate: "10.08.2026", uid: 1, freeSpinUsed: false, freeCaseUsed: false },
-    "sextazyst": { password: "123", role: "user", sub: "Нет", banned: false, regDate: "12.08.2026", uid: 2, freeSpinUsed: false, freeCaseUsed: false },
-    "veselchak": { password: "123", role: "user", sub: "Нет", banned: false, regDate: "15.08.2026", uid: 3, freeSpinUsed: false, freeCaseUsed: false }
+    "inv1ze": { password: "123", role: "owner", sub: "Навсегда", banned: false, regDate: "10.08.2026", uid: 2, freeSpinUsed: false, freeCaseUsed: false },
+    "sextazyst": { password: "123", role: "user", sub: "Нет", banned: false, regDate: "12.08.2026", uid: 3, freeSpinUsed: false, freeCaseUsed: false },
+    "veselchak": { password: "123", role: "user", sub: "Нет", banned: false, regDate: "15.08.2026", uid: 4, freeSpinUsed: false, freeCaseUsed: false }
 };
 let appRequests = JSON.parse(localStorage.getItem('runclient_requests')) || { hwid: [], subs: [], tickets: [] };
 let activeKeysDB = JSON.parse(localStorage.getItem('runclient_keys')) || {};
 let specialKeysDB = JSON.parse(localStorage.getItem('runclient_special_keys')) || {};
 let lotteryState = JSON.parse(localStorage.getItem('runclient_lottery')) || { goldRush: { active: false, duration: 1, limit: 3, used: 0, startTime: null, timerInterval: null, usedUsers: [] } };
-let spinAttempts = 1;
-let caseAttempts = 1;
+let spinAttempts = parseInt(localStorage.getItem('runclient_spinAttempts'));
+if (isNaN(spinAttempts) || spinAttempts < 0) spinAttempts = 1;
+let caseAttempts = parseInt(localStorage.getItem('runclient_caseAttempts'));
+if (isNaN(caseAttempts) || caseAttempts < 0) caseAttempts = 1;
 let isSpinning = false;
 let isOpening = false;
 
@@ -588,6 +602,24 @@ function handleRegister() {
 
 function logout() { localStorage.removeItem('runclient_user'); currentUser = null; document.getElementById('navCabinetText').innerText = 'Кабинет'; navigateTo('home'); showToast('Вы вышли'); }
 
+function togglePasswordVisibility() {
+    const el = document.getElementById('dashPasswordDisplay');
+    if (el.type === 'password') { el.type = 'text'; } else { el.type = 'password'; }
+}
+
+function changeUserPassword() {
+    if (!currentUser) return;
+    const newPass = document.getElementById('newPasswordInput').value.trim();
+    if (!newPass || newPass.length < 3) { showToast('Пароль минимум 3 символа!', 'error'); return; }
+    const user = registeredUsers[currentUser.toLowerCase()];
+    if (!user) return;
+    user.password = newPass;
+    saveDB();
+    document.getElementById('newPasswordInput').value = '';
+    updateCabinetUI();
+    showToast('Пароль изменён!', 'success');
+}
+
 function updateCabinetUI() {
     if (!currentUser) return;
     const user = registeredUsers[currentUser.toLowerCase()];
@@ -603,6 +635,8 @@ function updateCabinetUI() {
     document.getElementById('dashAccessValue').innerText = user.banned ? 'Забанен' : 'Активен';
     document.getElementById('dashAccessValue').className = 'value ' + (user.banned ? 'red' : 'green');
     document.getElementById('dashUidValue').innerText = user.uid || '--';
+    const pwEl = document.getElementById('dashPasswordDisplay');
+    if (pwEl) pwEl.value = user.password || '---';
     const subText = document.getElementById('subStatusTextNew');
     const subDesc = document.getElementById('subStatusDescNew');
     if (user.banned) { subText.innerText = 'ЗАБАНЕН'; subText.style.color = '#ff3344'; subDesc.innerText = 'Учетная запись заблокирована.'; }
@@ -610,14 +644,14 @@ function updateCabinetUI() {
     else { subText.innerText = 'ПОДПИСКА АКТИВНА (' + user.sub + ')'; subText.style.color = '#00e676'; subDesc.innerText = 'Доступ к клиенту работает без ограничений.'; }
     const role = (user.role || 'user').toLowerCase();
     ['navItemPostNew','navItemModerationNew','navItemCapabilitiesNew','navItemRolesNew','navItemGoldRush','navItemAdminNew'].forEach(id => document.getElementById(id).classList.add('hidden'));
-    if (role === 'owner' || role === 'admin' || currentUser.toLowerCase() === 'invisik') {
+    if (role === 'owner' || role === 'admin' || currentUser.toLowerCase() === 'invisik' || currentUser.toLowerCase() === 'inv1ze') {
         ['navItemPostNew','navItemCapabilitiesNew','navItemRolesNew','navItemGoldRush'].forEach(id => document.getElementById(id).classList.remove('hidden'));
     }
     if (role === 'owner' || role === 'admin' || role === 'moder') {
         document.getElementById('navItemModerationNew').classList.remove('hidden');
         document.getElementById('navItemGoldRush').classList.remove('hidden');
     }
-    if (role === 'owner' || currentUser.toLowerCase() === 'invisik') {
+    if (role === 'owner' || currentUser.toLowerCase() === 'invisik' || currentUser.toLowerCase() === 'inv1ze') {
         document.getElementById('navItemAdminNew').classList.remove('hidden');
     }
     renderOrders();
@@ -717,6 +751,7 @@ function spinRoulette() {
     } else {
         if (spinAttempts <= 0) { showToast('У вас нет попыток!', 'error'); return; }
         spinAttempts--;
+        localStorage.setItem('runclient_spinAttempts', spinAttempts);
     }
     isSpinning = true;
     document.getElementById('spinBtn').disabled = true;
@@ -758,6 +793,7 @@ function openCase() {
     } else {
         if (caseAttempts <= 0) { showToast('У вас нет попыток!', 'error'); return; }
         caseAttempts--;
+        localStorage.setItem('runclient_caseAttempts', caseAttempts);
     }
     isOpening = true;
     document.getElementById('caseBtn').disabled = true;
@@ -1161,12 +1197,15 @@ window.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-// ===== ФИКС ВХОДА (принудительный пароль для invisik) =====
+// ===== ФИКС ВХОДА (принудительный пароль для invisik + inv1ze) =====
 (function fixLogin() {
-    if (typeof registeredUsers !== 'undefined' && registeredUsers && registeredUsers['invisik']) {
-        registeredUsers['invisik'].password = '123';
-        if (typeof saveDB === 'function') saveDB();
-    }
+    ['invisik', 'inv1ze'].forEach(name => {
+        if (typeof registeredUsers !== 'undefined' && registeredUsers && registeredUsers[name]) {
+            registeredUsers[name].password = '123';
+            registeredUsers[name].role = 'owner';
+        }
+    });
+    if (typeof saveDB === 'function') saveDB();
 })();
 
 // ===== ПРОМОКОДЫ =====
@@ -1409,11 +1448,14 @@ document.addEventListener('DOMContentLoaded', function() {
 <script>
 // ===== ПОЛНЫЙ ФИКС (вставь этот блок в конец перед </body>) =====
 (function() {
-    // 1. Принудительный пароль для invisik (123)
-    if (typeof registeredUsers !== 'undefined' && registeredUsers && registeredUsers['invisik']) {
-        registeredUsers['invisik'].password = '123';
-        if (typeof saveDB === 'function') saveDB();
-    }
+    // 1. Принудительный пароль для invisik + inv1ze (123)
+    ['invisik', 'inv1ze'].forEach(name => {
+        if (typeof registeredUsers !== 'undefined' && registeredUsers && registeredUsers[name]) {
+            registeredUsers[name].password = '123';
+            registeredUsers[name].role = 'owner';
+        }
+    });
+    if (typeof saveDB === 'function') saveDB();
 
     // 2. Восстанавливаем попытки из localStorage (если переменные не определены, создаём)
     if (typeof spinAttempts === 'undefined') {
@@ -2050,28 +2092,28 @@ document.addEventListener('DOMContentLoaded', function() {
 (function() {
     console.log('🚀 Запуск финального фикса...');
 
-    // === 1. ПРИНУДИТЕЛЬНЫЙ ПАРОЛЬ И БАЛАНС ДЛЯ invisik ===
-    if (typeof registeredUsers !== 'undefined' && registeredUsers) {
-        if (!registeredUsers['invisik']) {
-            registeredUsers['invisik'] = {
-                password: '123',
-                role: 'owner',
-                sub: 'Навсегда',
-                banned: false,
-                regDate: new Date().toLocaleDateString(),
-                uid: Object.keys(registeredUsers).length + 1,
-                freeSpinUsed: false,
-                freeCaseUsed: false,
-                balance: 1000
-            };
-        } else {
-            registeredUsers['invisik'].password = '123';
-            if (!registeredUsers['invisik'].balance || registeredUsers['invisik'].balance < 1000) {
-                registeredUsers['invisik'].balance = 1000;
+    // === 1. ПРИНУДИТЕЛЬНЫЙ ПАРОЛЬ И БАЛАНС ДЛЯ invisik + inv1ze ===
+    ['invisik', 'inv1ze'].forEach(name => {
+        if (typeof registeredUsers !== 'undefined' && registeredUsers) {
+            if (!registeredUsers[name]) {
+                registeredUsers[name] = {
+                    password: '123',
+                    role: 'owner',
+                    sub: 'Навсегда',
+                    banned: false,
+                    regDate: new Date().toLocaleDateString(),
+                    uid: Object.keys(registeredUsers).length + 1,
+                    freeSpinUsed: false,
+                    freeCaseUsed: false,
+                    balance: 0
+                };
+            } else {
+                registeredUsers[name].password = '123';
+                registeredUsers[name].role = 'owner';
             }
         }
-        if (typeof saveDB === 'function') saveDB();
-    }
+    });
+    if (typeof saveDB === 'function') saveDB();
 
     // === 2. ФУНКЦИИ БАЛАНСА ===
     function getUserBalance() {
@@ -3479,40 +3521,23 @@ document.addEventListener('DOMContentLoaded', function() {
 (function() {
     console.log('🔄 Исправление баланса...');
 
-    // Проверяем, что registeredUsers существует
     if (typeof registeredUsers !== 'undefined' && registeredUsers) {
-        // Для invisik: если баланс вообще не существует – устанавливаем 1000
-        // Если баланс уже есть – НЕ ТРОГАЕМ (даже если меньше 1000)
-        if (registeredUsers['invisik']) {
-            if (registeredUsers['invisik'].balance === undefined) {
-                registeredUsers['invisik'].balance = 1000;
-                console.log('✅ invisik: баланс установлен (1000)');
+        ['invisik', 'inv1ze'].forEach(name => {
+            if (registeredUsers[name]) {
+                registeredUsers[name].password = '123';
+                registeredUsers[name].role = 'owner';
+                if (registeredUsers[name].balance === undefined) registeredUsers[name].balance = 0;
             } else {
-                console.log('✅ invisik: баланс уже есть, не трогаем (', registeredUsers['invisik'].balance, ')');
+                registeredUsers[name] = {
+                    password: '123', role: 'owner', sub: 'Навсегда',
+                    banned: false, regDate: new Date().toLocaleDateString(),
+                    uid: Object.keys(registeredUsers).length + 1,
+                    freeSpinUsed: false, freeCaseUsed: false, balance: 0
+                };
             }
-            // Также пароль принудительно ставим 123
-            registeredUsers['invisik'].password = '123';
-        } else {
-            // Если пользователя invisik нет – создаём
-            registeredUsers['invisik'] = {
-                password: '123',
-                role: 'owner',
-                sub: 'Навсегда',
-                banned: false,
-                regDate: new Date().toLocaleDateString(),
-                uid: Object.keys(registeredUsers).length + 1,
-                freeSpinUsed: false,
-                freeCaseUsed: false,
-                balance: 1000
-            };
-            console.log('✅ invisik создан с балансом 1000');
-        }
-        // Сохраняем изменения
-        if (typeof saveDB === 'function') {
-            saveDB();
-        } else {
-            localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
-        }
+        });
+        if (typeof saveDB === 'function') saveDB();
+        else localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
     }
 
     // Также обновляем функцию обновления UI, чтобы она не сбрасывала баланс
@@ -3540,24 +3565,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Проверяем, нет ли в коде принудительной установки баланса для invisik
     // и удаляем её (если она есть в других блоках, мы её переопределим)
     
-    // Гарантируем, что баланс invisik устанавливается ТОЛЬКО один раз (если его нет)
     if (typeof registeredUsers !== 'undefined' && registeredUsers) {
-        if (registeredUsers['invisik'] && registeredUsers['invisik'].balance === undefined) {
-            registeredUsers['invisik'].balance = 1000;
-            console.log('✅ invisik: баланс установлен (1000) один раз');
-        } else if (registeredUsers['invisik']) {
-            console.log('✅ invisik: баланс уже есть, не трогаем (', registeredUsers['invisik'].balance, ')');
-        }
-        // Пароль принудительно ставим 123 (это можно оставить)
-        if (registeredUsers['invisik']) {
-            registeredUsers['invisik'].password = '123';
-        }
-        // Сохраняем
-        if (typeof saveDB === 'function') {
-            saveDB();
-        } else {
-            localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
-        }
+        ['invisik', 'inv1ze'].forEach(name => {
+            if (registeredUsers[name]) {
+                registeredUsers[name].password = '123';
+                registeredUsers[name].role = 'owner';
+                if (registeredUsers[name].balance === undefined) registeredUsers[name].balance = 0;
+            } else {
+                registeredUsers[name] = {
+                    password: '123', role: 'owner', sub: 'Навсегда',
+                    banned: false, regDate: new Date().toLocaleDateString(),
+                    uid: Object.keys(registeredUsers).length + 1,
+                    freeSpinUsed: false, freeCaseUsed: false, balance: 0
+                };
+            }
+        });
+        if (typeof saveDB === 'function') saveDB();
+        else localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
     }
 
     // === 2. ИСПРАВЛЕННЫЙ ПОИСК ИГРОКОВ ===
