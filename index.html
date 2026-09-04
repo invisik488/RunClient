@@ -457,7 +457,8 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
                 </div>
                 <div class="actions-block">
                     <div class="block-title">Действия</div>
-                    <button class="btn-download-new" onclick="showToast('Загрузка RunClient.exe...','success')">📥 Скачать RunClient</button>
+                    <button class="btn-download-new" id="btnInstallLauncher" onclick="downloadLauncher()" style="display:none;">📥 Установить RunClient</button>
+                    <div id="launcherNotAvailable" style="display:none;padding:10px;background:rgba(255,77,109,0.1);border-radius:8px;border:1px solid rgba(255,77,109,0.3);font-size:.75rem;color:#ff4d6d;text-align:center;">Доступ закрыт. Активируйте подписку для скачивания лаунчера.</div>
                 </div>
                 <ul class="nav-menu-new">
                     <li class="nav-item-new active" onclick="switchCabinetTab('home',this)">🏠 Главная</li>
@@ -600,7 +601,24 @@ function handleRegister() {
     navigateTo('cabinet');
 }
 
-function logout() { localStorage.removeItem('runclient_user'); currentUser = null; document.getElementById('navCabinetText').innerText = 'Кабинет'; navigateTo('home'); showToast('Вы вышли'); }
+function logout() {
+    const prevUser = currentUser;
+    localStorage.removeItem('runclient_user');
+    currentUser = null;
+    document.getElementById('navCabinetText').innerText = 'Кабинет';
+    navigateTo('home');
+    showToast('Вы вышли');
+    if (prevUser) {
+        const storedToken = localStorage.getItem('runclient_launcher_token_' + prevUser.toLowerCase());
+        if (storedToken) {
+            fetch('https://cheat-backend.vercel.app/api/launcher-invalidate', {
+                method: 'POST', headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({token: storedToken})
+            }).catch(()=>{});
+            localStorage.removeItem('runclient_launcher_token_' + prevUser.toLowerCase());
+        }
+    }
+}
 
 function togglePasswordVisibility() {
     const el = document.getElementById('dashPasswordDisplay');
@@ -8616,7 +8634,59 @@ document.addEventListener('DOMContentLoaded', function() {
 
     setTimeout(syncAllUsers, 3000);
 
-    console.log('✅ API Bridge активен (login/register/keys/sync → backend)');
+    // --- LAUNCHER DOWNLOAD ---
+    async function downloadLauncher() {
+        if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+        const lower = currentUser.toLowerCase();
+        const user = registeredUsers[lower];
+        const hasSub = user && user.sub && user.sub !== 'Нет';
+        if (!hasSub) { showToast('Нет активной подписки!', 'error'); return; }
+
+        showToast('Получаю токен лаунчера...', 'success');
+        const tokenRes = await apiPost('/api/launcher-token', { username: lower, password: user.password });
+        if (!tokenRes.ok) { showToast(tokenRes.error || 'Ошибка получения токена', 'error'); return; }
+
+        const launcherConfig = {
+            mc_dir: (window.navigator || {}).platform === 'Win32'
+                ? (process.env.APPDATA || 'C:\\Users\\User\\AppData\\Roaming') + '\\.minecraft'
+                : '~/.minecraft',
+            api_url: 'https://cheat-backend.vercel.app',
+            launcher_token: tokenRes.token
+        };
+
+        localStorage.setItem('runclient_launcher_token_' + lower, tokenRes.token);
+
+        const blob = new Blob([JSON.stringify(launcherConfig, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'config.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showToast('Скачайте launcher.exe и положите config.json рядом с ним!', 'success');
+    }
+
+    function updateLauncherButton() {
+        const btn = document.getElementById('btnInstallLauncher');
+        const na = document.getElementById('launcherNotAvailable');
+        if (!btn || !na) return;
+        if (!currentUser) { btn.style.display = 'none'; na.style.display = 'none'; return; }
+        const lower = currentUser.toLowerCase();
+        const user = registeredUsers[lower];
+        const hasSub = user && user.sub && user.sub !== 'Нет';
+        if (hasSub) { btn.style.display = ''; na.style.display = 'none'; }
+        else { btn.style.display = 'none'; na.style.display = ''; }
+    }
+
+    const origUpdateCabinet = window.updateCabinetUI;
+    if (typeof origUpdateCabinet === 'function') {
+        window.updateCabinetUI = function() { origUpdateCabinet(); updateLauncherButton(); };
+    }
+
+    console.log('✅ API Bridge активен (login/register/keys/sync/launcher → backend)');
     })();
 </script>
 </body>
