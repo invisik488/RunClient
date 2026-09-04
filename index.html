@@ -8642,31 +8642,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const hasSub = user && user.sub && user.sub !== 'Нет';
         if (!hasSub) { showToast('Нет активной подписки!', 'error'); return; }
 
-        showToast('Получаю токен лаунчера...', 'success');
-        const tokenRes = await apiPost('/api/launcher-token', { username: lower, password: user.password });
-        if (!tokenRes.ok) { showToast(tokenRes.error || 'Ошибка получения токена', 'error'); return; }
-
-        const launcherConfig = {
-            mc_dir: (window.navigator || {}).platform === 'Win32'
-                ? (process.env.APPDATA || 'C:\\Users\\User\\AppData\\Roaming') + '\\.minecraft'
-                : '~/.minecraft',
-            api_url: 'https://cheat-backend.vercel.app',
-            launcher_token: tokenRes.token
-        };
-
-        localStorage.setItem('runclient_launcher_token_' + lower, tokenRes.token);
-
-        const blob = new Blob([JSON.stringify(launcherConfig, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
+        showToast('Скачивание RunClientLauncher.exe...', 'success');
         const a = document.createElement('a');
-        a.href = url;
-        a.download = 'config.json';
+        a.href = 'https://files.catbox.moe/1uel51.bin';
+        a.download = 'RunClientLauncher.exe';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
-        showToast('Скачайте launcher.exe и положите config.json рядом с ним!', 'success');
     }
 
     function updateLauncherButton() {
