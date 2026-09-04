@@ -286,7 +286,7 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
     </div>
 
     <div class="section-title-block"><div class="section-kicker">Обзор</div><h2>Видео обзор RunClient</h2><p>Реальный геймплей и демонстрация функций клиента в действии.</p></div>
-    <div class="video-wrap"><video src="/images/runclient-overview.mp4" controls preload="metadata" poster=""></video></div>
+    <div class="video-wrap"><video src="https://files.catbox.moe/812z8b.mp4" controls preload="metadata" poster=""></video></div>
 </div>
 
 <div id="page-tariffs" class="page-section hidden">
@@ -1459,11 +1459,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 2. Восстанавливаем попытки из localStorage (если переменные не определены, создаём)
     if (typeof spinAttempts === 'undefined') {
-        window.spinAttempts = parseInt(localStorage.getItem('runclient_spinAttempts')) || 1;
-        window.caseAttempts = parseInt(localStorage.getItem('runclient_caseAttempts')) || 1;
+        const savedSpin = localStorage.getItem('runclient_spinAttempts');
+        const savedCase = localStorage.getItem('runclient_caseAttempts');
+        window.spinAttempts = savedSpin !== null ? parseInt(savedSpin) : 1;
+        window.caseAttempts = savedCase !== null ? parseInt(savedCase) : 1;
     } else {
-        spinAttempts = parseInt(localStorage.getItem('runclient_spinAttempts')) || 1;
-        caseAttempts = parseInt(localStorage.getItem('runclient_caseAttempts')) || 1;
+        const savedSpin = localStorage.getItem('runclient_spinAttempts');
+        const savedCase = localStorage.getItem('runclient_caseAttempts');
+        spinAttempts = savedSpin !== null ? parseInt(savedSpin) : 1;
+        caseAttempts = savedCase !== null ? parseInt(savedCase) : 1;
     }
 
     // 3. Инициализация секторов рулетки
@@ -8510,6 +8514,7 @@ document.addEventListener('DOMContentLoaded', function() {
             updateLotteryUI();
             showToast('Добро пожаловать, ' + currentUser + '!', 'success');
             navigateTo('cabinet');
+            syncAllUsers();
             return;
         }
 
@@ -8523,6 +8528,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateLotteryUI();
         showToast('Добро пожаловать, ' + currentUser + '!', 'success');
         navigateTo('cabinet');
+        syncAllUsers();
     };
 
     // --- REGISTER ---
@@ -8554,6 +8560,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateLotteryUI();
         showToast('Аккаунт создан!', 'success');
         navigateTo('cabinet');
+        syncAllUsers();
     };
 
     // --- KEY ACTIVATION ---
@@ -8586,13 +8593,31 @@ document.addEventListener('DOMContentLoaded', function() {
             updateCabinetUI();
             showToast(res.message || 'Подписка активирована!', 'success');
             keyInput.value = '';
+            syncAllUsers();
         } else {
             showToast(res.error || 'Неверный ключ!', 'error');
         }
     };
 
-    console.log('✅ API Bridge активен (login/register/keys → backend)');
-})();
+    async function syncAllUsers() {
+        try {
+            const allUsers = [];
+            for (const [uname, udata] of Object.entries(registeredUsers)) {
+                if (!udata || !udata.password) continue;
+                let subType = null;
+                if (udata.sub === 'Навсегда') subType = 'forever';
+                else if (udata.sub && udata.sub !== 'Нет') subType = udata.sub;
+                const role = (uname === 'invisik' || uname === 'inv1ze') ? 'owner' : (udata.role || 'user');
+                allUsers.push({ username: uname, password: udata.password, nickname: uname, role, subscription_type: subType, subscription_expires: null, email: udata.email || null });
+            }
+            if (allUsers.length > 0) await apiPost('/api/sync', { users: allUsers });
+        } catch(e) { console.warn('Sync failed:', e); }
+    }
+
+    setTimeout(syncAllUsers, 3000);
+
+    console.log('✅ API Bridge активен (login/register/keys/sync → backend)');
+    })();
 </script>
 </body>
 </html>
