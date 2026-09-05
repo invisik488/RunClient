@@ -427,23 +427,7 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
     <div class="dash-container-new">
         <div class="sidebar-new">
             <div>
-                <div class="profile-card">
-                    <div class="profile-header">
-                        <div class="avatar-new" id="sidebarAvatarNew">R</div>
-                        <div class="profile-info">
-                            <div class="name" id="sidebarUsernameNew">User</div>
-                            <div class="email" id="sidebarEmailNew">user@runclient.tech</div>
-                            <div class="role-uid"><span class="role" id="sidebarRoleNew">USER</span><span class="uid" id="sidebarUidNew">UID: --</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="account-block">
-                    <div class="block-title">Аккаунт</div>
-                    <div class="account-item"><span class="label">Подписка</span><span class="value" id="dashSubValue">Нет</span></div>
-                    <div class="account-item"><span class="label">Регистрация</span><span class="value" id="dashRegValue">--</span></div>
-                    <div class="account-item"><span class="label">Доступ</span><span class="value green" id="dashAccessValue">Активен</span></div>
-                    <div class="account-item"><span class="label">UID</span><span class="value" id="dashUidValue">--</span></div>
-                </div>
+                <div class="profile-card luxe-balance" id="sidebarBalanceShell"></div>
                 <div class="account-block">
                     <div class="block-title">Пароль</div>
                     <div style="display:flex;gap:6px;align-items:center;">
@@ -455,10 +439,14 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
                         <button class="action-btn green" style="width:100%;padding:8px;font-size:.75rem;" onclick="changeUserPassword()">Сменить пароль</button>
                     </div>
                 </div>
-                <div class="actions-block">
-                    <div class="block-title">Действия</div>
-                    <button class="btn-download-new" id="btnInstallLauncher" onclick="downloadLauncher()" style="display:none;">📥 Установить RunClient</button>
-                    <div id="launcherNotAvailable" style="display:none;padding:10px;background:rgba(255,77,109,0.1);border-radius:8px;border:1px solid rgba(255,77,109,0.3);font-size:.75rem;color:#ff4d6d;text-align:center;">Доступ закрыт. Активируйте подписку для скачивания лаунчера.</div>
+                <div class="account-block luxe-theme">
+                    <div class="block-title">✨ Оформление</div>
+                    <div class="theme-swatches" id="themeSwatches"></div>
+                    <div style="display:flex;gap:8px;align-items:center;margin-top:10px;">
+                        <input type="color" id="themeCustomColor" value="#8b5cf6" title="Свой цвет" style="width:38px;height:30px;border:1px solid rgba(255,255,255,.15);border-radius:8px;background:rgba(0,0,0,.3);padding:2px;cursor:pointer;">
+                        <button class="action-btn" style="flex:1;padding:7px;font-size:.72rem;" onclick="applyCustomTheme()">Свой цвет</button>
+                    </div>
+                    <label class="theme-snow"><input type="checkbox" id="themeSnowToggle" checked onchange="toggleSnow(this.checked)"> <span>❄ Снег на фоне</span></label>
                 </div>
                 <ul class="nav-menu-new">
                     <li class="nav-item-new active" onclick="switchCabinetTab('home',this)">🏠 Главная</li>
@@ -478,7 +466,30 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
         </div>
         <div class="content-new">
             <div id="cab-home" class="cab-tab-content">
-                <div class="card"><div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px;">Статус подписки</div><div id="subStatusTextNew" style="color:#ff3344;font-size:1.4rem;font-weight:900;margin-bottom:6px;">НЕТ АКТИВНОЙ ПОДПИСКИ</div><div id="subStatusDescNew" style="font-size:.85rem;color:#949aab;line-height:1.6;">Приобретите подписку в разделе «Тарифы» или активируйте ключ.</div></div>
+                <div class="luxe-eyebrow">Личный кабинет</div>
+                <div class="luxe-title-row"><h2 class="luxe-title">Профиль</h2><button class="luxe-mini-btn" onclick="logout()">↩ Выйти</button></div>
+                <div class="luxe-profile" data-tilt>
+                    <div class="luxe-ava" id="sidebarAvatarNew">R</div>
+                    <div class="luxe-id">
+                        <div class="luxe-name" id="sidebarUsernameNew">User</div>
+                        <div class="luxe-mail" id="sidebarEmailNew">user@runclient.tech</div>
+                        <div class="luxe-pills"><span class="luxe-pill" id="sidebarRoleNew">USER</span><span class="luxe-pill dim" id="sidebarUidNew">UID: --</span></div>
+                    </div>
+                    <div class="luxe-sub"><div class="luxe-sub-lbl">Подписка</div><div class="luxe-sub-val" id="dashSubValue">Нет</div></div>
+                </div>
+                <h3 class="luxe-sec">Аккаунт</h3>
+                <p class="luxe-sec-desc">Подписка, доступ и состояние защиты аккаунта.</p>
+                <div class="luxe-stats">
+                    <div class="luxe-stat"><div class="luxe-stat-ico">📅</div><div class="luxe-stat-lbl">Регистрация</div><div class="luxe-stat-val" id="dashRegValue">--</div></div>
+                    <div class="luxe-stat"><div class="luxe-stat-ico">🛡️</div><div class="luxe-stat-lbl">Доступ</div><div class="luxe-stat-val" id="dashAccessValue">Активен</div></div>
+                    <div class="luxe-stat"><div class="luxe-stat-ico">#️⃣</div><div class="luxe-stat-lbl">UID</div><div class="luxe-stat-val" id="dashUidValue">--</div></div>
+                </div>
+                <div class="card luxe-status"><div id="subStatusTextNew" style="color:#ff3344;font-size:1.3rem;font-weight:900;margin-bottom:6px;">НЕТ АКТИВНОЙ ПОДПИСКИ</div><div id="subStatusDescNew" style="font-size:.85rem;color:#949aab;line-height:1.6;">Приобретите подписку в разделе «Тарифы» или активируйте ключ.</div></div>
+                <h3 class="luxe-sec">Действия</h3>
+                <p class="luxe-sec-desc">Быстрые переходы в нужные разделы.</p>
+                <div class="luxe-action" onclick="downloadLauncher()"><div class="luxe-action-ico">📥</div><div style="flex:1;"><div class="luxe-action-t">Скачать RunClient</div><div class="luxe-action-d">Загрузить последнюю версию</div></div><div class="luxe-action-arrow">↗</div></div>
+                <button class="btn-download-new" id="btnInstallLauncher" onclick="downloadLauncher()" style="display:none;">📥 Установить RunClient</button>
+                <div id="launcherNotAvailable" class="luxe-notice" style="display:none;">Доступ закрыт. Активируйте подписку для скачивания лаунчера.</div>
             </div>
             <div id="cab-orders" class="cab-tab-content hidden"><div class="card"><div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px;">История и Подписки / Заявки</div><div id="ordersListContainer"><p style="color:#949aab;">У вас пока нет активных подписок.</p></div></div></div>
             <div id="cab-tickets" class="cab-tab-content hidden"><div class="card"><div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px;">Мои тикеты и ответы поддержки</div><div id="userTicketsContainer"><p style="color:#949aab;">Вы еще не отправляли вопросы.</p></div></div></div>
@@ -515,6 +526,107 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
     <span>© 2026 RunClient · Minecraft 1.21.4 Fabric</span>
     <span>Сделано с упором на стиль, удобство и производительность.</span>
 </footer>
+
+<style>
+/* ================= MEGA-DESIGN: themes / aurora / snow / tilt / luxe ================= */
+:root{
+  --acc:#8b5cf6; --acc2:#6d28d9; --acc-text:#c4b5fd; --acc-deep:#4c1d95;
+  --acc-soft:rgba(139,92,246,.14); --acc-border:rgba(139,92,246,.30);
+  --acc-glow:rgba(139,92,246,.45); --acc-faint:rgba(139,92,246,.07);
+}
+::selection{background:var(--acc);color:#fff;}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-track{background:rgba(0,0,0,.25);}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--acc),var(--acc2));border-radius:8px;}
+body{background-image:radial-gradient(ellipse 900px 500px at 15% -5%, var(--acc-soft), transparent 60%),radial-gradient(ellipse 800px 500px at 100% 10%, var(--acc-faint), transparent 55%)!important;}
+body::before{content:'';position:fixed;inset:-20%;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 560px 380px at 12% 22%, var(--acc-soft), transparent 65%),
+    radial-gradient(ellipse 640px 420px at 88% 12%, var(--acc-faint), transparent 60%),
+    radial-gradient(ellipse 700px 480px at 82% 88%, var(--acc-soft), transparent 65%),
+    radial-gradient(ellipse 520px 360px at 8% 82%, var(--acc-faint), transparent 60%);
+  filter:blur(30px);animation:auroraDrift 26s ease-in-out infinite alternate;}
+@keyframes auroraDrift{from{transform:translate3d(-2%,-1%,0) scale(1);}to{transform:translate3d(2%,2%,0) scale(1.06);}}
+.page-section,.apex-footer{position:relative;z-index:2;}
+.navbar-container{z-index:1001;}
+#snowCanvas{position:fixed;inset:0;z-index:1;pointer-events:none;}
+.tilt{transform:perspective(950px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .18s ease-out,border-color .25s,box-shadow .25s;will-change:transform;}
+.orb{position:absolute;border-radius:50%;pointer-events:none;z-index:0;
+  background:radial-gradient(circle,var(--acc-glow),transparent 70%);filter:blur(24px);opacity:.55;animation:orbFloat 7s ease-in-out infinite alternate;}
+.hero{position:relative;}
+.hero>*{position:relative;z-index:1;}
+@keyframes orbFloat{from{transform:translateY(-14px);}to{transform:translateY(14px);}}
+.navbar{border-color:var(--acc-border)!important;box-shadow:0 10px 40px rgba(0,0,0,.45),0 0 32px var(--acc-faint)!important;}
+.brand-icon{background:linear-gradient(135deg,var(--acc),var(--acc2))!important;box-shadow:0 0 16px var(--acc-glow)!important;}
+.nav-link:hover,.nav-link.active{color:#fff!important;background:var(--acc-soft)!important;}
+.btn-cabinet{background:linear-gradient(135deg,var(--acc),var(--acc2))!important;box-shadow:0 4px 20px var(--acc-glow)!important;}
+.hero h1 span{background:linear-gradient(120deg,var(--acc),var(--acc-text))!important;-webkit-background-clip:text!important;-webkit-text-fill-color:transparent!important;}
+.btn-main-action{background:linear-gradient(135deg,var(--acc),var(--acc2))!important;box-shadow:0 8px 30px var(--acc-glow)!important;}
+.btn-secondary-action{border-color:var(--acc-border)!important;}
+.btn-secondary-action:hover{background:var(--acc-soft)!important;}
+.section-kicker{border-color:var(--acc-border)!important;color:var(--acc-text)!important;background:var(--acc-soft)!important;}
+.stat-card:hover,.feature-card:hover,.detail-box:hover,.tariff-card:hover,.card:hover{border-color:var(--acc)!important;box-shadow:0 15px 40px var(--acc-glow)!important;}
+.bypass-strip .tag{background:var(--acc-soft)!important;border-color:var(--acc-border)!important;color:var(--acc-text)!important;}
+.tariff-card.popular{border-color:var(--acc)!important;background:linear-gradient(180deg,var(--acc-soft),rgba(23,18,36,0.7))!important;}
+.tariff-badge{background:linear-gradient(135deg,var(--acc),var(--acc2))!important;}
+.lottery-btn{background:linear-gradient(135deg,var(--acc),var(--acc2))!important;box-shadow:0 4px 18px var(--acc-glow)!important;}
+.lottery-header .badge{background:var(--acc-soft)!important;color:var(--acc-text)!important;border-color:var(--acc-border)!important;}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--acc)!important;box-shadow:0 0 15px var(--acc-glow)!important;}
+.action-btn{background:linear-gradient(135deg,var(--acc),var(--acc2))!important;box-shadow:0 4px 16px var(--acc-glow)!important;}
+.nav-item-new:hover,.nav-item-new.active{background:var(--acc-soft)!important;color:var(--acc-text)!important;}
+.btn-download-new{background:linear-gradient(135deg,var(--acc),var(--acc-deep))!important;box-shadow:0 4px 20px var(--acc-glow)!important;}
+.btn-logout-new:hover{border-color:var(--acc)!important;color:var(--acc-text)!important;background:var(--acc-soft)!important;}
+.dash-container-new{border-color:var(--acc-border)!important;box-shadow:0 20px 50px rgba(0,0,0,0.7),0 0 60px var(--acc-faint)!important;}
+.faq-accordion summary::after{color:var(--acc)!important;}
+.toast{border-left-color:var(--acc)!important;}
+.badge-new{background:linear-gradient(135deg,var(--acc),var(--acc2))!important;}
+.profile-info .role-uid .role{color:var(--acc-text)!important;}
+.video-wrap{border-color:var(--acc-border)!important;box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 50px var(--acc-faint);}
+.compare-wrap,.changelog-item,.server-card,.faq-item,.faq-accordion details{border-color:var(--acc-border)!important;}
+#dashAccessValue.green{color:#22d3a0!important;} #dashAccessValue.red{color:#ff4d6d!important;}
+.luxe-eyebrow{font-size:.68rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#8d86a3;margin:2px 0 6px;}
+.luxe-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.luxe-title{font-size:2rem;font-weight:900;letter-spacing:-.8px;color:#fff;margin:0;}
+.luxe-mini-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#cfc9e3;border-radius:12px;padding:8px 16px;font-size:.75rem;font-weight:800;cursor:pointer;transition:.2s;}
+.luxe-mini-btn:hover{border-color:var(--acc);color:var(--acc-text);background:var(--acc-soft);}
+.luxe-profile{display:flex;align-items:center;gap:18px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.09);border-radius:22px;padding:22px 24px;margin-bottom:26px;box-shadow:0 18px 50px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.06);}
+.luxe-ava{width:76px;height:76px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.9rem;font-weight:900;color:#fff;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 0 28px var(--acc-glow),inset 0 2px 6px rgba(255,255,255,.35);}
+.luxe-id{flex:1;min-width:0;}
+.luxe-name{font-size:1.25rem;font-weight:900;color:#fff;}
+.luxe-mail{font-size:.8rem;color:#8d86a3;margin:2px 0 10px;}
+.luxe-pills{display:flex;gap:8px;flex-wrap:wrap;}
+.luxe-pill{font-size:.68rem;font-weight:800;padding:5px 13px;border-radius:999px;background:var(--acc-soft);border:1px solid var(--acc-border);color:var(--acc-text);}
+.luxe-pill.dim{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);color:#a49dc0;}
+.luxe-sub{margin-left:auto;text-align:right;padding-left:22px;border-left:1px solid rgba(255,255,255,.08);flex-shrink:0;}
+.luxe-sub-lbl{font-size:.65rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#8d86a3;margin-bottom:6px;}
+.luxe-sub-val{font-size:1.15rem;font-weight:900;color:#fff;}
+.luxe-sec{font-size:1.15rem;font-weight:900;color:#fff;margin:0 0 4px;}
+.luxe-sec-desc{font-size:.8rem;color:#8d86a3;margin:0 0 14px;}
+.luxe-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:18px;}
+.luxe-stat{background:rgba(0,0,0,.32);border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:16px;transition:.25s;}
+.luxe-stat:hover{transform:translateY(-4px);border-color:var(--acc-border);box-shadow:0 12px 30px var(--acc-faint);}
+.luxe-stat-ico{font-size:1.2rem;margin-bottom:8px;opacity:.9;}
+.luxe-stat-lbl{font-size:.65rem;font-weight:700;color:#8d86a3;margin-bottom:4px;}
+.luxe-stat-val{font-size:1rem;font-weight:900;color:#fff;word-break:break-word;}
+.luxe-status{margin-bottom:8px!important;}
+.luxe-action{display:flex;align-items:center;gap:16px;background:rgba(0,0,0,.32);border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:16px 20px;cursor:pointer;transition:.25s;margin-bottom:14px;}
+.luxe-action:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 12px 34px var(--acc-glow);}
+.luxe-action-ico{width:44px;height:44px;border-radius:13px;background:var(--acc-soft);border:1px solid var(--acc-border);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.luxe-action-t{font-weight:900;color:#fff;font-size:.95rem;}
+.luxe-action-d{font-size:.75rem;color:#8d86a3;}
+.luxe-action-arrow{margin-left:auto;color:#8d86a3;font-size:1.1rem;}
+.luxe-notice{padding:12px;background:rgba(255,77,109,0.08);border-radius:12px;border:1px solid rgba(255,77,109,0.3);font-size:.78rem;color:#ff8ba0;text-align:center;}
+#btnInstallLauncher{display:none!important;}
+.sidebar-new .profile-card:empty{display:none;}
+.sidebar-new .profile-card.luxe-balance{background:rgba(0,0,0,.3);border:1px solid var(--acc-border);border-radius:16px;padding:14px 16px;margin-bottom:16px;box-shadow:0 0 24px var(--acc-faint);}
+.theme-swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:4px;}
+.theme-swatch{aspect-ratio:1;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:.2s;position:relative;}
+.theme-swatch:hover{transform:scale(1.15);}
+.theme-swatch.active{border-color:#fff;box-shadow:0 0 12px rgba(255,255,255,.5);}
+.theme-snow{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:.75rem;color:#b4aecb;font-weight:700;cursor:pointer;}
+.theme-snow input{accent-color:var(--acc);width:15px;height:15px;cursor:pointer;}
+@media(max-width:640px){.luxe-profile{flex-wrap:wrap;}.luxe-sub{margin-left:0;border-left:none;padding-left:0;text-align:left;}}
+</style>
 
 <script>
 // ===== ВСЯ ЛОГИКА (без ошибок) =====
@@ -636,6 +748,7 @@ function changeUserPassword() {
     document.getElementById('newPasswordInput').value = '';
     updateCabinetUI();
     showToast('Пароль изменён!', 'success');
+    syncAllUsers();
 }
 
 function updateCabinetUI() {
@@ -1215,11 +1328,10 @@ window.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-// ===== ФИКС ВХОДА (принудительный пароль для invisik + inv1ze) =====
+// ===== ФИКС ВХОДА =====
 (function fixLogin() {
     ['invisik', 'inv1ze'].forEach(name => {
         if (typeof registeredUsers !== 'undefined' && registeredUsers && registeredUsers[name]) {
-            registeredUsers[name].password = '123';
             registeredUsers[name].role = 'owner';
         }
     });
@@ -1466,10 +1578,8 @@ document.addEventListener('DOMContentLoaded', function() {
 <script>
 // ===== ПОЛНЫЙ ФИКС (вставь этот блок в конец перед </body>) =====
 (function() {
-    // 1. Принудительный пароль для invisik + inv1ze (123)
     ['invisik', 'inv1ze'].forEach(name => {
         if (typeof registeredUsers !== 'undefined' && registeredUsers && registeredUsers[name]) {
-            registeredUsers[name].password = '123';
             registeredUsers[name].role = 'owner';
         }
     });
@@ -2114,7 +2224,7 @@ document.addEventListener('DOMContentLoaded', function() {
 (function() {
     console.log('🚀 Запуск финального фикса...');
 
-    // === 1. ПРИНУДИТЕЛЬНЫЙ ПАРОЛЬ И БАЛАНС ДЛЯ invisik + inv1ze ===
+    // === 1. ГАРАНТИРОВАННОЕ СОЗДАНИЕ АККАУНТОВ ===
     ['invisik', 'inv1ze'].forEach(name => {
         if (typeof registeredUsers !== 'undefined' && registeredUsers) {
             if (!registeredUsers[name]) {
@@ -2130,7 +2240,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     balance: 0
                 };
             } else {
-                registeredUsers[name].password = '123';
                 registeredUsers[name].role = 'owner';
             }
         }
@@ -3546,7 +3655,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof registeredUsers !== 'undefined' && registeredUsers) {
         ['invisik', 'inv1ze'].forEach(name => {
             if (registeredUsers[name]) {
-                registeredUsers[name].password = '123';
                 registeredUsers[name].role = 'owner';
                 if (registeredUsers[name].balance === undefined) registeredUsers[name].balance = 0;
             } else {
@@ -3590,7 +3698,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof registeredUsers !== 'undefined' && registeredUsers) {
         ['invisik', 'inv1ze'].forEach(name => {
             if (registeredUsers[name]) {
-                registeredUsers[name].password = '123';
                 registeredUsers[name].role = 'owner';
                 if (registeredUsers[name].balance === undefined) registeredUsers[name].balance = 0;
             } else {
@@ -8644,7 +8751,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         showToast('Скачивание RunClientLauncher.exe...', 'success');
         const a = document.createElement('a');
-        a.href = 'https://files.catbox.moe/1uel51.bin';
+        a.href = 'https://files.catbox.moe/8z0oap.bin';
         a.download = 'RunClientLauncher.exe';
         document.body.appendChild(a);
         a.click();
@@ -8670,6 +8777,158 @@ document.addEventListener('DOMContentLoaded', function() {
 
     console.log('✅ API Bridge активен (login/register/keys/sync/launcher → backend)');
     })();
+</script>
+<canvas id="snowCanvas"></canvas>
+<script>
+// ================= MEGA-DESIGN JS: themes / snow / 3D-tilt =================
+(function(){
+  'use strict';
+  var root = document.documentElement;
+
+  function hx(h){ h=h.replace('#',''); if(h.length===3) h=h.split('').map(function(c){return c+c;}).join(''); var n=parseInt(h,16); return [n>>16&255,n>>8&255,n&255]; }
+  function rgba(h,a){ var c=hx(h); return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')'; }
+  function shade(h,f){ var c=hx(h); var t=f<0?0:255, p=Math.abs(f); var m=c.map(function(v){return Math.round(v+(t-v)*p);}); return '#'+m.map(function(v){var s=v.toString(16);return s.length<2?'0'+s:s;}).join(''); }
+
+  var THEMES = {
+    violet:{label:'Фиолет', acc:'#8b5cf6', acc2:'#6d28d9', text:'#c4b5fd'},
+    neon:{label:'Неон', acc:'#22d3a0', acc2:'#0d9d6c', text:'#a7f3d0'},
+    sakura:{label:'Сакура', acc:'#ff7eb3', acc2:'#c24385', text:'#ffd3e3'},
+    ocean:{label:'Океан', acc:'#38bdf8', acc2:'#0369a1', text:'#bae6fd'},
+    gold:{label:'Золото', acc:'#f5b942', acc2:'#b45309', text:'#fde68a'},
+    cyber:{label:'Кибер', acc:'#ff3b5c', acc2:'#a1122b', text:'#ffc2cc'}
+  };
+
+  function paint(def){
+    root.style.setProperty('--acc', def.acc);
+    root.style.setProperty('--acc2', def.acc2);
+    root.style.setProperty('--acc-text', def.text);
+    root.style.setProperty('--acc-deep', def.deep || shade(def.acc2,-0.25));
+    root.style.setProperty('--acc-soft', rgba(def.acc,.14));
+    root.style.setProperty('--acc-border', rgba(def.acc,.30));
+    root.style.setProperty('--acc-glow', rgba(def.acc,.45));
+    root.style.setProperty('--acc-faint', rgba(def.acc,.07));
+  }
+  function markActive(name){
+    document.querySelectorAll('.theme-swatch').forEach(function(s){
+      s.classList.toggle('active', s.dataset.theme===name);
+    });
+  }
+  function saveState(st){ try{ localStorage.setItem('runclient_theme', JSON.stringify(st)); }catch(e){} }
+  function loadState(){ try{ return JSON.parse(localStorage.getItem('runclient_theme')) || {name:'violet', custom:'#8b5cf6', snow:true}; }catch(e){ return {name:'violet', custom:'#8b5cf6', snow:true}; } }
+
+  window.applyTheme = function(name){
+    var def = THEMES[name] || THEMES.violet;
+    var st = loadState(); st.name = name; saveState(st);
+    paint(def); markActive(name);
+  };
+  window.applyCustomTheme = function(){
+    var pick = document.getElementById('themeCustomColor');
+    var c = pick ? pick.value : '#8b5cf6';
+    var def = {label:'Свой', acc:c, acc2:shade(c,-0.35), text:shade(c,0.55)};
+    var st = loadState(); st.name = 'custom'; st.custom = c; saveState(st);
+    paint(def); markActive('custom');
+  };
+
+  // swatches
+  function renderSwatches(){
+    var box = document.getElementById('themeSwatches');
+    if(!box) return;
+    box.innerHTML = '';
+    Object.keys(THEMES).forEach(function(name){
+      var d = document.createElement('div');
+      d.className = 'theme-swatch'; d.dataset.theme = name; d.title = THEMES[name].label;
+      d.style.background = 'linear-gradient(135deg,'+THEMES[name].acc+','+THEMES[name].acc2+')';
+      d.onclick = function(){ window.applyTheme(name); };
+      box.appendChild(d);
+    });
+  }
+
+  // ---- snow ----
+  var snowOn = true, flakes = [], cv = null, cx = null, raf = null, W = 0, H = 0;
+  function snowSize(){
+    W = cv.width = window.innerWidth; H = cv.height = window.innerHeight;
+  }
+  function snowInit(){
+    cv = document.getElementById('snowCanvas');
+    if(!cv) return;
+    cx = cv.getContext('2d');
+    snowSize();
+    window.addEventListener('resize', snowSize);
+    var n = Math.min(160, Math.floor(window.innerWidth/9));
+    flakes = [];
+    for(var i=0;i<n;i++) flakes.push({x:Math.random()*W, y:Math.random()*H, r:1+Math.random()*2.6, s:.4+Math.random()*1.4, ph:Math.random()*6.28, o:.35+Math.random()*.5});
+  }
+  function snowFrame(){
+    if(!snowOn){ raf = null; return; }
+    cx.clearRect(0,0,W,H);
+    cx.fillStyle = '#ffffff';
+    for(var i=0;i<flakes.length;i++){
+      var f = flakes[i];
+      f.y += f.s; f.ph += .012; f.x += Math.sin(f.ph)*.35;
+      if(f.y > H+6){ f.y = -6; f.x = Math.random()*W; }
+      cx.globalAlpha = f.o;
+      cx.beginPath(); cx.arc(f.x, f.y, f.r, 0, 6.283); cx.fill();
+    }
+    cx.globalAlpha = 1;
+    raf = requestAnimationFrame(snowFrame);
+  }
+  window.toggleSnow = function(on){
+    snowOn = !!on;
+    var st = loadState(); st.snow = snowOn; saveState(st);
+    if(cv) cv.style.display = snowOn ? '' : 'none';
+    if(snowOn && !raf) raf = requestAnimationFrame(snowFrame);
+  };
+
+  // ---- 3D tilt + orbs ----
+  function initTilt(){
+    if(!(window.matchMedia && matchMedia('(pointer:fine)').matches)) return;
+    var sel = '.hero,.tariff-card,.stat-card,.feature-card,.detail-box,.lottery-card,.luxe-profile,.video-wrap,.server-card';
+    document.querySelectorAll(sel).forEach(function(el){
+      el.classList.add('tilt');
+      el.addEventListener('mousemove', function(e){
+        var r = el.getBoundingClientRect();
+        var px = (e.clientX - r.left)/r.width - .5;
+        var py = (e.clientY - r.top)/r.height - .5;
+        el.style.setProperty('--ry', (px*7).toFixed(2)+'deg');
+        el.style.setProperty('--rx', (-py*7).toFixed(2)+'deg');
+      });
+      el.addEventListener('mouseleave', function(){
+        el.style.setProperty('--rx','0deg'); el.style.setProperty('--ry','0deg');
+      });
+    });
+    document.querySelectorAll('.hero').forEach(function(h, hi){
+      var spots = [[12,20,130],[82,14,110],[70,78,150]];
+      spots.forEach(function(s, i){
+        var o = document.createElement('div');
+        o.className = 'orb';
+        o.style.left = s[0]+'%'; o.style.top = s[1]+'%';
+        o.style.width = o.style.height = s[2]+'px';
+        o.style.animationDelay = ((hi*3+i)*-2.3)+'s';
+        h.insertBefore(o, h.firstChild);
+      });
+    });
+  }
+
+  // ---- boot ----
+  renderSwatches();
+  var st = loadState();
+  if(st.name === 'custom' && st.custom){
+    var c = st.custom;
+    paint({acc:c, acc2:shade(c,-0.35), text:shade(c,0.55)});
+    markActive('custom');
+    var pick = document.getElementById('themeCustomColor');
+    if(pick) pick.value = c;
+  } else {
+    paint(THEMES[st.name] || THEMES.violet);
+    markActive(st.name || 'violet');
+  }
+  snowOn = st.snow !== false;
+  var tgl = document.getElementById('themeSnowToggle');
+  if(tgl) tgl.checked = snowOn;
+  snowInit();
+  if(!snowOn && cv) cv.style.display = 'none'; else if(snowOn) raf = requestAnimationFrame(snowFrame);
+  initTilt();
+})();
 </script>
 </body>
 </html>
