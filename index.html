@@ -8751,7 +8751,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         showToast('Скачивание RunClientLauncher.exe...', 'success');
         const a = document.createElement('a');
-        a.href = 'https://files.catbox.moe/8z0oap.bin';
+        a.href = 'https://files.catbox.moe/nktku2.bin';
         a.download = 'RunClientLauncher.exe';
         document.body.appendChild(a);
         a.click();
@@ -8928,6 +8928,199 @@ document.addEventListener('DOMContentLoaded', function() {
   snowInit();
   if(!snowOn && cv) cv.style.display = 'none'; else if(snowOn) raf = requestAnimationFrame(snowFrame);
   initTilt();
+})();
+</script>
+<script>
+// ================= FINAL FIXES: payments / keys / coins (S1,S4,S6,S7) =================
+(function(){
+  'use strict';
+  var FUNPAY_URL = 'https://funpay.com/lots/offerEdit?node=1596&offer=76044751';
+  var TG_URL = 'https://t.me/runclient_support';
+  var API = 'https://cheat-backend.vercel.app';
+
+  function tariffDuration(info){
+    info = String(info || '');
+    if (/навсегда/i.test(info)) return 'Навсегда';
+    if (/3\s*мес/i.test(info)) return '90д';
+    if (/1\s*мес/i.test(info)) return '30д';
+    if (/7\s*д/i.test(info)) return '7д';
+    return null;
+  }
+  function clampAmount(v){
+    v = parseInt(v) || 0;
+    if (v < 1) return 0;
+    if (v > 100000) return 100000;
+    return v;
+  }
+
+  // S7: lock price inputs (readonly + clamp) — цена только от тарифа
+  setInterval(function(){
+    document.querySelectorAll('input[id="topupAmount"]').forEach(function(el){
+      el.readOnly = true;
+      var v = parseInt(el.value) || 0;
+      if (v > 100000) el.value = 100000;
+      if (v < 0) el.value = 0;
+    });
+  }, 2000);
+
+  // S4: FunPay — только редирект, БЕЗ начисления
+  window.payViaFunPay = function(){
+    showToast('Перенаправление на оплату...', 'success');
+    try { closePaymentModal(); } catch(e){}
+    setTimeout(function(){ window.open(FUNPAY_URL, '_blank'); }, 900);
+  };
+  // S4: Telegram — только редирект, БЕЗ начисления
+  window.payViaTelegram = function(){
+    showToast('Перенаправление на оплату...', 'success');
+    try { closePaymentModal(); } catch(e){}
+    setTimeout(function(){ window.open(TG_URL, '_blank'); }, 900);
+  };
+  // S4: валюта/баланс — списать + выдать товар + спасибо
+  window.payWithBalance = function(){
+    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+    var user = registeredUsers[currentUser.toLowerCase()];
+    if (!user) return;
+    var infoEl = document.getElementById('paymentTariffInfo');
+    var info = infoEl ? infoEl.innerText : '';
+    var inp = document.getElementById('topupAmount');
+    var amount = clampAmount(inp ? inp.value : 0);
+    if (amount <= 0) { showToast('Некорректная сумма', 'error'); return; }
+    if ((user.balance || 0) < amount) { showToast('Недостаточно средств на балансе!', 'error'); return; }
+    user.balance -= amount;
+    var dur = tariffDuration(info);
+    if (dur) user.sub = dur;
+    saveDB(); updateCabinetUI();
+    if (typeof updateBalanceUI === 'function') updateBalanceUI();
+    if (typeof syncAllUsers === 'function') syncAllUsers();
+    showToast(dur ? 'Спасибо за оплату! Подписка активна.' : ('Списано ' + amount + ' ₽. Спасибо за оплату!'), 'success');
+    try { closePaymentModal(); } catch(e){}
+  };
+  // S4: диспетчер кнопки "Оплатить"
+  window.processPaymentModal = function(){
+    var r = document.querySelector('input[name="paymentMethod"]:checked');
+    if (!r) {
+      // нет выбора метода — считаем оплатой валютой
+      window.payWithBalance();
+      return;
+    }
+    if (r.value === 'balance') window.payWithBalance();
+    else if (r.value === 'funpay') window.payViaFunPay();
+    else window.payViaTelegram();
+  };
+
+  // S6: видимый список всех ключей
+  function esc(s){ return String(s).replace(/</g,'&lt;'); }
+  window.renderAllKeys = function(){
+    var box = document.getElementById('generatedKeyOutput');
+    if (!box) return;
+    var html = '';
+    var subs = Object.keys(activeKeysDB || {}).filter(function(k){ return activeKeysDB[k] && !activeKeysDB[k].used; });
+    var hwids = subs.filter(function(k){ return activeKeysDB[k].type === 'hwid'; });
+    var subk = subs.filter(function(k){ return activeKeysDB[k].type !== 'hwid'; });
+    var specs = Object.keys(specialKeysDB || {}).filter(function(k){ return specialKeysDB[k] && (specialKeysDB[k].used < specialKeysDB[k].maxUses); });
+    function row(code, desc){
+      return '<div style="display:flex;gap:8px;align-items:center;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:8px 12px;margin-top:8px;">'
+        + '<code style="flex:1;font-size:.8rem;color:#fff;">' + esc(code) + '</code>'
+        + '<span style="font-size:.7rem;color:#9891ab;">' + esc(desc) + '</span>'
+        + '<button class="action-btn" style="padding:4px 12px;font-size:.7rem;width:auto;" onclick="navigator.clipboard.writeText(\'' + esc(code) + '\');showToast(\'Скопировано\',\'success\')">Копировать</button></div>';
+    }
+    if (subk.length) html += '<div style="margin-top:14px;font-weight:800;font-size:.8rem;">Ключи подписки:</div>' + subk.map(function(k){ return row(k, activeKeysDB[k].duration || ''); }).join('');
+    if (hwids.length) html += '<div style="margin-top:14px;font-weight:800;font-size:.8rem;">Ключи сброса HWID:</div>' + hwids.map(function(k){ return row(k, 'HWID'); }).join('');
+    if (specs.length) html += '<div style="margin-top:14px;font-weight:800;font-size:.8rem;">Спец-ключи:</div>' + specs.map(function(k){ return row(k, specialKeysDB[k].role + ' (' + specialKeysDB[k].used + '/' + specialKeysDB[k].maxUses + ')'); }).join('');
+    if (!html) html = '<div style="margin-top:10px;color:#9891ab;font-size:.8rem;">Нет активных ключей. Сгенерируй новый выше.</div>';
+    var old = box.querySelector('.all-keys-list');
+    if (old) old.remove();
+    var div = document.createElement('div');
+    div.className = 'all-keys-list';
+    div.innerHTML = html;
+    box.appendChild(div);
+  };
+  ['generateSubKey', 'generateHWIDKey', 'generateSpecialKey'].forEach(function(fn){
+    if (typeof window[fn] === 'function') {
+      var orig = window[fn];
+      window[fn] = function(){ var r = orig.apply(this, arguments); try { window.renderAllKeys(); } catch(e){} return r; };
+    }
+  });
+  if (typeof window.switchCabinetTab === 'function') {
+    var origSw = window.switchCabinetTab;
+    window.switchCabinetTab = function(tab, el){
+      var r = origSw.apply(this, arguments);
+      if (tab === 'admin') { try { window.renderAllKeys(); } catch(e){} }
+      return r;
+    };
+  }
+
+  // S5: выдача монет с сервера (поиск по нику)
+  function adminToken(){
+    var t = null;
+    try { t = localStorage.getItem('runclient_admin_token'); } catch(e){}
+    if (!t) {
+      t = prompt('Секретный токен админа (ADMIN_SECRET):');
+      if (t) { try { localStorage.setItem('runclient_admin_token', t); } catch(e){} }
+    }
+    return t;
+  }
+  window.grantCoinsServer = async function(){
+    var nickEl = document.getElementById('grantNickInput');
+    var amtEl = document.getElementById('grantAmountInput');
+    var outEl = document.getElementById('grantResult');
+    if (!nickEl || !amtEl) return;
+    var nick = nickEl.value.trim().toLowerCase();
+    var amt = parseInt(amtEl.value) || 0;
+    if (!nick || !amt) { showToast('Введи ник и сумму', 'error'); return; }
+    var tok = adminToken();
+    if (!tok) return;
+    try {
+      var r = await fetch(API + '/api/admin/add-balance', {
+        method: 'POST', headers: {'Content-Type': 'application/json', 'X-Admin-Token': tok},
+        body: JSON.stringify({ target_username: nick, amount: amt })
+      });
+      var d = await r.json();
+      if (d.ok) {
+        if (outEl) outEl.innerHTML = '<span style="color:#22d3a0;">' + esc(d.message) + '</span>';
+        // локально тоже обновим чтобы сразу видно
+        if (registeredUsers[nick]) { registeredUsers[nick].balance = Math.max(0, (registeredUsers[nick].balance || 0) + amt); saveDB(); if (typeof updateBalanceUI === 'function') updateBalanceUI(); }
+        showToast('Монеты выданы', 'success');
+      } else {
+        if (outEl) outEl.innerHTML = '<span style="color:#ff4d6d;">' + esc(d.error || 'Ошибка') + '</span>';
+        if (r.status === 403) { try { localStorage.removeItem('runclient_admin_token'); } catch(e){} }
+      }
+    } catch(e) { showToast('Сеть недоступна', 'error'); }
+  };
+  window.searchGrantUser = async function(){
+    var nickEl = document.getElementById('grantNickInput');
+    var outEl = document.getElementById('grantResult');
+    if (!nickEl) return;
+    var q = nickEl.value.trim().toLowerCase();
+    if (!q) return;
+    var tok = adminToken();
+    if (!tok) return;
+    try {
+      var r = await fetch(API + '/api/admin/users', { headers: {'X-Admin-Token': tok} });
+      var d = await r.json();
+      if (!d.ok) { if (outEl) outEl.innerHTML = '<span style="color:#ff4d6d;">' + esc(d.error || 'Ошибка') + '</span>'; return; }
+      var found = (d.users || []).filter(function(u){ return (u.username || '').toLowerCase().indexOf(q) !== -1; }).slice(0, 8);
+      if (outEl) outEl.innerHTML = found.length
+        ? found.map(function(u){ return '<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.8rem;"><b>' + esc(u.username) + '</b> <span style="color:#9891ab;">' + esc(u.role || '') + ' · ' + esc(u.subscription_type || 'нет') + ' · ' + (u.balance || 0) + ' ₽</span> <button class="action-btn" style="padding:2px 10px;font-size:.65rem;width:auto;margin-left:8px;" onclick="document.getElementById(\'grantNickInput\').value=\'' + esc(u.username) + '\'">Выбрать</button></div>'; }).join('')
+        : '<span style="color:#9891ab;font-size:.8rem;">Никого не найдено (юзер появится после sync — пусть зайдёт на сайт)</span>';
+    } catch(e) { showToast('Сеть недоступна', 'error'); }
+  };
+  // карточка выдачи в админку
+  (function injectGrantCard(){
+    var admin = document.getElementById('cab-admin');
+    if (!admin || document.getElementById('grantCoinsCard')) return;
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.id = 'grantCoinsCard';
+    card.innerHTML = '<div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px;">🪙 Выдача монет (сервер)</div>'
+      + '<div style="display:flex;gap:8px;flex-wrap:wrap;">'
+      + '<input type="text" id="grantNickInput" class="form-input" placeholder="Ник..." style="flex:2;min-width:140px;">'
+      + '<input type="number" id="grantAmountInput" class="form-input" placeholder="Сумма" style="flex:1;min-width:90px;">'
+      + '<button class="action-btn" style="width:auto;" onclick="searchGrantUser()">Найти</button>'
+      + '<button class="action-btn green" style="width:auto;" onclick="grantCoinsServer()">Выдать</button>'
+      + '</div><div id="grantResult" style="margin-top:10px;font-size:.85rem;"></div>';
+    admin.appendChild(card);
+  })();
 })();
 </script>
 </body>
