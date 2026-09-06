@@ -323,7 +323,15 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
         <span style="margin-left:16px; color:#fff;">⏳ <span id="goldRushTimer">00:00</span></span>
         <span style="margin-left:16px; color:#fff;">👥 <span id="goldRushCount">0</span></span>
     </div>
-    <div class="lottery-grid">
+    <div class="cards3-head"><div class="cards3-title">🎴 Ежедневные карточки</div><div class="cards3-timer">🔄 Обновление через <span id="cardsTimer">--:--:--</span></div></div>
+    <div class="cards3-grid" id="cards3Grid"></div>
+    <div class="cards3-info">
+        <div class="cards3-col"><div class="cards3-h">Что может выпасть</div><div>💰 Валюта 1–15 ₽ · 🎟 Промо −5/−8/−12% · 👑 Сабка 1–3 дня · 🔑 Ключ подписки / сброса HWID</div></div>
+        <div class="cards3-col"><div class="cards3-h">Шансы</div><div>Промо 70% · Валюта 25% · Сабка 2.5% · Ключ 2.5%</div></div>
+        <div class="cards3-col"><div class="cards3-h">Уровни</div><div><span class="tier-pill t-common">Обычный</span> <span class="tier-pill t-epic">Эпический</span> <span class="tier-pill t-mythic">Мифический</span> <span class="tier-pill t-leg">Легендарный</span></div></div>
+        <div class="cards3-col"><div class="cards3-h">Важно</div><div>Ключи и промокоды одноразовые и действуют 30 минут!</div></div>
+    </div>
+    <div class="lottery-grid" style="display:none">
         <div class="lottery-card">
             <div class="lottery-header"><h3>🎡 Рулетка</h3><span class="badge" id="spinBadge">бесплатно</span></div>
             <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
@@ -9121,6 +9129,310 @@ document.addEventListener('DOMContentLoaded', function() {
       + '</div><div id="grantResult" style="margin-top:10px;font-size:.85rem;"></div>';
     admin.appendChild(card);
   })();
+})();
+</script>
+<script>
+// ================= FINAL v2: keys local-first / token default / password verify =================
+(function(){
+  'use strict';
+  var API = 'https://cheat-backend.vercel.app';
+
+  // токен админа по умолчанию (совпадает с ADMIN_SECRET на сервере) — вопросов больше нет
+  try {
+    if (!localStorage.getItem('runclient_admin_token'))
+      localStorage.setItem('runclient_admin_token', 'runclient-setup-2024');
+  } catch(e){}
+
+  function esc(s){ return String(s == null ? '' : s).replace(/</g,'&lt;'); }
+  function rnd6(){ var c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s=''; for(var i=0;i<6;i++) s+=c[Math.floor(Math.random()*c.length)]; return s; }
+
+  // --- SUB KEY: local-first (uppercase + 30мин) → purchaseKeys → server ---
+  window.activateSubKey = async function(){
+    var input = document.getElementById('subKeyInput');
+    if (!input) return;
+    var key = (input.value || '').trim().toUpperCase();
+    if (!key) { showToast('Введите ключ!', 'error'); return; }
+    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+    var user = registeredUsers[currentUser.toLowerCase()];
+    if (!user) return;
+    if (typeof purchaseKeys !== 'undefined' && purchaseKeys[key]) {
+      var pd = purchaseKeys[key];
+      if (pd.used) { showToast('Ключ уже использован', 'error'); return; }
+      if (pd.expires && Date.now() > pd.expires) { showToast('Срок ключа истёк', 'error'); return; }
+      pd.used = true;
+      try { localStorage.setItem('runclient_purchase_keys', JSON.stringify(purchaseKeys)); } catch(e){}
+      if (typeof saveDB === 'function') saveDB();
+      showToast('Ключ применён!', 'success');
+      input.value = '';
+      return;
+    }
+    if (typeof activeKeysDB !== 'undefined' && activeKeysDB[key]) {
+      var d = activeKeysDB[key];
+      if (d.used) { showToast('Ключ уже использован!', 'error'); return; }
+      if (d.expires && Date.now() > d.expires) { showToast('Срок ключа истёк (действовал 30 минут)!', 'error'); return; }
+      if (d.type === 'hwid') { showToast('Это HWID-ключ — вставь его в поле сброса HWID ниже', 'error'); return; }
+      d.used = true;
+      user.sub = d.duration || '30д';
+      if (typeof saveDB === 'function') saveDB();
+      updateCabinetUI();
+      showToast('Подписка ' + user.sub + ' активирована!', 'success');
+      input.value = '';
+      if (typeof syncAllUsers === 'function') { try { syncAllUsers(); } catch(e){} }
+      try { if (typeof window.renderAllKeys === 'function') window.renderAllKeys(); } catch(e){}
+      return;
+    }
+    try {
+      var r = await fetch(API + '/api/activate-key', { method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username: currentUser.toLowerCase(), key: key }) });
+      var res = await r.json();
+      if (res.ok) {
+        if (res.subscription) user.sub = res.subscription.type === 'forever' ? 'Навсегда' : res.subscription.type;
+        if (typeof saveDB === 'function') saveDB();
+        updateCabinetUI();
+        showToast(res.message || 'Подписка активирована!', 'success');
+        input.value = '';
+        if (typeof syncAllUsers === 'function') { try { syncAllUsers(); } catch(e){} }
+      } else {
+        showToast(res.error || 'Неверный ключ!', 'error');
+      }
+    } catch(e) { showToast('Сеть недоступна', 'error'); }
+  };
+
+  // --- SPECIAL KEY: uppercase + 30мин ---
+  window.activateSpecialKey = function(){
+    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+    var input = document.getElementById('specialKeyInput');
+    var key = ((input && input.value) || '').trim().toUpperCase();
+    if (!key) { showToast('Введите спец ключ!', 'error'); return; }
+    var db = (typeof specialKeysDB !== 'undefined') ? specialKeysDB : {};
+    if (!db[key]) { showToast('Неверный спец ключ! Проверь код из списка у админа.', 'error'); return; }
+    var data = db[key];
+    if (data.expires && Date.now() > data.expires) { showToast('Срок ключа истёк (действовал 30 минут)!', 'error'); return; }
+    if (data.used >= data.maxUses) { showToast('Ключ исчерпал лимит использований!', 'error'); return; }
+    data.used++;
+    registeredUsers[currentUser.toLowerCase()].role = data.role;
+    if (typeof saveDB === 'function') saveDB();
+    updateCabinetUI();
+    showToast('Роль ' + data.role + ' выдана!', 'success');
+    if (input) input.value = '';
+    try { if (typeof window.renderAllKeys === 'function') window.renderAllKeys(); } catch(e){}
+  };
+
+  // --- PASSWORD: смена + проверка синка ---
+  window.changeUserPassword = async function(){
+    if (!currentUser) return;
+    var npEl = document.getElementById('newPasswordInput');
+    var newPass = (npEl.value || '').trim();
+    if (!newPass || newPass.length < 3) { showToast('Пароль минимум 3 символа!', 'error'); return; }
+    var user = registeredUsers[currentUser.toLowerCase()];
+    if (!user) return;
+    user.password = newPass;
+    if (typeof saveDB === 'function') saveDB();
+    npEl.value = '';
+    updateCabinetUI();
+    showToast('Пароль изменён!', 'success');
+    try {
+      if (typeof syncAllUsers === 'function') await syncAllUsers();
+      var r = await fetch(API + '/api/login', { method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username: currentUser.toLowerCase(), password: newPass }) });
+      var d = await r.json();
+      if (d.ok) showToast('Сервер подтвердил: в лаунчер входи с НОВЫМ паролем', 'success');
+      else showToast('Сервер не обновился (' + (d.error || '?') + ') — в лаунчер входи СТАРЫМ паролем', 'error');
+    } catch(e) { showToast('Нет связи с сервером — в лаунчере действует старый пароль', 'error'); }
+  };
+})();
+</script>
+<style>
+/* ================= CARDS3 lottery ================= */
+#page-lottery .lottery-grid{display:none!important;}
+.cards3-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:6px 0 18px;}
+.cards3-title{font-size:1.3rem;font-weight:900;color:#fff;}
+.cards3-timer{font-size:.8rem;font-weight:800;color:var(--acc-text,#c4b5fd);background:var(--acc-soft,rgba(139,92,246,.14));border:1px solid var(--acc-border,rgba(139,92,246,.3));border-radius:999px;padding:8px 16px;}
+.cards3-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:26px;}
+@media(max-width:760px){.cards3-grid{grid-template-columns:1fr;}}
+.flip-card{perspective:1000px;height:230px;cursor:pointer;}
+.flip-inner{position:relative;width:100%;height:100%;transition:transform .6s cubic-bezier(.2,.7,.3,1.2);transform-style:preserve-3d;}
+.flip-card.flipped .flip-inner{transform:rotateY(180deg);}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;text-align:center;background:rgba(23,18,36,.85);border:1px solid rgba(255,255,255,.1);}
+.flip-front:hover{border-color:var(--acc,#8b5cf6);box-shadow:0 12px 34px var(--acc-glow,rgba(139,92,246,.4));transform:translateY(-4px);}
+.flip-front{transition:.25s;font-size:3rem;}
+.flip-front small{font-size:.75rem;color:#9891ab;font-weight:700;}
+.flip-back{transform:rotateY(180deg);}
+.flip-back .prize-ico{font-size:2.6rem;}
+.flip-back .prize-t{font-size:1rem;font-weight:900;color:#fff;}
+.flip-back .prize-d{font-size:.72rem;color:#9891ab;line-height:1.5;}
+.tier-pill{font-size:.65rem;font-weight:800;padding:4px 12px;border-radius:999px;text-transform:uppercase;letter-spacing:.5px;}
+.t-common{background:rgba(255,255,255,.08);color:#cfc9e3;border:1px solid rgba(255,255,255,.15);}
+.t-epic{background:rgba(139,92,246,.15);color:#c4b5fd;border:1px solid rgba(139,92,246,.4);}
+.t-mythic{background:rgba(255,62,142,.12);color:#ff8fb3;border:1px solid rgba(255,62,142,.45);}
+.t-leg{background:rgba(245,185,66,.12);color:#f5b942;border:1px solid rgba(245,185,66,.5);box-shadow:0 0 18px rgba(245,185,66,.25);}
+.flip-back.tb-common{border-color:rgba(255,255,255,.15);}
+.flip-back.tb-epic{border-color:rgba(139,92,246,.5);box-shadow:0 0 26px rgba(139,92,246,.25);}
+.flip-back.tb-mythic{border-color:rgba(255,62,142,.55);box-shadow:0 0 26px rgba(255,62,142,.3);}
+.flip-back.tb-leg{border-color:rgba(245,185,66,.6);box-shadow:0 0 30px rgba(245,185,66,.35);}
+.cards3-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
+.cards3-col{background:rgba(23,18,36,.7);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:14px 16px;font-size:.78rem;color:#b4aecb;line-height:1.7;}
+.cards3-h{font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#fff;margin-bottom:6px;}
+.cards3-col .tier-pill{margin:2px 3px 2px 0;display:inline-block;}
+</style>
+<script>
+// ================= CARDS3: daily 3 cards lottery =================
+(function(){
+  'use strict';
+  var DAY = 86400000, HALF_HOUR = 30 * 60000;
+  var API = 'https://cheat-backend.vercel.app';
+  function esc(s){ return String(s == null ? '' : s).replace(/</g,'&lt;'); }
+  function rnd6(){ var c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s=''; for(var i=0;i<6;i++) s+=c[Math.floor(Math.random()*c.length)]; return s; }
+  function load(){ try { return JSON.parse(localStorage.getItem('runclient_cards3')) || null; } catch(e){ return null; } }
+  function save(s){ try { localStorage.setItem('runclient_cards3', JSON.stringify(s)); } catch(e){} }
+  function fresh(){ return { reset: Date.now() + DAY, opened: [false,false,false], prizes: [null,null,null] }; }
+  function cur(){ var s = load(); if(!s || Date.now() > s.reset){ s = fresh(); save(s); } return s; }
+
+  setInterval(function(){
+    var el = document.getElementById('cardsTimer');
+    if(!el) return;
+    var ms = Math.max(0, cur().reset - Date.now());
+    var h = Math.floor(ms/3600000), m = Math.floor(ms%3600000/60000), s2 = Math.floor(ms%60000/1000);
+    el.innerText = (h<10?'0':'')+h + ':' + (m<10?'0':'')+m + ':' + (s2<10?'0':'')+s2;
+  }, 1000);
+
+  setInterval(function(){
+    try {
+      var changed = false;
+      if (typeof promoCodes !== 'undefined') {
+        Object.keys(promoCodes).forEach(function(k){
+          if (promoCodes[k] && promoCodes[k].expires && Date.now() > promoCodes[k].expires) { delete promoCodes[k]; changed = true; }
+        });
+        if (changed && typeof savePromoCodes === 'function') savePromoCodes();
+      }
+      if (typeof activeKeysDB !== 'undefined') {
+        Object.keys(activeKeysDB).forEach(function(k){
+          if (activeKeysDB[k] && activeKeysDB[k].expires && !activeKeysDB[k].used && Date.now() > activeKeysDB[k].expires) delete activeKeysDB[k];
+        });
+        if (typeof saveDB === 'function') saveDB();
+      }
+    } catch(e){}
+  }, 60000);
+
+  var TIER = {
+    common: {name:'Обычный', cls:'t-common', bcls:'tb-common'},
+    epic: {name:'Эпический', cls:'t-epic', bcls:'tb-epic'},
+    mythic: {name:'Мифический', cls:'t-mythic', bcls:'tb-mythic'},
+    leg: {name:'Легендарный', cls:'t-leg', bcls:'tb-leg'}
+  };
+
+  function render(){
+    var grid = document.getElementById('cards3Grid');
+    if(!grid) return;
+    var s = cur();
+    var html = '';
+    for (var i=0;i<3;i++){
+      var p = s.prizes[i];
+      if (s.opened[i] && p) {
+        var t = TIER[p.tier] || TIER.common;
+        html += '<div class="flip-card flipped"><div class="flip-inner">'
+          + '<div class="flip-face flip-front"><div>🎴</div><small>Карточка ' + (i+1) + '</small></div>'
+          + '<div class="flip-face flip-back ' + t.bcls + '">'
+          + '<div class="prize-ico">' + p.icon + '</div>'
+          + '<div><span class="tier-pill ' + t.cls + '">' + t.name + '</span></div>'
+          + '<div class="prize-t">' + esc(p.title) + '</div>'
+          + '<div class="prize-d">' + esc(p.desc) + (p.code ? '<br><code style="background:rgba(0,0,0,.5);padding:3px 10px;border-radius:6px;color:#fff;">' + esc(p.code) + '</code>' : '') + '</div>'
+          + '</div></div></div>';
+      } else {
+        html += '<div class="flip-card" onclick="openCard3(' + i + ')"><div class="flip-inner">'
+          + '<div class="flip-face flip-front"><div>🎴</div><small>Карточка ' + (i+1) + ' · жми!</small></div>'
+          + '<div class="flip-face flip-back tb-common"></div>'
+          + '</div></div>';
+      }
+    }
+    grid.innerHTML = html;
+  }
+
+  function grantSub(days){
+    var me = (currentUser || '').toLowerCase();
+    var who = registeredUsers[me];
+    if (!who) return;
+    who.sub = days + 'д';
+    if (typeof saveDB === 'function') saveDB();
+    if (typeof updateCabinetUI === 'function') updateCabinetUI();
+    if (typeof syncAllUsers === 'function') { try { syncAllUsers(); } catch(e){} }
+    try {
+      var tok = 'runclient-setup-2024';
+      try { tok = localStorage.getItem('runclient_admin_token') || tok; } catch(e){}
+      fetch(API + '/api/admin/set-subscription', { method:'POST',
+        headers:{'Content-Type':'application/json','X-Admin-Token':tok},
+        body: JSON.stringify({ target_username: me, subscription_type: days + 'д', days: days }) });
+    } catch(e){}
+  }
+
+  window.openCard3 = function(i){
+    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+    var user = registeredUsers[currentUser.toLowerCase()];
+    if (!user) return;
+    var s = cur();
+    if (s.opened[i]) return;
+    var r = Math.random() * 100, prize;
+    if (r < 70) {
+      var dr = Math.random();
+      var dsc = dr < 0.5 ? 5 : (dr < 0.8 ? 8 : 12);
+      var code = 'RUN-PROMO-' + rnd6();
+      try {
+        promoCodes[code] = { discount: dsc, uses: 1, used: 0, created: new Date().toISOString(), expires: Date.now() + HALF_HOUR };
+        if (typeof savePromoCodes === 'function') savePromoCodes();
+        if (typeof renderPromoCodes === 'function') renderPromoCodes();
+      } catch(e){}
+      prize = { tier: dsc === 12 ? 'mythic' : (dsc === 8 ? 'epic' : 'common'), icon: '🎟',
+        title: 'Промокод −' + dsc + '%', desc: 'Одноразовый · действует 30 минут', code: code };
+      showToast('Промокод ' + code + ' (−' + dsc + '%)! Действует 30 минут', 'success');
+    } else if (r < 95) {
+      var amt = 1 + Math.floor(Math.random() * 15);
+      addUserBalance(amt);
+      prize = { tier: amt <= 5 ? 'common' : (amt <= 10 ? 'epic' : 'mythic'), icon: '💰',
+        title: '+' + amt + ' ₽', desc: 'Валюта начислена на баланс' };
+      showToast('+' + amt + ' ₽ на баланс!', 'success');
+    } else if (r < 97.5) {
+      var days = 1 + Math.floor(Math.random() * 3);
+      if (user.sub && user.sub !== 'Нет') {
+        addUserBalance(15);
+        prize = { tier: 'epic', icon: '💰', title: '+15 ₽', desc: 'Сабка уже активна — выдали валютой' };
+        showToast('Сабка уже активна — вместо неё +15 ₽', 'success');
+      } else {
+        grantSub(days);
+        prize = { tier: 'leg', icon: '👑', title: 'Сабка ' + days + 'д', desc: 'Подписка активирована!' };
+        showToast('Легендарка! Сабка ' + days + 'д', 'success');
+      }
+    } else {
+      if (Math.random() < 0.5) {
+        var dur = Math.random() < 0.5 ? '7д' : '30д';
+        var kc = 'RUN-SUB-' + rnd6();
+        try {
+          activeKeysDB[kc] = { duration: dur, used: false, type: 'sub', expires: Date.now() + HALF_HOUR };
+          if (typeof saveDB === 'function') saveDB();
+        } catch(e){}
+        prize = { tier: 'leg', icon: '🔑', title: 'Ключ ' + dur, desc: 'Одноразовый · действует 30 минут', code: kc };
+        showToast('Легендарка! Ключ ' + dur + ' (30 минут)', 'success');
+      } else {
+        var kh = 'RUN-HWID-' + rnd6();
+        try {
+          activeKeysDB[kh] = { type: 'hwid', used: false, expires: Date.now() + HALF_HOUR };
+          if (typeof saveDB === 'function') saveDB();
+        } catch(e){}
+        prize = { tier: 'leg', icon: '🔑', title: 'Ключ сброса HWID', desc: 'Одноразовый · действует 30 минут', code: kh };
+        showToast('Легендарка! HWID-ключ (30 минут)', 'success');
+      }
+    }
+    s.opened[i] = true;
+    s.prizes[i] = prize;
+    save(s);
+    render();
+  };
+
+  window.renderCards3 = render;
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render);
+  else render();
+  setInterval(function(){ var g = document.getElementById('cards3Grid'); if (g && g.children.length === 0) render(); }, 3000);
 })();
 </script>
 </body>
