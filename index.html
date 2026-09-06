@@ -223,6 +223,7 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
                 <li><a class="nav-link" id="nav-tariffs" onclick="navigateTo('tariffs')">Тарифы</a></li>
                 <li><a class="nav-link" id="nav-lottery" onclick="navigateTo('lottery')">Лотерея</a></li>
                 <li><a class="nav-link" id="nav-reviews" onclick="navigateTo('reviews')">Отзывы</a></li>
+                <li><a class="nav-link" id="nav-scripts" onclick="navigateTo('scripts')">Скрипты</a></li>
                 <li><a class="nav-link" id="nav-help" onclick="navigateTo('help')">Помощь</a></li>
                 <li><a class="nav-link" id="nav-faq" onclick="navigateTo('faq')">FAQ</a></li>
                 <li><a class="nav-link" id="nav-support" onclick="navigateTo('support')">Поддержка</a></li>
@@ -329,7 +330,7 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
         <div class="cards3-col"><div class="cards3-h">Что может выпасть</div><div>💰 Валюта 1–15 ₽ · 🎟 Промо −5/−8/−12% · 👑 Сабка 1–3 дня · 🔑 Ключ подписки / сброса HWID</div></div>
         <div class="cards3-col"><div class="cards3-h">Шансы</div><div>Промо 70% · Валюта 25% · Сабка 2.5% · Ключ 2.5%</div></div>
         <div class="cards3-col"><div class="cards3-h">Уровни</div><div><span class="tier-pill t-common">Обычный</span> <span class="tier-pill t-epic">Эпический</span> <span class="tier-pill t-mythic">Мифический</span> <span class="tier-pill t-leg">Легендарный</span></div></div>
-        <div class="cards3-col"><div class="cards3-h">Важно</div><div>Ключи и промокоды одноразовые и действуют 30 минут!</div></div>
+        <div class="cards3-col"><div class="cards3-h">Важно</div><div>Ключи и промокоды одноразовые и действуют 30 минут! Открытие — 1 карточка в сутки.</div></div>
     </div>
     <div class="lottery-grid" style="display:none">
         <div class="lottery-card">
@@ -364,6 +365,39 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
         <div id="reviewsListContainer">
             <div class="card"><div><span style="font-weight:800;">Sextazyst</span> <span style="color:#ffbc00;">★★★★★</span></div><p style="color:#9891ab;">Лучший легитный чит для 1.21.4, триггер-бот работает идеально!</p></div>
             <div class="card"><div><span style="font-weight:800;">Veselchak</span> <span style="color:#ffbc00;">★★★★★</span></div><p style="color:#9891ab;">Аимасист очень плавный, ESP помогает видеть всех врагов. Рекомендую!</p></div>
+        </div>
+    </div>
+</div>
+
+<div id="page-scripts" class="page-section hidden">
+    <div class="hero"><div class="section-kicker">🤖 AI-конструктор</div><h1>Скрипты <span>под заказ</span></h1><p>Выбери нейросеть, опиши функцию — код прилетит сюда. Режим «В игру» — JS для внутриигрового движка. Режим «В студию» — JSON для Scratch-студии лаунчера (импорт кнопкой «AI-импорт», работает сразу).</p></div>
+    <div style="max-width:760px;margin:0 auto;">
+        <div class="card">
+            <div style="font-size:.7rem;color:#9891ab;font-weight:800;text-transform:uppercase;margin-bottom:12px;letter-spacing:.5px;">1. Нейросеть</div>
+            <div id="aiProviders" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+                <button class="action-btn ai-prov" data-p="gemini" onclick="aiSetProvider('gemini')" style="width:auto;">✨ Gemini</button>
+                <button class="action-btn ai-prov" data-p="deepseek" onclick="aiSetProvider('deepseek')" style="width:auto;">🐳 DeepSeek</button>
+                <button class="action-btn ai-prov" data-p="anthropic" onclick="aiSetProvider('anthropic')" style="width:auto;">🧠 Claude</button>
+                <button class="action-btn ai-prov" data-p="openai" onclick="aiSetProvider('openai')" style="width:auto;">🤖 ChatGPT</button>
+            </div>
+            <div class="form-group"><label>API-ключ (хранится только в твоём браузере)</label><input type="password" id="aiKeyInput" class="form-input" placeholder="Вставь свой ключ..."></div>
+            <div class="form-group"><label>Модель (необязательно)</label><input type="text" id="aiModelInput" class="form-input" placeholder="По умолчанию для провайдера"></div>
+            <div style="font-size:.7rem;color:#9891ab;font-weight:800;text-transform:uppercase;margin-bottom:12px;letter-spacing:.5px;">2. Куда</div>
+            <div style="display:flex;gap:8px;margin-bottom:16px;">
+                <button class="action-btn ai-mode" data-m="game" onclick="aiSetMode('game')" style="flex:1;">🎮 В игру (JS)</button>
+                <button class="action-btn ai-mode" data-m="blocks" onclick="aiSetMode('blocks')" style="flex:1;">🧩 В студию (блоки)</button>
+            </div>
+            <div class="form-group"><label>3. Название скрипта</label><input type="text" id="aiNameInput" class="form-input" placeholder="Мой скрипт"></div>
+            <div class="form-group"><label>4. Что должен делать скрипт</label><textarea id="aiPromptInput" class="form-textarea" placeholder="Например: каждые 5 секунд пиши в чат 'привет'..."></textarea></div>
+            <button class="action-btn green" id="aiGoBtn" onclick="aiGenerate()" style="width:100%;padding:14px;">⚡ Сгенерировать</button>
+        </div>
+        <div class="card" id="aiOutCard" style="display:none;">
+            <div style="font-size:.7rem;color:#9891ab;font-weight:800;text-transform:uppercase;margin-bottom:12px;letter-spacing:.5px;">Готовый код</div>
+            <pre id="aiOutput" style="background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px;overflow:auto;max-height:320px;font-size:.75rem;color:#d9f99d;white-space:pre-wrap;"></pre>
+            <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+                <button class="action-btn green" onclick="aiDownload()" style="flex:1;">📥 Скачать файл</button>
+                <button class="action-btn" onclick="aiCopy()" style="flex:1;">📋 Копировать</button>
+            </div>
         </div>
     </div>
 </div>
@@ -8759,7 +8793,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         showToast('Скачивание RunClientLauncher.exe...', 'success');
         const a = document.createElement('a');
-        a.href = 'https://files.catbox.moe/nktku2.bin';
+        a.href = 'https://files.catbox.moe/8d0nav.bin';
         a.download = 'RunClientLauncher.exe';
         document.body.appendChild(a);
         a.click();
@@ -9110,7 +9144,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var found = (d.users || []).filter(function(u){ return (u.username || '').toLowerCase().indexOf(q) !== -1; }).slice(0, 8);
       if (outEl) outEl.innerHTML = found.length
         ? found.map(function(u){ return '<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.8rem;"><b>' + esc(u.username) + '</b> <span style="color:#9891ab;">' + esc(u.role || '') + ' · ' + esc(u.subscription_type || 'нет') + ' · ' + (u.balance || 0) + ' ₽</span> <button class="action-btn" style="padding:2px 10px;font-size:.65rem;width:auto;margin-left:8px;" onclick="document.getElementById(\'grantNickInput\').value=\'' + esc(u.username) + '\'">Выбрать</button></div>'; }).join('')
-        : '<span style="color:#9891ab;font-size:.8rem;">Никого не найдено (юзер появится после sync — пусть зайдёт на сайт)</span>';
+        : '<span style="color:#9891ab;font-size:.8rem;">Нет на сервере. Причины: друг ни разу не заходил на сайт, либо сервер перезапускался (память чистится) — пусть друг откроет сайт, подождёт 5 сек и нажмёт «Найти» ещё раз</span>';
     } catch(e) { showToast('Сеть недоступна', 'error'); }
   };
   // карточка выдачи в админку
@@ -9253,6 +9287,7 @@ document.addEventListener('DOMContentLoaded', function() {
 .cards3-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:26px;}
 @media(max-width:760px){.cards3-grid{grid-template-columns:1fr;}}
 .flip-card{perspective:1000px;height:230px;cursor:pointer;}
+.flip-card.locked{opacity:.55;}
 .flip-inner{position:relative;width:100%;height:100%;transition:transform .6s cubic-bezier(.2,.7,.3,1.2);transform-style:preserve-3d;}
 .flip-card.flipped .flip-inner{transform:rotateY(180deg);}
 .flip-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;text-align:center;background:rgba(23,18,36,.85);border:1px solid rgba(255,255,255,.1);}
@@ -9341,7 +9376,8 @@ document.addEventListener('DOMContentLoaded', function() {
           + '<div class="prize-d">' + esc(p.desc) + (p.code ? '<br><code style="background:rgba(0,0,0,.5);padding:3px 10px;border-radius:6px;color:#fff;">' + esc(p.code) + '</code>' : '') + '</div>'
           + '</div></div></div>';
       } else {
-        html += '<div class="flip-card" onclick="openCard3(' + i + ')"><div class="flip-inner">'
+        var locked = s.opened.some(function(o){ return o; }) ? ' locked' : '';
+        html += '<div class="flip-card' + locked + '" onclick="openCard3(' + i + ')"><div class="flip-inner">'
           + '<div class="flip-face flip-front"><div>🎴</div><small>Карточка ' + (i+1) + ' · жми!</small></div>'
           + '<div class="flip-face flip-back tb-common"></div>'
           + '</div></div>';
@@ -9373,6 +9409,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!user) return;
     var s = cur();
     if (s.opened[i]) return;
+    if (s.opened.some(function(o){ return o; })) { showToast('Сегодня уже открыто. Завтра будет новая карточка!', 'error'); return; }
     var r = Math.random() * 100, prize;
     if (r < 70) {
       var dr = Math.random();
@@ -9433,6 +9470,74 @@ document.addEventListener('DOMContentLoaded', function() {
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render);
   else render();
   setInterval(function(){ var g = document.getElementById('cards3Grid'); if (g && g.children.length === 0) render(); }, 3000);
+})();
+</script>
+<script>
+// ================= AI SCRIPTS tab =================
+(function(){
+  'use strict';
+  var API = 'https://cheat-backend.vercel.app';
+  var prov = 'gemini', mode = 'game', lastCode = '';
+  try {
+    var k = localStorage.getItem('runclient_ai_key');
+    if (k) document.getElementById('aiKeyInput').value = k;
+  } catch(e){}
+
+  function paint(){
+    document.querySelectorAll('.ai-prov').forEach(function(b){
+      var on = b.dataset.p === prov;
+      b.style.opacity = on ? '1' : '.55';
+      b.style.border = on ? '2px solid #fff' : 'none';
+    });
+    document.querySelectorAll('.ai-mode').forEach(function(b){
+      var on = b.dataset.m === mode;
+      b.style.opacity = on ? '1' : '.55';
+      b.style.border = on ? '2px solid #fff' : 'none';
+    });
+  }
+  window.aiSetProvider = function(p){ prov = p; paint(); };
+  window.aiSetMode = function(m){ mode = m; paint(); };
+  paint();
+
+  window.aiGenerate = async function(){
+    var key = document.getElementById('aiKeyInput').value.trim();
+    var model = document.getElementById('aiModelInput').value.trim();
+    var prompt = document.getElementById('aiPromptInput').value.trim();
+    var name = document.getElementById('aiNameInput').value.trim() || 'AI-скрипт';
+    if (!key) { showToast('Вставь API-ключ провайдера', 'error'); return; }
+    if (!prompt) { showToast('Опиши что должен делать скрипт', 'error'); return; }
+    try { localStorage.setItem('runclient_ai_key', key); } catch(e){}
+    var btn = document.getElementById('aiGoBtn');
+    btn.disabled = true; btn.innerText = '⏳ Генерирую...';
+    try {
+      var r = await fetch(API + '/api/ai', { method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ provider: prov, key: key, model: model, prompt: prompt, mode: mode, name: name }) });
+      var d = await r.json();
+      if (!d.ok) { showToast(d.error || 'Ошибка генерации', 'error'); return; }
+      lastCode = d.code || '';
+      window._aiLastName = name;
+      window._aiLastMode = mode;
+      document.getElementById('aiOutCard').style.display = '';
+      document.getElementById('aiOutput').innerText = lastCode;
+      showToast('Готово!', 'success');
+    } catch(e) { showToast('Сеть недоступна', 'error'); }
+    btn.disabled = false; btn.innerText = '⚡ Сгенерировать';
+  };
+  window.aiCopy = function(){
+    if (!lastCode) return;
+    navigator.clipboard.writeText(lastCode).then(function(){ showToast('Скопировано', 'success'); });
+  };
+  window.aiDownload = function(){
+    if (!lastCode) return;
+    var isBlocks = (window._aiLastMode === 'blocks');
+    var ext = isBlocks ? '.blocks.json' : '.js';
+    var blob = new Blob([lastCode], { type: 'text/plain;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (window._aiLastName || 'ai-script').replace(/[\\/:*?"<>|]/g, '') + ext;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  };
 })();
 </script>
 </body>
