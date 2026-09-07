@@ -8895,7 +8895,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (udata.sub === 'Навсегда') subType = 'forever';
                 else if (udata.sub && udata.sub !== 'Нет') subType = udata.sub;
                 const role = (uname === 'invisik' || uname === 'inv1ze') ? 'owner' : (udata.role || 'user');
-                allUsers.push({ username: uname, password: udata.password, nickname: uname, role, subscription_type: subType, subscription_expires: null, email: udata.email || null });
+                allUsers.push({ username: uname, password: udata.password, nickname: uname, role, subscription_type: subType, subscription_expires: null, email: udata.email || null, balance: udata.balance || 0 });
             }
             if (allUsers.length > 0) await apiPost('/api/sync', { users: allUsers });
         } catch(e) { console.warn('Sync failed:', e); }
@@ -10010,11 +10010,27 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     drawChar();
   };
+  window.rcConfirm = function(title, text, okLabel){
+    return new Promise(function(resolve){
+      var ov = document.createElement('div');
+      ov.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;';
+      ov.innerHTML = '<div style="background:#16131f;border:1px solid var(--acc-border,rgba(139,92,246,.3));border-radius:20px;padding:28px;width:90%;max-width:360px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.6);">'
+        + '<div style="font-size:1.05rem;font-weight:900;color:#fff;margin-bottom:8px;">' + title + '</div>'
+        + '<div style="font-size:.83rem;color:#b4aecb;margin-bottom:20px;line-height:1.6;">' + text + '</div>'
+        + '<div style="display:flex;gap:10px;"><button id="rcOk" class="action-btn" style="flex:1;">' + (okLabel || 'Да') + '</button>'
+        + '<button id="rcNo" class="action-btn" style="flex:1;background:rgba(255,255,255,.08);box-shadow:none;">Отмена</button></div></div>';
+      document.body.appendChild(ov);
+      ov.querySelector('#rcOk').onclick = function(){ ov.remove(); resolve(true); };
+      ov.querySelector('#rcNo').onclick = function(){ ov.remove(); resolve(false); };
+      ov.addEventListener('click', function(e){ if (e.target === ov) { ov.remove(); resolve(false); } });
+    });
+  };
   window.buyCosmeticsPack = async function(){
     if (!currentUser) return;
     var user = registeredUsers[me()];
     var doBuy = async function(useBalance){
       try {
+        if (typeof syncAllUsers === 'function') { try { await syncAllUsers(); } catch(e){} }
         if (useBalance) {
           if ((user.balance || 0) < 149) { showToast('Не хватает монет! Пополни баланс.', 'error'); return; }
           user.balance -= 149; saveDB();
@@ -10029,7 +10045,7 @@ document.addEventListener('DOMContentLoaded', function() {
       } catch(e) { showToast('Сеть недоступна', 'error'); }
     };
     if (user && (user.balance || 0) >= 149) {
-      if (confirm('Купить пак косметики за 149 ₽ с баланса?')) doBuy(true);
+      if (await window.rcConfirm('Пак косметики', 'Купить пак за <b>149 ₽</b> с баланса?<br>Shizuko, купальник и будущие аватары — навсегда.', 'Купить')) doBuy(true);
     } else {
       showToast('Нужно 149 ₽ на балансе. Пополни через FunPay.', 'error');
     }
