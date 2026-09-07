@@ -468,41 +468,38 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
 
 <div id="page-cabinet" class="page-section hidden">
     <div class="dash-container-new">
-        <div class="sidebar-new">
+        <div class="sidebar-new fv-side">
             <div>
+                <div class="fv-profile">
+                    <canvas id="sideAvatarCanvas" width="52" height="52"></canvas>
+                    <div class="fv-id">
+                        <div class="fv-name" id="sidebarUsernameNew">User</div>
+                        <span class="fv-role" id="sidebarRoleNew">USER</span>
+                    </div>
+                </div>
+                <div class="fv-status"><span class="fv-dot"></span> Статус: В сети</div>
                 <div class="profile-card luxe-balance" id="sidebarBalanceShell"></div>
-                <div class="account-block">
-                    <div class="block-title">Пароль</div>
-                    <div style="display:flex;gap:6px;align-items:center;">
-                        <input type="password" id="dashPasswordDisplay" class="form-input" value="" readonly style="flex:1;font-size:.8rem;padding:8px 10px;">
-                        <button class="action-btn" style="padding:8px 10px;font-size:.7rem;width:auto;" onclick="togglePasswordVisibility()">👁</button>
-                    </div>
-                    <div style="margin-top:10px;">
-                        <input type="password" id="newPasswordInput" class="form-input" placeholder="Новый пароль" style="font-size:.8rem;padding:8px 10px;margin-bottom:6px;">
-                        <button class="action-btn green" style="width:100%;padding:8px;font-size:.75rem;" onclick="changeUserPassword()">Сменить пароль</button>
-                    </div>
-                </div>
-                <div class="account-block luxe-theme">
-                    <div class="block-title">✨ Оформление</div>
-                    <div class="theme-swatches" id="themeSwatches"></div>
-                    <div style="display:flex;gap:8px;align-items:center;margin-top:10px;">
-                        <input type="color" id="themeCustomColor" value="#8b5cf6" title="Свой цвет" style="width:38px;height:30px;border:1px solid rgba(255,255,255,.15);border-radius:8px;background:rgba(0,0,0,.3);padding:2px;cursor:pointer;">
-                        <button class="action-btn" style="flex:1;padding:7px;font-size:.72rem;" onclick="applyCustomTheme()">Свой цвет</button>
-                    </div>
-                    <label class="theme-snow"><input type="checkbox" id="themeSnowToggle" checked onchange="toggleSnow(this.checked)"> <span>❄ Снег на фоне</span></label>
-                </div>
-                <ul class="nav-menu-new">
-                    <li class="nav-item-new active" onclick="switchCabinetTab('home',this)">🏠 Главная</li>
+                <ul class="nav-menu-new fv-nav">
+                    <li class="nav-item-new active" onclick="switchCabinetTab('home',this)">▦ Основное</li>
+                    <li class="nav-item-new" onclick="switchCabinetTab('friends',this)">👥 Друзья</li>
+                    <li class="nav-item-new" onclick="switchCabinetTab('messages',this)">💬 Сообщения</li>
+                    <li class="nav-item-new" onclick="switchCabinetTab('downloads',this)">📥 Лаунчер</li>
+                    <li class="nav-item-new" onclick="switchCabinetTab('cosmetics',this)">👕 Косметика</li>
+                    <li class="nav-item-new" onclick="switchCabinetTab('emotes',this)">👋 Эмоции</li>
+                    <li class="nav-item-new" onclick="navigateTo('tariffs')">🛍 Магазин</li>
+                    <li class="nav-item-new" onclick="switchCabinetTab('settings',this)">⚙ Настройки</li>
+                </ul>
+                <div class="fv-more">Ещё</div>
+                <ul class="nav-menu-new fv-nav small">
                     <li class="nav-item-new" onclick="switchCabinetTab('orders',this)">📦 Мои предзаказы</li>
-                    <li class="nav-item-new" onclick="switchCabinetTab('tickets',this)">💬 Мои тикеты (<span id="ticketCountBadgeNew">0</span>)</li>
+                    <li class="nav-item-new" onclick="switchCabinetTab('tickets',this)">🎫 Мои тикеты (<span id="ticketCountBadgeNew">0</span>)</li>
                     <li class="nav-item-new" onclick="switchCabinetTab('keys',this)">🔑 Активация ключей</li>
                     <li class="nav-item-new hidden" id="navItemPostNew" onclick="switchCabinetTab('post',this)">📝 Сделать пост</li>
-                    <li class="nav-item-new" onclick="switchCabinetTab('downloads',this)">📥 Загрузки</li>
                     <li class="nav-item-new hidden" id="navItemModerationNew" onclick="switchCabinetTab('moderation',this)">🛡️ Модерация (<span id="modCountBadgeNew">0</span>)</li>
-                    <li class="nav-item-new hidden" id="navItemCapabilitiesNew" onclick="switchCabinetTab('capabilities',this)">🛠️ Настройка возможностей</li>
-                    <li class="nav-item-new hidden" id="navItemRolesNew" onclick="switchCabinetTab('roles',this)">👑 Управление ролями</li>
-                    <li class="nav-item-new hidden" id="navItemGoldRush" onclick="switchCabinetTab('goldrush',this)">🔥 Золотая лихорадка</li>
-                    <li class="nav-item-new hidden" id="navItemAdminNew" onclick="switchCabinetTab('admin',this)">⚙️ Панель Владельца</li>
+                    <li class="nav-item-new hidden" id="navItemCapabilitiesNew" onclick="switchCabinetTab('capabilities',this)">🛠️ Возможности</li>
+                    <li class="nav-item-new hidden" id="navItemRolesNew" onclick="switchCabinetTab('roles',this)">👑 Роли</li>
+                    <li class="nav-item-new hidden" id="navItemGoldRush" onclick="switchCabinetTab('goldrush',this)">🔥 Лихорадка</li>
+                    <li class="nav-item-new hidden" id="navItemAdminNew" onclick="switchCabinetTab('admin',this)">⚙️ Владелец</li>
                 </ul>
             </div>
             <button class="btn-logout-new" onclick="logout()">Выйти</button>
@@ -533,6 +530,97 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
                 <div class="luxe-action" onclick="downloadLauncher()"><div class="luxe-action-ico">📥</div><div style="flex:1;"><div class="luxe-action-t">Скачать RunClient</div><div class="luxe-action-d">Загрузить последнюю версию</div></div><div class="luxe-action-arrow">↗</div></div>
                 <button class="btn-download-new" id="btnInstallLauncher" onclick="downloadLauncher()" style="display:none;">📥 Установить RunClient</button>
                 <div id="launcherNotAvailable" class="luxe-notice" style="display:none;">Доступ закрыт. Активируйте подписку для скачивания лаунчера.</div>
+            </div>
+            <div id="cab-friends" class="cab-tab-content hidden">
+                <div class="luxe-eyebrow">Социал</div>
+                <div class="luxe-title-row"><h2 class="luxe-title">Друзья</h2><button class="luxe-mini-btn" onclick="loadFriends()">⟳ Обновить</button></div>
+                <p class="luxe-sec-desc">Список друзей и заявки.</p>
+                <div class="luxe-2col">
+                    <div class="card">
+                        <div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:12px;letter-spacing:.5px;">Добавить друга</div>
+                        <div class="form-group"><label>Логин</label><input type="text" id="friendNickInput" class="form-input" placeholder="Логин игрока"></div>
+                        <button class="action-btn" style="width:100%;" onclick="sendFriendRequest()">Отправить заявку</button>
+                        <div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin:18px 0 12px;letter-spacing:.5px;">Друзья</div>
+                        <div id="friendList"><p style="color:#949aab;">Список друзей пуст.</p></div>
+                    </div>
+                    <div>
+                        <div class="card">
+                            <div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:12px;letter-spacing:.5px;">Входящие заявки</div>
+                            <div id="friendIncoming"><p style="color:#949aab;">Нет входящих заявок.</p></div>
+                        </div>
+                        <div class="card">
+                            <div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:12px;letter-spacing:.5px;">Исходящие заявки</div>
+                            <div id="friendOutgoing"><p style="color:#949aab;">Нет исходящих заявок.</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="cab-messages" class="cab-tab-content hidden">
+                <div class="luxe-eyebrow">Социал</div>
+                <div class="luxe-title-row"><h2 class="luxe-title">Сообщения</h2><button class="luxe-mini-btn" onclick="renderMsgPeers()">⟳ Обновить</button></div>
+                <p class="luxe-sec-desc">Личная переписка с друзьями.</p>
+                <div class="luxe-2col">
+                    <div class="card">
+                        <div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:12px;letter-spacing:.5px;">Собеседники</div>
+                        <div id="msgPeers"><p style="color:#949aab;">Нет друзей для переписки.</p></div>
+                    </div>
+                    <div class="card">
+                        <div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:12px;letter-spacing:.5px;">Диалог <span id="msgPeerName"></span></div>
+                        <div id="msgDialog" style="min-height:120px;max-height:260px;overflow-y:auto;margin-bottom:12px;"><p style="color:#949aab;">Выберите собеседника.</p></div>
+                        <div class="form-group"><label>Сообщение</label><textarea id="msgTextInput" class="form-textarea" placeholder="Написать..." style="min-height:70px;"></textarea></div>
+                        <button class="action-btn" style="width:100%;" onclick="sendMsg()">Отправить</button>
+                    </div>
+                </div>
+            </div>
+            <div id="cab-cosmetics" class="cab-tab-content hidden">
+                <div class="luxe-eyebrow">Внешность</div>
+                <div class="luxe-title-row"><h2 class="luxe-title">Кастомизация</h2></div>
+                <p class="luxe-sec-desc">Управляй своим обликом — одевай и снимай предметы.</p>
+                <div class="luxe-2col">
+                    <div class="card" style="text-align:center;">
+                        <div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:12px;letter-spacing:.5px;">Персонаж</div>
+                        <canvas id="cosmoCanvas" width="200" height="260" style="background:rgba(0,0,0,.3);border-radius:14px;"></canvas>
+                        <div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin:14px 0 8px;letter-spacing:.5px;">Свой скин</div>
+                        <input type="file" id="skinFileInput" accept="image/png" style="display:none;" onchange="uploadSkin(this)">
+                        <button class="action-btn" style="width:100%;" onclick="document.getElementById('skinFileInput').click()">📤 Загрузить скин (PNG)</button>
+                        <div id="skinStatus" style="font-size:.75rem;color:#949aab;margin-top:8px;">Скин попадёт в игру при следующем запуске с читом</div>
+                    </div>
+                    <div class="card">
+                        <div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:12px;letter-spacing:.5px;">Доступные предметы</div>
+                        <div id="cosmoItems"><p style="color:#949aab;">Загрузка...</p></div>
+                    </div>
+                </div>
+            </div>
+            <div id="cab-emotes" class="cab-tab-content hidden">
+                <div class="card" style="text-align:center;padding:50px 24px;">
+                    <div style="font-size:2.4rem;margin-bottom:10px;">👋</div>
+                    <h3 style="color:#fff;margin-bottom:8px;">Эмоции скоро</h3>
+                    <p style="color:#949aab;font-size:.85rem;">Анимации персонажа уже в разработке.</p>
+                </div>
+            </div>
+            <div id="cab-settings" class="cab-tab-content hidden">
+                <div class="luxe-eyebrow">Кабинет</div>
+                <div class="luxe-title-row"><h2 class="luxe-title">Настройки</h2></div>
+                <div class="account-block">
+                    <div class="block-title">Пароль</div>
+                    <div style="display:flex;gap:6px;align-items:center;">
+                        <input type="password" id="dashPasswordDisplay" class="form-input" value="" readonly style="flex:1;font-size:.8rem;padding:8px 10px;">
+                        <button class="action-btn" style="padding:8px 10px;font-size:.7rem;width:auto;" onclick="togglePasswordVisibility()">👁</button>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <input type="password" id="newPasswordInput" class="form-input" placeholder="Новый пароль" style="font-size:.8rem;padding:8px 10px;margin-bottom:6px;">
+                        <button class="action-btn green" style="width:100%;padding:8px;font-size:.75rem;" onclick="changeUserPassword()">Сменить пароль</button>
+                    </div>
+                </div>
+                <div class="account-block luxe-theme">
+                    <div class="block-title">✨ Оформление</div>
+                    <div class="theme-swatches" id="themeSwatches"></div>
+                    <div style="display:flex;gap:8px;align-items:center;margin-top:10px;">
+                        <input type="color" id="themeCustomColor" value="#8b5cf6" title="Свой цвет" style="width:38px;height:30px;border:1px solid rgba(255,255,255,.15);border-radius:8px;background:rgba(0,0,0,.3);padding:2px;cursor:pointer;">
+                        <button class="action-btn" style="flex:1;padding:7px;font-size:.72rem;" onclick="applyCustomTheme()">Свой цвет</button>
+                    </div>
+                    <label class="theme-snow"><input type="checkbox" id="themeSnowToggle" checked onchange="toggleSnow(this.checked)"> <span>❄ Снег на фоне</span></label>
+                </div>
             </div>
             <div id="cab-orders" class="cab-tab-content hidden"><div class="card"><div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px;">История и Подписки / Заявки</div><div id="ordersListContainer"><p style="color:#949aab;">У вас пока нет активных подписок.</p></div></div></div>
             <div id="cab-tickets" class="cab-tab-content hidden"><div class="card"><div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px;">Мои тикеты и ответы поддержки</div><div id="userTicketsContainer"><p style="color:#949aab;">Вы еще не отправляли вопросы.</p></div></div></div>
@@ -669,6 +757,37 @@ body::before{content:'';position:fixed;inset:-20%;z-index:0;pointer-events:none;
 .theme-snow{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:.75rem;color:#b4aecb;font-weight:700;cursor:pointer;}
 .theme-snow input{accent-color:var(--acc);width:15px;height:15px;cursor:pointer;}
 @media(max-width:640px){.luxe-profile{flex-wrap:wrap;}.luxe-sub{margin-left:0;border-left:none;padding-left:0;text-align:left;}}
+/* ================= FADINGVISUAL cabinet ================= */
+.fv-side{background:rgba(10,8,18,.72);border:1px solid rgba(255,255,255,.06);border-radius:22px;padding:20px 16px!important;}
+.sidebar-new.fv-side{border-right:none;}
+.fv-profile{display:flex;align-items:center;gap:12px;padding:4px 4px 14px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:12px;}
+#sideAvatarCanvas{width:52px;height:52px;border-radius:14px;background:#1a1626;flex-shrink:0;}
+.fv-name{font-size:1rem;font-weight:900;color:#fff;}
+.fv-role{display:inline-block;font-size:.62rem;font-weight:800;padding:3px 12px;border-radius:999px;background:var(--acc-soft);border:1px solid var(--acc-border);color:var(--acc-text);margin-top:5px;text-transform:lowercase;}
+.fv-status{display:flex;align-items:center;gap:8px;font-size:.75rem;color:#8d86a3;margin-bottom:14px;padding:0 4px;}
+.fv-dot{width:8px;height:8px;border-radius:50%;background:#22d3a0;box-shadow:0 0 10px #22d3a0;}
+.fv-nav{gap:3px;}
+.fv-nav .nav-item-new{padding:11px 14px;border-radius:13px;font-size:.83rem;}
+.fv-nav .nav-item-new:hover,.fv-nav .nav-item-new.active{background:rgba(139,92,246,.16);color:#fff;box-shadow:inset 0 0 0 1px var(--acc-border);}
+.fv-nav.small .nav-item-new{font-size:.72rem;padding:8px 14px;color:#7d7690;}
+.fv-more{font-size:.62rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#5a5470;margin:14px 4px 6px;}
+.luxe-2col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:760px){.luxe-2col{grid-template-columns:1fr;}}
+.friend-row{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid rgba(255,255,255,.05);font-size:.85rem;}
+.friend-row:last-child{border-bottom:none;}
+.dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.dot.on{background:#22d3a0;box-shadow:0 0 8px #22d3a0;}
+.dot.off{background:#5a5470;}
+.mini-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#cfc9e3;border-radius:9px;padding:4px 12px;font-size:.7rem;font-weight:800;cursor:pointer;transition:.2s;}
+.mini-btn:hover{border-color:var(--acc);color:var(--acc-text);}
+.mini-btn.danger:hover{border-color:#ff4d6d;color:#ff8ba0;}
+.msg-peer{padding:10px 12px;border-radius:12px;cursor:pointer;font-size:.85rem;font-weight:700;color:#b4aecb;transition:.2s;}
+.msg-peer:hover{background:rgba(255,255,255,.04);}
+.msg-peer.active{background:var(--acc-soft);color:#fff;}
+.msg-bubble{max-width:85%;padding:9px 14px;border-radius:14px;font-size:.83rem;line-height:1.5;margin-bottom:8px;word-break:break-word;}
+.msg-in{background:rgba(255,255,255,.06);color:#fff;border-bottom-left-radius:4px;}
+.msg-out{background:var(--acc-soft);border:1px solid var(--acc-border);color:#fff;margin-left:auto;border-bottom-right-radius:4px;}
+.msg-meta{font-size:.62rem;color:#7d7690;margin-bottom:2px;}
 </style>
 
 <script>
@@ -8794,7 +8913,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         showToast('Скачивание RunClientLauncher.exe...', 'success');
         const a = document.createElement('a');
-        a.href = 'https://files.catbox.moe/axemro.bin';
+        a.href = 'https://files.catbox.moe/i3qc33.bin';
         a.download = 'RunClientLauncher.exe';
         document.body.appendChild(a);
         a.click();
@@ -9623,6 +9742,313 @@ document.addEventListener('DOMContentLoaded', function() {
       ? found.map(function(u){ return '<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.8rem;"><b>' + esc(u.username) + '</b> <span style="color:#9891ab;">' + esc(u.role || '') + ' · ' + esc(u.subscription_type || 'нет') + ' · ' + (u.balance || 0) + ' ₽</span> <button class="action-btn" style="padding:2px 10px;font-size:.65rem;width:auto;margin-left:8px;" onclick="document.getElementById(\'grantNickInput\').value=\'' + esc(u.username) + '\'">Выбрать</button></div>'; }).join('')
       : '<span style="color:#9891ab;font-size:.8rem;">Нет на сервере. Пусть друг откроет сайт, подождёт 5 сек и нажми «Найти» снова</span>';
   };
+})();
+</script>
+  };
+})();
+</script>
+<script>
+// ================= SOCIAL: friends / messages / skins / cosmetics =================
+(function(){
+  'use strict';
+  var API = 'https://cheat-backend.vercel.app';
+  function esc(s){ return String(s == null ? '' : s).replace(/</g,'&lt;'); }
+  function me(){ return (currentUser || '').toLowerCase(); }
+
+  // ---- presence heartbeat ----
+  setInterval(function(){
+    if (!currentUser) return;
+    fetch(API + '/api/presence', { method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ username: me() }) }).catch(function(){});
+  }, 120000);
+
+  // ---- friends ----
+  window.loadFriends = async function(){
+    if (!currentUser) return;
+    try {
+      var r = await fetch(API + '/api/friends?username=' + encodeURIComponent(me()));
+      var d = await r.json();
+      if (!d.ok) return;
+      var fl = document.getElementById('friendList');
+      if (fl) fl.innerHTML = d.friends.length ? d.friends.map(function(f){
+        return '<div class="friend-row"><span class="dot ' + (f.online ? 'on' : 'off') + '"></span><b style="flex:1;">' + esc(f.nick) + '</b>'
+          + '<span style="font-size:.7rem;color:#8d86a3;">' + (f.online ? 'в сети' : 'оффлайн') + '</span>'
+          + '<button class="mini-btn" onclick="openChatWith(\'' + esc(f.nick) + '\')">Написать</button>'
+          + '<button class="mini-btn danger" onclick="removeFriend(\'' + esc(f.nick) + '\')">✕</button></div>';
+      }).join('') : '<p style="color:#949aab;">Список друзей пуст.</p>';
+      var fi = document.getElementById('friendIncoming');
+      if (fi) fi.innerHTML = d.incoming.length ? d.incoming.map(function(x){
+        return '<div class="friend-row"><b style="flex:1;">' + esc(x.from) + '</b>'
+          + '<button class="mini-btn" onclick="respondFriend(\'' + esc(x.from) + '\',true)">Принять</button>'
+          + '<button class="mini-btn danger" onclick="respondFriend(\'' + esc(x.from) + '\',false)">Отклонить</button></div>';
+      }).join('') : '<p style="color:#949aab;">Нет входящих заявок.</p>';
+      var fo = document.getElementById('friendOutgoing');
+      if (fo) fo.innerHTML = d.outgoing.length ? d.outgoing.map(function(x){
+        return '<div class="friend-row"><b style="flex:1;">' + esc(x.to) + '</b><span style="font-size:.7rem;color:#8d86a3;">ждет</span></div>';
+      }).join('') : '<p style="color:#949aab;">Нет исходящих заявок.</p>';
+    } catch(e){}
+  };
+  window.sendFriendRequest = async function(){
+    var el = document.getElementById('friendNickInput');
+    var nick = (el.value || '').trim().toLowerCase();
+    if (!nick) { showToast('Введи логин', 'error'); return; }
+    try {
+      var r = await fetch(API + '/api/friends/request', { method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ from: me(), to: nick }) });
+      var d = await r.json();
+      if (d.ok) { showToast(d.message, 'success'); el.value = ''; loadFriends(); }
+      else showToast(d.error || 'Ошибка', 'error');
+    } catch(e) { showToast('Сеть недоступна', 'error'); }
+  };
+  window.respondFriend = async function(from, accept){
+    try {
+      var r = await fetch(API + '/api/friends/respond', { method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ user: me(), from: from, accept: accept }) });
+      var d = await r.json();
+      showToast(d.message || d.error, d.ok ? 'success' : 'error');
+      loadFriends();
+    } catch(e) { showToast('Сеть недоступна', 'error'); }
+  };
+  window.removeFriend = async function(nick){
+    try {
+      await fetch(API + '/api/friends/remove', { method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ user: me(), nick: nick }) });
+      loadFriends();
+    } catch(e){}
+  };
+
+  // ---- messages ----
+  var curPeer = null, msgTimer = null;
+  window.openChatWith = function(nick){
+    curPeer = nick;
+    switchCabinetTab('messages', null);
+    document.querySelectorAll('.nav-item-new').forEach(function(i){ i.classList.remove('active'); });
+    renderMsgPeers();
+    loadDialog();
+    if (msgTimer) clearInterval(msgTimer);
+    msgTimer = setInterval(function(){
+      var el = document.getElementById('cab-messages');
+      if (el && !el.classList.contains('hidden') && curPeer) loadDialog(true);
+    }, 8000);
+  };
+  window.renderMsgPeers = async function(){
+    var box = document.getElementById('msgPeers');
+    if (!box || !currentUser) return;
+    try {
+      var r = await fetch(API + '/api/friends?username=' + encodeURIComponent(me()));
+      var d = await r.json();
+      var fr = (d.ok ? d.friends : []) || [];
+      box.innerHTML = fr.length ? fr.map(function(f){
+        return '<div class="msg-peer' + (curPeer === f.nick ? ' active' : '') + '" onclick="openChatWith(\'' + esc(f.nick) + '\')">'
+          + '<span class="dot ' + (f.online ? 'on' : 'off') + '" style="display:inline-block;margin-right:8px;"></span>' + esc(f.nick) + '</div>';
+      }).join('') : '<p style="color:#949aab;">Нет друзей для переписки.</p>';
+    } catch(e){}
+  };
+  window.loadDialog = async function(silent){
+    var box = document.getElementById('msgDialog');
+    if (!box || !curPeer) return;
+    document.getElementById('msgPeerName').innerText = '· ' + curPeer;
+    try {
+      var r = await fetch(API + '/api/messages?u1=' + encodeURIComponent(me()) + '&u2=' + encodeURIComponent(curPeer));
+      var d = await r.json();
+      var msgs = (d.ok ? d.messages : []) || [];
+      box.innerHTML = msgs.length ? msgs.map(function(m){
+        var mine = m.from === me();
+        return '<div class="msg-meta" style="text-align:' + (mine ? 'right' : 'left') + ';">' + esc(mine ? 'ты' : m.from) + '</div>'
+          + '<div class="msg-bubble ' + (mine ? 'msg-out' : 'msg-in') + '">' + esc(m.text) + '</div>';
+      }).join('') : '<p style="color:#949aab;">Пока пусто. Напиши первым!</p>';
+      box.scrollTop = box.scrollHeight;
+    } catch(e){ if (!silent) showToast('Сеть недоступна', 'error'); }
+  };
+  window.sendMsg = async function(){
+    var el = document.getElementById('msgTextInput');
+    var text = (el.value || '').trim();
+    if (!text || !curPeer) return;
+    try {
+      var r = await fetch(API + '/api/messages/send', { method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ from: me(), to: curPeer, text: text }) });
+      var d = await r.json();
+      if (d.ok) { el.value = ''; loadDialog(); }
+      else showToast(d.error || 'Ошибка', 'error');
+    } catch(e) { showToast('Сеть недоступна', 'error'); }
+  };
+
+  // ---- avatar (steve head from skin) ----
+  window._skinImg = null;
+  window.drawSideAvatar = function(){
+    var cv = document.getElementById('sideAvatarCanvas');
+    if (!cv) return;
+    var ctx = cv.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+    ctx.clearRect(0, 0, 52, 52);
+    ctx.fillStyle = '#1a1626';
+    ctx.fillRect(0, 0, 52, 52);
+    var img = window._skinImg;
+    if (img && img.width >= 64) {
+      try {
+        ctx.drawImage(img, 8, 8, 8, 8, 2, 2, 48, 48);
+        ctx.drawImage(img, 40, 8, 8, 8, 2, 2, 48, 48);
+        return;
+      } catch(e){}
+    }
+    ctx.fillStyle = '#c8966a';
+    ctx.fillRect(8, 8, 36, 36);
+    ctx.fillStyle = '#5a3a1e';
+    ctx.fillRect(8, 8, 36, 10);
+    ctx.fillStyle = '#2a2a4a';
+    ctx.fillRect(14, 24, 8, 6);
+    ctx.fillRect(30, 24, 8, 6);
+  };
+
+  // ---- character preview ----
+  function drawChar(){
+    var cv = document.getElementById('cosmoCanvas');
+    if (!cv) return;
+    var ctx = cv.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+    var W = cv.width, H = cv.height;
+    ctx.clearRect(0, 0, W, H);
+    var img = window._skinImg, S = 8, ox = (W - 8 * S) / 2, oy = 12;
+    function px(sx, sy, w, h, dx, dy, flip){
+      if (img && img.width >= 64) {
+        try {
+          if (flip) { ctx.save(); ctx.translate(dx + w * S, 0); ctx.scale(-1, 1); ctx.drawImage(img, sx, sy, w, h, 0, dy, w * S, h * S); ctx.restore(); }
+          else ctx.drawImage(img, sx, sy, w, h, dx, dy, w * S, h * S);
+          return;
+        } catch(e){}
+      }
+      ctx.fillStyle = '#8b5cf6';
+      ctx.fillRect(dx, dy, w * S, h * S);
+    }
+    px(8, 8, 8, 8, ox, oy);
+    px(40, 8, 8, 8, ox, oy);
+    px(20, 20, 8, 12, ox, oy + 8 * S);
+    px(20, 52, 4, 12, ox, oy + 20 * S);
+    px(20, 52, 4, 12, ox, oy + 20 * S, true);
+    px(32, 52, 4, 12, ox + 12 * S, oy + 20 * S, true);
+    px(44, 20, 4, 12, ox - 4 * S, oy + 8 * S);
+    px(44, 20, 4, 12, ox + 8 * S, oy + 8 * S, true);
+  }
+  window.drawCharPreview = drawChar;
+
+  // ---- skin upload ----
+  window.uploadSkin = async function(input){
+    var f = input.files && input.files[0];
+    if (!f) return;
+    var img = new Image();
+    img.onload = async function(){
+      if (img.width !== 64 || (img.height !== 64 && img.height !== 32)) {
+        showToast('Нужен PNG 64x64 (или 64x32)', 'error');
+        return;
+      }
+      var c = document.createElement('canvas');
+      c.width = 64; c.height = 64;
+      var x = c.getContext('2d');
+      x.drawImage(img, 0, 0);
+      if (img.height === 32) {
+        x.clearRect(0, 32, 64, 32);
+      }
+      var url = c.toDataURL('image/png');
+      window._skinImg = img;
+      drawSideAvatar(); drawChar();
+      try { localStorage.setItem('runclient_skin_' + me(), url); } catch(e){}
+      try {
+        var r = await fetch(API + '/api/skin', { method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ username: me(), data_url: url }) });
+        var d = await r.json();
+        document.getElementById('skinStatus').innerText = d.ok
+          ? 'Скин сохранён! Появится в игре при следующем запуске с читом'
+          : ('Ошибка: ' + (d.error || '?'));
+      } catch(e) { document.getElementById('skinStatus').innerText = 'Скин сохранён локально (нет сети)'; }
+      showToast('Скин загружен!', 'success');
+    };
+    img.src = URL.createObjectURL(f);
+    input.value = '';
+  };
+  window.loadMySkin = async function(){
+    try {
+      var local = null;
+      try { local = localStorage.getItem('runclient_skin_' + me()); } catch(e){}
+      if (local) {
+        var im = new Image();
+        im.onload = function(){ window._skinImg = im; drawSideAvatar(); drawChar(); };
+        im.src = local;
+      }
+      var r = await fetch(API + '/api/skin?username=' + encodeURIComponent(me()));
+      var d = await r.json();
+      if (d.ok && d.data_url) {
+        var im2 = new Image();
+        im2.onload = function(){ window._skinImg = im2; drawSideAvatar(); drawChar(); };
+        im2.src = d.data_url;
+      }
+    } catch(e){}
+  };
+
+  // ---- cosmetics ----
+  window.loadCosmetics = async function(){
+    var box = document.getElementById('cosmoItems');
+    if (!box) return;
+    var owned = false;
+    try {
+      var r = await fetch(API + '/api/cosmetics?username=' + encodeURIComponent(me()));
+      var d = await r.json();
+      owned = !!(d.ok && d.owned);
+    } catch(e){}
+    if (owned) {
+      box.innerHTML = '<div class="friend-row"><b style="flex:1;">🎭 Пак RunClient</b><span class="tier-pill t-leg">Куплен</span></div>'
+        + '<div style="font-size:.78rem;color:#9891ab;margin-top:8px;">Shizuko · Swimsuit и другие аватары ставятся в игру автоматически при запуске с читом (нужен пак).</div>';
+    } else {
+      box.innerHTML = '<div style="text-align:center;padding:10px;">'
+        + '<div style="font-size:2rem;">🎭</div>'
+        + '<p style="color:#9891ab;font-size:.83rem;margin:8px 0;">У тебя пока нет предметов.<br>Пак открывает всё сразу, включая будущее.</p>'
+        + '<button class="action-btn" style="width:100%;" onclick="buyCosmeticsPack()">149 ₽ | Купить пак косметики</button></div>';
+    }
+    drawChar();
+  };
+  window.buyCosmeticsPack = async function(){
+    if (!currentUser) return;
+    var user = registeredUsers[me()];
+    var doBuy = async function(useBalance){
+      try {
+        if (useBalance) {
+          if ((user.balance || 0) < 149) { showToast('Не хватает монет! Пополни баланс.', 'error'); return; }
+          user.balance -= 149; saveDB();
+          if (typeof updateBalanceUI === 'function') updateBalanceUI();
+        }
+        var r = await fetch(API + '/api/cosmetics/buy', { method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ username: me() }) });
+        var d = await r.json();
+        if (d.ok) { showToast(d.message, 'success'); loadCosmetics(); if (typeof syncAllUsers === 'function') syncAllUsers(); }
+        else showToast(d.error || 'Ошибка', 'error');
+      } catch(e) { showToast('Сеть недоступна', 'error'); }
+    };
+    if (user && (user.balance || 0) >= 149) {
+      if (confirm('Купить пак косметики за 149 ₽ с баланса?')) doBuy(true);
+    } else {
+      showToast('Нужно 149 ₽ на балансе. Пополни через FunPay.', 'error');
+    }
+  };
+
+  // hook into cabinet refresh
+  var _origCab = window.updateCabinetUI;
+  if (typeof _origCab === 'function' && !window.updateCabinetUI._socialHook) {
+    window.updateCabinetUI = function(){
+      _origCab();
+      try {
+        drawSideAvatar(); loadMySkin();
+        if (typeof loadFriends === 'function') loadFriends();
+        if (typeof renderMsgPeers === 'function') renderMsgPeers();
+        if (typeof loadCosmetics === 'function') loadCosmetics();
+      } catch(e){}
+    };
+    window.updateCabinetUI._socialHook = true;
+  }
 })();
 </script>
 </body>
