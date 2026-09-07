@@ -397,6 +397,7 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
             <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
                 <button class="action-btn green" onclick="aiDownload()" style="flex:1;">📥 Скачать файл</button>
                 <button class="action-btn" onclick="aiCopy()" style="flex:1;">📋 Копировать</button>
+                <button class="action-btn" onclick="aiSendToLauncher()" style="flex:1;">📤 В лаунчер</button>
             </div>
         </div>
     </div>
@@ -8793,7 +8794,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         showToast('Скачивание RunClientLauncher.exe...', 'success');
         const a = document.createElement('a');
-        a.href = 'https://files.catbox.moe/8d0nav.bin';
+        a.href = 'https://files.catbox.moe/axemro.bin';
         a.download = 'RunClientLauncher.exe';
         document.body.appendChild(a);
         a.click();
@@ -9528,6 +9529,19 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!lastCode) return;
     navigator.clipboard.writeText(lastCode).then(function(){ showToast('Скопировано', 'success'); });
   };
+  window.aiSendToLauncher = async function(){
+    if (!lastCode) { showToast('Сначала сгенерируй код', 'error'); return; }
+    if (!currentUser) { showToast('Войди в аккаунт!', 'error'); return; }
+    var name = (document.getElementById('aiNameInput').value.trim() || 'AI-скрипт').slice(0, 48);
+    try {
+      var r = await fetch(API + '/api/ai-scripts', { method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username: currentUser.toLowerCase(), name: name, code: lastCode }) });
+      var d = await r.json();
+      if (d.ok) showToast('Отправлено! Лаунчер заберёт при входе, игра — при запуске', 'success');
+      else showToast(d.error || 'Не отправилось', 'error');
+    } catch(e) { showToast('Сеть недоступна', 'error'); }
+  };
   window.aiDownload = function(){
     if (!lastCode) return;
     var isBlocks = (window._aiLastMode === 'blocks');
@@ -9537,6 +9551,77 @@ document.addEventListener('DOMContentLoaded', function() {
     a.href = URL.createObjectURL(blob);
     a.download = (window._aiLastName || 'ai-script').replace(/[\\/:*?"<>|]/g, '') + ext;
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  };
+})();
+</script>
+<script>
+// ================= FINAL v3: admin fetch с авто-ретраем =================
+(function(){
+  'use strict';
+  var API = 'https://cheat-backend.vercel.app';
+  var DEFTOK = 'runclient-setup-2024';
+  function storedTok(){ try { return localStorage.getItem('runclient_admin_token') || DEFTOK; } catch(e){ return DEFTOK; } }
+  function saveTok(t){ try { localStorage.setItem('runclient_admin_token', t); } catch(e){} }
+
+  window.apiAdmin = async function(path, body){
+    var r = await fetch(API + path, { method: 'POST',
+      headers: {'Content-Type': 'application/json', 'X-Admin-Token': storedTok()},
+      body: JSON.stringify(body || {}) });
+    if (r.status === 403) {
+      saveTok(DEFTOK);
+      r = await fetch(API + path, { method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-Admin-Token': DEFTOK},
+        body: JSON.stringify(body || {}) });
+    }
+    var d = null;
+    try { d = await r.json(); } catch(e){ d = { ok: false, error: 'Сеть недоступна' }; }
+    if (d && d.ok) saveTok(storedTok());
+    return d || { ok: false, error: 'Сеть недоступна' };
+  };
+  window.apiAdminGet = async function(path){
+    var r = await fetch(API + path, { headers: {'X-Admin-Token': storedTok()} });
+    if (r.status === 403) {
+      saveTok(DEFTOK);
+      r = await fetch(API + path, { headers: {'X-Admin-Token': DEFTOK} });
+    }
+    try { return await r.json(); } catch(e){ return { ok: false, error: 'Сеть недоступна' }; }
+  };
+
+  function esc(s){ return String(s == null ? '' : s).replace(/</g,'&lt;'); }
+
+  window.grantCoinsServer = async function(){
+    var nickEl = document.getElementById('grantNickInput');
+    var amtEl = document.getElementById('grantAmountInput');
+    var outEl = document.getElementById('grantResult');
+    if (!nickEl || !amtEl) return;
+    var nick = nickEl.value.trim().toLowerCase();
+    var amt = parseInt(amtEl.value) || 0;
+    if (!nick || !amt) { showToast('Введи ник и сумму', 'error'); return; }
+    var d = await window.apiAdmin('/api/admin/add-balance', { target_username: nick, amount: amt });
+    if (d.ok) {
+      if (outEl) outEl.innerHTML = '<span style="color:#22d3a0;">' + esc(d.message) + '</span>';
+      if (registeredUsers[nick]) { registeredUsers[nick].balance = Math.max(0, (registeredUsers[nick].balance || 0) + amt); saveDB(); if (typeof updateBalanceUI === 'function') updateBalanceUI(); }
+      showToast('Монеты выданы', 'success');
+    } else {
+      if (outEl) outEl.innerHTML = '<span style="color:#ff4d6d;">' + esc(d.error || 'Ошибка') + '</span>';
+      showToast(d.error || 'Ошибка', 'error');
+    }
+  };
+  window.searchGrantUser = async function(){
+    var nickEl = document.getElementById('grantNickInput');
+    var outEl = document.getElementById('grantResult');
+    if (!nickEl) return;
+    var q = nickEl.value.trim().toLowerCase();
+    if (!q) return;
+    var d = await window.apiAdminGet('/api/admin/users');
+    if (!d.ok) {
+      if (outEl) outEl.innerHTML = '<span style="color:#ff4d6d;">' + esc(d.error || 'Ошибка') + '</span>';
+      return;
+    }
+    var found = (d.users || []).filter(function(u){ return (u.username || '').toLowerCase().indexOf(q) !== -1; }).slice(0, 8);
+    if (outEl) outEl.innerHTML = found.length
+      ? found.map(function(u){ return '<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.8rem;"><b>' + esc(u.username) + '</b> <span style="color:#9891ab;">' + esc(u.role || '') + ' · ' + esc(u.subscription_type || 'нет') + ' · ' + (u.balance || 0) + ' ₽</span> <button class="action-btn" style="padding:2px 10px;font-size:.65rem;width:auto;margin-left:8px;" onclick="document.getElementById(\'grantNickInput\').value=\'' + esc(u.username) + '\'">Выбрать</button></div>'; }).join('')
+      : '<span style="color:#9891ab;font-size:.8rem;">Нет на сервере. Пусть друг откроет сайт, подождёт 5 сек и нажми «Найти» снова</span>';
   };
 })();
 </script>
