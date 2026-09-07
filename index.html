@@ -10038,7 +10038,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         var r = await fetch(API + '/api/cosmetics/buy', { method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ username: me() }) });
+          body: JSON.stringify({ username: me(), balance: user.balance }) });
         var d = await r.json();
         if (d.ok) { showToast(d.message, 'success'); loadCosmetics(); if (typeof syncAllUsers === 'function') syncAllUsers(); }
         else showToast(d.error || 'Ошибка', 'error');
