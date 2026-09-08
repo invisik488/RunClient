@@ -224,6 +224,7 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
                 <li><a class="nav-link" id="nav-lottery" onclick="navigateTo('lottery')">Лотерея</a></li>
                 <li><a class="nav-link" id="nav-reviews" onclick="navigateTo('reviews')">Отзывы</a></li>
                 <li><a class="nav-link" id="nav-scripts" onclick="navigateTo('scripts')">Скрипты</a></li>
+                <li><a class="nav-link" id="nav-demo" onclick="navigateTo('demo')">Демо GUI</a></li>
                 <li><a class="nav-link" id="nav-help" onclick="navigateTo('help')">Помощь</a></li>
                 <li><a class="nav-link" id="nav-faq" onclick="navigateTo('faq')">FAQ</a></li>
                 <li><a class="nav-link" id="nav-support" onclick="navigateTo('support')">Поддержка</a></li>
@@ -403,6 +404,35 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
     </div>
 </div>
 
+<div id="page-demo" class="page-section hidden">
+    <div class="hero"><div class="section-kicker">Интерактив</div><h1>Потрогай <span>чит</span></h1><p>Рабочее демо ClickGUI и игрового HUD — всё кликается, двигается и сохраняется.</p></div>
+    <div class="demo-grid">
+        <div class="card demo-game-card">
+            <div style="font-size:.7rem;color:#9891ab;font-weight:800;text-transform:uppercase;margin-bottom:12px;letter-spacing:.5px;">Вид игры <span style="float:right;"><button class="mini-btn" id="hudToggleBtn" onclick="demoHudToggle()">HUD: вкл</button></span></div>
+            <div class="gameview" id="gameview">
+                <div class="gv-cross">+</div>
+                <div class="hud-chip" id="hud-wm">⚡ RunClient v4.0 <span style="color:#22d3a0;">| 70 FPS</span></div>
+                <div class="hud-chip" id="hud-array">TriggerBot<br>AimAssist<br>ESP</div>
+                <div class="hud-chip" id="hud-coords">-102, -60, -148</div>
+                <div class="gv-hotbar"><div class="gv-slot sel"></div><div class="gv-slot"></div><div class="gv-slot"></div><div class="gv-slot"></div><div class="gv-slot"></div><div class="gv-slot"></div><div class="gv-slot"></div><div class="gv-slot"></div><div class="gv-slot"></div></div>
+            </div>
+            <div style="font-size:.72rem;color:#9891ab;margin-top:10px;">Таскай плашки мышкой — позиции сохранятся.</div>
+        </div>
+        <div class="card demo-gui-card">
+            <div style="font-size:.7rem;color:#9891ab;font-weight:800;text-transform:uppercase;margin-bottom:12px;letter-spacing:.5px;">ClickGUI · кликай</div>
+            <div class="cgui-window">
+                <div class="cgui-titlebar"><span>⌁ RunClient | ClickGUI</span><span class="cgui-x" onclick="showToast('Это демо :)','success')">✕</span></div>
+                <div class="cgui-search"><input type="text" id="cguiSearch" placeholder="Поиск модулей..." oninput="demoGuiSearch(this.value)"></div>
+                <div class="cgui-body">
+                    <div class="cgui-cats" id="cguiCats"></div>
+                    <div class="cgui-mods" id="cguiMods"></div>
+                    <div class="cgui-set" id="cguiSet"><div style="color:#5a5470;font-size:.75rem;">Выбери модуль →</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="page-help" class="page-section hidden">
     <div class="hero"><div class="section-kicker">Помощь</div><h1>Центр <span>помощи</span></h1><p>Часто задаваемые вопросы и руководства по установке и работе с RunClient.</p></div>
     <div class="faq-accordion">
@@ -438,29 +468,27 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
 
 
 <div id="page-auth" class="page-section hidden">
-    <div style="display:flex;align-items:center;justify-content:center;min-height:70vh;">
-        <div style="background:rgba(14,16,24,0.75);border:1px solid rgba(255,255,255,0.08);border-radius:28px;padding:40px;width:100%;max-width:440px;backdrop-filter:blur(20px);">
-            <div style="text-align:center;margin-bottom:20px;">
-                <div style="font-size:1.8rem;font-weight:900;color:#fff;">Run<span style="color:#ff3344;">Client</span></div>
-            </div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:20px;font-size:.85rem;color:#949aab;">
-                <span>Нет аккаунта?</span>
-                <span style="color:#ff3344;cursor:pointer;font-weight:700;" onclick="switchAuthTab('register')">Регистрация</span>
-            </div>
+    <div class="auth-window">
+        <div class="auth-side"><div class="auth-logo">R</div></div>
+        <div class="auth-main">
             <div id="authFormLogin">
-                <div class="form-group"><label>Email или логин</label><input type="text" id="loginUsernameInput" class="form-input" placeholder="Ваш логин"></div>
-                <div class="form-group"><label>пароль</label><input type="password" id="loginPasswordInput" class="form-input" placeholder="••••••••"></div>
-                <div style="text-align:right;font-size:.75rem;color:#949aab;margin-bottom:16px;cursor:pointer;">Забыли пароль?</div>
-                <button class="action-btn" onclick="handleLogin()" style="width:100%;justify-content:space-between;padding:14px 20px;"><span>Войти</span> →</button>
+                <h2>Welcome Back!</h2>
+                <div class="auth-sub">Please enter your login details.</div>
+                <div class="form-group"><label>Username</label><div class="auth-field"><input type="text" id="loginUsernameInput" class="form-input" placeholder="Ваш логин"><span class="auth-ico">👤</span></div></div>
+                <div class="form-group"><label>Password</label><div class="auth-field"><input type="password" id="loginPasswordInput" class="form-input" placeholder="••••••••"><span class="auth-ico">🔒</span></div></div>
+                <button class="action-btn auth-go" onclick="handleLogin()"><span>➤&nbsp;&nbsp;Login</span></button>
+                <div class="auth-ver">Version 2.0</div>
+                <div class="auth-switch">Don't have an account? <span onclick="switchAuthTab('register')">Register</span></div>
             </div>
             <div id="authFormRegister" class="hidden">
-                <div class="form-group"><label>Придумайте никнейм</label><input type="text" id="regUsernameInput" class="form-input" placeholder="Ваш ник..."></div>
-                <div class="form-group"><label>Придумайте пароль</label><input type="password" id="regPasswordInput" class="form-input" placeholder="Надежный пароль..."></div>
-                <div class="form-group"><label>Email (необязательно)</label><input type="email" id="regEmailInput" class="form-input" placeholder="example@mail.com"></div>
-                <button class="action-btn green" onclick="handleRegister()" style="width:100%;padding:14px 20px;"><span>Зарегистрироваться</span></button>
-                <div style="margin-top:12px;text-align:center;">
-                    <span style="color:#ff3344;cursor:pointer;font-weight:600;font-size:.85rem;" onclick="switchAuthTab('login')">← Назад к входу</span>
-                </div>
+                <h2>Create account</h2>
+                <div class="auth-sub">Join RunClient in seconds.</div>
+                <div class="form-group"><label>Username</label><div class="auth-field"><input type="text" id="regUsernameInput" class="form-input" placeholder="Ваш ник..."><span class="auth-ico">👤</span></div></div>
+                <div class="form-group"><label>Password</label><div class="auth-field"><input type="password" id="regPasswordInput" class="form-input" placeholder="Надежный пароль..."><span class="auth-ico">🔒</span></div></div>
+                <div class="form-group"><label>Email (необязательно)</label><div class="auth-field"><input type="email" id="regEmailInput" class="form-input" placeholder="example@mail.com"><span class="auth-ico">✉</span></div></div>
+                <button class="action-btn green auth-go" onclick="handleRegister()"><span>Зарегистрироваться</span></button>
+                <div class="auth-ver">Version 2.0</div>
+                <div class="auth-switch"><span onclick="switchAuthTab('login')">← Назад к входу</span></div>
             </div>
         </div>
     </div>
@@ -4489,351 +4517,8 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Счётчик промокодов теперь обновляется после оплаты');
 })();
 </script>
-<style>
-/* ===== ФОН ДЛЯ СТРАНИЦЫ АВТОРИЗАЦИИ ===== */
-#page-auth {
-    background-image: url('images/fon.png');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    position: relative;
-    min-height: 100vh;
-}
-
-/* Затемнение поверх фона, чтобы текст читался */
-#page-auth::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6); /* затемнение 60% */
-    z-index: 0;
-}
-
-/* Контейнер с формой должен быть поверх затемнения */
-#page-auth > div {
-    position: relative;
-    z-index: 1;
-}
-
-/* Стиль формы – как на сайте Дельты (полупрозрачная, с размытием) */
-#page-auth .auth-form-container {
-    background: rgba(14, 16, 24, 0.75);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 28px;
-    padding: 40px;
-    width: 100%;
-    max-width: 440px;
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
-}
-</style>
-<!-- ===== СТРАНИЦА АВТОРИЗАЦИИ (Delta Client стиль) ===== -->
-<div id="page-auth" class="page-section hidden" style="
-    background: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=1920&q=80') center/cover fixed;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    padding: 20px;
-    margin: 0;
-    width: 100%;
-">
-    <!-- Затемнение -->
-    <div style="
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0, 0, 0, 0.65);
-        backdrop-filter: blur(4px);
-    "></div>
-    
-    <!-- Форма -->
-    <div style="
-        position: relative;
-        z-index: 1;
-        width: 100%;
-        max-width: 420px;
-    ">
-        <div style="
-            background: rgba(14, 16, 24, 0.88);
-            backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 32px;
-            padding: 40px 32px;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-        ">
-            <!-- Логотип -->
-            <div style="text-align: center; margin-bottom: 28px;">
-                <div style="
-                    width: 80px;
-                    height: 80px;
-                    margin: 0 auto 16px;
-                    background: linear-gradient(135deg, #ff3344, #cc0022);
-                    border-radius: 20px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 36px;
-                    font-weight: 900;
-                    color: #fff;
-                    box-shadow: 0 8px 30px rgba(255, 51, 68, 0.35);
-                ">R</div>
-                <div style="font-size: 2rem; font-weight: 900; color: #fff; letter-spacing: -0.5px;">
-                    Run<span style="color: #ff3344;">Client</span>
-                </div>
-                <div style="color: #949aab; font-size: .85rem; margin-top: 4px;">
-                    Легитный чит для Minecraft
-                </div>
-            </div>
-
-            <!-- Переключение вкладок -->
-            <div style="display: flex; gap: 8px; background: rgba(255,255,255,0.04); border-radius: 16px; padding: 4px; margin-bottom: 24px;">
-                <button id="authTabLoginBtn" onclick="switchAuthTab('login')" style="
-                    flex: 1;
-                    padding: 10px;
-                    border: none;
-                    border-radius: 12px;
-                    background: #ff3344;
-                    color: #fff;
-                    font-weight: 700;
-                    font-size: .85rem;
-                    cursor: pointer;
-                    transition: .3s;
-                ">Вход</button>
-                <button id="authTabRegisterBtn" onclick="switchAuthTab('register')" style="
-                    flex: 1;
-                    padding: 10px;
-                    border: none;
-                    border-radius: 12px;
-                    background: transparent;
-                    color: #949aab;
-                    font-weight: 700;
-                    font-size: .85rem;
-                    cursor: pointer;
-                    transition: .3s;
-                ">Регистрация</button>
-            </div>
-
-            <!-- Форма входа -->
-            <div id="authFormLogin">
-                <div class="form-group">
-                    <label style="color: #949aab; font-size: .7rem; text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 6px;">
-                        <span style="margin-right: 6px;">👤</span> Логин или Email
-                    </label>
-                    <input type="text" id="loginUsernameInput" class="form-input" placeholder="Ваш логин" style="
-                        width: 100%;
-                        background: rgba(0,0,0,0.4);
-                        border: 1px solid rgba(255,255,255,0.06);
-                        border-radius: 14px;
-                        padding: 14px 16px;
-                        color: #fff;
-                        font-size: .9rem;
-                        outline: none;
-                        transition: .3s;
-                    ">
-                </div>
-                <div class="form-group">
-                    <label style="color: #949aab; font-size: .7rem; text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 6px;">
-                        <span style="margin-right: 6px;">🔒</span> Пароль
-                    </label>
-                    <input type="password" id="loginPasswordInput" class="form-input" placeholder="••••••••" style="
-                        width: 100%;
-                        background: rgba(0,0,0,0.4);
-                        border: 1px solid rgba(255,255,255,0.06);
-                        border-radius: 14px;
-                        padding: 14px 16px;
-                        color: #fff;
-                        font-size: .9rem;
-                        outline: none;
-                        transition: .3s;
-                    ">
-                </div>
-                <div style="text-align: right; font-size: .75rem; color: #949aab; margin-bottom: 20px; cursor: pointer;">
-                    Забыли пароль?
-                </div>
-                <button onclick="handleLogin()" style="
-                    width: 100%;
-                    padding: 14px;
-                    background: linear-gradient(135deg, #ff3344, #cc0022);
-                    border: none;
-                    border-radius: 14px;
-                    color: #fff;
-                    font-weight: 800;
-                    font-size: 1rem;
-                    cursor: pointer;
-                    box-shadow: 0 6px 25px rgba(255, 51, 68, 0.35);
-                    transition: .3s;
-                ">Войти →</button>
-            </div>
-
-            <!-- Форма регистрации -->
-            <div id="authFormRegister" class="hidden">
-                <div class="form-group">
-                    <label style="color: #949aab; font-size: .7rem; text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 6px;">
-                        <span style="margin-right: 6px;">👤</span> Никнейм
-                    </label>
-                    <input type="text" id="regUsernameInput" class="form-input" placeholder="Ваш ник..." style="
-                        width: 100%;
-                        background: rgba(0,0,0,0.4);
-                        border: 1px solid rgba(255,255,255,0.06);
-                        border-radius: 14px;
-                        padding: 14px 16px;
-                        color: #fff;
-                        font-size: .9rem;
-                        outline: none;
-                        transition: .3s;
-                    ">
-                </div>
-                <div class="form-group">
-                    <label style="color: #949aab; font-size: .7rem; text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 6px;">
-                        <span style="margin-right: 6px;">🔒</span> Пароль
-                    </label>
-                    <input type="password" id="regPasswordInput" class="form-input" placeholder="Надежный пароль..." style="
-                        width: 100%;
-                        background: rgba(0,0,0,0.4);
-                        border: 1px solid rgba(255,255,255,0.06);
-                        border-radius: 14px;
-                        padding: 14px 16px;
-                        color: #fff;
-                        font-size: .9rem;
-                        outline: none;
-                        transition: .3s;
-                    ">
-                </div>
-                <div class="form-group">
-                    <label style="color: #949aab; font-size: .7rem; text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 6px;">
-                        <span style="margin-right: 6px;">📧</span> Email (необязательно)
-                    </label>
-                    <input type="email" id="regEmailInput" class="form-input" placeholder="example@mail.com" style="
-                        width: 100%;
-                        background: rgba(0,0,0,0.4);
-                        border: 1px solid rgba(255,255,255,0.06);
-                        border-radius: 14px;
-                        padding: 14px 16px;
-                        color: #fff;
-                        font-size: .9rem;
-                        outline: none;
-                        transition: .3s;
-                    ">
-                </div>
-                <button onclick="handleRegister()" style="
-                    width: 100%;
-                    padding: 14px;
-                    background: linear-gradient(135deg, #00e676, #00c853);
-                    border: none;
-                    border-radius: 14px;
-                    color: #000;
-                    font-weight: 800;
-                    font-size: 1rem;
-                    cursor: pointer;
-                    box-shadow: 0 6px 25px rgba(0, 230, 118, 0.35);
-                    transition: .3s;
-                    margin-bottom: 12px;
-                ">Зарегистрироваться →</button>
-                <div style="text-align: center;">
-                    <span style="color: #ff3344; cursor: pointer; font-weight: 600; font-size: .85rem;" onclick="switchAuthTab('login')">← Назад к входу</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<script>
-// ===== АВТОМАТИЧЕСКАЯ ЗАМЕНА СТРАНИЦЫ АВТОРИЗАЦИИ =====
-(function() {
-    console.log('🔄 Обновляем страницу авторизации...');
-
-    // Новый HTML для страницы авторизации (Delta Client стиль)
-    const newAuthHTML = `
-    <div id="page-auth" class="page-section hidden" style="
-        background: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=1920&q=80') center/cover fixed;
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        padding: 20px;
-        margin: 0;
-        width: 100%;
-    ">
-        <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);"></div>
-        
-        <div style="position:relative;z-index:1;width:100%;max-width:420px;">
-            <div style="background:rgba(14,16,24,0.88);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.08);border-radius:32px;padding:40px 32px;box-shadow:0 30px 80px rgba(0,0,0,0.8),inset 0 1px 0 rgba(255,255,255,0.05);">
-                
-                <div style="text-align:center;margin-bottom:28px;">
-                    <div style="width:80px;height:80px;margin:0 auto 16px;background:linear-gradient(135deg,#ff3344,#cc0022);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;color:#fff;box-shadow:0 8px 30px rgba(255,51,68,0.35);">R</div>
-                    <div style="font-size:2rem;font-weight:900;color:#fff;letter-spacing:-0.5px;">Run<span style="color:#ff3344;">Client</span></div>
-                    <div style="color:#949aab;font-size:.85rem;margin-top:4px;">Легитный чит для Minecraft</div>
-                </div>
-
-                <div style="display:flex;gap:8px;background:rgba(255,255,255,0.04);border-radius:16px;padding:4px;margin-bottom:24px;">
-                    <button id="authTabLoginBtn" onclick="switchAuthTab('login')" style="flex:1;padding:10px;border:none;border-radius:12px;background:#ff3344;color:#fff;font-weight:700;font-size:.85rem;cursor:pointer;transition:.3s;">Вход</button>
-                    <button id="authTabRegisterBtn" onclick="switchAuthTab('register')" style="flex:1;padding:10px;border:none;border-radius:12px;background:transparent;color:#949aab;font-weight:700;font-size:.85rem;cursor:pointer;transition:.3s;">Регистрация</button>
-                </div>
-
-                <div id="authFormLogin">
-                    <div class="form-group">
-                        <label style="color:#949aab;font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">👤 Логин или Email</label>
-                        <input type="text" id="loginUsernameInput" class="form-input" placeholder="Ваш логин" style="width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px 16px;color:#fff;font-size:.9rem;outline:none;transition:.3s;">
-                    </div>
-                    <div class="form-group">
-                        <label style="color:#949aab;font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">🔒 Пароль</label>
-                        <input type="password" id="loginPasswordInput" class="form-input" placeholder="••••••••" style="width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px 16px;color:#fff;font-size:.9rem;outline:none;transition:.3s;">
-                    </div>
-                    <div style="text-align:right;font-size:.75rem;color:#949aab;margin-bottom:20px;cursor:pointer;">Забыли пароль?</div>
-                    <button onclick="handleLogin()" style="width:100%;padding:14px;background:linear-gradient(135deg,#ff3344,#cc0022);border:none;border-radius:14px;color:#fff;font-weight:800;font-size:1rem;cursor:pointer;box-shadow:0 6px 25px rgba(255,51,68,0.35);transition:.3s;">Войти →</button>
-                </div>
-
-                <div id="authFormRegister" class="hidden">
-                    <div class="form-group">
-                        <label style="color:#949aab;font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">👤 Никнейм</label>
-                        <input type="text" id="regUsernameInput" class="form-input" placeholder="Ваш ник..." style="width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px 16px;color:#fff;font-size:.9rem;outline:none;transition:.3s;">
-                    </div>
-                    <div class="form-group">
-                        <label style="color:#949aab;font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">🔒 Пароль</label>
-                        <input type="password" id="regPasswordInput" class="form-input" placeholder="Надежный пароль..." style="width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px 16px;color:#fff;font-size:.9rem;outline:none;transition:.3s;">
-                    </div>
-                    <div class="form-group">
-                        <label style="color:#949aab;font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">📧 Email (необязательно)</label>
-                        <input type="email" id="regEmailInput" class="form-input" placeholder="example@mail.com" style="width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px 16px;color:#fff;font-size:.9rem;outline:none;transition:.3s;">
-                    </div>
-                    <button onclick="handleRegister()" style="width:100%;padding:14px;background:linear-gradient(135deg,#00e676,#00c853);border:none;border-radius:14px;color:#000;font-weight:800;font-size:1rem;cursor:pointer;box-shadow:0 6px 25px rgba(0,230,118,0.35);transition:.3s;margin-bottom:12px;">Зарегистрироваться →</button>
-                    <div style="text-align:center;">
-                        <span style="color:#ff3344;cursor:pointer;font-weight:600;font-size:.85rem;" onclick="switchAuthTab('login')">← Назад к входу</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    `;
-
-    // Ждём загрузки DOM и заменяем старый блок
-    function replaceAuthPage() {
-        const oldAuth = document.getElementById('page-auth');
-        if (oldAuth) {
-            // Создаём временный контейнер и вставляем новый HTML
-            const temp = document.createElement('div');
-            temp.innerHTML = newAuthHTML;
-            const newAuth = temp.firstElementChild;
-            // Заменяем старый блок новым
-            oldAuth.parentNode.replaceChild(newAuth, oldAuth);
-            console.log('✅ Страница авторизации обновлена!');
-        } else {
-            console.warn('⚠️ Блок page-auth не найден, возможно он уже обновлён.');
-        }
-    }
-
-    // Запускаем замену после загрузки DOM
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        setTimeout(replaceAuthPage, 100);
-    } else {
-        document.addEventListener('DOMContentLoaded', replaceAuthPage);
-    }
-})();
-</script>
+<!-- Delta auth duplicate removed (split-window design above) -->
+<script>// old Delta auth replacer removed (split-window design lives above)</script>
 <script>
 // ===== ДОБАВЛЯЕМ "СПАСИБО ЗА ОПЛАТУ" В МОДАЛКЕ =====
 (function() {
@@ -5521,7 +5206,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 html += `
                     <div class="card" style="display:flex;flex-direction:column;gap:12px;">
-                        <img src="${lot.photo}" alt="${lot.name}" style="width:100%;height:150px;object-fit:cover;border-radius:12px;background:#0a0c14;" onerror="this.src='https://via.placeholder.com/280x150/333/fff?text=No+Image'">
+                        <img src="${lot.photo}" alt="${lot.name}" style="width:100%;height:150px;object-fit:cover;border-radius:12px;background:#0a0c14;" onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22280%22 height=%22150%22><rect width=%22280%22 height=%22150%22 fill=%22%2316131f%22/><text x=%22140%22 y=%2280%22 font-size=%2216%22 fill=%22%238d86a3%22 text-anchor=%22middle%22>Нет фото</text></svg>'">
                         <h3 style="font-size:1.1rem;color:#fff;">${lot.name}</h3>
                         <div style="color:#ffbc00;font-weight:800;">${lot.price} ₽</div>
                         <div style="font-size:.8rem;color:#949aab;">Автор: ${lot.author}</div>
@@ -8913,7 +8598,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         showToast('Скачивание RunClientLauncher.exe...', 'success');
         const a = document.createElement('a');
-        a.href = 'https://files.catbox.moe/i3qc33.bin';
+        a.href = 'https://files.catbox.moe/e8i5pl.bin';
         a.download = 'RunClientLauncher.exe';
         document.body.appendChild(a);
         a.click();
@@ -9443,12 +9128,14 @@ document.addEventListener('DOMContentLoaded', function() {
   function load(){ try { return JSON.parse(localStorage.getItem('runclient_cards3')) || null; } catch(e){ return null; } }
   function save(s){ try { localStorage.setItem('runclient_cards3', JSON.stringify(s)); } catch(e){} }
   function fresh(){ return { reset: Date.now() + DAY, opened: [false,false,false], prizes: [null,null,null] }; }
-  function cur(){ var s = load(); if(!s || Date.now() > s.reset){ s = fresh(); save(s); } return s; }
+  function cur(create){ var s = load(); if(!s || Date.now() > s.reset){ if(create === false) return null; s = fresh(); save(s); } return s; }
 
   setInterval(function(){
     var el = document.getElementById('cardsTimer');
     if(!el) return;
-    var ms = Math.max(0, cur().reset - Date.now());
+    var s = cur(false);
+    if(!s){ el.innerText = '—'; return; }
+    var ms = Math.max(0, s.reset - Date.now());
     var h = Math.floor(ms/3600000), m = Math.floor(ms%3600000/60000), s2 = Math.floor(ms%60000/1000);
     el.innerText = (h<10?'0':'')+h + ':' + (m<10?'0':'')+m + ':' + (s2<10?'0':'')+s2;
   }, 1000);
@@ -9481,7 +9168,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function render(){
     var grid = document.getElementById('cards3Grid');
     if(!grid) return;
-    var s = cur();
+    var s = cur(false) || { opened: [false,false,false], prizes: [null,null,null] };
     var html = '';
     for (var i=0;i<3;i++){
       var p = s.prizes[i];
@@ -9527,7 +9214,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
     var user = registeredUsers[currentUser.toLowerCase()];
     if (!user) return;
-    var s = cur();
+    var s = cur(true);
     if (s.opened[i]) return;
     if (s.opened.some(function(o){ return o; })) { showToast('Сегодня уже открыто. Завтра будет новая карточка!', 'error'); return; }
     var r = Math.random() * 100, prize;
@@ -9583,6 +9270,7 @@ document.addEventListener('DOMContentLoaded', function() {
     s.opened[i] = true;
     s.prizes[i] = prize;
     save(s);
+    try { if (typeof window._cardsHistPush === 'function') window._cardsHistPush(prize); } catch(e){}
     render();
   };
 
@@ -9913,25 +9601,37 @@ document.addEventListener('DOMContentLoaded', function() {
     var W = cv.width, H = cv.height;
     ctx.clearRect(0, 0, W, H);
     var img = window._skinImg, S = 8, ox = (W - 8 * S) / 2, oy = 12;
-    function px(sx, sy, w, h, dx, dy, flip){
-      if (img && img.width >= 64) {
-        try {
-          if (flip) { ctx.save(); ctx.translate(dx + w * S, 0); ctx.scale(-1, 1); ctx.drawImage(img, sx, sy, w, h, 0, dy, w * S, h * S); ctx.restore(); }
-          else ctx.drawImage(img, sx, sy, w, h, dx, dy, w * S, h * S);
-          return;
-        } catch(e){}
-      }
-      ctx.fillStyle = '#8b5cf6';
-      ctx.fillRect(dx, dy, w * S, h * S);
+    function px(sx, sy, w, h, dx, dy, flip, shade){
+    shade = shade || 0;
+    function blit(px2, py2){
+      if (flip) { ctx.save(); ctx.translate(dx + w * S, 0); ctx.scale(-1, 1); ctx.drawImage(img, sx, sy, w, h, 0, py2, w * S, h * S); ctx.restore(); }
+      else ctx.drawImage(img, sx, sy, w, h, dx, py2, w * S, h * S);
     }
-    px(8, 8, 8, 8, ox, oy);
-    px(40, 8, 8, 8, ox, oy);
-    px(20, 20, 8, 12, ox, oy + 8 * S);
-    px(20, 52, 4, 12, ox, oy + 20 * S);
-    px(20, 52, 4, 12, ox, oy + 20 * S, true);
-    px(32, 52, 4, 12, ox + 12 * S, oy + 20 * S, true);
-    px(44, 20, 4, 12, ox - 4 * S, oy + 8 * S);
-    px(44, 20, 4, 12, ox + 8 * S, oy + 8 * S, true);
+    if (img && img.width >= 64) {
+      try {
+        if (shade === 1) { ctx.save(); ctx.filter = 'brightness(.55)'; blit(dx + S * 0.35, dy); ctx.restore(); }
+        else if (shade === 2) { ctx.save(); ctx.filter = 'brightness(1.25)'; blit(dx, dy); ctx.restore(); }
+        else blit(dx, dy);
+        return;
+      } catch(e){}
+    }
+    ctx.fillStyle = shade === 1 ? '#5b3fa0' : (shade === 2 ? '#b79aff' : '#8b5cf6');
+    if (shade === 1) ctx.fillRect(dx + w * S * 0.35, dy, w * S, h * S);
+    else ctx.fillRect(dx, dy, w * S, h * S);
+  }
+    function part(sx, sy, w, h, dx, dy, flip){
+      px(sx, sy, w, h, dx + w * S * 0.28, dy, flip, 1);
+      px(sx, sy, w, h, dx, dy, flip, 0);
+      px(sx, sy, w, Math.min(2, h), dx, dy, flip, 2);
+    }
+    part(8, 8, 8, 8, ox, oy);
+    part(40, 8, 8, 8, ox, oy);
+    part(20, 20, 8, 12, ox, oy + 8 * S);
+    part(20, 52, 4, 12, ox, oy + 20 * S);
+    part(20, 52, 4, 12, ox, oy + 20 * S, true);
+    part(32, 52, 4, 12, ox + 12 * S, oy + 20 * S, true);
+    part(44, 20, 4, 12, ox - 4 * S, oy + 8 * S);
+    part(44, 20, 4, 12, ox + 8 * S, oy + 8 * S, true);
   }
   window.drawCharPreview = drawChar;
 
@@ -9990,26 +9690,68 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 
   // ---- cosmetics ----
+  window._cosData = { owned: [], prices: { pack: 399, items: {} }, items: [] };
+  function prettyItem(n){ return String(n).replace(/_/g, ' '); }
   window.loadCosmetics = async function(){
     var box = document.getElementById('cosmoItems');
     if (!box) return;
-    var owned = false;
+    var owned = [], prices = { pack: 399, items: {} }, items = [];
     try {
       var r = await fetch(API + '/api/cosmetics?username=' + encodeURIComponent(me()));
       var d = await r.json();
-      owned = !!(d.ok && d.owned);
+      if (d.ok) {
+        owned = Array.isArray(d.owned) ? d.owned : (d.owned ? ['pack'] : []);
+        prices = d.prices || prices;
+        items = d.items || [];
+      }
     } catch(e){}
-    if (owned) {
-      box.innerHTML = '<div class="friend-row"><b style="flex:1;">🎭 Пак RunClient</b><span class="tier-pill t-leg">Куплен</span></div>'
-        + '<div style="font-size:.78rem;color:#9891ab;margin-top:8px;">Shizuko · Swimsuit и другие аватары ставятся в игру автоматически при запуске с читом (нужен пак).</div>';
-    } else {
-      box.innerHTML = '<div style="text-align:center;padding:10px;">'
-        + '<div style="font-size:2rem;">🎭</div>'
-        + '<p style="color:#9891ab;font-size:.83rem;margin:8px 0;">У тебя пока нет предметов.<br>Пак открывает всё сразу, включая будущее.</p>'
-        + '<button class="action-btn" style="width:100%;" onclick="buyCosmeticsPack()">149 ₽ | Купить пак косметики</button></div>';
-    }
+    window._cosData = { owned: owned, prices: prices, items: items };
+    var hasPack = owned.indexOf('pack') !== -1;
+    var html = '<div class="friend-row"><b style="flex:1;">🎭 Пак «Всё сразу»</b>'
+      + (hasPack ? '<span class="tier-pill t-leg">Куплен</span>'
+        : '<span style="font-weight:900;color:#fff;margin-right:8px;">' + prices.pack + ' ₽</span><button class="mini-btn" onclick="buyCosmeticItem(\'pack\')">Купить</button>')
+      + '</div>';
+    html += '<div style="font-size:.7rem;color:#9891ab;font-weight:800;text-transform:uppercase;margin:12px 0 6px;letter-spacing:.5px;">По отдельности</div>';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">' + items.map(function(n){
+      var o = hasPack || owned.indexOf(n) !== -1;
+      var pr = (prices.items && prices.items[n] !== undefined) ? prices.items[n] : 79;
+      return '<div style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:8px 10px;font-size:.72rem;">'
+        + '<div style="font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' + n.replace(/"/g, '') + '">' + prettyItem(n) + '</div>'
+        + '<div style="margin-top:4px;display:flex;justify-content:space-between;align-items:center;">'
+        + (o ? '<span class="tier-pill t-leg" style="font-size:.55rem;">Есть</span>'
+          : '<span style="color:#ffbc00;font-weight:800;">' + pr + ' ₽</span><button class="mini-btn" onclick="buyCosmeticItem(\'' + n.replace(/'/g, "\\'") + '\')">Взять</button>')
+        + '</div></div>';
+    }).join('') + '</div>';
+    box.innerHTML = html;
     drawChar();
   };
+  window.buyCosmeticItem = async function(item){
+    if (!currentUser) return;
+    var d0 = window._cosData || {};
+    var prices = d0.prices || { pack: 399, items: {} };
+    var price = (item === 'pack') ? prices.pack : ((prices.items && prices.items[item] !== undefined) ? prices.items[item] : 79);
+    var user = registeredUsers[me()];
+    var ok = await window.rcConfirm(item === 'pack' ? 'Пак косметики' : prettyItem(item),
+      'Купить за <b>' + price + ' ₽</b> с баланса?<br>' + (item === 'pack' ? 'Все аватары сразу, включая будущие.' : 'Появится в игре при следующем запуске с читом.'),
+      'Купить');
+    if (!ok) return;
+    var doBuy = async function(){
+      try {
+        if (typeof syncAllUsers === 'function') { try { await syncAllUsers(); } catch(e){} }
+        if ((user.balance || 0) < price) { showToast('Не хватает монет! Пополни баланс.', 'error'); return; }
+        user.balance -= price; saveDB();
+        if (typeof updateBalanceUI === 'function') updateBalanceUI();
+        var r = await fetch(API + '/api/cosmetics/buy', { method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ username: me(), item: item, balance: user.balance }) });
+        var dd = await r.json();
+        if (dd.ok) { showToast(dd.message, 'success'); loadCosmetics(); if (typeof syncAllUsers === 'function') syncAllUsers(); }
+        else showToast(dd.error || 'Ошибка', 'error');
+      } catch(e) { showToast('Сеть недоступна', 'error'); }
+    };
+    doBuy();
+  };
+  window.buyCosmeticsPack = function(){ window.buyCosmeticItem('pack'); };
   window.rcConfirm = function(title, text, okLabel){
     return new Promise(function(resolve){
       var ov = document.createElement('div');
@@ -10025,32 +9767,7 @@ document.addEventListener('DOMContentLoaded', function() {
       ov.addEventListener('click', function(e){ if (e.target === ov) { ov.remove(); resolve(false); } });
     });
   };
-  window.buyCosmeticsPack = async function(){
-    if (!currentUser) return;
-    var user = registeredUsers[me()];
-    var doBuy = async function(useBalance){
-      try {
-        if (typeof syncAllUsers === 'function') { try { await syncAllUsers(); } catch(e){} }
-        if (useBalance) {
-          if ((user.balance || 0) < 149) { showToast('Не хватает монет! Пополни баланс.', 'error'); return; }
-          user.balance -= 149; saveDB();
-          if (typeof updateBalanceUI === 'function') updateBalanceUI();
-        }
-        var r = await fetch(API + '/api/cosmetics/buy', { method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ username: me(), balance: user.balance }) });
-        var d = await r.json();
-        if (d.ok) { showToast(d.message, 'success'); loadCosmetics(); if (typeof syncAllUsers === 'function') syncAllUsers(); }
-        else showToast(d.error || 'Ошибка', 'error');
-      } catch(e) { showToast('Сеть недоступна', 'error'); }
-    };
-    if (user && (user.balance || 0) >= 149) {
-      if (await window.rcConfirm('Пак косметики', 'Купить пак за <b>149 ₽</b> с баланса?<br>Shizuko, купальник и будущие аватары — навсегда.', 'Купить')) doBuy(true);
-    } else {
-      showToast('Нужно 149 ₽ на балансе. Пополни через FunPay.', 'error');
-    }
-  };
-
+    // (old buyCosmeticsPack removed — see buyCosmeticItem above)
   // hook into cabinet refresh
   var _origCab = window.updateCabinetUI;
   if (typeof _origCab === 'function' && !window.updateCabinetUI._socialHook) {
@@ -10065,6 +9782,564 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     window.updateCabinetUI._socialHook = true;
   }
+})();
+</script>
+<script>
+// ================= FINAL v4: admin users / lottery+ / no-telegram / fun / cosmetics =================
+(function(){
+  'use strict';
+  var API = 'https://cheat-backend.vercel.app';
+  function esc(s){ return String(s == null ? '' : s).replace(/</g,'&lt;'); }
+  function me(){ return (currentUser || '').toLowerCase(); }
+
+  // ---- скрыть Telegram-оплату везде ----
+  var st = document.createElement('style');
+  st.innerHTML = 'button[onclick*="payViaTelegram"]{display:none!important;}';
+  document.head.appendChild(st);
+  window.payViaTelegram = function(){ showToast('Оплата через Telegram отключена', 'error'); };
+
+  // ---- штамп сборки ----
+  try {
+    var f = document.querySelector('footer.apex-footer span');
+    if (f && f.innerText.indexOf('build') === -1) f.innerText += ' · build 20260907d';
+  } catch(e){}
+
+  // ---- админ: управление пользователями ----
+  function subDays(label){
+    if (label === 'Навсегда') return 9999;
+    var m = String(label).match(/(\d+)/);
+    return m ? parseInt(m[1]) : 30;
+  }
+  window.adminUserFind = async function(){
+    var q = (document.getElementById('adminUserSearchInput').value || '').trim().toLowerCase();
+    var box = document.getElementById('adminUserResult');
+    if (!q || !box) return;
+    box.innerHTML = '<p style="color:#9891ab;">Ищу...</p>';
+    var found = [];
+    var seen = {};
+    try {
+      var d = await window.apiAdminGet('/api/admin/users');
+      (d.users || []).forEach(function(u){
+        if ((u.username || '').toLowerCase().indexOf(q) !== -1) {
+          seen[u.username.toLowerCase()] = 1;
+          found.push({ nick: u.username, role: u.role, sub: u.subscription_type || 'нет',
+            balance: (u.balance || 0), src: 'сервер' });
+        }
+      });
+    } catch(e){}
+    Object.keys(registeredUsers || {}).forEach(function(un){
+      if (un.indexOf(q) !== -1 && !seen[un]) {
+        var u = registeredUsers[un];
+        found.push({ nick: un, role: u.role, sub: u.sub || 'нет', balance: (u.balance || 0), src: 'локально' });
+      }
+    });
+    if (!found.length) { box.innerHTML = '<p style="color:#ff8ba0;">Никого не найдено ни на сервере, ни локально.</p>'; return; }
+    box.innerHTML = found.slice(0, 10).map(function(f){
+      var nq = esc(f.nick).replace(/'/g, "\\'");
+      return '<div style="background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px;margin-top:8px;">'
+        + '<div style="font-weight:900;color:#fff;">' + esc(f.nick) + ' <span style="font-size:.65rem;color:#8d86a3;">' + esc(f.role || '') + ' · ' + esc(f.src) + '</span></div>'
+        + '<div style="font-size:.78rem;color:#b4aecb;margin:4px 0;">Сабка: <b>' + esc(f.sub) + '</b> · Баланс: <b>' + esc(f.balance) + ' ₽</b></div>'
+        + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">'
+        + ['7д','30д','90д','Навсегда'].map(function(s){
+            return '<button class="mini-btn" onclick="adminGiveSub(\'' + nq + '\',\'' + s + '\')">' + s + '</button>';
+          }).join('')
+        + '<button class="mini-btn danger" onclick="adminGiveSub(\'' + nq + '\',\'none\')">Забрать саб</button>'
+        + '<button class="mini-btn" onclick="adminResetHwid(\'' + nq + '\')">Сброс HWID</button>'
+        + '<button class="mini-btn" onclick="adminCoins(\'' + nq + '\',1)">+ монеты</button>'
+        + '<button class="mini-btn danger" onclick="adminCoins(\'' + nq + '\',-1)">− монеты</button>'
+        + '</div></div>';
+    }).join('');
+  };
+  window.adminGiveSub = async function(nick, sub){
+    var amt = null;
+    if (registeredUsers[nick]) {
+      registeredUsers[nick].sub = (sub === 'none') ? 'Нет' : sub;
+      saveDB(); updateCabinetUI();
+      if (typeof syncAllUsers === 'function') { try { await syncAllUsers(); } catch(e){} }
+    }
+    try {
+      var d;
+      if (sub === 'none') {
+        d = await window.apiAdmin('/api/admin/set-subscription', { target_username: nick, subscription_type: 'none' });
+      } else {
+        d = await window.apiAdmin('/api/admin/set-subscription', { target_username: nick, subscription_type: sub, days: subDays(sub) });
+      }
+      showToast((d && d.ok) ? (d.message || 'Готово') : ('Сервер: ' + ((d && d.error) || '?')), (d && d.ok) ? 'success' : 'error');
+    } catch(e) { showToast('Применено локально', 'success'); }
+    adminUserFind();
+  };
+  window.adminResetHwid = async function(nick){
+    try {
+      var d = await window.apiAdmin('/api/admin/reset-hwid', { username: nick });
+      showToast((d && d.ok) ? d.message : ('Сервер: ' + ((d && d.error) || '?')), (d && d.ok) ? 'success' : 'error');
+    } catch(e) { showToast('Сеть недоступна', 'error'); }
+  };
+  window.adminCoins = async function(nick, sign){
+    var v = prompt('Сколько монет ' + (sign > 0 ? 'выдать' : 'забрать') + ' (' + nick + ')?', '100');
+    if (v === null) return;
+    var amt = parseInt(v) || 0;
+    if (!amt) return;
+    amt = sign * Math.abs(amt);
+    if (registeredUsers[nick]) {
+      registeredUsers[nick].balance = Math.max(0, (registeredUsers[nick].balance || 0) + amt);
+      saveDB(); updateCabinetUI();
+    }
+    try {
+      var d = await window.apiAdmin('/api/admin/add-balance', { target_username: nick, amount: amt });
+      showToast((d && d.ok) ? d.message : ('Сервер: ' + ((d && d.error) || '?')), (d && d.ok) ? 'success' : 'error');
+    } catch(e) { showToast('Применено локально', 'success'); }
+    adminUserFind();
+  };
+  (function injectAdminUsersCard(){
+    var admin = document.getElementById('cab-admin');
+    if (!admin || document.getElementById('adminUsersCard')) return;
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.id = 'adminUsersCard';
+    card.innerHTML = '<div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:12px;letter-spacing:.5px;">👥 Управление пользователями</div>'
+      + '<div style="display:flex;gap:8px;"><input type="text" id="adminUserSearchInput" class="form-input" placeholder="Ник..." style="flex:1;">'
+      + '<button class="action-btn" style="width:auto;" onclick="adminUserFind()">Найти</button></div>'
+      + '<div id="adminUserResult" style="margin-top:6px;"></div>';
+    admin.insertBefore(card, admin.firstChild);
+  })();
+
+  // ---- лотерея: история ----
+  function histLoad(){ try { return JSON.parse(localStorage.getItem('runclient_cards_history')) || []; } catch(e){ return []; } }
+  function histRender(){
+    var box = document.getElementById('cardsHistory');
+    if (!box) return;
+    var h = histLoad();
+    box.innerHTML = h.length ? h.slice(0, 50).map(function(x){
+      var dt = new Date(x.ts);
+      var ds = ('0' + dt.getDate()).slice(-2) + '.' + ('0' + (dt.getMonth() + 1)).slice(-2) + ' ' + ('0' + dt.getHours()).slice(-2) + ':' + ('0' + dt.getMinutes()).slice(-2);
+      return '<div class="friend-row"><span style="font-size:1.1rem;">' + esc(x.icon || '🎁') + '</span><b style="flex:1;">' + esc(x.title) + '</b><span style="font-size:.7rem;color:#8d86a3;">' + ds + '</span></div>';
+    }).join('') : '<p style="color:#949aab;">Пока пусто — открывай карточки!</p>';
+  }
+  window._cardsHistPush = function(prize){
+    try {
+      var h = histLoad();
+      h.unshift({ title: prize.title, icon: prize.icon, tier: prize.tier, ts: Date.now() });
+      localStorage.setItem('runclient_cards_history', JSON.stringify(h.slice(0, 50)));
+      histRender();
+    } catch(e){}
+  };
+  (function injectHistory(){
+    var grid = document.getElementById('cards3Grid');
+    if (!grid || document.getElementById('cardsHistory')) return;
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.style.marginTop = '18px';
+    card.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">'
+      + '<div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;letter-spacing:.5px;">🏆 История выигрышей</div>'
+      + '<button class="action-btn" style="width:auto;padding:8px 16px;font-size:.75rem;" onclick="resetCardsAttempts()">Сбросить попытки · 59 ₽</button></div>'
+      + '<div id="cardsHistory"></div>';
+    grid.parentNode.insertBefore(card, grid.nextSibling);
+    histRender();
+  })();
+  window.resetCardsAttempts = async function(){
+    if (!currentUser) { showToast('Войди в аккаунт!', 'error'); return; }
+    var user = registeredUsers[currentUser.toLowerCase()];
+    if (!user) return;
+    if ((user.balance || 0) < 59) { showToast('Нужно 59 ₽ на балансе!', 'error'); return; }
+    var ok = await window.rcConfirm('Сброс попыток', 'Сбросить карточки за <b>59 ₽</b>? Появятся 3 новые.');
+    if (!ok) return;
+    user.balance -= 59;
+    saveDB();
+    if (typeof updateBalanceUI === 'function') updateBalanceUI();
+    try { localStorage.removeItem('runclient_cards3'); } catch(e){}
+    if (typeof renderCards3 === 'function') renderCards3();
+    showToast('Попытки сброшены! Удачи 🎴', 'success');
+    if (typeof syncAllUsers === 'function') { try { syncAllUsers(); } catch(e){} }
+  };
+
+  // ---- интерактив: искры по клику ----
+  var sparkCss = document.createElement('style');
+  sparkCss.innerHTML = '.rc-spark{position:fixed;z-index:9998;pointer-events:none;border-radius:50%;animation:rcSparkFly .55s ease-out forwards;}'
+    + '@keyframes rcSparkFly{from{transform:translate(0,0) scale(1);opacity:1;}to{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0;}}';
+  document.head.appendChild(sparkCss);
+  document.addEventListener('click', function(e){
+    if (e.target.closest('input,textarea,select')) return;
+    var acc = '#8b5cf6';
+    try { acc = getComputedStyle(document.documentElement).getPropertyValue('--acc').trim() || acc; } catch(_){}
+    for (var i = 0; i < 7; i++) {
+      var s = document.createElement('div');
+      s.className = 'rc-spark';
+      var sz = 3 + Math.random() * 4;
+      s.style.cssText += ';width:' + sz + 'px;height:' + sz + 'px;left:' + e.clientX + 'px;top:' + e.clientY + 'px;background:' + acc + ';'
+        + '--dx:' + ((Math.random() - .5) * 90) + 'px;--dy:' + ((Math.random() - .7) * 90) + 'px;';
+      document.body.appendChild(s);
+      (function(el){ setTimeout(function(){ el.remove(); }, 600); })(s);
+    }
+  });
+
+  // ---- интерактив: count-up цифр статистики ----
+  function countUp(){
+    document.querySelectorAll('.stat-val').forEach(function(el){
+      if (el.dataset.done) return;
+      var m = el.innerText.match(/([\d.,]+)(.*)/);
+      if (!m) return;
+      var target = parseFloat(m[1].replace(',', '.'));
+      var suf = m[2] || '';
+      if (isNaN(target)) return;
+      el.dataset.done = '1';
+      var t0 = null, dec = (m[1].indexOf('.') !== -1 || m[1].indexOf(',') !== -1) ? 1 : 0;
+      function step(ts){
+        if (!t0) t0 = ts;
+        var k = Math.min(1, (ts - t0) / 1200);
+        var v = target * (1 - Math.pow(1 - k, 3));
+        el.innerText = (dec ? v.toFixed(1).replace('.', ',') : Math.round(v)) + suf;
+        if (k < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  }
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function(es){ es.forEach(function(x){ if (x.isIntersecting) countUp(); }); });
+    document.querySelectorAll('.stats-grid').forEach(function(g){ obs.observe(g); });
+  }
+  setTimeout(countUp, 2500);
+})();
+</script>
+<script>
+// ================= FINAL v5: owner cosmetic prices + footer stamp =================
+(function(){
+  'use strict';
+  try {
+    var f = document.querySelector('footer.apex-footer span');
+    if (f && f.innerText.indexOf('build') === -1) f.innerText += ' · build 20260907e';
+  } catch(e){}
+  function esc(s){ return String(s == null ? '' : s).replace(/</g,'&lt;'); }
+  window.renderCosPrices = async function(){
+    var box = document.getElementById('cosPricesBox');
+    if (!box) return;
+    box.innerHTML = '<p style="color:#9891ab;">Загрузка...</p>';
+    try {
+      var me = (currentUser || '').toLowerCase();
+      var r = await fetch('https://cheat-backend.vercel.app/api/cosmetics?username=' + encodeURIComponent(me));
+      var d = await r.json();
+      var prices = (d.ok && d.prices) || { pack: 399, items: {} };
+      var items = d.items || [];
+      var html = '<div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">'
+        + '<b style="flex:1;">Пак «Всё сразу»</b>'
+        + '<input type="number" id="cosPackPrice" class="form-input" value="' + prices.pack + '" min="0" style="width:100px;">'
+        + '<span style="color:#9891ab;">₽</span></div>';
+      html += '<div style="max-height:300px;overflow-y:auto;">' + items.map(function(n){
+        var pr = (prices.items && prices.items[n] !== undefined) ? prices.items[n] : 79;
+        return '<div style="display:flex;gap:8px;align-items:center;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.78rem;">'
+          + '<span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + esc(n.replace(/_/g,' ')) + '</span>'
+          + '<input type="number" class="form-input cos-item-price" data-name="' + esc(n) + '" value="' + pr + '" min="0" style="width:90px;padding:5px 8px;">'
+          + '<span style="color:#9891ab;">₽</span></div>';
+      }).join('') + '</div>';
+      html += '<button class="action-btn green" style="margin-top:12px;" onclick="saveCosPrices()">Сохранить цены</button><div id="cosPricesMsg" style="margin-top:8px;font-size:.8rem;"></div>';
+      box.innerHTML = html;
+    } catch(e){ box.innerHTML = '<p style="color:#ff8ba0;">Сеть недоступна</p>'; }
+  };
+  window.saveCosPrices = async function(){
+    var pack = parseInt((document.getElementById('cosPackPrice') || {}).value) || 0;
+    var items = {};
+    document.querySelectorAll('.cos-item-price').forEach(function(el){
+      items[el.dataset.name] = parseInt(el.value) || 0;
+    });
+    try {
+      var d = await window.apiAdmin('/api/admin/cosmetics-prices', { pack: pack, items: items });
+      document.getElementById('cosPricesMsg').innerHTML = d.ok
+        ? '<span style="color:#22d3a0;">Цены сохранены!</span>'
+        : ('<span style="color:#ff4d6d;">' + esc(d.error || '?') + '</span>');
+      if (typeof loadCosmetics === 'function') loadCosmetics();
+    } catch(e){}
+  };
+  (function injectCosPrices(){
+    var admin = document.getElementById('cab-admin');
+    if (!admin || document.getElementById('cosPricesCard')) return;
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.id = 'cosPricesCard';
+    card.innerHTML = '<div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:12px;letter-spacing:.5px;">🎭 Цены косметики</div><div id="cosPricesBox"></div>';
+    admin.appendChild(card);
+  })();
+  if (typeof window.switchCabinetTab === 'function' && !window.switchCabinetTab._cosHook) {
+    var _sw = window.switchCabinetTab;
+    window.switchCabinetTab = function(tab, el){
+      var r = _sw.apply(this, arguments);
+      if (tab === 'admin') { try { renderCosPrices(); } catch(e){} }
+      return r;
+    };
+    window.switchCabinetTab._cosHook = true;
+  }
+})();
+</script>
+<style>
+/* ================= V2: payment / auth window / reveal / cabinet / demo ================= */
+#paymentModal{backdrop-filter:blur(14px)!important;background:rgba(4,3,8,.82)!important;}
+#paymentModal>div{border-radius:26px!important;border:1px solid var(--acc-border)!important;overflow:hidden;position:relative;
+  box-shadow:0 30px 90px rgba(0,0,0,.8),0 0 60px var(--acc-faint)!important;background:linear-gradient(180deg,#17121f,#0d0a14)!important;}
+#paymentModal>div::before{content:'';display:block;height:6px;background:linear-gradient(90deg,var(--acc),var(--acc-text),var(--acc));}
+#paymentModal h2{font-size:1.45rem!important;letter-spacing:-.5px;}
+#paymentModal h2::after{content:'RunClient';display:block;font-size:.62rem;letter-spacing:3px;color:var(--acc-text);margin-top:4px;text-transform:uppercase;}
+#paymentTariffInfo{font-size:.85rem!important;}
+#paymentPrice{font-size:2.6rem!important;text-shadow:0 0 26px var(--acc-glow);}
+#paymentModal .action-btn{border-radius:16px!important;padding:15px 14px!important;font-size:.88rem!important;transition:.22s;}
+#paymentModal .action-btn:hover{transform:translateY(-3px) scale(1.02)!important;}
+#paymentModal .form-input{text-align:center;font-weight:800;}
+#promoMessage{font-weight:700;}
+
+/* --- auth window (split) --- */
+.auth-window{display:flex;width:100%;max-width:760px;min-height:520px;margin:0 auto;background:#0d0a14;border:1px solid rgba(255,255,255,.09);border-radius:26px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.7),0 0 70px var(--acc-faint);}
+.auth-side{flex:1.05;background:url('https://files.catbox.moe/qz8t7k.png') center/cover;position:relative;display:flex;align-items:center;justify-content:center;min-height:520px;}
+.auth-side::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,5,20,.15),rgba(10,5,20,.55));}
+.auth-logo{position:relative;z-index:1;width:84px;height:84px;border-radius:24px;background:rgba(10,6,18,.55);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:2.4rem;font-weight:900;color:#fff;box-shadow:0 14px 40px rgba(0,0,0,.5);}
+.auth-main{flex:1;padding:46px 44px;display:flex;flex-direction:column;justify-content:center;}
+.auth-main h2{font-size:1.7rem;font-weight:900;color:#fff;letter-spacing:-.5px;}
+.auth-sub{color:#8d86a3;font-size:.82rem;margin:6px 0 26px;}
+.auth-main .form-group label{color:#b4aecb!important;}
+.auth-field{position:relative;}
+.auth-field .form-input{padding-right:42px!important;background:rgba(255,255,255,.045)!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:14px!important;}
+.auth-field .form-input:focus{border-color:var(--acc)!important;box-shadow:0 0 18px var(--acc-glow)!important;}
+.auth-ico{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#6f6884;font-size:.95rem;pointer-events:none;}
+.auth-go{width:100%;padding:15px!important;border-radius:15px!important;font-size:.95rem!important;background:linear-gradient(135deg,#b79cff,#8b5cf6)!important;box-shadow:0 10px 30px var(--acc-glow)!important;}
+.auth-ver{text-align:center;color:#5a5470;font-size:.72rem;margin-top:16px;}
+.auth-switch{text-align:center;color:#8d86a3;font-size:.8rem;margin-top:10px;}
+.auth-switch span{color:var(--acc-text);font-weight:800;cursor:pointer;}
+.auth-switch span:hover{text-decoration:underline;}
+@media(max-width:640px){.auth-side{display:none;}.auth-main{padding:36px 26px;}}
+
+/* --- reveal on scroll --- */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s cubic-bezier(.16,1,.3,1);}
+.rv.in{opacity:1;transform:none;}
+.grad-anim{background:linear-gradient(120deg,var(--acc),var(--acc-text),var(--acc))!important;background-size:220% auto!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;animation:gradShift 5s linear infinite;}
+@keyframes gradShift{to{background-position:220% center;}}
+
+/* --- cabinet v2 --- */
+.luxe-profile{position:relative;overflow:hidden;animation:cabIn .5s cubic-bezier(.16,1,.3,1),profGlow 3.2s ease-in-out 0.5s infinite;}
+@keyframes cabIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+@keyframes profGlow{0%,100%{box-shadow:0 18px 50px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.06);}50%{box-shadow:0 18px 54px rgba(0,0,0,.45),0 0 34px var(--acc-faint),inset 0 1px 0 rgba(255,255,255,.06);}}
+.luxe-profile::after{content:'';position:absolute;top:-60%;bottom:-60%;width:120px;left:-160px;transform:rotate(18deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);animation:sheen 6s ease-in-out infinite;pointer-events:none;}
+@keyframes sheen{0%{left:-160px;}55%,100%{left:130%;}}
+.cab-tab-content:not(.hidden){animation:cabIn .45s cubic-bezier(.16,1,.3,1);}
+.luxe-stat-val{background:linear-gradient(120deg,#fff,var(--acc-text));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-item-new.active{background:linear-gradient(135deg,var(--acc-soft),rgba(255,255,255,.03))!important;color:#fff!important;box-shadow:inset 0 0 0 1px var(--acc-border),0 4px 18px var(--acc-faint);}
+.action-btn{position:relative;overflow:hidden;}
+.action-btn::after{content:'';position:absolute;top:0;bottom:0;width:60px;left:-80px;transform:skewX(-18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);transition:left .5s;}
+.action-btn:hover::after{left:130%;}
+.luxe-ava{animation:avaFloat 4s ease-in-out infinite;}
+@keyframes avaFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+.luxe-ava{animation:avaFloat 4s ease-in-out infinite;}
+@keyframes avaFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+
+/* --- demo GUI --- */
+.demo-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:18px;margin-bottom:40px;}
+@media(max-width:900px){.demo-grid{grid-template-columns:1fr;}}
+.gameview{position:relative;width:100%;aspect-ratio:16/10;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.1);background:#4a7c2f;user-select:none;}
+.gv-cross{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:rgba(255,255,255,.85);font-size:22px;font-weight:300;pointer-events:none;text-shadow:0 1px 3px #000;}
+.hud-chip{position:absolute;background:rgba(10,8,16,.78);border:1px solid rgba(139,92,246,.35);border-radius:9px;padding:7px 11px;font-size:11px;font-weight:700;color:#fff;cursor:move;box-shadow:0 4px 16px rgba(0,0,0,.5);line-height:1.5;touch-action:none;}
+#hud-wm{left:3%;top:4%;}
+#hud-array{right:3%;top:4%;text-align:right;color:#c4b5fd;}
+#hud-coords{left:3%;bottom:14%;color:#e8e4f5;}
+.gv-hotbar{position:absolute;left:50%;bottom:3%;transform:translateX(-50%);display:flex;gap:3px;background:rgba(0,0,0,.45);padding:3px;border-radius:8px;border:1px solid rgba(255,255,255,.25);}
+.gv-slot{width:30px;height:30px;border-radius:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);}
+.gv-slot.sel{border-color:#fff;box-shadow:0 0 0 1px #fff;}
+.cgui-window{background:#0e0b16;border:1px solid rgba(139,92,246,.3);border-radius:16px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.6);}
+.cgui-titlebar{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(139,92,246,.1);font-size:.75rem;font-weight:900;color:#fff;border-bottom:1px solid rgba(139,92,246,.2);}
+.cgui-x{cursor:pointer;color:#8d86a3;padding:2px 8px;border-radius:8px;}
+.cgui-x:hover{background:rgba(244,63,94,.2);color:#ff8ba0;}
+.cgui-search{padding:10px 12px 0;}
+.cgui-search input{width:100%;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:.75rem;padding:8px 12px;outline:none;}
+.cgui-search input:focus{border-color:var(--acc);}
+.cgui-body{display:grid;grid-template-columns:110px 1fr 150px;gap:0;min-height:300px;max-height:340px;}
+.cgui-cats{border-right:1px solid rgba(255,255,255,.06);padding:10px 8px;display:flex;flex-direction:column;gap:3px;overflow-y:auto;}
+.cgui-cat{padding:8px 10px;border-radius:10px;font-size:.72rem;font-weight:800;color:#8d86a3;cursor:pointer;transition:.15s;}
+.cgui-cat:hover{background:rgba(255,255,255,.05);color:#fff;}
+.cgui-cat.active{background:var(--acc-soft);color:#fff;box-shadow:inset 0 0 0 1px var(--acc-border);}
+.cgui-cat small{display:block;font-weight:600;color:#5a5470;font-size:.6rem;}
+.cgui-mods{border-right:1px solid rgba(255,255,255,.06);padding:10px 8px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;}
+.cgui-mod{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;cursor:pointer;transition:.15s;}
+.cgui-mod:hover{background:rgba(255,255,255,.05);}
+.cgui-mod.sel{background:var(--acc-soft);box-shadow:inset 0 0 0 1px var(--acc-border);}
+.cgui-mod .nm{flex:1;font-size:.74rem;font-weight:800;color:#fff;}
+.cgui-sw{width:30px;height:16px;border-radius:999px;background:rgba(255,255,255,.12);position:relative;transition:.2s;flex-shrink:0;}
+.cgui-sw::after{content:'';position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#8d86a3;transition:.2s;}
+.cgui-sw.on{background:var(--acc);}
+.cgui-sw.on::after{left:16px;background:#fff;}
+.cgui-set{padding:12px 10px;overflow-y:auto;}
+.cgui-set h4{font-size:.74rem;color:#fff;margin-bottom:10px;}
+.cgui-srow{margin-bottom:12px;}
+.cgui-srow label{display:block;font-size:.62rem;color:#8d86a3;font-weight:800;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;}
+.cgui-srow output{float:right;color:var(--acc-text);font-size:.65rem;font-weight:800;}
+.cgui-srow input[type=range]{width:100%;accent-color:var(--acc);}
+.cgui-srow select{width:100%;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.12);color:#fff;border-radius:8px;padding:6px;font-size:.7rem;outline:none;}
+</style>
+<script>
+// ================= DEMO GUI + reveal =================
+(function(){
+  'use strict';
+  function esc(s){ return String(s == null ? '' : s).replace(/</g,'&lt;'); }
+
+  // ---- reveal on scroll ----
+  function armReveal(){
+    var els = document.querySelectorAll('.feature-card,.stat-card,.tariff-card,.detail-box,.server-card,.changelog-item,.section-title-block,.luxe-profile,.luxe-stats,.video-wrap');
+    els.forEach(function(el, i){
+      if (el.classList.contains('rv')) return;
+      el.classList.add('rv');
+      el.style.transitionDelay = ((i % 4) * 70) + 'ms';
+    });
+    if (!('IntersectionObserver' in window)) {
+      document.querySelectorAll('.rv').forEach(function(el){ el.classList.add('in'); });
+      return;
+    }
+    var obs = new IntersectionObserver(function(es){
+      es.forEach(function(x){ if (x.isIntersecting) { x.target.classList.add('in'); obs.unobserve(x.target); } });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.rv:not(.in)').forEach(function(el){ obs.observe(el); });
+  }
+  document.querySelectorAll('.hero h1 span, .luxe-title').forEach(function(el){ el.classList.add('grad-anim'); });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', armReveal);
+  else armReveal();
+
+  // ---- grass texture ----
+  function grassURL(){
+    try {
+      var c = document.createElement('canvas');
+      c.width = c.height = 96;
+      var x = c.getContext('2d');
+      var greens = ['#5a8f3c','#4e8034','#63a047','#548739','#578b38'];
+      for (var i = 0; i < 96; i++) for (var j = 0; j < 96; j++) {
+        x.fillStyle = greens[Math.floor(Math.random() * greens.length)];
+        x.fillRect(i, j, 1, 1);
+      }
+      x.fillStyle = 'rgba(0,0,0,.18)';
+      for (var k = 0; k < 130; k++) x.fillRect(Math.floor(Math.random()*96), Math.floor(Math.random()*96), 2, 1);
+      return c.toDataURL();
+    } catch(e){ return ''; }
+  }
+
+  // ---- HUD drag ----
+  var hudPos = { 'hud-wm': [3, 4], 'hud-array': [null, 4], 'hud-coords': [3, 82] };
+  try { var saved = JSON.parse(localStorage.getItem('runclient_demo_hud') || 'null'); if (saved) hudPos = saved; } catch(e){}
+  function applyHud(){
+    Object.keys(hudPos).forEach(function(id){
+      var el = document.getElementById(id);
+      if (!el) return;
+      var p = hudPos[id];
+      el.style.left = (p[0] === null ? 'auto' : p[0] + '%');
+      el.style.right = (p[0] === null ? '3%' : 'auto');
+      el.style.top = p[1] + '%';
+      el.style.bottom = 'auto';
+    });
+  }
+  function saveHud(){ try { localStorage.setItem('runclient_demo_hud', JSON.stringify(hudPos)); } catch(e){} }
+  var dragEl = null, dragDX = 0, dragDY = 0;
+  document.addEventListener('pointerdown', function(e){
+    var t = e.target.closest ? e.target.closest('.hud-chip') : null;
+    if (!t) return;
+    dragEl = t;
+    var r = t.getBoundingClientRect();
+    dragDX = e.clientX - r.left; dragDY = e.clientY - r.top;
+    t.setPointerCapture && e.pointerId !== undefined && t.setPointerCapture(e.pointerId);
+  });
+  document.addEventListener('pointermove', function(e){
+    if (!dragEl) return;
+    var gv = document.getElementById('gameview');
+    if (!gv) return;
+    var r = gv.getBoundingClientRect();
+    var px = (e.clientX - r.left - dragDX) / r.width * 100;
+    var py = (e.clientY - r.top - dragDY) / r.height * 100;
+    px = Math.max(0, Math.min(88, px)); py = Math.max(0, Math.min(88, py));
+    dragEl.style.left = px + '%'; dragEl.style.right = 'auto';
+    dragEl.style.top = py + '%'; dragEl.style.bottom = 'auto';
+    hudPos[dragEl.id] = [Math.round(px), Math.round(py)];
+  });
+  document.addEventListener('pointerup', function(){ if (dragEl) { saveHud(); dragEl = null; } });
+  window.demoHudToggle = function(){
+    var on = document.getElementById('gameview').dataset.hud !== 'off';
+    document.getElementById('gameview').dataset.hud = on ? 'off' : 'on';
+    document.querySelectorAll('.hud-chip').forEach(function(el){ el.style.display = on ? 'none' : ''; });
+    document.getElementById('hudToggleBtn').innerText = on ? 'HUD: выкл' : 'HUD: вкл';
+  };
+
+  // ---- ClickGUI demo ----
+  var DEMO = {
+    Combat: ['TriggerBot', 'AimAssist', 'AttackAura', 'AutoTotem', 'MaceHelper', 'AutoArmor'],
+    Movement: ['AutoSprint', 'NoSlow', 'NoFallDamage', 'WaterSpeed', 'AirStuck', 'FreeCam'],
+    Render: ['Esp', 'TargetESP', 'BlockESP', 'FleshEffect', 'CrossHair', 'Particles'],
+    Player: ['ChestStealer', 'AutoUse', 'AutoTool', 'InventoryMove', 'PotionThrower', 'ClickPearl'],
+    Misc: ['Panic', 'SelfDestruct', 'IRC', 'AutoLeave', 'AntiAFK', 'Sounds'],
+    Scripts: ['AutoGG', 'ESP-Test']
+  };
+  var dst = { cat: 'Combat', sel: null, mods: {} };
+  try { var s = JSON.parse(localStorage.getItem('runclient_demo_gui') || 'null'); if (s && s.mods) dst.mods = s.mods; } catch(e){}
+  function mstate(n){
+    if (!dst.mods[n]) dst.mods[n] = { on: false, s1: 50, s2: 50, sel: 'A' };
+    return dst.mods[n];
+  }
+  function saveDst(){ try { localStorage.setItem('runclient_demo_gui', JSON.stringify({ mods: dst.mods })); } catch(e){} }
+  function matchQ(n, q){ return !q || n.toLowerCase().indexOf(q.toLowerCase()) !== -1; }
+
+  window.demoGuiSearch = function(q){
+    renderMods(q || '');
+  };
+  function renderCats(){
+    var box = document.getElementById('cguiCats');
+    if (!box) return;
+    box.innerHTML = Object.keys(DEMO).map(function(c){
+      var n = DEMO[c].length;
+      return '<div class="cgui-cat' + (dst.cat === c ? ' active' : '') + '" onclick="demoGuiCat(\'' + c + '\')">' + c + '<small>' + n + ' mods</small></div>';
+    }).join('');
+  }
+  window.demoGuiCat = function(c){
+    dst.cat = c; dst.sel = null;
+    renderCats(); renderMods(document.getElementById('cguiSearch').value || ''); renderSet();
+  };
+  function renderMods(q){
+    var box = document.getElementById('cguiMods');
+    if (!box) return;
+    box.innerHTML = DEMO[dst.cat].filter(function(n){ return matchQ(n, q); }).map(function(n){
+      var st = mstate(n);
+      return '<div class="cgui-mod' + (dst.sel === n ? ' sel' : '') + '" onclick="demoGuiSel(\'' + n + '\')">'
+        + '<span class="nm">' + n + '</span>'
+        + '<span class="cgui-sw' + (st.on ? ' on' : '') + '" onclick="event.stopPropagation();demoGuiToggle(\'' + n + '\')"></span></div>';
+    }).join('') || '<div style="color:#5a5470;font-size:.72rem;">Ничего нет</div>';
+  }
+  window.demoGuiSel = function(n){
+    dst.sel = n;
+    renderMods(document.getElementById('cguiSearch').value || ''); renderSet();
+  };
+  window.demoGuiToggle = function(n){
+    mstate(n).on = !mstate(n).on;
+    saveDst(); renderMods(document.getElementById('cguiSearch').value || ''); renderSet();
+  };
+  function renderSet(){
+    var box = document.getElementById('cguiSet');
+    if (!box) return;
+    if (!dst.sel) { box.innerHTML = '<div style="color:#5a5470;font-size:.75rem;">Выбери модуль →</div>'; return; }
+    var st = mstate(dst.sel);
+    box.innerHTML = '<h4>' + esc(dst.sel) + '</h4>'
+      + '<div class="cgui-srow"><label>Включён <output>' + (st.on ? 'да' : 'нет') + '</output></label>'
+      + '<div class="cgui-sw' + (st.on ? ' on' : '') + '" onclick="demoGuiToggle(\'' + esc(dst.sel) + '\')"></div></div>'
+      + '<div class="cgui-srow"><label>Дистанция <output>' + st.s1 + '</output></label>'
+      + '<input type="range" min="1" max="100" value="' + st.s1 + '" oninput="demoGuiSet(\'' + esc(dst.sel) + '\',\'s1\',this.value)"></div>'
+      + '<div class="cgui-srow"><label>Скорость <output>' + st.s2 + '</output></label>'
+      + '<input type="range" min="1" max="100" value="' + st.s2 + '" oninput="demoGuiSet(\'' + esc(dst.sel) + '\',\'s2\',this.value)"></div>'
+      + '<div class="cgui-srow"><label>Режим</label><select onchange="demoGuiSet(\'' + esc(dst.sel) + '\',\'sel\',this.value)">'
+      + ['A', 'B', 'C'].map(function(o){ return '<option' + (st.sel === o ? ' selected' : '') + '>' + o + '</option>'; }).join('')
+      + '</select></div>';
+  }
+  window.demoGuiSet = function(n, k, v){
+    mstate(n)[k] = (k === 'sel') ? v : parseInt(v);
+    saveDst(); renderSet();
+  };
+  function bootDemo(){
+    var gv = document.getElementById('gameview');
+    if (gv) {
+      var u = grassURL();
+      if (u) gv.style.backgroundImage = 'url(' + u + ')';
+      gv.style.backgroundSize = '64px';
+      applyHud();
+    }
+    renderCats(); renderMods(''); renderSet();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bootDemo);
+  else bootDemo();
 })();
 </script>
 </body>
