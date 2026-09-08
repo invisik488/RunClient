@@ -224,7 +224,7 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
                 <li><a class="nav-link" id="nav-lottery" onclick="navigateTo('lottery')">Лотерея</a></li>
                 <li><a class="nav-link" id="nav-reviews" onclick="navigateTo('reviews')">Отзывы</a></li>
                 <li><a class="nav-link" id="nav-scripts" onclick="navigateTo('scripts')">Скрипты</a></li>
-                <li><a class="nav-link" id="nav-demo" onclick="navigateTo('demo')">Демо GUI</a></li>
+                
                 <li><a class="nav-link" id="nav-help" onclick="navigateTo('help')">Помощь</a></li>
                 <li><a class="nav-link" id="nav-faq" onclick="navigateTo('faq')">FAQ</a></li>
                 <li><a class="nav-link" id="nav-support" onclick="navigateTo('support')">Поддержка</a></li>
@@ -404,35 +404,34 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
     </div>
 </div>
 
-<div id="page-demo" class="page-section hidden">
-    <div class="hero"><div class="section-kicker">Интерактив</div><h1>Потрогай <span>чит</span></h1><p>Рабочее демо ClickGUI и игрового HUD — всё кликается, двигается и сохраняется.</p></div>
-    <div class="demo-grid">
-        <div class="card demo-game-card">
-            <div style="font-size:.7rem;color:#9891ab;font-weight:800;text-transform:uppercase;margin-bottom:12px;letter-spacing:.5px;">Вид игры <span style="float:right;"><button class="mini-btn" id="hudToggleBtn" onclick="demoHudToggle()">HUD: вкл</button></span></div>
-            <div class="gameview" id="gameview">
-                <div class="gv-cross">+</div>
-                <div class="hud-chip" id="hud-wm">⚡ RunClient v4.0 <span style="color:#22d3a0;">| 70 FPS</span></div>
-                <div class="hud-chip" id="hud-array">TriggerBot<br>AimAssist<br>ESP</div>
-                <div class="hud-chip" id="hud-coords">-102, -60, -148</div>
-                <div class="gv-hotbar"><div class="gv-slot sel"></div><div class="gv-slot"></div><div class="gv-slot"></div><div class="gv-slot"></div><div class="gv-slot"></div><div class="gv-slot"></div><div class="gv-slot"></div><div class="gv-slot"></div><div class="gv-slot"></div></div>
-            </div>
-            <div style="font-size:.72rem;color:#9891ab;margin-top:10px;">Таскай плашки мышкой — позиции сохранятся.</div>
-        </div>
-        <div class="card demo-gui-card">
-            <div style="font-size:.7rem;color:#9891ab;font-weight:800;text-transform:uppercase;margin-bottom:12px;letter-spacing:.5px;">ClickGUI · кликай</div>
-            <div class="cgui-window">
-                <div class="cgui-titlebar"><span>⌁ RunClient | ClickGUI</span><span class="cgui-x" onclick="showToast('Это демо :)','success')">✕</span></div>
-                <div class="cgui-search"><input type="text" id="cguiSearch" placeholder="Поиск модулей..." oninput="demoGuiSearch(this.value)"></div>
-                <div class="cgui-body">
-                    <div class="cgui-cats" id="cguiCats"></div>
-                    <div class="cgui-mods" id="cguiMods"></div>
-                    <div class="cgui-set" id="cguiSet"><div style="color:#5a5470;font-size:.75rem;">Выбери модуль →</div></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
+<script>
+// ================= reveal on scroll =================
+(function(){
+  'use strict';
+  function arm(){
+    var els = document.querySelectorAll('.feature-card,.stat-card,.tariff-card,.detail-box,.server-card,.changelog-item,.section-title-block,.luxe-profile,.luxe-stats,.video-wrap');
+    els.forEach(function(el, i){
+      if (el.classList.contains('rv')) return;
+      el.classList.add('rv');
+      el.style.transitionDelay = ((i % 4) * 70) + 'ms';
+    });
+    if (!('IntersectionObserver' in window)) {
+      document.querySelectorAll('.rv').forEach(function(el){ el.classList.add('in'); });
+      return;
+    }
+    var obs = new IntersectionObserver(function(es){
+      es.forEach(function(x){ if (x.isIntersecting) { x.target.classList.add('in'); obs.unobserve(x.target); } });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.rv:not(.in)').forEach(function(el){ obs.observe(el); });
+  }
+  document.querySelectorAll('.hero h1 span, .luxe-title').forEach(function(el){ el.classList.add('grad-anim'); });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', arm);
+  else arm();
+  window.aiGenerate = function(){ showToast('Сейчас недоступно! Данный блок в разработке.', 'error'); };
+})();
+</script>
+</body>
+</html>
 <div id="page-help" class="page-section hidden">
     <div class="hero"><div class="section-kicker">Помощь</div><h1>Центр <span>помощи</span></h1><p>Часто задаваемые вопросы и руководства по установке и работе с RunClient.</p></div>
     <div class="faq-accordion">
@@ -8598,7 +8597,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         showToast('Скачивание RunClientLauncher.exe...', 'success');
         const a = document.createElement('a');
-        a.href = 'https://files.catbox.moe/e8i5pl.bin';
+        a.href = 'https://files.catbox.moe/k27jap.bin';
         a.download = 'RunClientLauncher.exe';
         document.body.appendChild(a);
         a.click();
@@ -8781,7 +8780,21 @@ document.addEventListener('DOMContentLoaded', function() {
 // ================= FINAL FIXES: payments / keys / coins (S1,S4,S6,S7) =================
 (function(){
   'use strict';
-  var FUNPAY_URL = 'https://funpay.com/lots/offerEdit?node=1596&offer=76044751';
+  var FUNPAY_URLS = {
+    coins: 'https://funpay.com/lots/offer?id=76214053',
+    lifetime: 'https://funpay.com/lots/offer?id=76212399',
+    p90: 'https://funpay.com/lots/offer?id=76212321',
+    p30: 'https://funpay.com/lots/offer?id=76212095'
+  };
+  var FUNPAY_URL = FUNPAY_URLS.coins;
+  function funpayUrlFor(){
+    var infoEl = document.getElementById('paymentTariffInfo');
+    var info = infoEl ? infoEl.innerText : '';
+    if (/навсегда/i.test(info)) return FUNPAY_URLS.lifetime;
+    if (/3\s*мес/i.test(info)) return FUNPAY_URLS.p90;
+    if (/1\s*мес/i.test(info)) return FUNPAY_URLS.p30;
+    return FUNPAY_URLS.coins;
+  }
   var TG_URL = 'https://t.me/runclient_support';
   var API = 'https://cheat-backend.vercel.app';
 
@@ -8812,9 +8825,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // S4: FunPay — только редирект, БЕЗ начисления
   window.payViaFunPay = function(){
+    var infoEl = document.getElementById('paymentTariffInfo');
+    var info = infoEl ? infoEl.innerText : '';
+    var isSub = /месяц|навсегда/i.test(info);
+    if (!isSub) { topupAccessCode(); return; }
     showToast('Перенаправление на оплату...', 'success');
     try { closePaymentModal(); } catch(e){}
-    setTimeout(function(){ window.open(FUNPAY_URL, '_blank'); }, 900);
+    var url = funpayUrlFor();
+    setTimeout(function(){ window.open(url, '_blank'); }, 900);
   };
   // S4: Telegram — только редирект, БЕЗ начисления
   window.payViaTelegram = function(){
@@ -8855,7 +8873,110 @@ document.addEventListener('DOMContentLoaded', function() {
     else window.payViaTelegram();
   };
 
-  // S6: видимый список всех ключей
+  // ---- топап монет через код доступа ----
+  function paycodesLoad(){ try { return JSON.parse(localStorage.getItem('runclient_paycodes')) || []; } catch(e){ return []; } }
+  function paycodesSave(a){ try { localStorage.setItem('runclient_paycodes', JSON.stringify(a)); } catch(e){} }
+  function paycodeGen(){
+    var c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s = '';
+    for (var i = 0; i < 6; i++) s += c[Math.floor(Math.random() * c.length)];
+    return 'RUN-PAY-' + s;
+  }
+  window.topupAccessCode = function(){
+    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+    var inp = document.getElementById('topupAmount');
+    var defAmt = inp ? (parseInt(inp.value) || 100) : 100;
+    defAmt = Math.max(10, Math.min(100000, defAmt));
+    var ov = document.createElement('div');
+    ov.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;';
+    ov.innerHTML = '<div style="background:#16131f;border:1px solid var(--acc-border,rgba(139,92,246,.3));border-radius:20px;padding:26px;width:90%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.6);">'
+      + '<div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:4px;">Пополнение баланся</div>'
+      + '<div style="font-size:.76rem;color:#b4aecb;margin-bottom:14px;line-height:1.6;">1. Оплати на FunPay<br>2. Вставь код ниже — получишь монеты</div>'
+      + '<div style="font-size:.7rem;color:#9891ab;font-weight:800;margin-bottom:6px;">СУММА (₽)</div>'
+      + '<input type="number" id="pcAmount" class="form-input" value="' + defAmt + '" min="10" style="margin-bottom:12px;">'
+      + '<button class="action-btn" id="pcGen" style="width:100%;margin-bottom:12px;">Получить код</button>'
+      + '<div id="pcCodeBox" style="display:none;text-align:center;margin-bottom:12px;">'
+      + '<div style="font-size:.7rem;color:#9891ab;margin-bottom:6px;">ТВОЙ КОД (сфоткай/скопируй):</div>'
+      + '<div style="display:flex;gap:8px;align-items:center;justify-content:center;">'
+      + '<code id="pcCode" style="background:rgba(0,0,0,.5);padding:8px 14px;border-radius:8px;color:#fff;font-size:.95rem;"></code>'
+      + '<button class="action-btn" id="pcCopy" style="width:auto;padding:8px 12px;font-size:.7rem;">Копировать</button>'
+      + '</div></div>'
+      + '<div style="font-size:.7rem;color:#9891ab;font-weight:800;margin-bottom:6px;">ВСТАВЬ КОД ДЛЯ ПОДТВЕРЖДЕНИЯ</div>'
+      + '<input type="text" id="pcInput" class="form-input" placeholder="RUN-PAY-XXXXXX" style="margin-bottom:12px;">'
+      + '<div style="display:flex;gap:10px;"><button class="action-btn green" id="pcOk" style="flex:1;">Подтвердить</button>'
+      + '<button class="action-btn" id="pcNo" style="flex:1;background:rgba(255,255,255,.08);box-shadow:none;">Отмена</button></div></div>';
+    document.body.appendChild(ov);
+    var state = { code: null, amount: defAmt };
+    ov.querySelector('#pcGen').onclick = function(){
+      var a = Math.max(10, Math.min(100000, parseInt(ov.querySelector('#pcAmount').value) || 0));
+      if (!a) { showToast('Некорректная сумма', 'error'); return; }
+      state.code = paycodeGen();
+      state.amount = a;
+      ov.querySelector('#pcCode').innerText = state.code;
+      ov.querySelector('#pcCodeBox').style.display = '';
+    };
+    ov.querySelector('#pcCopy').onclick = function(){
+      if (state.code) navigator.clipboard.writeText(state.code).then(function(){ showToast('Скопировано', 'success'); });
+    };
+    ov.querySelector('#pcNo').onclick = function(){ ov.remove(); };
+    ov.addEventListener('click', function(e){ if (e.target === ov) ov.remove(); });
+    ov.querySelector('#pcOk').onclick = function(){
+      var v = (ov.querySelector('#pcInput').value || '').trim().toUpperCase();
+      if (!state.code || v !== state.code) { showToast('Код не совпадает! Сначала нажми «Получить код».', 'error'); return; }
+      var arr = paycodesLoad();
+      arr.unshift({ code: state.code, user: currentUser.toLowerCase(), amount: state.amount,
+        ts: Date.now(), confirmed: true, credited: false });
+      paycodesSave(arr);
+      ov.remove();
+      try { closePaymentModal(); } catch(e){}
+      showToast('Заявка создана! Оплати на FunPay — админ начислит ' + state.amount + ' ₽', 'success');
+      setTimeout(function(){ window.open(FUNPAY_URLS.coins, '_blank'); }, 900);
+      renderPaycodesAdmin();
+    };
+  };
+  window.renderPaycodesAdmin = function(){
+    var host = document.getElementById('grantCoinsCard');
+    if (!host) return;
+    var box = document.getElementById('paycodesAdmin');
+    if (!box) {
+      box = document.createElement('div');
+      box.id = 'paycodesAdmin';
+      host.appendChild(box);
+    }
+    var arr = paycodesLoad();
+    var html = '<div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin:16px 0 8px;letter-spacing:.5px;">🔑 Коды оплаты <button class="mini-btn" onclick="renderPaycodesAdmin()">Обновить</button></div>';
+    if (!arr.length) html += '<p style="color:#949aab;font-size:.8rem;">Пока пусто.</p>';
+    html += arr.slice(0, 30).map(function(p){
+      var st = p.credited ? '<span style="color:#22d3a0;">начислено</span>' : '<span style="color:#ffbc00;">ждёт</span>';
+      return '<div style="background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:8px 12px;margin-top:6px;font-size:.78rem;">'
+        + '<code style="color:#fff;">' + p.code + '</code> <b>' + p.user + '</b> · ' + p.amount + ' ₽ · ' + st
+        + (p.credited ? '' : ' <button class="mini-btn" onclick="confirmPaycode(\'' + p.code + '\')">Начислить</button>')
+        + ' <button class="mini-btn danger" onclick="deletePaycode(\'' + p.code + '\')">✕</button></div>';
+    }).join('');
+    box.innerHTML = html;
+  };
+  window.confirmPaycode = async function(code){
+    var arr = paycodesLoad();
+    var p = null;
+    arr.forEach(function(x){ if (x.code === code) p = x; });
+    if (!p || p.credited) return;
+    if (registeredUsers[p.user]) {
+      registeredUsers[p.user].balance = (registeredUsers[p.user].balance || 0) + p.amount;
+      saveDB(); updateCabinetUI();
+      if (typeof updateBalanceUI === 'function') updateBalanceUI();
+    }
+    try {
+      await window.apiAdmin('/api/admin/add-balance', { target_username: p.user, amount: p.amount });
+    } catch(e){}
+    p.credited = true;
+    paycodesSave(arr);
+    renderPaycodesAdmin();
+    showToast('Начислено ' + p.amount + ' ₽ (' + p.user + ')', 'success');
+    if (typeof syncAllUsers === 'function') { try { syncAllUsers(); } catch(e){} }
+  };
+  window.deletePaycode = function(code){
+    paycodesSave(paycodesLoad().filter(function(x){ return x.code !== code; }));
+    renderPaycodesAdmin();
+  };
   function esc(s){ return String(s).replace(/</g,'&lt;'); }
   window.renderAllKeys = function(){
     var box = document.getElementById('generatedKeyOutput');
@@ -10170,177 +10291,6 @@ document.addEventListener('DOMContentLoaded', function() {
 .cgui-srow select{width:100%;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.12);color:#fff;border-radius:8px;padding:6px;font-size:.7rem;outline:none;}
 </style>
 <script>
-// ================= DEMO GUI + reveal =================
-(function(){
-  'use strict';
-  function esc(s){ return String(s == null ? '' : s).replace(/</g,'&lt;'); }
-
-  // ---- reveal on scroll ----
-  function armReveal(){
-    var els = document.querySelectorAll('.feature-card,.stat-card,.tariff-card,.detail-box,.server-card,.changelog-item,.section-title-block,.luxe-profile,.luxe-stats,.video-wrap');
-    els.forEach(function(el, i){
-      if (el.classList.contains('rv')) return;
-      el.classList.add('rv');
-      el.style.transitionDelay = ((i % 4) * 70) + 'ms';
-    });
-    if (!('IntersectionObserver' in window)) {
-      document.querySelectorAll('.rv').forEach(function(el){ el.classList.add('in'); });
-      return;
-    }
-    var obs = new IntersectionObserver(function(es){
-      es.forEach(function(x){ if (x.isIntersecting) { x.target.classList.add('in'); obs.unobserve(x.target); } });
-    }, { threshold: 0.08 });
-    document.querySelectorAll('.rv:not(.in)').forEach(function(el){ obs.observe(el); });
-  }
-  document.querySelectorAll('.hero h1 span, .luxe-title').forEach(function(el){ el.classList.add('grad-anim'); });
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', armReveal);
-  else armReveal();
-
-  // ---- grass texture ----
-  function grassURL(){
-    try {
-      var c = document.createElement('canvas');
-      c.width = c.height = 96;
-      var x = c.getContext('2d');
-      var greens = ['#5a8f3c','#4e8034','#63a047','#548739','#578b38'];
-      for (var i = 0; i < 96; i++) for (var j = 0; j < 96; j++) {
-        x.fillStyle = greens[Math.floor(Math.random() * greens.length)];
-        x.fillRect(i, j, 1, 1);
-      }
-      x.fillStyle = 'rgba(0,0,0,.18)';
-      for (var k = 0; k < 130; k++) x.fillRect(Math.floor(Math.random()*96), Math.floor(Math.random()*96), 2, 1);
-      return c.toDataURL();
-    } catch(e){ return ''; }
-  }
-
-  // ---- HUD drag ----
-  var hudPos = { 'hud-wm': [3, 4], 'hud-array': [null, 4], 'hud-coords': [3, 82] };
-  try { var saved = JSON.parse(localStorage.getItem('runclient_demo_hud') || 'null'); if (saved) hudPos = saved; } catch(e){}
-  function applyHud(){
-    Object.keys(hudPos).forEach(function(id){
-      var el = document.getElementById(id);
-      if (!el) return;
-      var p = hudPos[id];
-      el.style.left = (p[0] === null ? 'auto' : p[0] + '%');
-      el.style.right = (p[0] === null ? '3%' : 'auto');
-      el.style.top = p[1] + '%';
-      el.style.bottom = 'auto';
-    });
-  }
-  function saveHud(){ try { localStorage.setItem('runclient_demo_hud', JSON.stringify(hudPos)); } catch(e){} }
-  var dragEl = null, dragDX = 0, dragDY = 0;
-  document.addEventListener('pointerdown', function(e){
-    var t = e.target.closest ? e.target.closest('.hud-chip') : null;
-    if (!t) return;
-    dragEl = t;
-    var r = t.getBoundingClientRect();
-    dragDX = e.clientX - r.left; dragDY = e.clientY - r.top;
-    t.setPointerCapture && e.pointerId !== undefined && t.setPointerCapture(e.pointerId);
-  });
-  document.addEventListener('pointermove', function(e){
-    if (!dragEl) return;
-    var gv = document.getElementById('gameview');
-    if (!gv) return;
-    var r = gv.getBoundingClientRect();
-    var px = (e.clientX - r.left - dragDX) / r.width * 100;
-    var py = (e.clientY - r.top - dragDY) / r.height * 100;
-    px = Math.max(0, Math.min(88, px)); py = Math.max(0, Math.min(88, py));
-    dragEl.style.left = px + '%'; dragEl.style.right = 'auto';
-    dragEl.style.top = py + '%'; dragEl.style.bottom = 'auto';
-    hudPos[dragEl.id] = [Math.round(px), Math.round(py)];
-  });
-  document.addEventListener('pointerup', function(){ if (dragEl) { saveHud(); dragEl = null; } });
-  window.demoHudToggle = function(){
-    var on = document.getElementById('gameview').dataset.hud !== 'off';
-    document.getElementById('gameview').dataset.hud = on ? 'off' : 'on';
-    document.querySelectorAll('.hud-chip').forEach(function(el){ el.style.display = on ? 'none' : ''; });
-    document.getElementById('hudToggleBtn').innerText = on ? 'HUD: выкл' : 'HUD: вкл';
-  };
-
-  // ---- ClickGUI demo ----
-  var DEMO = {
-    Combat: ['TriggerBot', 'AimAssist', 'AttackAura', 'AutoTotem', 'MaceHelper', 'AutoArmor'],
-    Movement: ['AutoSprint', 'NoSlow', 'NoFallDamage', 'WaterSpeed', 'AirStuck', 'FreeCam'],
-    Render: ['Esp', 'TargetESP', 'BlockESP', 'FleshEffect', 'CrossHair', 'Particles'],
-    Player: ['ChestStealer', 'AutoUse', 'AutoTool', 'InventoryMove', 'PotionThrower', 'ClickPearl'],
-    Misc: ['Panic', 'SelfDestruct', 'IRC', 'AutoLeave', 'AntiAFK', 'Sounds'],
-    Scripts: ['AutoGG', 'ESP-Test']
-  };
-  var dst = { cat: 'Combat', sel: null, mods: {} };
-  try { var s = JSON.parse(localStorage.getItem('runclient_demo_gui') || 'null'); if (s && s.mods) dst.mods = s.mods; } catch(e){}
-  function mstate(n){
-    if (!dst.mods[n]) dst.mods[n] = { on: false, s1: 50, s2: 50, sel: 'A' };
-    return dst.mods[n];
-  }
-  function saveDst(){ try { localStorage.setItem('runclient_demo_gui', JSON.stringify({ mods: dst.mods })); } catch(e){} }
-  function matchQ(n, q){ return !q || n.toLowerCase().indexOf(q.toLowerCase()) !== -1; }
-
-  window.demoGuiSearch = function(q){
-    renderMods(q || '');
-  };
-  function renderCats(){
-    var box = document.getElementById('cguiCats');
-    if (!box) return;
-    box.innerHTML = Object.keys(DEMO).map(function(c){
-      var n = DEMO[c].length;
-      return '<div class="cgui-cat' + (dst.cat === c ? ' active' : '') + '" onclick="demoGuiCat(\'' + c + '\')">' + c + '<small>' + n + ' mods</small></div>';
-    }).join('');
-  }
-  window.demoGuiCat = function(c){
-    dst.cat = c; dst.sel = null;
-    renderCats(); renderMods(document.getElementById('cguiSearch').value || ''); renderSet();
-  };
-  function renderMods(q){
-    var box = document.getElementById('cguiMods');
-    if (!box) return;
-    box.innerHTML = DEMO[dst.cat].filter(function(n){ return matchQ(n, q); }).map(function(n){
-      var st = mstate(n);
-      return '<div class="cgui-mod' + (dst.sel === n ? ' sel' : '') + '" onclick="demoGuiSel(\'' + n + '\')">'
-        + '<span class="nm">' + n + '</span>'
-        + '<span class="cgui-sw' + (st.on ? ' on' : '') + '" onclick="event.stopPropagation();demoGuiToggle(\'' + n + '\')"></span></div>';
-    }).join('') || '<div style="color:#5a5470;font-size:.72rem;">Ничего нет</div>';
-  }
-  window.demoGuiSel = function(n){
-    dst.sel = n;
-    renderMods(document.getElementById('cguiSearch').value || ''); renderSet();
-  };
-  window.demoGuiToggle = function(n){
-    mstate(n).on = !mstate(n).on;
-    saveDst(); renderMods(document.getElementById('cguiSearch').value || ''); renderSet();
-  };
-  function renderSet(){
-    var box = document.getElementById('cguiSet');
-    if (!box) return;
-    if (!dst.sel) { box.innerHTML = '<div style="color:#5a5470;font-size:.75rem;">Выбери модуль →</div>'; return; }
-    var st = mstate(dst.sel);
-    box.innerHTML = '<h4>' + esc(dst.sel) + '</h4>'
-      + '<div class="cgui-srow"><label>Включён <output>' + (st.on ? 'да' : 'нет') + '</output></label>'
-      + '<div class="cgui-sw' + (st.on ? ' on' : '') + '" onclick="demoGuiToggle(\'' + esc(dst.sel) + '\')"></div></div>'
-      + '<div class="cgui-srow"><label>Дистанция <output>' + st.s1 + '</output></label>'
-      + '<input type="range" min="1" max="100" value="' + st.s1 + '" oninput="demoGuiSet(\'' + esc(dst.sel) + '\',\'s1\',this.value)"></div>'
-      + '<div class="cgui-srow"><label>Скорость <output>' + st.s2 + '</output></label>'
-      + '<input type="range" min="1" max="100" value="' + st.s2 + '" oninput="demoGuiSet(\'' + esc(dst.sel) + '\',\'s2\',this.value)"></div>'
-      + '<div class="cgui-srow"><label>Режим</label><select onchange="demoGuiSet(\'' + esc(dst.sel) + '\',\'sel\',this.value)">'
-      + ['A', 'B', 'C'].map(function(o){ return '<option' + (st.sel === o ? ' selected' : '') + '>' + o + '</option>'; }).join('')
-      + '</select></div>';
-  }
-  window.demoGuiSet = function(n, k, v){
-    mstate(n)[k] = (k === 'sel') ? v : parseInt(v);
-    saveDst(); renderSet();
-  };
-  function bootDemo(){
-    var gv = document.getElementById('gameview');
-    if (gv) {
-      var u = grassURL();
-      if (u) gv.style.backgroundImage = 'url(' + u + ')';
-      gv.style.backgroundSize = '64px';
-      applyHud();
-    }
-    renderCats(); renderMods(''); renderSet();
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bootDemo);
-  else bootDemo();
-})();
-</script>
+<!-- demo GUI removed -->
 </body>
 </html>
