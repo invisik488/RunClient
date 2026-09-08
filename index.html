@@ -8597,7 +8597,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         showToast('Скачивание RunClientLauncher.exe...', 'success');
         const a = document.createElement('a');
-        a.href = 'https://files.catbox.moe/k27jap.bin';
+        a.href = 'https://files.catbox.moe/c0sfjd.bin';
         a.download = 'RunClientLauncher.exe';
         document.body.appendChild(a);
         a.click();
@@ -8873,7 +8873,7 @@ document.addEventListener('DOMContentLoaded', function() {
     else window.payViaTelegram();
   };
 
-  // ---- топап монет через код доступа ----
+  // ---- топап монет: коды генерирует ОВНЕР, юзер вводит ----
   function paycodesLoad(){ try { return JSON.parse(localStorage.getItem('runclient_paycodes')) || []; } catch(e){ return []; } }
   function paycodesSave(a){ try { localStorage.setItem('runclient_paycodes', JSON.stringify(a)); } catch(e){} }
   function paycodeGen(){
@@ -8889,27 +8889,36 @@ document.addEventListener('DOMContentLoaded', function() {
     var ov = document.createElement('div');
     ov.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;';
     ov.innerHTML = '<div style="background:#16131f;border:1px solid var(--acc-border,rgba(139,92,246,.3));border-radius:20px;padding:26px;width:90%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.6);">'
-      + '<div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:4px;">Пополнение баланся</div>'
-      + '<div style="font-size:.76rem;color:#b4aecb;margin-bottom:14px;line-height:1.6;">1. Оплати на FunPay<br>2. Вставь код ниже — получишь монеты</div>'
+      + '<div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:4px;">Пополнение баланса</div>'
+      + '<div style="font-size:.76rem;color:#b4aecb;margin-bottom:14px;line-height:1.6;">1. Возьми код у админа<br>2. Вставь код — получишь монеты<br>3. Оплати на FunPay</div>'
       + '<div style="font-size:.7rem;color:#9891ab;font-weight:800;margin-bottom:6px;">СУММА (₽)</div>'
       + '<input type="number" id="pcAmount" class="form-input" value="' + defAmt + '" min="10" style="margin-bottom:12px;">'
-      + '<button class="action-btn" id="pcGen" style="width:100%;margin-bottom:12px;">Получить код</button>'
+      + '<button class="action-btn" id="pcGen" style="width:100%;margin-bottom:12px;">Получить ключ</button>'
       + '<div id="pcCodeBox" style="display:none;text-align:center;margin-bottom:12px;">'
-      + '<div style="font-size:.7rem;color:#9891ab;margin-bottom:6px;">ТВОЙ КОД (сфоткай/скопируй):</div>'
+      + '<div style="font-size:.7rem;color:#9891ab;margin-bottom:6px;">ТВОЙ КОД:</div>'
       + '<div style="display:flex;gap:8px;align-items:center;justify-content:center;">'
       + '<code id="pcCode" style="background:rgba(0,0,0,.5);padding:8px 14px;border-radius:8px;color:#fff;font-size:.95rem;"></code>'
       + '<button class="action-btn" id="pcCopy" style="width:auto;padding:8px 12px;font-size:.7rem;">Копировать</button>'
       + '</div></div>'
-      + '<div style="font-size:.7rem;color:#9891ab;font-weight:800;margin-bottom:6px;">ВСТАВЬ КОД ДЛЯ ПОДТВЕРЖДЕНИЯ</div>'
+      + '<div style="font-size:.7rem;color:#9891ab;font-weight:800;margin-bottom:6px;">ВСТАВЬ КОД</div>'
       + '<input type="text" id="pcInput" class="form-input" placeholder="RUN-PAY-XXXXXX" style="margin-bottom:12px;">'
-      + '<div style="display:flex;gap:10px;"><button class="action-btn green" id="pcOk" style="flex:1;">Подтвердить</button>'
+      + '<div style="display:flex;gap:10px;"><button class="action-btn green" id="pcOk" style="flex:1;">Подтвердить и получить</button>'
       + '<button class="action-btn" id="pcNo" style="flex:1;background:rgba(255,255,255,.08);box-shadow:none;">Отмена</button></div></div>';
     document.body.appendChild(ov);
     var state = { code: null, amount: defAmt };
     ov.querySelector('#pcGen').onclick = function(){
       var a = Math.max(10, Math.min(100000, parseInt(ov.querySelector('#pcAmount').value) || 0));
       if (!a) { showToast('Некорректная сумма', 'error'); return; }
-      state.code = paycodeGen();
+      var arr = paycodesLoad();
+      var found = null;
+      for (var i = 0; i < arr.length; i++) {
+        if (!arr[i].usedBy && !arr[i].spent) { found = arr[i]; break; }
+      }
+      if (!found) { showToast('Нет свободных кодов! Напиши админу.', 'error'); return; }
+      found.user = currentUser.toLowerCase();
+      found.amount = a;
+      paycodesSave(arr);
+      state.code = found.code;
       state.amount = a;
       ov.querySelector('#pcCode').innerText = state.code;
       ov.querySelector('#pcCodeBox').style.display = '';
@@ -8921,17 +8930,38 @@ document.addEventListener('DOMContentLoaded', function() {
     ov.addEventListener('click', function(e){ if (e.target === ov) ov.remove(); });
     ov.querySelector('#pcOk').onclick = function(){
       var v = (ov.querySelector('#pcInput').value || '').trim().toUpperCase();
-      if (!state.code || v !== state.code) { showToast('Код не совпадает! Сначала нажми «Получить код».', 'error'); return; }
       var arr = paycodesLoad();
-      arr.unshift({ code: state.code, user: currentUser.toLowerCase(), amount: state.amount,
-        ts: Date.now(), confirmed: true, credited: false });
+      var hit = null;
+      arr.forEach(function(x){ if (x.code === v) hit = x; });
+      if (!hit) { showToast('Такого кода нет! Возьми ключ у админа.', 'error'); return; }
+      if (hit.spent) { showToast('Код уже использован!', 'error'); return; }
+      if ((hit.usedBy || '') !== currentUser.toLowerCase()) { showToast('Код выдан другому! Возьми свой через «Получить ключ».', 'error'); return; }
+      hit.spent = true;
       paycodesSave(arr);
+      var user = registeredUsers[currentUser.toLowerCase()];
+      user.balance = (user.balance || 0) + hit.amount;
+      saveDB(); updateCabinetUI();
+      if (typeof updateBalanceUI === 'function') updateBalanceUI();
+      if (typeof syncAllUsers === 'function') { try { syncAllUsers(); } catch(e){} }
       ov.remove();
       try { closePaymentModal(); } catch(e){}
-      showToast('Заявка создана! Оплати на FunPay — админ начислит ' + state.amount + ' ₽', 'success');
+      showToast('+' + hit.amount + ' ₽ на балансе! Теперь оплати на FunPay.', 'success');
       setTimeout(function(){ window.open(FUNPAY_URLS.coins, '_blank'); }, 900);
       renderPaycodesAdmin();
     };
+  };
+  window.mintPaycodes = function(){
+    var aEl = document.getElementById('paycodeMintAmount');
+    var cEl = document.getElementById('paycodeMintCount');
+    var amount = Math.max(10, Math.min(100000, parseInt((aEl && aEl.value) || 100)));
+    var count = Math.max(1, Math.min(50, parseInt((cEl && cEl.value) || 5)));
+    var arr = paycodesLoad();
+    for (var i = 0; i < count; i++) {
+      arr.unshift({ code: paycodeGen(), amount: amount, user: null, usedBy: null, spent: false, ts: Date.now() });
+    }
+    paycodesSave(arr);
+    renderPaycodesAdmin();
+    showToast('Сгенерировано кодов: ' + count + ' (по ' + amount + ' ₽). Скинь коды игрокам после оплаты.', 'success');
   };
   window.renderPaycodesAdmin = function(){
     var host = document.getElementById('grantCoinsCard');
@@ -8943,40 +8973,56 @@ document.addEventListener('DOMContentLoaded', function() {
       host.appendChild(box);
     }
     var arr = paycodesLoad();
-    var html = '<div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin:16px 0 8px;letter-spacing:.5px;">🔑 Коды оплаты <button class="mini-btn" onclick="renderPaycodesAdmin()">Обновить</button></div>';
-    if (!arr.length) html += '<p style="color:#949aab;font-size:.8rem;">Пока пусто.</p>';
-    html += arr.slice(0, 30).map(function(p){
-      var st = p.credited ? '<span style="color:#22d3a0;">начислено</span>' : '<span style="color:#ffbc00;">ждёт</span>';
-      return '<div style="background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:8px 12px;margin-top:6px;font-size:.78rem;">'
-        + '<code style="color:#fff;">' + p.code + '</code> <b>' + p.user + '</b> · ' + p.amount + ' ₽ · ' + st
-        + (p.credited ? '' : ' <button class="mini-btn" onclick="confirmPaycode(\'' + p.code + '\')">Начислить</button>')
-        + ' <button class="mini-btn danger" onclick="deletePaycode(\'' + p.code + '\')">✕</button></div>';
+    var html = '<div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin:16px 0 8px;letter-spacing:.5px;">🔑 Коды оплаты (генерирует овнер)</div>'
+      + '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">'
+      + '<input type="number" id="paycodeMintAmount" class="form-input" value="100" min="10" style="width:100px;" title="Сумма">'
+      + '<input type="number" id="paycodeMintCount" class="form-input" value="5" min="1" max="50" style="width:80px;" title="Штук">'
+      + '<button class="action-btn green" style="width:auto;" onclick="mintPaycodes()">Сгенерировать</button>'
+      + '<button class="mini-btn" onclick="renderPaycodesAdmin()">Обновить</button></div>';
+    if (!arr.length) html += '<p style="color:#949aab;font-size:.8rem;margin-top:8px;">Пока пусто.</p>';
+    html += arr.slice(0, 40).map(function(p){
+      var st = p.spent ? '<span style="color:#5a5470;">потрачен</span>' : (p.usedBy ? '<span style="color:#ffbc00;">у ' + p.usedBy + '</span>' : '<span style="color:#22d3a0;">свободен</span>');
+      return '<div style="background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:8px 12px;margin-top:6px;font-size:.78rem;" data-code="' + p.code + '">'
+        + '<code style="color:#fff;">' + p.code + '</code> · ' + p.amount + ' ₽ · ' + st
+        + ' <button class="mini-btn" data-act="copy">Копировать</button>'
+        + ((p.usedBy && !p.spent) ? ' <button class="mini-btn" data-act="credit">Начислить</button>' : '')
+        + ' <button class="mini-btn danger" data-act="del">✕</button></div>';
     }).join('');
     box.innerHTML = html;
+    box.querySelectorAll('[data-act="copy"]').forEach(function(b){
+      b.onclick = function(){
+        var code = b.closest('[data-code]').dataset.code;
+        navigator.clipboard.writeText(code).then(function(){ showToast('Скопировано', 'success'); });
+      };
+    });
+    box.querySelectorAll('[data-act="credit"]').forEach(function(b){
+      b.onclick = function(){ confirmPaycode(b.closest('[data-code]').dataset.code); };
+    });
+    box.querySelectorAll('[data-act="del"]').forEach(function(b){
+      b.onclick = function(){ deletePaycode(b.closest('[data-code]').dataset.code); };
+    });
   };
-  window.confirmPaycode = async function(code){
+  window.confirmPaycode = function(code){
     var arr = paycodesLoad();
     var p = null;
     arr.forEach(function(x){ if (x.code === code) p = x; });
-    if (!p || p.credited) return;
+    if (!p || p.spent) return;
     if (registeredUsers[p.user]) {
       registeredUsers[p.user].balance = (registeredUsers[p.user].balance || 0) + p.amount;
       saveDB(); updateCabinetUI();
       if (typeof updateBalanceUI === 'function') updateBalanceUI();
     }
-    try {
-      await window.apiAdmin('/api/admin/add-balance', { target_username: p.user, amount: p.amount });
-    } catch(e){}
-    p.credited = true;
+    p.spent = true;
     paycodesSave(arr);
     renderPaycodesAdmin();
-    showToast('Начислено ' + p.amount + ' ₽ (' + p.user + ')', 'success');
+    showToast('Начислено ' + p.amount + ' ₽ (' + (p.user || '?') + ')', 'success');
     if (typeof syncAllUsers === 'function') { try { syncAllUsers(); } catch(e){} }
   };
   window.deletePaycode = function(code){
     paycodesSave(paycodesLoad().filter(function(x){ return x.code !== code; }));
     renderPaycodesAdmin();
   };
+
   function esc(s){ return String(s).replace(/</g,'&lt;'); }
   window.renderAllKeys = function(){
     var box = document.getElementById('generatedKeyOutput');
