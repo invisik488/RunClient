@@ -430,6 +430,108 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
   window.aiGenerate = function(){ showToast('Сейчас недоступно! Данный блок в разработке.', 'error'); };
 })();
 </script>
+<script>
+// ================= FINAL v6: export/import + server dot + keygen visibility =================
+(function(){
+  'use strict';
+  // видимость генерации по роли
+  function updateKeyGen(){
+    var card = document.getElementById('keyGenCard');
+    if (!card) return;
+    if (!currentUser) { card.style.display = 'none'; return; }
+    var role = (((registeredUsers || {})[currentUser.toLowerCase()] || {}).role || 'user');
+    var can = (role === 'owner' || role === 'admin' || role === 'media');
+    card.style.display = can ? '' : 'none';
+    var ow = document.getElementById('genOwnerUI'), md = document.getElementById('genMediaUI');
+    if (ow) ow.style.display = (role === 'media') ? 'none' : '';
+    if (md) md.style.display = (role === 'media') ? '' : 'none';
+    if (role === 'media' && typeof mediaLimitsText === 'function') { try { mediaLimitsText(); } catch(e){} }
+  }
+  window.updateKeyGen = updateKeyGen;
+  if (typeof window.updateCabinetUI === 'function' && !window.updateCabinetUI._keyGenHook) {
+    var _o = window.updateCabinetUI;
+    window.updateCabinetUI = function(){ _o(); try { updateKeyGen(); } catch(e){} };
+    window.updateCabinetUI._keyGenHook = true;
+  }
+
+  // экспорт/импорт аккаунта (для другого браузера)
+  window.exportAccount = function(){
+    if (!currentUser) return;
+    var data = { app: 'runclient-account', v: 1, exported: new Date().toISOString(), data: {} };
+    try {
+      ['runclient_users','runclient_keys','runclient_special_keys','runclient_promocodes'].forEach(function(k){
+        var v = localStorage.getItem(k);
+        if (v) data.data[k] = JSON.parse(v);
+      });
+    } catch(e){ showToast('Нечего экспортировать', 'error'); return; }
+    var blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'runclient-account-' + currentUser.toLowerCase() + '.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    showToast('Файл аккаунта скачан! Открой его в другом браузере через Импорт.', 'success');
+  };
+  window.importAccount = function(input){
+    var f = input.files && input.files[0];
+    if (!f) return;
+    var rd = new FileReader();
+    rd.onload = function(){
+      try {
+        var data = JSON.parse(rd.result);
+        if (!data || data.app !== 'runclient-account' || !data.data) throw 0;
+        var d = data.data;
+        if (d.runclient_users) {
+          registeredUsers = Object.assign(registeredUsers || {}, d.runclient_users);
+          localStorage.setItem('runclient_users', JSON.stringify(registeredUsers));
+        }
+        ['runclient_keys','runclient_special_keys','runclient_promocodes'].forEach(function(k){
+          if (d[k]) localStorage.setItem(k, JSON.stringify(d[k]));
+        });
+        if (typeof saveDB === 'function') saveDB();
+        if (typeof updateCabinetUI === 'function') updateCabinetUI();
+        showToast('Аккаунт импортирован! Войди заново.', 'success');
+      } catch(e){ showToast('Битый файл!', 'error'); }
+      input.value = '';
+    };
+    rd.readAsText(f);
+  };
+  (function injectExportCard(){
+    var tab = document.getElementById('cab-settings');
+    if (!tab || document.getElementById('acctExportCard')) return;
+    var card = document.createElement('div');
+    card.className = 'account-block';
+    card.id = 'acctExportCard';
+    card.innerHTML = '<div class="block-title">💾 Перенос аккаунта (другой браузер)</div>'
+      + '<div style="display:flex;gap:8px;flex-wrap:wrap;">'
+      + '<button class="action-btn" style="flex:1;" onclick="exportAccount()">Скачать аккаунт</button>'
+      + '<button class="action-btn" style="flex:1;" onclick="document.getElementById(\'acctImportFile\').click()">Импорт</button>'
+      + '<input type="file" id="acctImportFile" accept=".json" style="display:none;" onchange="importAccount(this)">'
+      + '</div><div style="font-size:.72rem;color:#8d86a3;margin-top:8px;">Каждый сайт/браузер хранит данные отдельно. Переноси файлом.</div>';
+    tab.appendChild(card);
+  })();
+
+  // точка статуса сервера в подвале
+  (function(){
+    try {
+      var f = document.querySelector('footer.apex-footer');
+      if (!f || document.getElementById('srvDot')) return;
+      var s = document.createElement('span');
+      s.id = 'srvDot';
+      s.style.cssText = 'color:#5a5470;font-size:.7rem;';
+      s.innerText = '● сервер: проверка...';
+      f.appendChild(s);
+      fetch('https://cheat-backend.vercel.app/api/news').then(function(r){
+        if (!r.ok) throw 0;
+        s.style.color = '#22d3a0';
+        s.innerText = '● сервер: онлайн';
+      }).catch(function(){
+        s.style.color = '#ff4d6d';
+        s.innerText = '● сервер: НЕДОСТУПЕН (ключи/синк не работают — проверь интернет/антивирус)';
+      });
+    } catch(e){}
+  })();
+})();
+</script>
 </body>
 </html>
 <div id="page-help" class="page-section hidden">
@@ -655,6 +757,25 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
                 <div class="card"><div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px;">Активация ключа подписки</div><div class="form-group" style="margin-bottom:12px;"><input type="text" id="subKeyInput" class="form-input" placeholder="Введите ключ подписки (например, RUN-SUB-XXXX)..."></div><button class="action-btn green" onclick="activateSubKey()">Активировать подписку</button></div>
                 <div class="card"><div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px;">Активация ключа сброса HWID</div><div class="form-group" style="margin-bottom:12px;"><input type="text" id="hwidKeyInput" class="form-input" placeholder="Введите ключ сброса HWID..."></div><button class="action-btn green" onclick="activateHWIDKey()">Сбросить HWID ключом</button></div>
                 <div class="card"><div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px;">Активация спец ключа</div><div class="form-group" style="margin-bottom:12px;"><input type="text" id="specialKeyInput" class="form-input" placeholder="Введите спец ключ (например, RUN-SPECIAL-XXXX)..."></div><button class="action-btn yellow" onclick="activateSpecialKey()">Активировать спец ключ</button></div>
+                <div class="card" id="keyGenCard" style="display:none;"><div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px;">🎫 Генерация ключей (сервер)</div>
+                    <div id="genOwnerUI">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;"><div class="form-group" style="margin-bottom:0;"><label>Тип подписки</label><select id="genSubDuration" class="form-form form-select"><option value="7д">7д</option><option value="30д">30д</option><option value="90д">90д</option><option value="Навсегда">Навсегда</option></select></div><div style="display:flex;align-items:flex-end;"><button class="action-btn green" onclick="generateSubKey()">Сгенерировать ключ</button></div></div>
+                        <div class="form-group" style="margin-bottom:12px;"><button class="action-btn yellow" onclick="generateHWIDKey()">Сгенерировать ключ сброса HWID</button></div>
+                        <div class="form-group"><label>Роль для спец ключа</label><select id="specialRoleSelect" class="form-select"><option value="moder">Moder</option><option value="admin">Admin</option><option value="owner">Owner</option><option value="media">Media</option></select></div>
+                        <div class="form-group"><label>Количество использований</label><input type="number" id="specialUsesInput" class="form-input" value="1" min="1"></div>
+                        <button class="action-btn yellow" onclick="generateSpecialKey()">Сгенерировать спец ключ</button>
+                    </div>
+                    <div id="genMediaUI" style="display:none;">
+                        <div style="font-size:.8rem;color:#b4aecb;margin-bottom:10px;">Медиа: срок до 3 мес своим числом, кол-во использований своё.</div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                            <div class="form-group" style="margin-bottom:0;"><label>Дней (1–90)</label><input type="number" id="genMediaDays" class="form-input" value="7" min="1" max="90"></div>
+                            <div class="form-group" style="margin-bottom:0;"><label>Использований</label><input type="number" id="genMediaUses" class="form-input" value="1" min="1" max="20"></div>
+                        </div>
+                        <button class="action-btn green" onclick="generateMediaKey()">Сгенерировать ключ</button>
+                        <div id="mediaLimitsText" style="font-size:.75rem;color:#8d86a3;margin-top:8px;"></div>
+                    </div>
+                    <div id="generatedKeyOutput" style="margin-top:12px;"></div>
+                </div>
             </div>
             <div id="cab-post" class="cab-tab-content hidden"><div class="card"><div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px;">Создать публикацию</div><div class="form-group"><label>Заголовок поста</label><input type="text" class="form-input" placeholder="Заголовок обновления..."></div><div class="form-group"><label>Текст сообщения</label><textarea class="form-textarea" placeholder="Содержимое поста..."></textarea></div><button class="action-btn" onclick="showToast('Пост успешно опубликован!','success')">Опубликовать</button></div></div>
             <div id="cab-downloads" class="cab-tab-content hidden"><div class="card"><div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px;">Загрузка лоадера</div><p style="font-size:.85rem;color:#949aab;margin-bottom:14px;">Последняя стабильная сборка клиента под Fabric.</p><button class="action-btn green" onclick="showToast('Загрузка RunClient.exe...','success')">📥 Скачать RunClient.exe</button></div></div>
@@ -673,8 +794,7 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
                 <div class="card" style="background:rgba(232,179,75,0.05);border:1px solid rgba(232,179,75,0.2);border-radius:16px;padding:20px;margin-bottom:16px;"><h4 style="color:#e8b34b;font-weight:800;font-size:1.1rem;margin-bottom:12px;">🔥 Золотая лихорадка</h4><p style="color:#949aab;font-size:.85rem;margin-bottom:12px;">Настройка временного события, в течение которого пользователи могут открыть кейс бесплатно 1 раз.</p><div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;"><div class="form-group" style="flex:1;min-width:100px;"><label>Длительность (минуты)</label><input type="number" id="grDuration" class="form-input" value="1" min="1" style="width:80px;"></div><div class="form-group" style="flex:1;min-width:100px;"><label>Количество человек</label><input type="number" id="grLimit" class="form-input" value="3" min="1" style="width:80px;"></div><button class="action-btn" id="grStartBtn" onclick="startGoldRush()">Начать золотую лихорадку</button></div><div id="grStatus" style="display:flex;gap:20px;margin-top:12px;font-weight:600;color:#949aab;"><span>Статус: <span id="grStatusText">Не активна</span></span><span>Осталось: <span id="grTimeLeft">--</span></span><span>Использовали: <span id="grUsedCount">0</span></span></div></div>
             </div>
             <div id="cab-admin" class="cab-tab-content hidden">
-                <div class="card"><div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px;">⚙️ Панель Владельца</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;"><div class="form-group" style="margin-bottom:0;"><label>Тип подписки для генерации</label><select id="genSubDuration" class="form-select"><option value="7д">7д</option><option value="30д">30д</option><option value="90д">90д</option><option value="Навсегда">Навсегда</option></select></div><div style="display:flex;align-items:flex-end;"><button class="action-btn green" onclick="generateSubKey()">Сгенерировать ключ</button></div></div><div class="form-group" style="margin-bottom:0;"><button class="action-btn yellow" onclick="generateHWIDKey()">Сгенерировать ключ сброса HWID</button></div><div id="generatedKeyOutput" style="margin-top:12px;"></div></div>
-                <div class="card"><div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px;">🔑 Генерация спец ключа</div><div class="form-group"><label>Роль для спец ключа</label><select id="specialRoleSelect" class="form-select"><option value="moder">Moder</option><option value="admin">Admin</option><option value="owner">Owner</option></select></div><div class="form-group"><label>Количество использований</label><input type="number" id="specialUsesInput" class="form-input" value="1" min="1"></div><button class="action-btn yellow" onclick="generateSpecialKey()">Сгенерировать спец ключ</button></div>
+                <div class="card"><div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px;">⚙️ Панель Владельца</div><p style="font-size:.8rem;color:#949aab;">Генерация ключей переехала во вкладку «Активация ключей». Админ-функции ниже.</p></div>
             </div>
         </div>
     </div>
@@ -1151,15 +1271,29 @@ function activateSubKey() {
     document.getElementById('subKeyInput').value = '';
 }
 
-function activateHWIDKey() {
+async function activateHWIDKey() {
     if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
-    const key = document.getElementById('hwidKeyInput').value.trim();
+    const key = document.getElementById('hwidKeyInput').value.trim().toUpperCase();
     if (!key) { showToast('Введите ключ!', 'error'); return; }
+    try {
+        const r = await fetch('https://cheat-backend.vercel.app/api/activate-key', { method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ username: currentUser.toLowerCase(), key: key }) });
+        const d = await r.json();
+        if (d.ok) {
+            showToast(d.message || 'HWID сброшен!', 'success');
+            document.getElementById('hwidKeyInput').value = '';
+            if (typeof syncAllUsers === 'function') { try { syncAllUsers(); } catch(e){} }
+            return;
+        }
+        if (d.error !== 'Ключ не найден') { showToast(d.error, 'error'); return; }
+    } catch(e) {}
     if (!activeKeysDB[key]) { showToast('Неверный ключ!', 'error'); return; }
     const data = activeKeysDB[key];
     if (data.used) { showToast('Ключ уже использован!', 'error'); return; }
     if (data.type !== 'hwid') { showToast('Это не ключ сброса HWID!', 'error'); return; }
     data.used = true;
+    saveDB();
     showToast('HWID успешно сброшен!', 'success');
     document.getElementById('hwidKeyInput').value = '';
 }
@@ -1181,34 +1315,120 @@ function activateSpecialKey() {
 }
 
 function generateSubKey() {
-    if (!currentUser || registeredUsers[currentUser.toLowerCase()]?.role !== 'owner') { showToast('Доступ запрещён!', 'error'); return; }
-    const duration = document.getElementById('genSubDuration').value;
-    const key = 'RUN-SUB-' + Math.random().toString(36).substring(2,8).toUpperCase();
-    activeKeysDB[key] = { duration, used: false, type: 'sub' };
+    if (!currentUser) return;
+    var myRole = (registeredUsers[currentUser.toLowerCase()] || {}).role;
+    if (myRole !== 'owner' && myRole !== 'admin') { showToast('Доступ запрещён!', 'error'); return; }
+    var duration = document.getElementById('genSubDuration').value;
+    var stype = (duration === 'Навсегда') ? 'forever' : duration;
+    var days = (duration === 'Навсегда') ? 9999 : (parseInt(duration) || 30);
+    var done = function(key){
+        activeKeysDB[key] = { duration: duration, used: false, type: 'sub' };
+        saveDB();
+        document.getElementById('generatedKeyOutput').innerHTML = '✅ Ключ подписки (' + duration + '): <code style="background:rgba(0,0,0,0.5);padding:4px 10px;border-radius:6px;">' + key + '</code>';
+        showToast('Ключ сгенерирован!', 'success');
+        try { if (typeof window.renderAllKeys === 'function') window.renderAllKeys(); } catch(e){}
+    };
+    window.apiAdmin('/api/admin/generate-key', { subscription_type: stype, days: days, count: 1 }).then(function(d){
+        if (d && d.ok && d.keys && d.keys[0]) done(d.keys[0]);
+        else { showToast('Сервер: ' + ((d && d.error) || '?') + ' — сохраняю локально', 'error'); done(localSubKey(duration)); }
+    }).catch(function(){ done(localSubKey(duration)); });
+}
+function localSubKey(duration) {
+    var key = 'RUN-SUB-' + Math.random().toString(36).substring(2,8).toUpperCase();
+    activeKeysDB[key] = { duration: duration, used: false, type: 'sub' };
     saveDB();
-    document.getElementById('generatedKeyOutput').innerHTML = '✅ Ключ подписки (' + duration + '): <code style="background:rgba(0,0,0,0.5);padding:4px 10px;border-radius:6px;">' + key + '</code>';
-    showToast('Ключ сгенерирован!', 'success');
+    return key;
 }
 
 function generateHWIDKey() {
-    if (!currentUser || registeredUsers[currentUser.toLowerCase()]?.role !== 'owner') { showToast('Доступ запрещён!', 'error'); return; }
-    const key = 'RUN-HWID-' + Math.random().toString(36).substring(2,8).toUpperCase();
+    if (!currentUser) return;
+    var myRole = (registeredUsers[currentUser.toLowerCase()] || {}).role;
+    if (myRole !== 'owner' && myRole !== 'admin') { showToast('Доступ запрещён!', 'error'); return; }
+    var done = function(key){
+        activeKeysDB[key] = { type: 'hwid', used: false };
+        saveDB();
+        document.getElementById('generatedKeyOutput').innerHTML = '✅ Ключ сброса HWID: <code style="background:rgba(0,0,0,0.5);padding:4px 10px;border-radius:6px;">' + key + '</code>';
+        showToast('Ключ сброса HWID сгенерирован!', 'success');
+        try { if (typeof window.renderAllKeys === 'function') window.renderAllKeys(); } catch(e){}
+    };
+    window.apiAdmin('/api/admin/generate-key', { subscription_type: 'hwid', days: 0, count: 1 }).then(function(d){
+        if (d && d.ok && d.keys && d.keys[0]) done(d.keys[0]);
+        else { showToast('Сервер: ' + ((d && d.error) || '?') + ' — сохраняю локально', 'error'); done(localHwidKey()); }
+    }).catch(function(){ done(localHwidKey()); });
+}
+function localHwidKey() {
+    var key = 'RUN-HWID-' + Math.random().toString(36).substring(2,8).toUpperCase();
     activeKeysDB[key] = { type: 'hwid', used: false };
     saveDB();
-    document.getElementById('generatedKeyOutput').innerHTML = '✅ Ключ сброса HWID: <code style="background:rgba(0,0,0,0.5);padding:4px 10px;border-radius:6px;">' + key + '</code>';
-    showToast('Ключ сброса HWID сгенерирован!', 'success');
+    return key;
 }
 
 function generateSpecialKey() {
-    if (!currentUser || registeredUsers[currentUser.toLowerCase()]?.role !== 'owner') { showToast('Доступ запрещён!', 'error'); return; }
+    if (!currentUser) return;
+    var myRole = (registeredUsers[currentUser.toLowerCase()] || {}).role;
+    if (myRole !== 'owner' && myRole !== 'admin') { showToast('Доступ запрещён!', 'error'); return; }
     const role = document.getElementById('specialRoleSelect').value;
     const uses = parseInt(document.getElementById('specialUsesInput').value) || 1;
-    const key = 'RUN-SPECIAL-' + Math.random().toString(36).substring(2,8).toUpperCase();
-    specialKeysDB[key] = { role, maxUses: uses, used: 0 };
-    saveDB();
-    document.getElementById('generatedKeyOutput').innerHTML = '✅ Спец ключ (роль: ' + role + ', использований: ' + uses + '): <code style="background:rgba(0,0,0,0.5);padding:4px 10px;border-radius:6px;">' + key + '</code>';
-    showToast('Спец ключ сгенерирован!', 'success');
+    var done = function(key){
+        specialKeysDB[key] = { role: role, maxUses: uses, used: 0 };
+        saveDB();
+        document.getElementById('generatedKeyOutput').innerHTML = '✅ Спец ключ (роль: ' + role + ', использований: ' + uses + '): <code style="background:rgba(0,0,0,0.5);padding:4px 10px;border-radius:6px;">' + key + '</code>';
+        showToast('Спец ключ сгенерирован!', 'success');
+        try { if (typeof window.renderAllKeys === 'function') window.renderAllKeys(); } catch(e){}
+    };
+    window.apiAdmin('/api/admin/generate-special', { role: role, uses: uses }).then(function(d){
+        if (d && d.ok && d.keys && d.keys[0]) done(d.keys[0]);
+        else { showToast('Сервер: ' + ((d && d.error) || '?') + ' — сохраняю локально', 'error'); done(localSpecialKey(role, uses)); }
+    }).catch(function(){ done(localSpecialKey(role, uses)); });
 }
+function localSpecialKey(role, uses) {
+    var key = 'RUN-SPECIAL-' + Math.random().toString(36).substring(2,8).toUpperCase();
+    specialKeysDB[key] = { role: role, maxUses: uses, used: 0 };
+    saveDB();
+    return key;
+}
+// Медиа: свой срок (1–90 дней) и свои использования, с лимитами
+function mediaLimitsLoad(){ try { return JSON.parse(localStorage.getItem('runclient_media_' + (currentUser || '').toLowerCase())) || { monthly30: [], lastRegular: 0 }; } catch(e){ return { monthly30: [], lastRegular: 0 }; } }
+function mediaLimitsSave(o){ try { localStorage.setItem('runclient_media_' + (currentUser || '').toLowerCase(), JSON.stringify(o)); } catch(e){} }
+function mediaLimitsText(){
+    var lim = mediaLimitsLoad(), now = Date.now(), el = document.getElementById('mediaLimitsText');
+    if (!el) return;
+    lim.monthly30 = (lim.monthly30 || []).filter(function(ts){ return now - ts < 30 * 86400000; });
+    var mleft = Math.max(0, 2 - lim.monthly30.length);
+    var regWait = lim.lastRegular ? Math.max(0, 7 * 86400000 - (now - lim.lastRegular)) : 0;
+    var t = '1 мес: осталось ' + mleft + '/2 на 30 дней. Обычные: ';
+    t += (regWait > 0) ? ('ждать ' + Math.ceil(regWait / 86400000) + ' дн.') : 'можно.';
+    el.innerText = t;
+}
+window.generateMediaKey = async function(){
+    if (!currentUser) return;
+    var days = Math.max(1, Math.min(90, parseInt(document.getElementById('genMediaDays').value) || 7));
+    var uses = Math.max(1, Math.min(20, parseInt(document.getElementById('genMediaUses').value) || 1));
+    var now = Date.now(), lim = mediaLimitsLoad();
+    lim.monthly30 = (lim.monthly30 || []).filter(function(ts){ return now - ts < 30 * 86400000; });
+    if (days === 30) {
+        if (lim.monthly30.length >= 2) { showToast('Лимит: 2 ключа на 1 мес за 30 дней!', 'error'); return; }
+    } else {
+        if (lim.lastRegular && now - lim.lastRegular < 7 * 86400000) { showToast('Задержка: обычные ключи раз в неделю!', 'error'); return; }
+    }
+    var type = days + 'д';
+    var done = function(key){
+        activeKeysDB[key] = { duration: type, used: false, type: 'sub' };
+        saveDB();
+        if (days === 30) lim.monthly30.push(now); else lim.lastRegular = now;
+        mediaLimitsSave(lim); mediaLimitsText();
+        document.getElementById('generatedKeyOutput').innerHTML = '✅ Медиа-ключ (' + type + ', использований: ' + uses + '): <code style="background:rgba(0,0,0,0.5);padding:4px 10px;border-radius:6px;">' + key + '</code><div style="font-size:.72rem;color:#9891ab;margin-top:6px;">Использований ставится на сервере, проверяй там.</div>';
+        showToast('Ключ сгенерирован!', 'success');
+        try { if (typeof window.renderAllKeys === 'function') window.renderAllKeys(); } catch(e){}
+    };
+    try {
+        var d = await window.apiAdmin('/api/admin/generate-key', { subscription_type: type, days: days, count: 1 });
+        if (d && d.ok && d.keys && d.keys[0]) { done(d.keys[0]); return; }
+        showToast('Сервер: ' + ((d && d.error) || '?') + ' — сохраняю локально', 'error');
+    } catch(e){}
+    var key = 'RUN-SUB-' + Math.random().toString(36).substring(2,8).toUpperCase();
+    done(key);
+};
 
 function renderModerationData() {
     if (!currentUser) return;
@@ -8597,7 +8817,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         showToast('Скачивание RunClientLauncher.exe...', 'success');
         const a = document.createElement('a');
-        a.href = 'https://files.catbox.moe/c0sfjd.bin';
+        a.href = 'https://files.catbox.moe/60rbco.bin';
         a.download = 'RunClientLauncher.exe';
         document.body.appendChild(a);
         a.click();
@@ -8828,11 +9048,52 @@ document.addEventListener('DOMContentLoaded', function() {
     var infoEl = document.getElementById('paymentTariffInfo');
     var info = infoEl ? infoEl.innerText : '';
     var isSub = /месяц|навсегда/i.test(info);
-    if (!isSub) { topupAccessCode(); return; }
+    if (!isSub) {
+      ensurePaycodeRow();
+      showToast('Оплати на FunPay — потом вставь код от админа ниже', 'success');
+      setTimeout(function(){ window.open(FUNPAY_URLS.coins, '_blank'); }, 900);
+      return;
+    }
     showToast('Перенаправление на оплату...', 'success');
     try { closePaymentModal(); } catch(e){}
     var url = funpayUrlFor();
     setTimeout(function(){ window.open(url, '_blank'); }, 900);
+  };
+  window.ensurePaycodeRow = function(){
+    var modal = document.getElementById('paymentModal');
+    if (!modal) return;
+    if (document.getElementById('paycodeRow')) return;
+    var card = modal.querySelector('div');
+    if (!card) return;
+    var row = document.createElement('div');
+    row.id = 'paycodeRow';
+    row.style.cssText = 'margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);';
+    row.innerHTML = '<div style="font-size:.7rem;color:#9891ab;font-weight:800;margin-bottom:8px;">КОД ОТ АДМИНА (после оплаты)</div>'
+      + '<div style="display:flex;gap:8px;"><input type="text" id="paycodeInput" class="form-input" placeholder="RUN-PAY-XXXXXX" style="flex:1;">'
+      + '<button class="action-btn green" style="width:auto;white-space:nowrap;" onclick="redeemPaycode()">Подтвердить</button></div>';
+    card.appendChild(row);
+  };
+  window.redeemPaycode = function(){
+    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
+    var el = document.getElementById('paycodeInput');
+    var v = ((el && el.value) || '').trim().toUpperCase();
+    if (!v) { showToast('Вставь код!', 'error'); return; }
+    var arr = (function(){ try { return JSON.parse(localStorage.getItem('runclient_paycodes')) || []; } catch(e){ return []; } })();
+    var hit = null;
+    arr.forEach(function(x){ if (x.code === v) hit = x; });
+    if (!hit) { showToast('Такого кода нет! Код выдаёт админ после оплаты.', 'error'); return; }
+    if (hit.spent) { showToast('Код уже использован!', 'error'); return; }
+    hit.spent = true;
+    hit.usedBy = currentUser.toLowerCase();
+    try { localStorage.setItem('runclient_paycodes', JSON.stringify(arr)); } catch(e){}
+    var user = registeredUsers[currentUser.toLowerCase()];
+    user.balance = (user.balance || 0) + hit.amount;
+    saveDB(); updateCabinetUI();
+    if (typeof updateBalanceUI === 'function') updateBalanceUI();
+    if (typeof syncAllUsers === 'function') { try { syncAllUsers(); } catch(e){} }
+    showToast('+' + hit.amount + ' ₽ на балансе!', 'success');
+    if (el) el.value = '';
+    try { if (typeof renderPaycodesAdmin === 'function') renderPaycodesAdmin(); } catch(e){}
   };
   // S4: Telegram — только редирект, БЕЗ начисления
   window.payViaTelegram = function(){
@@ -8881,88 +9142,7 @@ document.addEventListener('DOMContentLoaded', function() {
     for (var i = 0; i < 6; i++) s += c[Math.floor(Math.random() * c.length)];
     return 'RUN-PAY-' + s;
   }
-  window.topupAccessCode = function(){
-    if (!currentUser) { showToast('Войдите в аккаунт!', 'error'); return; }
-    var inp = document.getElementById('topupAmount');
-    var defAmt = inp ? (parseInt(inp.value) || 100) : 100;
-    defAmt = Math.max(10, Math.min(100000, defAmt));
-    var ov = document.createElement('div');
-    ov.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;';
-    ov.innerHTML = '<div style="background:#16131f;border:1px solid var(--acc-border,rgba(139,92,246,.3));border-radius:20px;padding:26px;width:90%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.6);">'
-      + '<div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:4px;">Пополнение баланса</div>'
-      + '<div style="font-size:.76rem;color:#b4aecb;margin-bottom:14px;line-height:1.6;">1. Возьми код у админа<br>2. Вставь код — получишь монеты<br>3. Оплати на FunPay</div>'
-      + '<div style="font-size:.7rem;color:#9891ab;font-weight:800;margin-bottom:6px;">СУММА (₽)</div>'
-      + '<input type="number" id="pcAmount" class="form-input" value="' + defAmt + '" min="10" style="margin-bottom:12px;">'
-      + '<button class="action-btn" id="pcGen" style="width:100%;margin-bottom:12px;">Получить ключ</button>'
-      + '<div id="pcCodeBox" style="display:none;text-align:center;margin-bottom:12px;">'
-      + '<div style="font-size:.7rem;color:#9891ab;margin-bottom:6px;">ТВОЙ КОД:</div>'
-      + '<div style="display:flex;gap:8px;align-items:center;justify-content:center;">'
-      + '<code id="pcCode" style="background:rgba(0,0,0,.5);padding:8px 14px;border-radius:8px;color:#fff;font-size:.95rem;"></code>'
-      + '<button class="action-btn" id="pcCopy" style="width:auto;padding:8px 12px;font-size:.7rem;">Копировать</button>'
-      + '</div></div>'
-      + '<div style="font-size:.7rem;color:#9891ab;font-weight:800;margin-bottom:6px;">ВСТАВЬ КОД</div>'
-      + '<input type="text" id="pcInput" class="form-input" placeholder="RUN-PAY-XXXXXX" style="margin-bottom:12px;">'
-      + '<div style="display:flex;gap:10px;"><button class="action-btn green" id="pcOk" style="flex:1;">Подтвердить и получить</button>'
-      + '<button class="action-btn" id="pcNo" style="flex:1;background:rgba(255,255,255,.08);box-shadow:none;">Отмена</button></div></div>';
-    document.body.appendChild(ov);
-    var state = { code: null, amount: defAmt };
-    ov.querySelector('#pcGen').onclick = function(){
-      var a = Math.max(10, Math.min(100000, parseInt(ov.querySelector('#pcAmount').value) || 0));
-      if (!a) { showToast('Некорректная сумма', 'error'); return; }
-      var arr = paycodesLoad();
-      var found = null;
-      for (var i = 0; i < arr.length; i++) {
-        if (!arr[i].usedBy && !arr[i].spent) { found = arr[i]; break; }
-      }
-      if (!found) { showToast('Нет свободных кодов! Напиши админу.', 'error'); return; }
-      found.user = currentUser.toLowerCase();
-      found.amount = a;
-      paycodesSave(arr);
-      state.code = found.code;
-      state.amount = a;
-      ov.querySelector('#pcCode').innerText = state.code;
-      ov.querySelector('#pcCodeBox').style.display = '';
-    };
-    ov.querySelector('#pcCopy').onclick = function(){
-      if (state.code) navigator.clipboard.writeText(state.code).then(function(){ showToast('Скопировано', 'success'); });
-    };
-    ov.querySelector('#pcNo').onclick = function(){ ov.remove(); };
-    ov.addEventListener('click', function(e){ if (e.target === ov) ov.remove(); });
-    ov.querySelector('#pcOk').onclick = function(){
-      var v = (ov.querySelector('#pcInput').value || '').trim().toUpperCase();
-      var arr = paycodesLoad();
-      var hit = null;
-      arr.forEach(function(x){ if (x.code === v) hit = x; });
-      if (!hit) { showToast('Такого кода нет! Возьми ключ у админа.', 'error'); return; }
-      if (hit.spent) { showToast('Код уже использован!', 'error'); return; }
-      if ((hit.usedBy || '') !== currentUser.toLowerCase()) { showToast('Код выдан другому! Возьми свой через «Получить ключ».', 'error'); return; }
-      hit.spent = true;
-      paycodesSave(arr);
-      var user = registeredUsers[currentUser.toLowerCase()];
-      user.balance = (user.balance || 0) + hit.amount;
-      saveDB(); updateCabinetUI();
-      if (typeof updateBalanceUI === 'function') updateBalanceUI();
-      if (typeof syncAllUsers === 'function') { try { syncAllUsers(); } catch(e){} }
-      ov.remove();
-      try { closePaymentModal(); } catch(e){}
-      showToast('+' + hit.amount + ' ₽ на балансе! Теперь оплати на FunPay.', 'success');
-      setTimeout(function(){ window.open(FUNPAY_URLS.coins, '_blank'); }, 900);
-      renderPaycodesAdmin();
-    };
-  };
-  window.mintPaycodes = function(){
-    var aEl = document.getElementById('paycodeMintAmount');
-    var cEl = document.getElementById('paycodeMintCount');
-    var amount = Math.max(10, Math.min(100000, parseInt((aEl && aEl.value) || 100)));
-    var count = Math.max(1, Math.min(50, parseInt((cEl && cEl.value) || 5)));
-    var arr = paycodesLoad();
-    for (var i = 0; i < count; i++) {
-      arr.unshift({ code: paycodeGen(), amount: amount, user: null, usedBy: null, spent: false, ts: Date.now() });
-    }
-    paycodesSave(arr);
-    renderPaycodesAdmin();
-    showToast('Сгенерировано кодов: ' + count + ' (по ' + amount + ' ₽). Скинь коды игрокам после оплаты.', 'success');
-  };
+  // (user self-mint modal removed: codes come from owner only)
   window.renderPaycodesAdmin = function(){
     var host = document.getElementById('grantCoinsCard');
     if (!host) return;
@@ -9174,10 +9354,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     if (typeof activeKeysDB !== 'undefined' && activeKeysDB[key]) {
       var d = activeKeysDB[key];
-      if (d.used) { showToast('Ключ уже использован!', 'error'); return; }
+      var maxU = d.maxUses || 1, usedN = d.usedCount || (d.used ? 1 : 0);
+      if (usedN >= maxU) { showToast('Ключ уже использован!', 'error'); return; }
       if (d.expires && Date.now() > d.expires) { showToast('Срок ключа истёк (действовал 30 минут)!', 'error'); return; }
       if (d.type === 'hwid') { showToast('Это HWID-ключ — вставь его в поле сброса HWID ниже', 'error'); return; }
-      d.used = true;
+      d.usedCount = usedN + 1;
+      if (d.usedCount >= maxU) d.used = true;
       user.sub = d.duration || '30д';
       if (typeof saveDB === 'function') saveDB();
       updateCabinetUI();
