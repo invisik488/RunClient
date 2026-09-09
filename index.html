@@ -10520,5 +10520,22 @@ document.addEventListener('DOMContentLoaded', function() {
 </style>
 <script>
 <!-- demo GUI removed -->
+</script>
+<script>
+// ================= paycodes render on admin open =================
+(function(){
+  if (typeof window.switchCabinetTab === 'function' && !window.switchCabinetTab._payHook) {
+    var _prev = window.switchCabinetTab;
+    window.switchCabinetTab = function(tab, el){
+      var r = _prev.apply(this, arguments);
+      if (tab === 'admin') {
+        try { if (typeof window.renderPaycodesAdmin === 'function') window.renderPaycodesAdmin(); } catch(e){}
+      }
+      return r;
+    };
+    window.switchCabinetTab._payHook = true;
+  }
+})();
+</script>
 </body>
 </html>
