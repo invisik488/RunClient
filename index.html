@@ -532,6 +532,247 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
   })();
 })();
 </script>
+<script>
+// ================= FINAL v7: mint + social union + avatars + profiles =================
+(function(){
+  'use strict';
+  function esc(s){ return String(s == null ? '' : s).replace(/</g,'&lt;'); }
+  function me(){ return (currentUser || '').toLowerCase(); }
+
+  // ---- mint adjunct (кнопка генерации кодов) ----
+  window.mintPaycodes = function(){
+    try {
+      var aEl = document.getElementById('paycodeMintAmount');
+      var cEl = document.getElementById('paycodeMintCount');
+      var amount = Math.max(10, Math.min(100000, parseInt((aEl && aEl.value) || 100)));
+      var count = Math.max(1, Math.min(50, parseInt((cEl && cEl.value) || 5)));
+      var arr = [];
+      try { arr = JSON.parse(localStorage.getItem('runclient_paycodes')) || []; } catch(e){}
+      var c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      for (var i = 0; i < count; i++) {
+        var s = '';
+        for (var k = 0; k < 6; k++) s += c[Math.floor(Math.random() * c.length)];
+        arr.unshift({ code: 'RUN-PAY-' + s, amount: amount, user: null, usedBy: null, spent: false, ts: Date.now() });
+      }
+      try { localStorage.setItem('runclient_paycodes', JSON.stringify(arr)); } catch(e){}
+      if (typeof renderPaycodesAdmin === 'function') renderPaycodesAdmin();
+      showToast('Сгенерировано кодов: ' + count + ' (по ' + amount + ' ₽)', 'success');
+    } catch(e){ showToast('Ошибка: ' + e.message, 'error'); }
+  };
+
+  // ---- union cache (друзья/заявки/сообщения переживают вайпы) ----
+  function socKey(){ return 'runclient_social_' + me(); }
+  function socLoad(){ try { return JSON.parse(localStorage.getItem(socKey())) || { friends: [], incoming: [], outgoing: [], msgs: {} }; } catch(e){ return { friends: [], incoming: [], outgoing: [], msgs: {} }; } }
+  function socSave(s){ try { localStorage.setItem(socKey(), JSON.stringify(s)); } catch(e){} }
+  window.unionFriends = function(srv){
+    var c = socLoad();
+    var fmap = {};
+    (c.friends || []).forEach(function(f){ if (f && f.nick) fmap[f.nick] = f; });
+    ((srv && srv.friends) || []).forEach(function(f){ if (f && f.nick) fmap[f.nick] = f; });
+    var imap = {};
+    (c.incoming || []).forEach(function(r){ if (r && r.from) imap[r.from] = r; });
+    ((srv && srv.incoming) || []).forEach(function(r){ if (r && r.from) imap[r.from] = r; });
+    var omap = {};
+    (c.outgoing || []).forEach(function(r){ if (r && r.to) omap[r.to] = r; });
+    ((srv && srv.outgoing) || []).forEach(function(r){ if (r && r.to) omap[r.to] = r; });
+    var out = { friends: Object.keys(fmap).map(function(k){ return fmap[k]; }),
+      incoming: Object.keys(imap).map(function(k){ return imap[k]; }),
+      outgoing: Object.keys(omap).map(function(k){ return omap[k]; }) };
+    socSave({ friends: out.friends, incoming: out.incoming, outgoing: out.outgoing, msgs: c.msgs || {} });
+    return out;
+  };
+  window.unionMsgs = function(peer, serverMsgs){
+    var c = socLoad();
+    c.msgs = c.msgs || {};
+    var map = {};
+    (c.msgs[peer] || []).forEach(function(m){ map[m.ts + '|' + m.from + '|' + m.text] = m; });
+    (serverMsgs || []).forEach(function(m){ if (m) map[m.ts + '|' + m.from + '|' + m.text] = m; });
+    var list = Object.keys(map).map(function(k){ return map[k]; });
+    list.sort(function(a, b){ return (a.ts || 0) - (b.ts || 0); });
+    list = list.slice(-100);
+    c.msgs[peer] = list;
+    socSave(c);
+    return list;
+  };
+  window.cacheMsg = function(peer, from, text){
+    if (!peer || !text) return;
+    var c = socLoad();
+    c.msgs = c.msgs || {};
+    var list = c.msgs[peer] || [];
+    list.push({ from: from, text: text, ts: Date.now() });
+    c.msgs[peer] = list.slice(-100);
+    socSave(c);
+  };
+  ['sendFriendRequest', 'respondFriend', 'removeFriend'].forEach(function(fn){
+    if (typeof window[fn] !== 'function' || window[fn]._socHook) return;
+    var orig = window[fn];
+    window[fn] = function(){
+      var r = orig.apply(this, arguments);
+      if (r && r.then) r.then(function(){ setTimeout(function(){ try { window.loadFriends(); } catch(e){} }, 600); });
+      else setTimeout(function(){ try { window.loadFriends(); } catch(e){} }, 600);
+      return r;
+    };
+    window[fn]._socHook = true;
+  });
+
+  // ---- аватары ----
+  function avaCache(){ try { return JSON.parse(localStorage.getItem('runclient_avatars') || '{}'); } catch(e){ return {}; } }
+  function avaSaveCache(o){ try { localStorage.setItem('runclient_avatars', JSON.stringify(o)); } catch(e){} }
+  window.myAvatar = function(){ var c = avaCache(); return c['me:' + me()] || null; };
+  window.paintAvatars = function(){
+    var cache = avaCache();
+    var need = [];
+    document.querySelectorAll('#friendList .friend-row, #msgPeers .msg-peer').forEach(function(row){
+      var btn = row.querySelector('[onclick*="openChatWith"]');
+      var m = btn ? (btn.getAttribute('onclick') || '').match(/openChatWith\('([^']+)'/) : null;
+      if (!m) {
+        var oc = row.getAttribute('onclick') || '';
+        m = oc.match(/openChatWith\('([^']+)'/);
+      }
+      if (!m) return;
+      var nick = m[1];
+      if (row.querySelector('img.ava-mini')) return;
+      var img = document.createElement('img');
+      img.className = 'ava-mini';
+      img.dataset.nick = nick;
+      img.style.cssText = 'width:24px;height:24px;border-radius:8px;object-fit:cover;cursor:pointer;flex-shrink:0;background:#1a1626;';
+      img.onclick = function(e){ e.stopPropagation(); showFriendProfile(nick); };
+      row.insertBefore(img, row.firstChild);
+      if (cache[nick]) img.src = cache[nick];
+      else need.push({ img: img, nick: nick });
+    });
+    need.slice(0, 12).forEach(function(x){
+      fetch('https://cheat-backend.vercel.app/api/avatar?username=' + encodeURIComponent(x.nick))
+        .then(function(r){ return r.json(); }).then(function(d){
+          if (d && d.ok && d.data_url) {
+            cache[x.nick] = d.data_url; avaSaveCache(cache);
+            try { x.img.src = d.data_url; } catch(e){}
+          }
+        }).catch(function(){});
+    });
+  };
+  var _paintT = setInterval(function(){
+    try {
+      if (document.getElementById('friendList') || document.getElementById('msgPeers')) paintAvatars();
+    } catch(e){}
+  }, 2500);
+
+  window.uploadAvatar = function(input){
+    var f = input.files && input.files[0];
+    if (!f || !currentUser) return;
+    var img = new Image();
+    img.onload = function(){
+      var c = document.createElement('canvas');
+      var S = Math.min(img.width, img.height);
+      c.width = c.height = 96;
+      c.getContext('2d').drawImage(img, (img.width - S) / 2, (img.height - S) / 2, S, S, 0, 0, 96, 96);
+      var url = c.toDataURL('image/jpeg', 0.85);
+      var cache = avaCache();
+      cache['me:' + me()] = url;
+      avaSaveCache(cache);
+      paintMyAvatar();
+      fetch('https://cheat-backend.vercel.app/api/avatar', { method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username: me(), data_url: url }) }).catch(function(){});
+      showToast('Аватарка загружена!', 'success');
+    };
+    img.src = URL.createObjectURL(f);
+    input.value = '';
+  };
+  window.paintMyAvatar = function(){
+    var cv = document.getElementById('sideAvatarCanvas');
+    var url = myAvatar();
+    if (!url) {
+      fetch('https://cheat-backend.vercel.app/api/avatar?username=' + encodeURIComponent(me()))
+        .then(function(r){ return r.json(); }).then(function(d){
+          if (d && d.ok && d.data_url) {
+            var cache = avaCache();
+            cache['me:' + me()] = d.data_url; avaSaveCache(cache);
+            paintMyAvatar();
+          }
+        }).catch(function(){});
+      return;
+    }
+    var img = new Image();
+    img.onload = function(){
+      if (!cv) return;
+      var ctx = cv.getContext('2d');
+      ctx.imageSmoothingEnabled = true;
+      ctx.clearRect(0, 0, 52, 52);
+      ctx.save();
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(0, 0, 52, 52, 12); else ctx.rect(0, 0, 52, 52);
+      ctx.clip();
+      ctx.drawImage(img, 0, 0, 52, 52);
+      ctx.restore();
+    };
+    img.src = url;
+  };
+  function injectAvatarCard(){
+    var tab = document.getElementById('cab-settings');
+    if (!tab || document.getElementById('avatarCard')) return;
+    var card = document.createElement('div');
+    card.className = 'account-block';
+    card.id = 'avatarCard';
+    card.innerHTML = '<div class="block-title">📷 Аватарка</div>'
+      + '<div style="display:flex;gap:8px;">'
+      + '<button class="action-btn" style="flex:1;" onclick="document.getElementById(\'avatarFileInput\').click()">Загрузить</button>'
+      + '<input type="file" id="avatarFileInput" accept="image/*" style="display:none;" onchange="uploadAvatar(this)">'
+      + '</div><div style="font-size:.72rem;color:#8d86a3;margin-top:8px;">Как в телеграме — видно друзьям.</div>';
+    tab.appendChild(card);
+  }
+  window.injectAvatarCard = injectAvatarCard;
+
+  // ---- профиль друга ----
+  window.showFriendProfile = async function(nick){
+    var old = document.getElementById('friendProfileOv');
+    if (old) old.remove();
+    var ov = document.createElement('div');
+    ov.id = 'friendProfileOv';
+    ov.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;';
+    ov.innerHTML = '<div style="background:#16131f;border:1px solid rgba(139,92,246,.3);border-radius:20px;padding:26px;width:90%;max-width:340px;text-align:center;">'
+      + '<div style="color:#9891ab;">Загрузка...</div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click', function(e){ if (e.target === ov) ov.remove(); });
+    var box = ov.firstChild;
+    try {
+      var r = await fetch('https://cheat-backend.vercel.app/api/profile?username=' + encodeURIComponent(nick.toLowerCase()));
+      var d = await r.json();
+      if (!d.ok) throw 0;
+      var p = d.profile;
+      var av = p.avatar || '';
+      var cos = (p.cosmetics || []);
+      var cosTxt = cos.length ? (cos.indexOf('pack') !== -1 ? 'Пак «Всё сразу»' : cos.length + ' шт.') : 'нет';
+      box.innerHTML = (av ? '<img src="' + av + '" style="width:72px;height:72px;border-radius:20px;object-fit:cover;margin-bottom:10px;">' : '<div style="font-size:2.4rem;">👤</div>')
+        + '<div style="font-size:1.15rem;font-weight:900;color:#fff;">' + esc(p.nickname || p.username) + '</div>'
+        + '<div style="margin:8px 0;"><span class="luxe-pill">' + esc(p.role || 'user') + '</span> '
+        + '<span class="dot ' + (p.online ? 'on' : 'off') + '" style="display:inline-block;"></span> <span style="font-size:.75rem;color:#8d86a3;">' + (p.online ? 'в сети' : 'оффлайн') + '</span></div>'
+        + '<div style="font-size:.8rem;color:#b4aecb;line-height:2;">Подписка: <b>' + esc(p.sub) + '</b><br>Косметика: <b>' + esc(cosTxt) + '</b><br>Баланс: <b>' + esc(p.balance) + ' ₽</b></div>'
+        + '<div style="display:flex;gap:8px;margin-top:14px;">'
+        + '<button class="action-btn green" style="flex:1;" onclick="document.getElementById(\'friendProfileOv\').remove();openChatWith(\'' + esc(p.username).replace(/'/g, "\\'") + '\')">Написать</button>'
+        + '<button class="action-btn" style="flex:1;background:rgba(255,255,255,.08);box-shadow:none;" onclick="document.getElementById(\'friendProfileOv\').remove()">Закрыть</button></div>';
+    } catch(e) {
+      box.innerHTML = '<div style="color:#ff8ba0;">Не вышло загрузить профиль</div>'
+        + '<button class="action-btn" style="margin-top:12px;" onclick="document.getElementById(\'friendProfileOv\').remove()">Закрыть</button>';
+    }
+    function esc(s){ return String(s == null ? '' : s).replace(/</g,'&lt;'); }
+  };
+
+  function v7boot(){
+    try { injectAvatarCard(); } catch(e){}
+    try {
+      if (typeof window.updateCabinetUI === 'function' && !window.updateCabinetUI._avaHook) {
+        var _u = window.updateCabinetUI;
+        window.updateCabinetUI = function(){ _u(); try { paintMyAvatar(); paintAvatars(); } catch(e){} };
+        window.updateCabinetUI._avaHook = true;
+      }
+    } catch(e){}
+    try { paintMyAvatar(); } catch(e){}
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', v7boot);
+  else v7boot();
+})();
+</script>
 </body>
 </html>
 <div id="page-help" class="page-section hidden">
@@ -9805,7 +10046,8 @@ document.addEventListener('DOMContentLoaded', function() {
     try {
       var r = await fetch(API + '/api/friends?username=' + encodeURIComponent(me()));
       var d = await r.json();
-      if (!d.ok) return;
+      d = unionFriends(d.ok ? d : null);
+      if (!d) return;
       var fl = document.getElementById('friendList');
       if (fl) fl.innerHTML = d.friends.length ? d.friends.map(function(f){
         return '<div class="friend-row"><span class="dot ' + (f.online ? 'on' : 'off') + '"></span><b style="flex:1;">' + esc(f.nick) + '</b>'
@@ -9877,7 +10119,8 @@ document.addEventListener('DOMContentLoaded', function() {
     try {
       var r = await fetch(API + '/api/friends?username=' + encodeURIComponent(me()));
       var d = await r.json();
-      var fr = (d.ok ? d.friends : []) || [];
+      d = unionFriends(d.ok ? d : null) || { friends: [] };
+      var fr = d.friends || [];
       box.innerHTML = fr.length ? fr.map(function(f){
         return '<div class="msg-peer' + (curPeer === f.nick ? ' active' : '') + '" onclick="openChatWith(\'' + esc(f.nick) + '\')">'
           + '<span class="dot ' + (f.online ? 'on' : 'off') + '" style="display:inline-block;margin-right:8px;"></span>' + esc(f.nick) + '</div>';
@@ -9891,14 +10134,27 @@ document.addEventListener('DOMContentLoaded', function() {
     try {
       var r = await fetch(API + '/api/messages?u1=' + encodeURIComponent(me()) + '&u2=' + encodeURIComponent(curPeer));
       var d = await r.json();
-      var msgs = (d.ok ? d.messages : []) || [];
+      var msgs = unionMsgs(curPeer, (d.ok ? d.messages : []) || []);
       box.innerHTML = msgs.length ? msgs.map(function(m){
         var mine = m.from === me();
         return '<div class="msg-meta" style="text-align:' + (mine ? 'right' : 'left') + ';">' + esc(mine ? 'ты' : m.from) + '</div>'
           + '<div class="msg-bubble ' + (mine ? 'msg-out' : 'msg-in') + '">' + esc(m.text) + '</div>';
       }).join('') : '<p style="color:#949aab;">Пока пусто. Напиши первым!</p>';
       box.scrollTop = box.scrollHeight;
-    } catch(e){ if (!silent) showToast('Сеть недоступна', 'error'); }
+    } catch(e){
+      try {
+        var cached = unionMsgs(curPeer, []);
+        if (cached.length) {
+          box.innerHTML = cached.map(function(m){
+            var mine = m.from === me();
+            return '<div class="msg-meta" style="text-align:' + (mine ? 'right' : 'left') + ';">' + esc(mine ? 'ты' : m.from) + '</div>'
+              + '<div class="msg-bubble ' + (mine ? 'msg-out' : 'msg-in') + '">' + esc(m.text) + '</div>';
+          }).join('');
+          box.scrollTop = box.scrollHeight;
+        }
+      } catch(_){}
+      if (!silent) showToast('Сеть недоступна', 'error');
+    }
   };
   window.sendMsg = async function(){
     var el = document.getElementById('msgTextInput');
@@ -9909,9 +10165,14 @@ document.addEventListener('DOMContentLoaded', function() {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ from: me(), to: curPeer, text: text }) });
       var d = await r.json();
-      if (d.ok) { el.value = ''; loadDialog(); }
+      if (d.ok) { el.value = ''; cacheMsg(curPeer, me(), el.value || text); loadDialog(); }
       else showToast(d.error || 'Ошибка', 'error');
-    } catch(e) { showToast('Сеть недоступна', 'error'); }
+    } catch(e) {
+      cacheMsg(curPeer, me(), text);
+      el.value = '';
+      loadDialog();
+      showToast('Нет сети — сохранено локально', 'error');
+    }
   };
 
   // ---- avatar (steve head from skin) ----
