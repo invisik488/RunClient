@@ -25,9 +25,7 @@ app.post('/api/search', async (req, res) => {
       'SELECT id, username, role FROM users WHERE LOWER(username) = $1',
       [cleanSearch]
     );
-    if (result.rows.length > 0) {
-      return res.json({ success: true, user: result.rows[0] });
-    }
+    if (result.rows.length > 0) return res.json({ success: true, user: result.rows[0] });
     return res.status(404).json({ success: false, message: "Пользователь не найден" });
   } catch (err) {
     console.error(err);
@@ -78,7 +76,6 @@ app.post('/api/users/:id/subscription', async (req, res) => {
 // ===== СТАТИКА (ПОСЛЕ API) =====
 app.use(express.static(__dirname));
 
-// Fallback только на GET, чтобы не перехватывать POST к API
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
