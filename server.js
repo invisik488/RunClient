@@ -8,19 +8,26 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// ===== БАЗА ДАННЫХ =====
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
 
-// 1. Поиск
+// ===== API ЭНДПОИНТЫ =====
+
 app.post('/api/search', async (req, res) => {
   const rawInput = req.body.username || req.body.nickname || "";
   const cleanSearch = String(rawInput).trim().toLowerCase();
   if (!cleanSearch) return res.status(400).json({ success: false, message: "Введите ник" });
   try {
-    const result = await pool.query('SELECT id, username, role FROM users WHERE LOWER(username) = $1', [cleanSearch]);
-    if (result.rows.length > 0) return res.json({ success: true, user: result.rows[0] });
+    const result = await pool.query(
+      'SELECT id, username, role FROM users WHERE LOWER(username) = $1',
+      [cleanSearch]
+    );
+    if (result.rows.length > 0) {
+      return res.json({ success: true, user: result.rows[0] });
+    }
     return res.status(404).json({ success: false, message: "Пользователь не найден" });
   } catch (err) {
     console.error(err);
@@ -28,7 +35,6 @@ app.post('/api/search', async (req, res) => {
   }
 });
 
-// 2. Все пользователи
 app.get('/api/users', async (req, res) => {
   try {
     const result = await pool.query('SELECT id, username, role FROM users ORDER BY id');
@@ -39,7 +45,6 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
-// 3. Выдать роль
 app.post('/api/users/:id/role', async (req, res) => {
   const { id } = req.params;
   const { role } = req.body;
@@ -52,7 +57,6 @@ app.post('/api/users/:id/role', async (req, res) => {
   }
 });
 
-// 4. Выдать подписку
 app.post('/api/users/:id/subscription', async (req, res) => {
   const { id } = req.params;
   const { subscription } = req.body;
@@ -74,7 +78,7 @@ app.post('/api/users/:id/subscription', async (req, res) => {
 // ===== СТАТИКА (ПОСЛЕ API) =====
 app.use(express.static(__dirname));
 
-// Fallback: любой другой путь → index.html
+// Fallback только на GET, чтобы не перехватывать POST к API
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
