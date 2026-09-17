@@ -8,34 +8,27 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ===== БАЗА ДАННЫХ =====
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
 
-// ===== API ЭНДПОИНТЫ =====
-
+// 1. Поиск
 app.post('/api/search', async (req, res) => {
   const rawInput = req.body.username || req.body.nickname || "";
   const cleanSearch = String(rawInput).trim().toLowerCase();
   if (!cleanSearch) return res.status(400).json({ success: false, message: "Введите ник" });
   try {
-    const result = await pool.query(
-      'SELECT id, username, role FROM users WHERE LOWER(username) = $1',
-      [cleanSearch]
-    );
-    if (result.rows.length > 0) {
-      return res.json({ success: true, user: result.rows[0] });
-    } else {
-      return res.status(404).json({ success: false, message: "Пользователь не найден" });
-    }
+    const result = await pool.query('SELECT id, username, role FROM users WHERE LOWER(username) = $1', [cleanSearch]);
+    if (result.rows.length > 0) return res.json({ success: true, user: result.rows[0] });
+    return res.status(404).json({ success: false, message: "Пользователь не найден" });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ success: false, message: "Ошибка базы данных" });
   }
 });
 
+// 2. Все пользователи
 app.get('/api/users', async (req, res) => {
   try {
     const result = await pool.query('SELECT id, username, role FROM users ORDER BY id');
@@ -46,18 +39,20 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
+// 3. Выдать роль
 app.post('/api/users/:id/role', async (req, res) => {
   const { id } = req.params;
   const { role } = req.body;
   try {
     await pool.query('UPDATE users SET role = $1 WHERE id = $2', [role, id]);
-    res.json({ success: true, message: `Роль ${role} выдана пользователю ${id}` });
+    res.json({ success: true, message: `Роль ${role} выдана` });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Ошибка базы данных' });
   }
 });
 
+// 4. Выдать подписку
 app.post('/api/users/:id/subscription', async (req, res) => {
   const { id } = req.params;
   const { subscription } = req.body;
