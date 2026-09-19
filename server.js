@@ -18,24 +18,43 @@ const pool = new Pool({
 async function ensureOwnerUser() {
   const username = 'Boomba';
   const role = 'Owner';
+  const subscription = 'lifetime';
 
-  const existing = await pool.query(
-    'SELECT id FROM users WHERE LOWER(username) = LOWER($1) LIMIT 1',
-    [username]
-  );
-
-  if (existing.rows.length > 0) {
-    await pool.query(
-      'UPDATE users SET username = $1, role = $2 WHERE id = $3',
-      [username, role, existing.rows[0].id]
+  try {
+    const existing = await pool.query(
+      'SELECT id FROM users WHERE LOWER(username) = LOWER($1) LIMIT 1',
+      [username]
     );
-    return;
-  }
 
-  await pool.query(
-    'INSERT INTO users (username, role) VALUES ($1, $2)',
-    [username, role]
-  );
+    if (existing.rows.length > 0) {
+      await pool.query(
+        'UPDATE users SET username = $1, role = $2, subscription = $3 WHERE id = $4',
+        [username, role, subscription, existing.rows[0].id]
+      );
+      return;
+    }
+
+    const columns = await pool.query(
+      "SELECT column_name FROM information_schema.columns WHERE table_name = 'users'"
+    );
+    const hasRole = columns.rows.some(c => c.column_name === 'role');
+    const hasSubscription = columns.rows.some(c => c.column_name === 'subscription');
+
+    if (!hasRole) {
+      await pool.query('ALTER TABLE users ADD COLUMN role TEXT DEFAULT  \'' + 'User' + '\'');
+    }
+    if (!hasSubscription) {
+      await pool.query("ALTER TABLE users ADD COLUMN subscription TEXT DEFAULT 'free'");
+    }
+
+    await pool.query(
+      'INSERT INTO users (username, role, subscription) VALUES ($1, $2, $3)',
+      [username, role, subscription]
+    );
+  } catch (err) {
+    console.error('ensureOwnerUser error:', err);
+    throw err;
+  }
 }
 
 // ===== API ЭНДПОИНТЫ =====
@@ -46,7 +65,7 @@ app.post('/api/search', async (req, res) => {
   if (!cleanSearch) return res.status(400).json({ success: false, message: "Введите ник" });
   try {
     const result = await pool.query(
-      'SELECT id, username, role FROM users WHERE LOWER(username) = $1',
+      'SELECT id, username, role, subscription FROM users WHERE LOWER(username) = $1',
       [cleanSearch]
     );
     if (result.rows.length > 0) return res.json({ success: true, user: result.rows[0] });
@@ -59,7 +78,7 @@ app.post('/api/search', async (req, res) => {
 
 app.get('/api/users', async (req, res) => {
   try {
-    const result = await pool.query('SELECT id, username, role FROM users ORDER BY id');
+    const result = await pool.query('SELECT id, username, role, subscription FROM users ORDER BY id');
     res.json(result.rows);
   } catch (err) {
     console.error(err);
