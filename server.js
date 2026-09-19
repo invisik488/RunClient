@@ -14,6 +14,30 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
+// Гарантируем, что владелец проекта всегда имеет максимальную роль.
+async function ensureOwnerUser() {
+  const username = 'Boomba';
+  const role = 'Owner';
+
+  const existing = await pool.query(
+    'SELECT id FROM users WHERE LOWER(username) = LOWER($1) LIMIT 1',
+    [username]
+  );
+
+  if (existing.rows.length > 0) {
+    await pool.query(
+      'UPDATE users SET username = $1, role = $2 WHERE id = $3',
+      [username, role, existing.rows[0].id]
+    );
+    return;
+  }
+
+  await pool.query(
+    'INSERT INTO users (username, role) VALUES ($1, $2)',
+    [username, role]
+  );
+}
+
 // ===== API ЭНДПОИНТЫ =====
 
 app.post('/api/search', async (req, res) => {
@@ -80,6 +104,12 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
+  try {
+    await ensureOwnerUser();
+    console.log('Пользователь Boomba назначен Owner.');
+  } catch (err) {
+    console.error('Не удалось создать или обновить пользователя Boomba:', err);
+  }
   console.log(`Сервер запущен на порту ${PORT}`);
 });
