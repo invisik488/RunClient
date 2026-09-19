@@ -41,7 +41,7 @@ async function ensureOwnerUser() {
     const hasSubscription = columns.rows.some(c => c.column_name === 'subscription');
 
     if (!hasRole) {
-      await pool.query('ALTER TABLE users ADD COLUMN role TEXT DEFAULT  \'' + 'User' + '\'');
+      await pool.query("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'User'");
     }
     if (!hasSubscription) {
       await pool.query("ALTER TABLE users ADD COLUMN subscription TEXT DEFAULT 'free'");
@@ -116,8 +116,17 @@ app.post('/api/users/:id/subscription', async (req, res) => {
   }
 });
 
-// ===== СТАТИКА (ПОСЛЕ API) =====
+// ===== СТАТИКА =====
 app.use(express.static(__dirname));
+
+// Явный маршрут для отдельного кабинета с рабочей админ-панелью.
+app.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dashboard.html'));
+});
+
+app.get('/dashboard.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dashboard.html'));
+});
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
