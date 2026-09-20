@@ -27,26 +27,27 @@ async function ensureOwnerUser() {
   );
   if (result.rows.length) {
     await pool.query(
-      "UPDATE users SET username = 'Boomba', role = 'Owner', subscription = 'lifetime' WHERE id = $1",
+      "UPDATE users SET username = 'Boomba', role = 'Owner+', subscription = 'lifetime', discount = 0 WHERE id = $1",
       [result.rows[0].id]
     );
   } else {
     await pool.query(
-      "INSERT INTO users (username, role, subscription, discount) VALUES ('Boomba', 'Owner', 'lifetime', 0)"
+      "INSERT INTO users (username, role, subscription, discount) VALUES ('Boomba', 'Owner+', 'lifetime', 0)"
     );
   }
 }
 
-async function requireOwner(req, res, next) {
+async function requireBoomba(req, res, next) {
   try {
     const username = String(req.get('x-admin-user') || '').trim().toLowerCase();
-    if (!username) return res.status(401).json({ error: 'Требуется авторизация владельца' });
+    if (username !== 'boomba') {
+      return res.status(403).json({ error: 'Эта панель доступна только Boomba' });
+    }
     const result = await pool.query(
-      "SELECT role FROM users WHERE LOWER(username) = $1 LIMIT 1",
-      [username]
+      "SELECT role FROM users WHERE LOWER(username) = 'boomba' LIMIT 1"
     );
-    if (!result.rows.length || String(result.rows[0].role).toLowerCase() !== 'owner') {
-      return res.status(403).json({ error: 'Только Owner может выполнить это действие' });
+    if (!result.rows.length || String(result.rows[0].role).toLowerCase() !== 'owner+') {
+      return res.status(403).json({ error: 'У пользователя нет роли Owner+' });
     }
     next();
   } catch (err) {
@@ -71,67 +72,44 @@ app.post('/api/search', async (req, res) => {
   }
 });
 
-app.get('/api/users', requireOwner, async (req, res) => {
-  try {
-    const result = await pool.query(
-      'SELECT id, username, role, subscription, discount, access_key FROM users ORDER BY id'
-    );
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Ошибка базы данных' });
-  }
+app.get('/api/users', requireBoomba, async (req, res) => {
+  const result = await pool.query('SELECT id, username, role, subscription, discount, access_key FROM users ORDER BY id');
+  res.json(result.rows);
 });
 
-app.post('/api/users/:id/role', requireOwner, async (req, res) => {
-  const role = String(req.body.role || 'User').trim();
-  try {
-    const result = await pool.query('UPDATE users SET role = $1 WHERE id = $2 RETURNING id, username, role', [role, req.params.id]);
-    if (!result.rows.length) return res.status(404).json({ error: 'Пользователь не найден' });
-    res.json({ success: true, user: result.rows[0] });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Ошибка базы данных' });
-  }
-});
-
-app.put('/api/users/:id/subscription', requireOwner, async (req, res) => {
+app.put('/api/users/:id/subscription', requireBoomba, async (req, res) => {
   const subscription = String(req.body.subscription || 'free').trim();
-  try {
-    const result = await pool.query('UPDATE users SET subscription = $1 WHERE id = $2 RETURNING id, username, subscription', [subscription, req.params.id]);
-    if (!result.rows.length) return res.status(404).json({ error: 'Пользователь не найден' });
-    res.json({ success: true, user: result.rows[0] });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Ошибка базы данных' });
-  }
+  const result = await pool.query(
+    'UPDATE users SET subscription = $1 WHERE id = $2 RETURNING id, username, subscription',
+    [subscription, req.params.id]
+  );
+  if (!result.rows.length) return res.status(404).json({ error: 'Пользователь не найден' });
+  res.json({ success: true, user: result.rows[0] });
 });
 
-app.delete('/api/users/:id/subscription', requireOwner, async (req, res) => {
-  try {
-    const result = await pool.query("UPDATE users SET subscription = 'free', access_key = NULL WHERE id = $1 RETURNING id, username, subscription", [req.params.id]);
-    if (!result.rows.length) return res.status(404).json({ error: 'Пользователь не найден' });
-    res.json({ success: true, user: result.rows[0] });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Ошибка базы данных' });
-  }
+app.delete('/api/users/:id/subscription', requireBoomba, async (req, res) => {
+  const result = await pool.query(
+    "UPDATE users SET subscription = 'free', access_key = NULL WHERE id = $1 RETURNING id, username, subscription",
+    [req.params.id]
+  );
+  if (!result.rows.length) return res.status(404).json({ error: 'Пользователь не найден' });
+  res.json({ success: true, user: result.rows[0] });
 });
 
-app.put('/api/users/:id/discount', requireOwner, async (req, res) => {
-  const discount = Math.max(0, Math.min(100, Number(req.body.discount)));
-  if (!Number.isFinite(discount)) return res.status(400).json({ error: 'Скидка должна быть числом от 0 до 100' });
-  try {
-    const result = await pool.query('UPDATE users SET discount = $1 WHERE id = $2 RETURNING id, username, discount', [discount, req.params.id]);
-    if (!result.rows.length) return res.status(404).json({ error: 'Пользователь не найден' });
-    res.json({ success: true, user: result.rows[0] });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Ошибка базы данных' });
+app.put('/api/users/:id/discount', requireBoomba, async (req, res) => {
+  const discount = Number(req.body.discount);
+  if (!Number.isInteger(discount) || discount < 0 || discount > 100) {
+    return res.status(400).json({ error: 'Скидка должна быть целым числом от 0 до 100' });
   }
+  const result = await pool.query(
+    'UPDATE users SET discount = $1 WHERE id = $2 RETURNING id, username, discount',
+    [discount, req.params.id]
+  );
+  if (!result.rows.length) return res.status(404).json({ error: 'Пользователь не найден' });
+  res.json({ success: true, user: result.rows[0] });
 });
 
-app.post('/api/keys', requireOwner, async (req, res) => {
+app.post('/api/keys', requireBoomba, async (req, res) => {
   const count = Math.max(1, Math.min(100, Number(req.body.count) || 1));
   const keys = Array.from({ length: count }, () => `RUN-${crypto.randomBytes(6).toString('hex').toUpperCase()}`);
   res.json({ success: true, keys });
@@ -145,7 +123,7 @@ app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 app.listen(PORT, async () => {
   try {
     await ensureOwnerUser();
-    console.log('Boomba назначен Owner.');
+    console.log('Boomba назначен Owner+.');
   } catch (err) {
     console.error('Не удалось подготовить базу:', err);
   }
