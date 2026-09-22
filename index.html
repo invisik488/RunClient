@@ -10988,5 +10988,537 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('✅ FINAL FIX активен: API =', API);
 })();
 </script>
+<script>
+// ============================================================
+// МЕГА-ФИКС: всё сразу — 13 пунктов
+// Вставить ПЕРЕД </body>, ПОСЛЕ всех остальных скриптов
+// ============================================================
+(function(){
+  'use strict';
+  const API = 'https://cheat-backend.vercel.app';
+
+  // ---------- УТИЛИТЫ ----------
+  function u(){ return (currentUser || '').toLowerCase(); }
+  function db(){ return (typeof registeredUsers === 'object' && registeredUsers) ? registeredUsers : (window.registeredUsers = {}); }
+  function save(){ try { localStorage.setItem('runclient_users', JSON.stringify(db())); } catch(e){} }
+  function toast(m, t){ if (typeof showToast === 'function') showToast(m, t || 'success'); }
+  function esc(s){ return String(s == null ? '' : s).replace(/</g,'&lt;'); }
+
+  async function apiPost(path, body){
+    try {
+      const r = await fetch(API + path, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body || {}) });
+      return await r.json();
+    } catch(e){ return { ok:false, error:'Сеть недоступна' }; }
+  }
+  async function apiGet(path){
+    try { const r = await fetch(API + path); return await r.json(); } catch(e){ return { ok:false }; }
+  }
+  async function syncAll(){
+    try {
+      const list = [];
+      for (const k in db()) {
+        const x = db()[k]; if (!x || !x.password) continue;
+        let st = null;
+        if (x.sub === 'Навсегда') st = 'forever';
+        else if (x.sub && x.sub !== 'Нет') st = x.sub;
+        list.push({ username:k, password:x.password, nickname:k,
+          role:(k==='invisik'||k==='inv1ze')?'owner':(x.role||'user'),
+          subscription_type:st, subscription_expires:null,
+          email:x.email||null, balance:x.balance||0 });
+      }
+      if (list.length) await apiPost('/api/sync', { users:list });
+    } catch(e){}
+  }
+  setTimeout(syncAll, 2500);
+
+  // ---------- 9. ВОЗВРАТ БЛОКА СОЗДАНИЯ КЛЮЧЕЙ ----------
+  // Вставляем в cab-keys полноценный генератор
+  setTimeout(function(){
+    const keysTab = document.getElementById('cab-keys');
+    if (!keysTab) return;
+    // Если блока генерации нет — создаём
+    if (!document.getElementById('keyGenCard')) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.id = 'keyGenCard';
+      card.style.display = 'none';
+      card.innerHTML = `
+        <div style="font-size:.7rem;color:#949aab;font-weight:800;text-transform:uppercase;margin-bottom:16px;letter-spacing:.5px;">🎫 Генерация ключей</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+          <div><label style="font-size:.7rem;color:#949aab;">Тип подписки</label>
+          <select id="genSubDuration" class="form-select">
+            <option value="7д">7д</option><option value="30д">30д</option>
+            <option value="90д">90д</option><option value="Навсегда">Навсегда</option>
+          </select></div>
+          <div style="display:flex;align-items:flex-end;"><button class="action-btn green" onclick="generateSubKey()">Сгенерировать ключ</button></div>
+        </div>
+        <div style="margin-bottom:12px;"><button class="action-btn yellow" onclick="generateHWIDKey()">Сгенерировать HWID-ключ</button></div>
+        <div style="margin-bottom:12px;">
+          <label style="font-size:.7rem;color:#949aab;">Роль для спец ключа</label>
+          <select id="specialRoleSelect" class="form-select">
+            <option value="moder">Moder</option><option value="admin">Admin</option>
+            <option value="owner">Owner</option><option value="media">Media</option>
+          </select>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="font-size:.7rem;color:#949aab;">Кол-во использований</label>
+          <input type="number" id="specialUsesInput" class="form-input" value="1" min="1">
+        </div>
+        <button class="action-btn yellow" onclick="generateSpecialKey()">Сгенерировать спец-ключ</button>
+        <div id="generatedKeyOutput" style="margin-top:12px;"></div>
+      `;
+      keysTab.appendChild(card);
+    }
+    // Показываем генерацию owner/admin/media
+    function updateKeyGen(){
+      const c = document.getElementById('keyGenCard');
+      if (!c) return;
+      if (!currentUser) { c.style.display='none'; return; }
+      const role = (db()[u()] || {}).role || 'user';
+      const can = ['owner','admin','media'].includes(role);
+      c.style.display = can ? '' : 'none';
+    }
+    updateKeyGen();
+    const origUpdate = window.updateCabinetUI;
+    if (origUpdate && !origUpdate._kgHook) {
+      window.updateCabinetUI = function(){ origUpdate(); updateKeyGen(); };
+      window.updateCabinetUI._kgHook = true;
+    }
+  }, 1500);
+
+  // Генераторы ключей — с записью на бэкенд + локально
+  window.generateSubKey = async function(){
+    if (!currentUser) return toast('Войдите!','error');
+    const role = (db()[u()] || {}).role;
+    if (!['owner','admin','media'].includes(role)) return toast('Доступ запрещён','error');
+    const duration = document.getElementById('genSubDuration').value;
+    const days = duration === 'Навсегда' ? 9999 : parseInt(duration) || 30;
+    const stype = duration === 'Навсегда' ? 'forever' : duration;
+    let key;
+    try {
+      const d = await apiPost('/api/admin/generate-key', { subscription_type:stype, days:days, count:1 });
+      key = d && d.ok && d.keys ? d.keys[0] : null;
+    } catch(e){}
+    if (!key) key = 'RUN-SUB-' + Math.random().toString(36).substring(2,8).toUpperCase();
+    const ak = JSON.parse(localStorage.getItem('runclient_keys') || '{}');
+    ak[key] = { duration: duration, used: false, type: 'sub' };
+    localStorage.setItem('runclient_keys', JSON.stringify(ak));
+    if (typeof activeKeysDB !== 'undefined') activeKeysDB[key] = ak[key];
+    document.getElementById('generatedKeyOutput').innerHTML =
+      '<div style="background:rgba(0,0,0,.4);padding:10px;border-radius:8px;margin-top:8px;">Ключ подписки ('+duration+'): <code style="color:#fff;">'+key+'</code> <button class="mini-btn" onclick="navigator.clipboard.writeText(\''+key+'\')">Копировать</button></div>';
+    toast('Ключ создан!','success');
+  };
+
+  window.generateHWIDKey = async function(){
+    if (!currentUser) return toast('Войдите!','error');
+    const role = (db()[u()] || {}).role;
+    if (!['owner','admin','media'].includes(role)) return toast('Доступ запрещён','error');
+    let key;
+    try {
+      const d = await apiPost('/api/admin/generate-key', { subscription_type:'hwid', days:0, count:1 });
+      key = d && d.ok && d.keys ? d.keys[0] : null;
+    } catch(e){}
+    if (!key) key = 'RUN-HWID-' + Math.random().toString(36).substring(2,8).toUpperCase();
+    const ak = JSON.parse(localStorage.getItem('runclient_keys') || '{}');
+    ak[key] = { type: 'hwid', used: false };
+    localStorage.setItem('runclient_keys', JSON.stringify(ak));
+    if (typeof activeKeysDB !== 'undefined') activeKeysDB[key] = ak[key];
+    document.getElementById('generatedKeyOutput').innerHTML =
+      '<div style="background:rgba(0,0,0,.4);padding:10px;border-radius:8px;margin-top:8px;">HWID-ключ: <code style="color:#fff;">'+key+'</code> <button class="mini-btn" onclick="navigator.clipboard.writeText(\''+key+'\')">Копировать</button></div>';
+    toast('HWID-ключ создан!','success');
+  };
+
+  window.generateSpecialKey = async function(){
+    if (!currentUser) return toast('Войдите!','error');
+    const role = (db()[u()] || {}).role;
+    if (!['owner','admin'].includes(role)) return toast('Доступ запрещён','error');
+    const r = document.getElementById('specialRoleSelect').value;
+    const uses = parseInt(document.getElementById('specialUsesInput').value) || 1;
+    let key;
+    try {
+      const d = await apiPost('/api/admin/generate-special', { role:r, uses:uses });
+      key = d && d.ok && d.keys ? d.keys[0] : null;
+    } catch(e){}
+    if (!key) key = 'RUN-SPECIAL-' + Math.random().toString(36).substring(2,8).toUpperCase();
+    const sk = JSON.parse(localStorage.getItem('runclient_special_keys') || '{}');
+    sk[key] = { role:r, maxUses:uses, used:0 };
+    localStorage.setItem('runclient_special_keys', JSON.stringify(sk));
+    if (typeof specialKeysDB !== 'undefined') specialKeysDB[key] = sk[key];
+    document.getElementById('generatedKeyOutput').innerHTML =
+      '<div style="background:rgba(0,0,0,.4);padding:10px;border-radius:8px;margin-top:8px;">Спец-ключ ('+r+', '+uses+' исп.): <code style="color:#fff;">'+key+'</code> <button class="mini-btn" onclick="navigator.clipboard.writeText(\''+key+'\')">Копировать</button></div>';
+    toast('Спец-ключ создан!','success');
+  };
+
+  // ---------- 7 + 8. АКТИВАЦИЯ КЛЮЧЕЙ ЧЕРЕЗ API ----------
+  window.activateSubKey = async function(){
+    const inp = document.getElementById('subKeyInput');
+    if (!inp) return;
+    const key = (inp.value||'').trim().toUpperCase();
+    if (!key) return toast('Введите ключ!','error');
+    if (!currentUser) return toast('Войдите!','error');
+    const user = db()[u()];
+    if (!user) return;
+
+    // 1) Локальные purchase keys
+    const pk = JSON.parse(localStorage.getItem('runclient_purchase_keys') || '{}');
+    if (pk[key]) {
+      const p = pk[key];
+      if (p.used) return toast('Ключ уже использован','error');
+      if (p.expires && Date.now() > p.expires) return toast('Ключ истёк','error');
+      p.used = true;
+      localStorage.setItem('runclient_purchase_keys', JSON.stringify(pk));
+      return toast('Ключ применён!','success');
+    }
+    // 2) Локальные sub keys
+    const ak = JSON.parse(localStorage.getItem('runclient_keys') || '{}');
+    if (ak[key] && ak[key].type !== 'hwid') {
+      const d = ak[key];
+      if (d.used) return toast('Ключ уже использован','error');
+      if (d.expires && Date.now() > d.expires) return toast('Ключ истёк','error');
+      d.used = true;
+      user.sub = d.duration || '30д';
+      localStorage.setItem('runclient_keys', JSON.stringify(ak));
+      save();
+      if (typeof updateCabinetUI === 'function') updateCabinetUI();
+      inp.value = '';
+      toast('Подписка '+user.sub+' активирована!','success');
+      syncAll();
+      return;
+    }
+    // 3) API
+    const res = await apiPost('/api/activate-key', { username: u(), key: key });
+    if (res && res.ok) {
+      if (res.subscription) user.sub = res.subscription.type === 'forever' ? 'Навсегда' : res.subscription.type;
+      save();
+      if (typeof updateCabinetUI === 'function') updateCabinetUI();
+      inp.value = '';
+      toast(res.message || 'Подписка активирована!','success');
+      syncAll();
+    } else {
+      toast((res && res.error) || 'Неверный ключ','error');
+    }
+  };
+
+  window.activateSpecialKey = function(){
+    if (!currentUser) return toast('Войдите!','error');
+    const inp = document.getElementById('specialKeyInput');
+    const key = ((inp&&inp.value)||'').trim().toUpperCase();
+    if (!key) return toast('Введите ключ!','error');
+    const sk = JSON.parse(localStorage.getItem('runclient_special_keys') || '{}');
+    const d = sk[key];
+    if (!d) return toast('Неверный спец-ключ','error');
+    if (d.used >= d.maxUses) return toast('Лимит использований','error');
+    if (d.expires && Date.now() > d.expires) return toast('Ключ истёк','error');
+    d.used++;
+    localStorage.setItem('runclient_special_keys', JSON.stringify(sk));
+    const user = db()[u()];
+    user.role = d.role;
+    save();
+    if (typeof updateCabinetUI === 'function') updateCabinetUI();
+    inp.value = '';
+    toast('Роль '+d.role+' выдана!','success');
+    syncAll();
+  };
+
+  window.activateHWIDKey = async function(){
+    if (!currentUser) return toast('Войдите!','error');
+    const inp = document.getElementById('hwidKeyInput');
+    const key = ((inp&&inp.value)||'').trim().toUpperCase();
+    if (!key) return toast('Введите ключ!','error');
+    const res = await apiPost('/api/activate-hwid', { username:u(), key:key });
+    if (res && res.ok) {
+      if (inp) inp.value = '';
+      return toast(res.message || 'HWID сброшен!','success');
+    }
+    const ak = JSON.parse(localStorage.getItem('runclient_keys') || '{}');
+    if (ak[key] && ak[key].type === 'hwid' && !ak[key].used) {
+      ak[key].used = true;
+      localStorage.setItem('runclient_keys', JSON.stringify(ak));
+      if (inp) inp.value = '';
+      return toast('HWID сброшен (локально)','success');
+    }
+    toast((res && res.error) || 'Неверный HWID-ключ','error');
+  };
+
+  // ---------- 2. РЕАЛЬНАЯ ПРИВЯЗКА HWID ----------
+  function getHWID(){
+    try {
+      let hwid = localStorage.getItem('runclient_hwid');
+      if (!hwid) {
+        // Генерируем псевдо-HWID из браузера
+        const parts = [
+          navigator.userAgent, navigator.language,
+          screen.width + 'x' + screen.height,
+          screen.colorDepth, new Date().getTimezoneOffset(),
+          navigator.hardwareConcurrency || 0
+        ].join('|');
+        let hash = 0;
+        for (let i=0; i<parts.length; i++){ hash = ((hash<<5)-hash) + parts.charCodeAt(i); hash |= 0; }
+        hwid = 'HW-' + Math.abs(hash).toString(16).toUpperCase();
+        localStorage.setItem('runclient_hwid', hwid);
+      }
+      return hwid;
+    } catch(e){ return 'HW-UNKNOWN'; }
+  }
+  window._getHWID = getHWID;
+
+  // Обновляем HWID пользователя в кабинете + сохраняем
+  const origCab2 = window.updateCabinetUI;
+  if (origCab2 && !origCab2._hwidHook) {
+    window.updateCabinetUI = function(){
+      origCab2();
+      if (!currentUser) return;
+      const user = db()[u()]; if (!user) return;
+      const hwid = getHWID();
+      user.hwid = hwid;
+      save();
+      // Показываем в кабинете
+      const boxes = document.querySelectorAll('[id*="hwid"], [class*="hwid"]');
+      boxes.forEach(function(el){
+        if (el.tagName === 'INPUT') el.value = hwid;
+        else if (!el.innerHTML || el.innerHTML.indexOf('HW-') === -1) el.innerText = hwid;
+      });
+      // Отправляем на бэкенд
+      apiPost('/api/hwid', { username:u(), hwid:hwid });
+    };
+    origCab2._hwidHook = true;
+  }
+
+  // ---------- 11. СМЕНА ПАРОЛЯ С СИНКОМ API ----------
+  window.changeUserPassword = async function(){
+    if (!currentUser) return;
+    const np = (document.getElementById('newPasswordInput').value||'').trim();
+    if (!np || np.length < 3) return toast('Пароль минимум 3 символа!','error');
+    const user = db()[u()]; if (!user) return;
+    user.password = np;
+    save();
+    document.getElementById('newPasswordInput').value = '';
+    if (typeof updateCabinetUI === 'function') updateCabinetUI();
+    toast('Пароль изменён! Синхронизирую с сервером...','success');
+    await syncAll();
+    const check = await apiPost('/api/login', { username:u(), password:np });
+    if (check && check.ok) toast('Сервер подтвердил новый пароль ✓','success');
+    else toast('Сервер не принял пароль, попробуй позже','error');
+  };
+
+  // ---------- 3. УДАЛИТЬ ВКЛАДКУ СКРИПТОВ ----------
+  setTimeout(function(){
+    const navScripts = document.getElementById('nav-scripts');
+    if (navScripts) navScripts.parentElement.remove();
+    const pageScripts = document.getElementById('page-scripts');
+    if (pageScripts) pageScripts.remove();
+  }, 1000);
+
+  // ---------- 4. ОБЪЕДИНИТЬ FAQ + ПОМОЩЬ → «ВОПРОСЫ» ----------
+  setTimeout(function(){
+    // Скрываем старые кнопки
+    const navFaq = document.getElementById('nav-faq');
+    const navHelp = document.getElementById('nav-help');
+    if (navFaq) navFaq.style.display = 'none';
+    if (navHelp) navHelp.style.display = 'none';
+    // Создаём новую «Вопросы»
+    const navLinks = document.querySelector('.nav-links');
+    if (navLinks && !document.getElementById('nav-questions')) {
+      const li = document.createElement('li');
+      li.innerHTML = '<a class="nav-link" id="nav-questions" onclick="navigateTo(\'questions\')">Вопросы</a>';
+      navLinks.appendChild(li);
+    }
+    // Создаём страницу
+    if (!document.getElementById('page-questions')) {
+      const pg = document.createElement('div');
+      pg.id = 'page-questions';
+      pg.className = 'page-section hidden';
+      pg.innerHTML = `
+        <div class="hero"><div class="section-kicker">FAQ</div><h1>Частые <span>вопросы</span></h1></div>
+        <div class="faq-accordion">
+          <details open><summary>Какая версия поддерживается?</summary><div class="faq-a">RunClient для Minecraft 1.21.4 Fabric.</div></details>
+          <details><summary>Как запустить клиент?</summary><div class="faq-a">Скачай лоадер в кабинете, запусти, войди под аккаунтом.</div></details>
+          <details><summary>Что делать при смене ПК (HWID)?</summary><div class="faq-a">Оформи заявку на сброс HWID за 139 ₽ в «Тарифах» или активируй HWID-ключ.</div></details>
+          <details><summary>Как установить RunClient?</summary><div class="faq-a">1. Скачай лоадер. 2. Java 17+. 3. Запусти и выбери версию MC.</div></details>
+          <details><summary>Какие требования?</summary><div class="faq-a">Windows 10/11, 4+ GB RAM, Java 17+, интернет.</div></details>
+          <details><summary>Работает ли на пиратке?</summary><div class="faq-a">Да, совместим с лицензией и офлайн-режимом.</div></details>
+        </div>`;
+      const cab = document.getElementById('page-cabinet');
+      if (cab) cab.parentNode.insertBefore(pg, cab);
+      else document.body.appendChild(pg);
+    }
+  }, 1500);
+
+  // ---------- 5. ЖИДКОЕ СТЕКЛО ВМЕСТО БЕЛОЙ ТЕМЫ ----------
+  const glassCSS = document.createElement('style');
+  glassCSS.innerHTML = `
+    .light-theme, body.light-theme {
+      background: linear-gradient(135deg,#1a0b2e,#2d1b4e,#0f0521) !important;
+      color: #fff !important;
+    }
+    .light-theme .navbar, .light-theme .card, .light-theme .profile-card,
+    .light-theme .account-block, .light-theme .stat-card, .light-theme .feature-card,
+    .light-theme .tariff-card, .light-theme .lottery-card, .light-theme .detail-box,
+    .light-theme .server-card, .light-theme .faq-item, .light-theme .changelog-item {
+      background: rgba(255,255,255,0.06) !important;
+      backdrop-filter: blur(20px) saturate(180%) !important;
+      -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+      border: 1px solid rgba(255,255,255,0.12) !important;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.1) !important;
+    }
+    .light-theme .form-input {
+      background: rgba(255,255,255,0.08) !important;
+      border: 1px solid rgba(255,255,255,0.15) !important;
+      color:#fff !important;
+      backdrop-filter: blur(10px) !important;
+    }
+    .light-theme .form-input::placeholder { color: rgba(255,255,255,0.5) !important; }
+    .light-theme .nav-link { color: rgba(255,255,255,0.7) !important; }
+    .light-theme .nav-link:hover, .light-theme .nav-link.active { color:#fff !important; background: rgba(255,255,255,0.1) !important; }
+    .light-theme .toast { background: rgba(30,20,50,0.85) !important; color:#fff !important; border-color: rgba(255,255,255,0.15) !important; backdrop-filter: blur(16px) !important; }
+    .light-theme h1, .light-theme h2, .light-theme h3, .light-theme p, .light-theme span, .light-theme label, .light-theme div { color: inherit; }
+  `;
+  document.head.appendChild(glassCSS);
+
+  // ---------- 10. ФОН ЗАВИСИТ ОТ ТЕМЫ ----------
+  const bgCSS = document.createElement('style');
+  bgCSS.innerHTML = `
+    body { transition: background 0.4s ease; }
+    :root { --bg-base: #0a0713; }
+    body { background-color: var(--bg-base) !important; }
+    body::before {
+      background:
+        radial-gradient(ellipse 560px 380px at 12% 22%, var(--acc-soft), transparent 65%),
+        radial-gradient(ellipse 640px 420px at 88% 12%, var(--acc-faint), transparent 60%),
+        radial-gradient(ellipse 700px 480px at 82% 88%, var(--acc-soft), transparent 65%),
+        radial-gradient(ellipse 520px 360px at 8% 82%, var(--acc-faint), transparent 60%) !important;
+    }
+  `;
+  document.head.appendChild(bgCSS);
+  // Перекрашиваем фон при смене темы
+  const origApplyTheme = window.applyTheme;
+  if (origApplyTheme && !origApplyTheme._bgHook) {
+    window.applyTheme = function(name){
+      origApplyTheme(name);
+      const colors = {
+        violet:'#0a0713', neon:'#07130d', sakura:'#1a0a12',
+        ocean:'#07101a', gold:'#1a1207', cyber:'#1a070a', custom:'#0a0713'
+      };
+      document.documentElement.style.setProperty('--bg-base', colors[name] || '#0a0713');
+    };
+    origApplyTheme._bgHook = true;
+  }
+
+  // ---------- 1. ОТЗЫВЫ СОХРАНЯЮТСЯ ----------
+  window.addNewReview = function(){
+    const author = (document.getElementById('reviewAuthorInput').value||'').trim();
+    const text = (document.getElementById('reviewTextInput').value||'').trim();
+    const rating = document.getElementById('reviewRatingInput').value;
+    if (!author || !text) return toast('Заполните поля!','error');
+    const reviews = JSON.parse(localStorage.getItem('runclient_reviews') || '[]');
+    reviews.unshift({ author, text, rating, date: Date.now() });
+    localStorage.setItem('runclient_reviews', JSON.stringify(reviews));
+    renderReviews();
+    document.getElementById('reviewAuthorInput').value = '';
+    document.getElementById('reviewTextInput').value = '';
+    toast('Отзыв опубликован!','success');
+  };
+  function renderReviews(){
+    const c = document.getElementById('reviewsListContainer');
+    if (!c) return;
+    const reviews = JSON.parse(localStorage.getItem('runclient_reviews') || '[]');
+    if (!reviews.length) { c.innerHTML = '<p style="color:#949aab;">Пока нет отзывов.</p>'; return; }
+    c.innerHTML = reviews.map(r => {
+      const stars = '★'.repeat(parseInt(r.rating)) + '☆'.repeat(5-parseInt(r.rating));
+      return '<div class="card"><div><b>'+esc(r.author)+'</b> <span style="color:#ffbc00;">'+stars+'</span></div><p style="color:#949aab;">'+esc(r.text)+'</p></div>';
+    }).join('');
+  }
+  setTimeout(renderReviews, 1000);
+
+  // ---------- 6. ОБНОВЛЁННЫЙ ЛИЧНЫЙ КАБИНЕТ (как на фото) ----------
+  setTimeout(function(){
+    const cabHome = document.getElementById('cab-home');
+    if (!cabHome) return;
+    // Расширяем карточки — добавляем HWID и UID крупным блоком
+    const statsBlock = cabHome.querySelector('.luxe-stats');
+    if (statsBlock && !document.getElementById('hwidStatCard')) {
+      const hwid = getHWID();
+      const div = document.createElement('div');
+      div.className = 'luxe-stat';
+      div.id = 'hwidStatCard';
+      div.innerHTML = '<div class="luxe-stat-ico">🔐</div><div class="luxe-stat-lbl">HWID</div><div class="luxe-stat-val" style="font-size:.8rem;font-family:monospace;">'+hwid+'</div>';
+      statsBlock.appendChild(div);
+    }
+  }, 2000);
+
+  // ---------- 12 + 13. ПОИСК ПОЛЬЗОВАТЕЛЕЙ + ВЫДАЧА РОЛИ/ПОДПИСКИ/МОНЕТ ----------
+  window.searchUserCapabilities = function(){
+    const q = (document.getElementById('capSearchInput').value||'').trim().toLowerCase();
+    const c = document.getElementById('capSearchResultContainer');
+    if (!c) return;
+    if (!q) { c.innerHTML = '<p style="color:#949aab;">Введи ник</p>'; return; }
+    const found = Object.keys(db()).filter(function(k){ return k.toLowerCase().indexOf(q) !== -1; });
+    if (!found.length) { c.innerHTML = '<p style="color:#ff8ba0;">Никого не найдено</p>'; return; }
+    c.innerHTML = found.slice(0,10).map(function(nick){
+      const x = db()[nick];
+      return '<div style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;margin-top:10px;">'
+        +'<div style="font-weight:900;color:#fff;font-size:1rem;">'+esc(nick)+' <span style="font-size:.7rem;color:#8d86a3;">'+esc(x.role||'user')+' · '+esc(x.sub||'Нет')+' · '+(x.balance||0)+' ₽</span></div>'
+        +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">'
+        +'<button class="mini-btn" onclick="capGiveRole(\''+esc(nick)+'\')">👑 Роль</button>'
+        +'<button class="mini-btn" onclick="capGiveSub(\''+esc(nick)+'\')">⭐ Подписка</button>'
+        +'<button class="mini-btn" onclick="capGiveCoins(\''+esc(nick)+'\')">💰 Монеты</button>'
+        +'<button class="mini-btn danger" onclick="capBan(\''+esc(nick)+'\')">🚫 '+(x.banned?'Разбан':'Бан')+'</button>'
+        +'</div></div>';
+    }).join('');
+  };
+
+  window.capGiveRole = async function(nick){
+    const r = prompt('Новая роль для '+nick+' (user/moder/admin/media/owner):');
+    if (!r) return;
+    const x = db()[nick.toLowerCase()]; if (!x) return toast('Нет пользователя','error');
+    x.role = r.trim();
+    save();
+    await syncAll();
+    toast('Роль выдана: '+r,'success');
+    searchUserCapabilities();
+  };
+  window.capGiveSub = async function(nick){
+    const s = prompt('Подписка для '+nick+' (7д/30д/90д/Навсегда/Нет):');
+    if (!s) return;
+    const x = db()[nick.toLowerCase()]; if (!x) return toast('Нет пользователя','error');
+    x.sub = s.trim();
+    save();
+    await syncAll();
+    toast('Подписка выдана: '+s,'success');
+    searchUserCapabilities();
+  };
+  window.capGiveCoins = async function(nick){
+    const a = parseInt(prompt('Сколько монет выдать '+nick+'?','100'));
+    if (!a) return;
+    const x = db()[nick.toLowerCase()]; if (!x) return toast('Нет пользователя','error');
+    x.balance = (x.balance||0) + a;
+    save();
+    await syncAll();
+    toast('Выдано '+a+' ₽','success');
+    searchUserCapabilities();
+  };
+  window.capBan = async function(nick){
+    const x = db()[nick.toLowerCase()]; if (!x) return;
+    x.banned = !x.banned;
+    save();
+    await syncAll();
+    toast(x.banned?'Забанен':'Разбанен','success');
+    searchUserCapabilities();
+  };
+
+  // Привязываем поиск + Enter
+  setTimeout(function(){
+    const btn = document.querySelector('#cab-capabilities .action-btn');
+    if (btn) btn.onclick = window.searchUserCapabilities;
+    const inp = document.getElementById('capSearchInput');
+    if (inp) inp.addEventListener('keypress', function(e){ if (e.key==='Enter') searchUserCapabilities(); });
+  }, 2500);
+
+  // ---------- Общий автосинк каждые 30 сек ----------
+  setInterval(syncAll, 30000);
+
+  console.log('✅ MEGA-FIX загружен: 13 пунктов применены');
+})();
+</script>
 </body>
 </html>
