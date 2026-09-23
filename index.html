@@ -11520,5 +11520,359 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('✅ MEGA-FIX загружен: 13 пунктов применены');
 })();
 </script>
+<script>
+/* ================================================================
+   DEFINITIVE FIX v1 — локально-первый. Переопределяет всё выше.
+   Ключи / HWID / поиск юзера / выдача роли / монеты / пароль.
+   ================================================================ */
+(function(){
+  'use strict';
+  const API = 'https://cheat-backend.vercel.app';
+
+  const u    = () => (currentUser || '').toLowerCase();
+  const db   = () => (typeof registeredUsers === 'object' && registeredUsers)
+                     ? registeredUsers
+                     : (window.registeredUsers = {});
+  const save = () => { try { localStorage.setItem('runclient_users', JSON.stringify(db())); } catch(e){} };
+  const toast= (m,t) => { if (typeof showToast === 'function') showToast(m, t || 'success'); };
+  const refresh = () => { try { if (typeof updateCabinetUI === 'function') updateCabinetUI(); } catch(e){} };
+
+  /* ---------- HWID ---------- */
+  function getHWID(){
+    let h = null;
+    try { h = localStorage.getItem('runclient_hwid'); } catch(e){}
+    if (h) return h;
+    const parts = [navigator.userAgent, navigator.language,
+      screen.width + 'x' + screen.height, screen.colorDepth,
+      new Date().getTimezoneOffset(), navigator.hardwareConcurrency || 0].join('|');
+    let n = 0; for (let i=0;i<parts.length;i++){ n = ((n<<5)-n) + parts.charCodeAt(i); n |= 0; }
+    h = 'HW-' + Math.abs(n).toString(16).toUpperCase();
+    try { localStorage.setItem('runclient_hwid', h); } catch(e){}
+    return h;
+  }
+  window._getHWID = getHWID;
+
+  /* ================================================================
+     1) КЛЮЧИ ПОДПИСКИ — local first
+     ================================================================ */
+  window.activateSubKey = function(){
+    const inp = document.getElementById('subKeyInput');
+    if (!inp) return;
+    const key = (inp.value || '').trim().toUpperCase();
+    if (!key)  return toast('Введите ключ!', 'error');
+    if (!currentUser) return toast('Войдите в аккаунт!', 'error');
+    const user = db()[u()];
+    if (!user) return toast('Пользователь не найден!', 'error');
+
+    // 1.1 ключи из карточек (purchase keys) — они локальные!
+    let pk = {};
+    try { pk = JSON.parse(localStorage.getItem('runclient_purchase_keys') || '{}'); } catch(e){}
+    if (pk[key]) {
+      const p = pk[key];
+      if (p.used) return toast('Ключ уже использован!', 'error');
+      if (p.expires && Date.now() > p.expires) return toast('Срок ключа истёк!', 'error');
+      p.used = true;
+      if (p.type === 'subscription' && p.subName) user.sub = p.subName;
+      else if (p.amount) user.balance = (user.balance || 0) + p.amount;
+      try { localStorage.setItem('runclient_purchase_keys', JSON.stringify(pk)); } catch(e){}
+      save(); refresh(); inp.value = '';
+      return toast('Ключ активирован!', 'success');
+    }
+
+    // 1.2 ключи, сгенерированные в кабинете (activeKeysDB / runclient_keys)
+    let ak = {};
+    try { ak = JSON.parse(localStorage.getItem('runclient_keys') || '{}'); } catch(e){}
+    if (ak[key]) {
+      const d = ak[key];
+      if (d.used) return toast('Ключ уже использован!', 'error');
+      if (d.expires && Date.now() > d.expires) return toast('Ключ истёк!', 'error');
+      if (d.type === 'hwid') return toast('Это HWID-ключ, вставь его ниже', 'error');
+      d.used = true;
+      user.sub = d.duration || '30д';
+      try { localStorage.setItem('runclient_keys', JSON.stringify(ak)); } catch(e){}
+      if (typeof activeKeysDB !== 'undefined') activeKeysDB[key] = d;
+      save(); refresh(); inp.value = '';
+      if (typeof renderAllKeys === 'function') try { renderAllKeys(); } catch(e){}
+      return toast('Подписка ' + user.sub + ' активирована!', 'success');
+    }
+
+    // 1.3 сервер (best-effort, не блокирует)
+    fetch(API + '/api/activate-key', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ username: u(), key: key })
+    }).then(r => r.json()).then(d => {
+      if (d && d.ok) {
+        if (d.subscription) user.sub = d.subscription.type === 'forever' ? 'Навсегда' : d.subscription.type;
+        save(); refresh(); inp.value = '';
+        toast(d.message || 'Подписка активирована!', 'success');
+      } else {
+        toast((d && d.error) || 'Ключ не найден', 'error');
+      }
+    }).catch(() => toast('Ключ не найден. Проверь код', 'error'));
+  };
+
+  /* ================================================================
+     2) HWID-КЛЮЧ — local first (это и был "сеть недоступна")
+     ================================================================ */
+  window.activateHWIDKey = function(){
+    const inp = document.getElementById('hwidKeyInput');
+    if (!inp) return;
+    const key = (inp.value || '').trim().toUpperCase();
+    if (!key) return toast('Введите ключ!', 'error');
+    if (!currentUser) return toast('Войдите в аккаунт!', 'error');
+    const user = db()[u()];
+    if (!user) return toast('Пользователь не найден!', 'error');
+
+    let ak = {};
+    try { ak = JSON.parse(localStorage.getItem('runclient_keys') || '{}'); } catch(e){}
+    const d = ak[key];
+    if (!d) return toast('Неверный HWID-ключ', 'error');
+    if (d.type !== 'hwid') return toast('Это не HWID-ключ', 'error');
+    if (d.used) return toast('Ключ уже использован!', 'error');
+    if (d.expires && Date.now() > d.expires) return toast('Ключ истёк!', 'error');
+
+    d.used = true;
+    try { localStorage.setItem('runclient_keys', JSON.stringify(ak)); } catch(e){}
+    user.hwid = getHWID();
+    save(); refresh(); inp.value = '';
+    toast('HWID успешно сброшен!', 'success');
+
+    // на сервер — best-effort
+    fetch(API + '/api/activate-hwid', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ username: u(), key: key })
+    }).catch(() => {});
+  };
+
+  /* ================================================================
+     3) СПЕЦ-КЛЮЧ — local only
+     ================================================================ */
+  window.activateSpecialKey = function(){
+    if (!currentUser) return toast('Войдите!', 'error');
+    const inp = document.getElementById('specialKeyInput');
+    const key = ((inp && inp.value) || '').trim().toUpperCase();
+    if (!key) return toast('Введите ключ!', 'error');
+
+    let sk = {};
+    try { sk = JSON.parse(localStorage.getItem('runclient_special_keys') || '{}'); } catch(e){}
+    const d = sk[key];
+    if (!d) return toast('Неверный спец-ключ', 'error');
+    if (d.used >= d.maxUses) return toast('Лимит использований', 'error');
+    if (d.expires && Date.now() > d.expires) return toast('Ключ истёк', 'error');
+
+    d.used++;
+    try { localStorage.setItem('runclient_special_keys', JSON.stringify(sk)); } catch(e){}
+    db()[u()].role = d.role;
+    save(); refresh();
+    if (inp) inp.value = '';
+    toast('Роль ' + d.role + ' выдана!', 'success');
+  };
+
+  /* ================================================================
+     4) ПОИСК ЮЗЕРА + ВЫДАЧА РОЛИ / ПОДПИСКИ / МОНЕТ / БАНА
+     ================================================================ */
+  window.searchUserCapabilities = function(){
+    const box = document.getElementById('capSearchResultContainer');
+    const qEl = document.getElementById('capSearchInput');
+    if (!box || !qEl) return;
+    const q = qEl.value.trim().toLowerCase();
+    if (!q) { box.innerHTML = '<p style="color:#949aab;">Введи ник</p>'; return; }
+
+    const all = Object.keys(db());
+    // Ищем и по ключу (он в lowercase), и по полю nickname если есть
+    const found = all.filter(k => {
+      const x = db()[k];
+      const nick = (x && x.nickname) ? String(x.nickname).toLowerCase() : '';
+      return k.toLowerCase().indexOf(q) !== -1 || nick.indexOf(q) !== -1;
+    });
+
+    if (!found.length) { box.innerHTML = '<p style="color:#ff8ba0;">Никого не найдено</p>'; return; }
+
+    box.innerHTML = found.slice(0, 15).map(nick => {
+      const x = db()[nick] || {};
+      const safe = nick.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+      const role = x.role || 'user';
+      const sub  = x.sub  || 'Нет';
+      const bal  = x.balance || 0;
+      const banned = x.banned ? 'ДА' : 'нет';
+      return '<div style="background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;margin-top:10px;">'
+        + '<div style="font-weight:900;color:#fff;font-size:1rem;">' + nick
+        + ' <span style="font-size:.72rem;color:#8d86a3;font-weight:600;">'
+        + 'роль: ' + role + ' · саб: ' + sub + ' · баланс: ' + bal + ' ₽ · бан: ' + banned
+        + '</span></div>'
+        + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">'
+        +   '<button class="mini-btn" onclick="capGiveRole(\'' + safe + '\')">👑 Роль</button>'
+        +   '<button class="mini-btn" onclick="capGiveSub(\''  + safe + '\')">⭐ Подписка</button>'
+        +   '<button class="mini-btn" onclick="capGiveCoins(\''+ safe + '\')">💰 Монеты</button>'
+        +   '<button class="mini-btn danger" onclick="capBan(\''+ safe + '\')">🚫 ' + (x.banned ? 'Разбан' : 'Бан') + '</button>'
+        + '</div></div>';
+    }).join('');
+  };
+
+  window.capGiveRole = function(nick){
+    const x = db()[nick]; if (!x) return toast('Нет пользователя','error');
+    const r = prompt('Новая роль для ' + nick + ' (user / moder / admin / media / owner):', x.role || 'user');
+    if (!r) return;
+    x.role = r.trim().toLowerCase();
+    save(); refresh();
+    toast('Роль выдана: ' + x.role, 'success');
+    searchUserCapabilities();
+  };
+
+  window.capGiveSub = function(nick){
+    const x = db()[nick]; if (!x) return toast('Нет пользователя','error');
+    const s = prompt('Подписка для ' + nick + ' (7д / 30д / 90д / Навсегда / Нет):', x.sub || '30д');
+    if (!s) return;
+    x.sub = s.trim();
+    save(); refresh();
+    toast('Подписка: ' + x.sub, 'success');
+    searchUserCapabilities();
+  };
+
+  window.capGiveCoins = function(nick){
+    const x = db()[nick]; if (!x) return toast('Нет пользователя','error');
+    const a = parseInt(prompt('Сколько ₽ выдать ' + nick + '?', '100'));
+    if (!a) return;
+    x.balance = (x.balance || 0) + a;
+    save(); refresh();
+    if (typeof updateBalanceUI === 'function') try { updateBalanceUI(); } catch(e){}
+    toast('Выдано ' + a + ' ₽', 'success');
+    searchUserCapabilities();
+  };
+
+  window.capBan = function(nick){
+    const x = db()[nick]; if (!x) return;
+    x.banned = !x.banned;
+    if (x.banned) x.banReason = prompt('Причина бана:', 'Нарушение правил') || 'Нарушение правил';
+    save(); refresh();
+    toast(x.banned ? 'Пользователь забанен' : 'Бан снят', 'success');
+    searchUserCapabilities();
+  };
+
+  // Автопривязка кнопки "Найти" + Enter, на случай если старая onclick осталась
+  setTimeout(function(){
+    const tab = document.getElementById('cab-capabilities');
+    if (!tab) return;
+    const btn = tab.querySelector('button.action-btn');
+    if (btn) btn.onclick = window.searchUserCapabilities;
+    const inp = document.getElementById('capSearchInput');
+    if (inp && !inp._fixBound) {
+      inp.addEventListener('keypress', function(e){ if (e.key === 'Enter') window.searchUserCapabilities(); });
+      inp._fixBound = true;
+    }
+  }, 1500);
+
+  /* ================================================================
+     5) ПАНЕЛЬ ВЫДАЧИ МОНЕТ — работает даже без сервера
+     ================================================================ */
+  window.grantCoinsServer = function(){
+    const nickEl = document.getElementById('grantNickInput');
+    const amtEl  = document.getElementById('grantAmountInput');
+    const outEl  = document.getElementById('grantResult');
+    if (!nickEl || !amtEl) return;
+    const nick = nickEl.value.trim().toLowerCase();
+    const amt  = parseInt(amtEl.value) || 0;
+    if (!nick || !amt) return toast('Введи ник и сумму', 'error');
+    const x = db()[nick];
+    if (!x) {
+      if (outEl) outEl.innerHTML = '<span style="color:#ff4d6d;">Пользователь не найден локально</span>';
+      return toast('Нет такого пользователя', 'error');
+    }
+    x.balance = (x.balance || 0) + amt;
+    save();
+    if (typeof updateBalanceUI === 'function') try { updateBalanceUI(); } catch(e){}
+    if (outEl) outEl.innerHTML = '<span style="color:#22d3a0;">✅ Выдано ' + amt + ' ₽ → ' + nick + '. Новый баланс: ' + x.balance + ' ₽</span>';
+    toast('Выдано ' + amt + ' ₽', 'success');
+
+    // best-effort API
+    fetch(API + '/api/admin/add-balance', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Admin-Token': (localStorage.getItem('runclient_admin_token') || 'runclient-setup-2024')},
+      body: JSON.stringify({ target_username: nick, amount: amt })
+    }).catch(() => {});
+  };
+
+  window.searchGrantUser = function(){
+    const nickEl = document.getElementById('grantNickInput');
+    const outEl  = document.getElementById('grantResult');
+    if (!nickEl) return;
+    const q = nickEl.value.trim().toLowerCase();
+    if (!q) return;
+    const found = Object.keys(db()).filter(k => k.indexOf(q) !== -1).slice(0, 8);
+    if (outEl) {
+      outEl.innerHTML = found.length
+        ? found.map(nick => {
+            const x = db()[nick] || {};
+            const safe = nick.replace(/'/g, "\\'");
+            return '<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.82rem;">'
+              + '<b>' + nick + '</b> <span style="color:#9891ab;">' + (x.role||'') + ' · ' + (x.sub||'Нет') + ' · ' + (x.balance||0) + ' ₽</span>'
+              + ' <button class="mini-btn" style="margin-left:8px;" onclick="document.getElementById(\'grantNickInput\').value=\'' + safe + '\'">Выбрать</button>'
+              + '</div>';
+          }).join('')
+        : '<span style="color:#9891ab;font-size:.8rem;">Никого не найдено</span>';
+    }
+  };
+
+  /* ================================================================
+     6) СМЕНА ПАРОЛЯ — работает локально, синк на API best-effort
+     ================================================================ */
+  window.changeUserPassword = function(){
+    if (!currentUser) return toast('Войдите в аккаунт!', 'error');
+    const npEl = document.getElementById('newPasswordInput');
+    if (!npEl) return;
+    const np = (npEl.value || '').trim();
+    if (!np || np.length < 3) return toast('Пароль минимум 3 символа!', 'error');
+
+    const x = db()[u()];
+    if (!x) return toast('Пользователь не найден!', 'error');
+    x.password = np;
+    save();
+
+    // обновим readonly-дисплей, чтобы не показывал старый
+    const disp = document.getElementById('dashPasswordDisplay');
+    if (disp) disp.value = np;
+
+    npEl.value = '';
+    refresh();
+    toast('Пароль изменён!', 'success');
+
+    // best-effort синк
+    fetch(API + '/api/sync', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ users: Object.keys(db()).map(k => {
+        const y = db()[k];
+        let st = null;
+        if (y.sub === 'Навсегда') st = 'forever';
+        else if (y.sub && y.sub !== 'Нет') st = y.sub;
+        return { username:k, password:y.password, nickname:k,
+          role:(k==='invisik'||k==='inv1ze')?'owner':(y.role||'user'),
+          subscription_type:st, subscription_expires:null,
+          email:y.email||null, balance:y.balance||0 };
+      }) })
+    }).catch(() => {});
+  };
+
+  /* ================================================================
+     7) НА ВСЯКИЙ: при загрузке кабинета — обновляем HWID и дисплей пароля
+     ================================================================ */
+  const _origCab = window.updateCabinetUI;
+  if (typeof _origCab === 'function' && !_origCab._defFixHook) {
+    window.updateCabinetUI = function(){
+      _origCab.apply(this, arguments);
+      try {
+        if (!currentUser) return;
+        const x = db()[u()];
+        if (!x) return;
+        x.hwid = getHWID();
+        const disp = document.getElementById('dashPasswordDisplay');
+        if (disp) disp.value = x.password || '';
+      } catch(e){}
+    };
+    window.updateCabinetUI._defFixHook = true;
+  }
+
+  console.log('✅ DEFINITIVE FIX v1: ключи/HWID/поиск/монеты/пароль — локально-первыми.');
+})();
+</script>
 </body>
 </html>
