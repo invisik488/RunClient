@@ -66,8 +66,9 @@ body{background:linear-gradient(135deg,#0d0b14,#171524);color:#fff;min-height:10
 
 <section class="login" id="loginSection">
   <h2>Вход в ApexClient</h2>
-  <input id="searchKey" class="input" placeholder="Введите ник...">
+  <input id="searchKey" class="input" placeholder="Введите ник или HWID...">
   <button class="btn" id="loginBtn">Войти</button>
+  <p class="muted" style="margin-top:10px">HWID смотри в лаунчере (кнопка «Мой HWID») или в игре слева внизу.</p>
   <p id="loginError" class="muted"></p>
 </section>
 
@@ -89,7 +90,7 @@ body{background:linear-gradient(135deg,#0d0b14,#171524);color:#fff;min-height:10
     <div class="stats">
       <div class="stat"><span>Осталось</span><strong id="statDays">-</strong></div>
       <div class="stat"><span>Статус</span><strong id="statStatus" style="color:#57f287">Активен</strong></div>
-      <div class="stat"><span>HWID</span><strong>OK</strong></div>
+      <div class="stat"><span>HWID</span><strong id="statHwid" style="font-size:.75rem;word-break:break-all">-</strong></div>
       <div class="stat"><span>Client</span><strong>Apex 1.21.4</strong></div>
     </div>
     <button class="btn danger" id="logoutBtn">Выйти</button>
@@ -143,6 +144,17 @@ body{background:linear-gradient(135deg,#0d0b14,#171524);color:#fff;min-height:10
             <button class="btn success" id="subscriptionBtn">Выдать подписку</button>
             <button class="btn" id="discountBtn">Выдать скидку</button>
             <button class="btn danger" id="revokeSubBtn">Снять подписку</button>
+          </div>
+        </div>
+
+        <div class="admin-box">
+          <h3>HWID и бан</h3>
+          <input id="adminHwid" class="input" placeholder="HWID (64 hex, пусто = отвязать)" style="font-family:monospace;font-size:.8rem">
+          <input id="adminDays" class="input" type="number" min="0" max="3650" value="30" placeholder="Дней подписки">
+          <div class="actions">
+            <button class="btn success" id="hwidBtn">Привязать + продлить</button>
+            <button class="btn danger" id="banBtn">Забанить</button>
+            <button class="btn" id="unbanBtn">Разбанить</button>
           </div>
         </div>
 
@@ -259,10 +271,14 @@ function showProfile(data) {
   var s = subscription(u.subscription || u.expireDate, currentUser.role, currentUser.username);
   el('profName').textContent = currentUser.username;
   el('profRole').textContent = currentUser.role;
-  el('profExpire').textContent = s[0];
+  el('profExpire').textContent = u.expires_at ? new Date(u.expires_at).toLocaleString('ru-RU') : s[0];
   el('statDays').textContent = s[1];
-  var roleLower = String(currentUser.role).toLowerCase();
-  el('statStatus').textContent = (roleLower === 'owner' || roleLower === 'owner+') ? 'Owner+' : 'Активен';
+  var hwid = u.hwid || '';
+  el('statHwid').textContent = hwid ? (hwid.length > 20 ? hwid.slice(0, 16) + '...' : hwid) : 'не привязан';
+  var banned = Number(u.is_banned) === 1;
+  var expired = u.expires_at ? (new Date(u.expires_at) <= new Date()) : false;
+  el('statStatus').textContent = banned ? 'ЗАБАНЕН' : (expired ? 'Истекла' : ((String(currentUser.role).toLowerCase() === 'owner' || String(currentUser.role).toLowerCase() === 'owner+') ? 'Owner+' : 'Активен'));
+  el('statStatus').style.color = (banned || expired) ? '#ff9aa0' : '#57f287';
   el('loginSection').style.display = 'none';
   el('cabinetSection').style.display = 'block';
   updateAdmin();
@@ -271,10 +287,11 @@ function showProfile(data) {
 function login() {
   var name = el('searchKey').value.trim();
   if (!name) return;
+  var body = /^[a-f0-9]{32,128}$/i.test(name) ? { hwid: name } : { username: name };
   api('/api/search', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username: name })
+    body: JSON.stringify(body)
   }).then(showProfile).catch(function (e) {
     el('loginError').textContent = e.message;
   });
@@ -291,8 +308,10 @@ function loadUsers() {
     el('adminUserList').innerHTML = rows.map(function (u) {
       var sub = u.subscription || 'free';
       var disc = (u.discount != null ? u.discount : 0) + '%';
+      var hw = u.hwid ? (String(u.hwid).length > 18 ? String(u.hwid).slice(0, 12) + '...' : u.hwid) : '<span class="muted">—</span>';
+      var ban = Number(u.is_banned) === 1 ? ' <span style="color:#ff9aa0">BAN</span>' : '';
       return '<div class="user-row">' +
-        '<span><b>' + escapeHtml(u.username) + '</b><br><small class="muted">' + escapeHtml(u.role || 'User') + '</small></span>' +
+        '<span><b>' + escapeHtml(u.username) + '</b>' + ban + '<br><small class="muted">' + escapeHtml(u.role || 'User') + ' · </small><small class="muted" style="font-family:monospace">' + hw + '</small></span>' +
         '<span class="muted">' + escapeHtml(sub) + '</span>' +
         '<span class="muted">' + disc + '</span>' +
         '<span class="muted">#' + u.id + '</span>' +
@@ -361,6 +380,23 @@ function revokeSubscription() {
     .catch(function (e) { toast(e.message); });
 }
 
+function updateAccess(patch, okMsg) {
+  findAdminUser().then(function (u) {
+    return adminApi('/api/users/' + u.id + '/access', {
+      method: 'PUT',
+      body: JSON.stringify(patch)
+    });
+  }).then(function () { toast(okMsg); loadUsers(); })
+    .catch(function (e) { toast(e.message); });
+}
+
+function bindHwid() {
+  updateAccess({ hwid: el('adminHwid').value.trim(), days: Number(el('adminDays').value) || 0 }, 'HWID обновлён');
+}
+
+function banUser() { updateAccess({ ban: 1 }, 'Пользователь забанен'); }
+function unbanUser() { updateAccess({ ban: 0 }, 'Пользователь разбанен'); }
+
 function genKeys() {
   var count = Math.max(1, Math.min(100, Number(el('keysCount').value) || 1));
   adminApi('/api/keys', {
@@ -381,6 +417,9 @@ el('discountBtn').onclick = updateDiscount;
 el('revokeSubBtn').onclick = revokeSubscription;
 el('refreshUsersBtn').onclick = loadUsers;
 el('genKeysBtn').onclick = genKeys;
+el('hwidBtn').onclick = bindHwid;
+el('banBtn').onclick = banUser;
+el('unbanBtn').onclick = unbanUser;
 
 el('saveTokenBtn').onclick = function () {
   var t = el('adminToken').value.trim();

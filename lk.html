@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Личный кабинет — проверка подписки</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,system-ui,sans-serif}
+body{background:linear-gradient(135deg,#0d0b14,#171524);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{width:100%;max-width:420px;background:#ffffff08;border:1px solid #ffffff14;border-radius:16px;padding:32px;text-align:center}
+h2{margin-bottom:8px}.muted{color:#999;font-size:.85rem}
+.input{width:100%;padding:12px;margin:14px 0;border-radius:8px;background:#0000004d;border:1px solid #ffffff1a;color:#fff;outline:0;font-family:monospace;font-size:.8rem}
+.btn{width:100%;padding:12px;border:0;border-radius:8px;background:#5865f2;color:#fff;font-weight:700;cursor:pointer}
+.btn:hover{background:#4752c4}
+#out{margin-top:14px;font-size:.9rem;line-height:1.7}
+.ok{color:#57f287}.bad{color:#ff9aa0}.warn{color:#ffc857}
+</style>
+</head>
+<body>
+<div class="card">
+  <h2>Личный кабинет</h2>
+  <p class="muted">Вставь свой HWID и узнай статус подписки.<br>HWID: лаунчер → «Мой HWID» или игра → слева внизу.</p>
+  <input id="hwid" class="input" placeholder="HWID (64 символа)" autocomplete="off" spellcheck="false">
+  <button class="btn" id="check">Проверить подписку</button>
+  <div id="out" class="muted"></div>
+  <p style="margin-top:14px"><a href="/dashboard" class="muted">Войти в кабинет →</a></p>
+</div>
+<script>
+var out = document.getElementById('out');
+function show(html, cls) { out.className = cls || 'muted'; out.innerHTML = html; }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+document.getElementById('check').onclick = function () {
+  var h = document.getElementById('hwid').value.trim().toLowerCase();
+  if (!/^[a-f0-9]{32,128}$/.test(h)) { show('Вставь HWID целиком (64 hex-символа).', 'bad'); return; }
+  show('Проверяю…');
+  fetch('/api/check?hwid=' + encodeURIComponent(h)).then(function (r) {
+    return r.json().then(function (j) { return { ok: r.ok, j: j }; });
+  }).then(function (x) {
+    var j = x.j || {};
+    if (!x.ok || j.status === 'not_found') { show('HWID не найден. Обратись к админу.', 'bad'); return; }
+    if (j.status === 'bad_format') { show('Неверный формат HWID.', 'bad'); return; }
+    if (j.status === 'db_error') { show('База временно недоступна, попробуй позже.', 'warn'); return; }
+    var label = j.status === 'active' ? 'АКТИВНА' : (j.status === 'banned' ? 'ЗАБАНЕНА' : 'ИСТЕКЛА');
+    var cls = j.status === 'active' ? 'ok' : (j.status === 'banned' ? 'bad' : 'warn');
+    show('Ник: <b>' + esc(j.username || '-') + '</b><br>Подписка: <b>' + label + '</b><br>До: ' + esc(j.expires_at ? new Date(j.expires_at).toLocaleString('ru-RU') : (j.subscription || '-')), cls);
+  }).catch(function () { show('Ошибка сети, попробуй позже.', 'bad'); });
+};
+</script>
+</body>
+</html>

@@ -19,6 +19,33 @@ async function ensureSchema() {
   await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription TEXT DEFAULT 'free'");
   await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS discount INTEGER DEFAULT 0");
   await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS access_key TEXT");
+  await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS hwid TEXT");
+  await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ");
+  await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS is_banned INTEGER DEFAULT 0");
+  await pool.query("CREATE UNIQUE INDEX IF NOT EXISTS users_hwid_uidx ON users(hwid)");
+}
+
+// Стартовый HWID владельца (активен сразу после деплоя, без ручных действий в БД).
+const OWNER_HWID = 'fa7026acd053415a32d983cc0dd1ddfb26236b467163c898cb564414eac9dcb9';
+async function ensureHwidSeed() {
+  await pool.query(
+    "INSERT INTO users (username, role, subscription, discount, hwid, expires_at, is_banned) " +
+    "VALUES ('tania', 'Owner+', 'lifetime', 0, $1, NOW() + INTERVAL '365 days', 0) " +
+    "ON CONFLICT (hwid) DO NOTHING",
+    [OWNER_HWID]
+  );
+}
+
+function isHwid(s) {
+  return /^[a-f0-9]{32,128}$/i.test(String(s || '').trim());
+}
+
+// Единое решение по строке пользователя: активен / забанен / истёк.
+function accessState(row) {
+  if (!row) return 'not_found';
+  if (Number(row.is_banned) === 1) return 'banned';
+  if (row.expires_at && new Date(row.expires_at) <= new Date()) return 'expired';
+  return 'active';
 }
 
 async function ensureOwnerUser() {
@@ -42,19 +69,49 @@ async function requireBoomba(req, res, next) {
 }
 
 app.post('/api/search', async (req, res) => {
-  const username = String(req.body.username || req.body.nickname || '').trim().toLowerCase();
-  if (!username) return res.status(400).json({ success: false, message: 'Введите ник' });
+  const raw = String(req.body.username || req.body.nickname || req.body.hwid || '').trim();
+  if (!raw) return res.status(400).json({ success: false, message: 'Введите ник или HWID' });
   try {
-    const result = await pool.query('SELECT id, username, role, subscription, discount, access_key FROM users WHERE LOWER(username) = $1', [username]);
+    let result;
+    if (isHwid(raw)) {
+      result = await pool.query('SELECT id, username, role, subscription, discount, access_key, hwid, expires_at, is_banned FROM users WHERE hwid = $1', [raw.toLowerCase()]);
+    } else {
+      result = await pool.query('SELECT id, username, role, subscription, discount, access_key, hwid, expires_at, is_banned FROM users WHERE LOWER(username) = $1', [raw.toLowerCase()]);
+    }
     if (!result.rows.length) return res.status(404).json({ success: false, message: 'Пользователь не найден' });
     res.json({ success: true, user: result.rows[0] });
   } catch (err) { console.error(err); res.status(500).json({ success: false, message: 'Ошибка базы данных' }); }
 });
 
+// Проверка HWID для игры (DRM): POST {hwid} -> 200 {success:true,...} или 403 {success:false, reason}
+app.post('/api/verify', async (req, res) => {
+  const hwid = String(req.body.hwid || '').trim().toLowerCase();
+  if (!isHwid(hwid)) return res.status(403).json({ success: false, reason: 'bad_format' });
+  try {
+    const result = await pool.query('SELECT username, subscription, expires_at, is_banned FROM users WHERE hwid = $1 LIMIT 1', [hwid]);
+    const state = accessState(result.rows[0]);
+    if (state !== 'active') return res.status(403).json({ success: false, reason: state });
+    const u = result.rows[0];
+    res.json({ success: true, username: u.username, subscription: u.subscription, expires_at: u.expires_at });
+  } catch (err) { console.error(err); res.status(500).json({ success: false, reason: 'db_error' }); }
+});
+
+// Публичная проверка для личного кабинета: GET /api/check?hwid=...
+app.get('/api/check', async (req, res) => {
+  const hwid = String(req.query.hwid || '').trim().toLowerCase();
+  if (!isHwid(hwid)) return res.status(400).json({ status: 'bad_format' });
+  try {
+    const result = await pool.query('SELECT username, subscription, expires_at, is_banned FROM users WHERE hwid = $1 LIMIT 1', [hwid]);
+    if (!result.rows.length) return res.status(404).json({ status: 'not_found' });
+    const u = result.rows[0];
+    res.json({ status: accessState(u), username: u.username, subscription: u.subscription, expires_at: u.expires_at });
+  } catch (err) { console.error(err); res.status(500).json({ status: 'db_error' }); }
+});
+
 app.get('/api/admin/status', requireBoomba, (req, res) => res.json({ success: true, ownerPlus: true }));
 
 app.get('/api/users', requireBoomba, async (req, res) => {
-  const result = await pool.query('SELECT id, username, role, subscription, discount, access_key FROM users ORDER BY id');
+  const result = await pool.query('SELECT id, username, role, subscription, discount, access_key, hwid, expires_at, is_banned FROM users ORDER BY id');
   res.json(result.rows);
 });
 
@@ -93,13 +150,46 @@ app.post('/api/keys', requireBoomba, async (req, res) => {
   res.json({ success: true, keys });
 });
 
+// Привязка HWID + продление + бан/разбан одним вызовом (админка).
+// body: { hwid?, days?, ban? }  days: +N дней к expires_at (от max(now, expires_at)); ban: 1/0
+app.put('/api/users/:id/access', requireBoomba, async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ error: 'Некорректный id' });
+  const hwid = req.body.hwid !== undefined ? String(req.body.hwid || '').trim().toLowerCase() : undefined;
+  if (hwid !== undefined && hwid !== '' && !isHwid(hwid)) return res.status(400).json({ error: 'HWID: 32-128 hex-символов' });
+  const days = req.body.days !== undefined ? Number(req.body.days) : 0;
+  if (req.body.days !== undefined && (!Number.isInteger(days) || days < 0 || days > 3650)) return res.status(400).json({ error: 'days: 0-3650' });
+  const ban = req.body.ban !== undefined ? (Number(req.body.ban) ? 1 : 0) : undefined;
+  try {
+    if (hwid !== undefined) {
+      await pool.query('UPDATE users SET hwid = NULLIF($1, \'\') WHERE id = $2', [hwid, id]);
+    }
+    if (days > 0) {
+      await pool.query(
+        "UPDATE users SET expires_at = GREATEST(COALESCE(expires_at, NOW()), NOW()) + ($1 || ' days')::INTERVAL WHERE id = $2",
+        [String(days), id]
+      );
+    }
+    if (ban !== undefined) {
+      await pool.query('UPDATE users SET is_banned = $1 WHERE id = $2', [ban, id]);
+    }
+    const result = await pool.query('SELECT id, username, role, subscription, hwid, expires_at, is_banned FROM users WHERE id = $1', [id]);
+    if (!result.rows.length) return res.status(404).json({ error: 'Пользователь не найден' });
+    res.json({ success: true, user: result.rows[0] });
+  } catch (err) {
+    if (err && err.code === '23505') return res.status(409).json({ error: 'Такой HWID уже привязан к другому пользователю' });
+    console.error(err);
+    res.status(500).json({ error: 'Ошибка базы данных' });
+  }
+});
+
 app.use(express.static(__dirname));
 app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
 app.get('/dashboard.html', (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
 app.listen(PORT, async () => {
-  try { await ensureOwnerUser(); console.log('Boomba назначен Owner+.'); }
+  try { await ensureOwnerUser(); await ensureHwidSeed(); console.log('Boomba назначен Owner+, HWID-сид готов.'); }
   catch (err) { console.error('Не удалось подготовить базу:', err); }
   console.log(`Сервер запущен на порту ${PORT}`);
 });
