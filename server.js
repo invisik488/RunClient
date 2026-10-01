@@ -29,6 +29,7 @@ async function ensureSchema() {
   await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS hwid TEXT");
   await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ");
   await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS is_banned INTEGER DEFAULT 0");
+  await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash TEXT");
   await pool.query("CREATE UNIQUE INDEX IF NOT EXISTS users_hwid_uidx ON users(hwid)");
 }
 
@@ -54,6 +55,68 @@ function accessState(row) {
   if (row.expires_at && new Date(row.expires_at) <= new Date()) return 'expired';
   return 'active';
 }
+
+function hashPassword(pw, salt) {
+  salt = salt || crypto.randomBytes(16).toString('hex');
+  const hash = crypto.pbkdf2Sync(String(pw), salt, 120000, 32, 'sha256').toString('hex');
+  return 'pbkdf2$120000$' + salt + '$' + hash;
+}
+
+function checkPassword(pw, stored) {
+  try {
+    const parts = String(stored || '').split('$');
+    if (parts[0] !== 'pbkdf2' || parts.length !== 4) return false;
+    const iters = Number(parts[1]) || 120000;
+    const hash = crypto.pbkdf2Sync(String(pw), parts[2], iters, 32, 'sha256').toString('hex');
+    return crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(parts[3]));
+  } catch (err) {
+    return false;
+  }
+}
+
+function publicUser(row) {
+  return {
+    id: row.id, username: row.username, role: row.role,
+    subscription: row.subscription, expires_at: row.expires_at,
+    is_banned: Number(row.is_banned) === 1 ? 1 : 0,
+    status: accessState(row)
+  };
+}
+
+// Регистрация для консольного инжектора: POST {username, password}
+app.post('/api/register', async (req, res) => {
+  const username = String(req.body.username || '').trim();
+  const password = String(req.body.password || '');
+  if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) return res.status(400).json({ success: false, message: 'Ник: 3-20 символов (буквы, цифры, _)' });
+  if (password.length < 4 || password.length > 128) return res.status(400).json({ success: false, message: 'Пароль: от 4 символов' });
+  try {
+    const ex = await pool.query('SELECT id FROM users WHERE LOWER(username) = $1', [username.toLowerCase()]);
+    if (ex.rows.length) return res.status(409).json({ success: false, message: 'Ник уже занят' });
+    const r = await pool.query(
+      "INSERT INTO users (username, role, subscription, password_hash) VALUES ($1, 'User', 'free', $2) RETURNING id, username",
+      [username, hashPassword(password)]
+    );
+    res.json({ success: true, user: r.rows[0] });
+  } catch (err) { console.error(err); res.status(500).json({ success: false, message: 'Ошибка базы данных' }); }
+});
+
+// Вход для консольного инжектора: POST {username, password}
+app.post('/api/login', async (req, res) => {
+  const username = String(req.body.username || '').trim();
+  const password = String(req.body.password || '');
+  if (!username || !password) return res.status(400).json({ success: false, message: 'Нужны логин и пароль' });
+  try {
+    const r = await pool.query(
+      'SELECT id, username, role, subscription, hwid, expires_at, is_banned, password_hash FROM users WHERE LOWER(username) = $1',
+      [username.toLowerCase()]
+    );
+    const u = r.rows[0];
+    if (!u || !checkPassword(password, u.password_hash)) {
+      return res.status(401).json({ success: false, message: 'Неверный логин или пароль' });
+    }
+    res.json({ success: true, user: publicUser(u) });
+  } catch (err) { console.error(err); res.status(500).json({ success: false, message: 'Ошибка базы данных' }); }
+});
 
 async function ensureOwnerUser() {
   await ensureSchema();
