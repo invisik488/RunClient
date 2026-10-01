@@ -16,6 +16,13 @@ const pool = new Pool({
 });
 
 async function ensureSchema() {
+  await pool.query(
+    "CREATE TABLE IF NOT EXISTS users (" +
+    "id SERIAL PRIMARY KEY, " +
+    "username TEXT, role TEXT DEFAULT 'User', " +
+    "subscription TEXT DEFAULT 'free', discount INTEGER DEFAULT 0, access_key TEXT, " +
+    "hwid TEXT, expires_at TIMESTAMPTZ, is_banned INTEGER DEFAULT 0)"
+  );
   await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription TEXT DEFAULT 'free'");
   await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS discount INTEGER DEFAULT 0");
   await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS access_key TEXT");
