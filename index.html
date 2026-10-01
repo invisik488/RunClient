@@ -974,11 +974,11 @@ footer.apex-footer{max-width:1140px;width:92%;margin:0 auto 30px;padding:24px 0;
                 <div class="account-block">
                     <div class="block-title">Пароль</div>
                     <div style="display:flex;gap:6px;align-items:center;">
-                        <input type="password" id="dashPasswordDisplay" class="form-input" value="" readonly style="flex:1;font-size:.8rem;padding:8px 10px;">
-                        <button class="action-btn" style="padding:8px 10px;font-size:.7rem;width:auto;" onclick="togglePasswordVisibility()">👁</button>
+                        <input type="password" id="dashPasswordDisplay" class="form-input" value="••••••••" readonly style="flex:1;font-size:.8rem;padding:8px 10px;">
                     </div>
                     <div style="margin-top:10px;">
-                        <input type="password" id="newPasswordInput" class="form-input" placeholder="Новый пароль" style="font-size:.8rem;padding:8px 10px;margin-bottom:6px;">
+                        <input type="password" id="oldPasswordInput" class="form-input" placeholder="Старый пароль" autocomplete="current-password" style="font-size:.8rem;padding:8px 10px;margin-bottom:6px;">
+                        <input type="password" id="newPasswordInput" class="form-input" placeholder="Новый пароль (от 4 символов)" autocomplete="new-password" style="font-size:.8rem;padding:8px 10px;margin-bottom:6px;">
                         <button class="action-btn green" style="width:100%;padding:8px;font-size:.75rem;" onclick="changeUserPassword()">Сменить пароль</button>
                     </div>
                 </div>
@@ -1317,7 +1317,7 @@ function updateCabinetUI() {
     document.getElementById('dashAccessValue').className = 'value ' + (user.banned ? 'red' : 'green');
     document.getElementById('dashUidValue').innerText = user.uid || '--';
     const pwEl = document.getElementById('dashPasswordDisplay');
-    if (pwEl) pwEl.value = user.password || '---';
+    if (pwEl) pwEl.value = '••••••••';
     const subText = document.getElementById('subStatusTextNew');
     const subDesc = document.getElementById('subStatusDescNew');
     if (user.banned) { subText.innerText = 'ЗАБАНЕН'; subText.style.color = '#ff3344'; subDesc.innerText = 'Учетная запись заблокирована.'; }
@@ -10843,26 +10843,38 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!username || !pass) { showToast('Заполните все поля!', 'error'); return; }
     var lower = username.toLowerCase();
     var ok = false;
+    var serverMsg = null;
 
-    // 1. Пытаемся через API
+    // 1. Пытаемся через API (формат сервера: {success, user} или старый {ok, nick})
     try {
       var r = await fetch(API + '/api/login', {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ username: lower, password: pass })
       });
       var d = await r.json();
-      if (d && d.ok && d.nick) {
-        if (!db()[lower]) db()[lower] = { password: pass, role: d.role || 'user', sub: 'Нет', banned: false, regDate: new Date().toLocaleDateString(), uid: Object.keys(db()).length+1, balance: 0 };
-        if (d.subscription) db()[lower].sub = (d.subscription.type === 'forever') ? 'Навсегда' : d.subscription.type;
-        db()[lower].role = d.role || db()[lower].role;
+      var srv = null;
+      if (d && d.success && d.user) srv = d.user;
+      else if (d && d.ok && d.nick) srv = { username: d.nick, role: d.role, subscription: d.subscription };
+      if (srv) {
+        if (!db()[lower]) db()[lower] = { password: pass, role: 'user', sub: 'Нет', banned: false, regDate: new Date().toLocaleDateString(), uid: Object.keys(db()).length+1, balance: 0 };
+        var dest = db()[lower];
+        dest.password = pass;
+        if (srv.subscription !== undefined) {
+          dest.sub = (srv.subscription && srv.subscription.type === 'forever') ? 'Навсегда'
+            : (typeof srv.subscription === 'string' ? srv.subscription : (dest.sub || 'Нет'));
+        }
+        if (srv.role) dest.role = srv.role;
+        if (srv.expires_at) dest.sub = 'До ' + new Date(srv.expires_at).toLocaleDateString('ru-RU');
         ok = true;
+      } else if (d && (d.message || d.error)) {
+        serverMsg = d.message || d.error;
       }
     } catch(e){}
 
     // 2. Fallback — локальная проверка
     if (!ok) {
-      if (!db()[lower]) { showToast('Пользователь не найден!', 'error'); return; }
-      if (db()[lower].password !== pass) { showToast('Неверный пароль!', 'error'); return; }
+      if (!db()[lower]) { showToast(serverMsg || 'Пользователь не найден!', 'error'); return; }
+      if (db()[lower].password !== pass) { showToast(serverMsg || 'Неверный пароль!', 'error'); return; }
       ok = true;
     }
 
@@ -11814,42 +11826,40 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 
   /* ================================================================
-     6) СМЕНА ПАРОЛЯ — работает локально, синк на API best-effort
+     6) СМЕНА ПАРОЛЯ — серверный /api/change-password, локально — копия
      ================================================================ */
   window.changeUserPassword = function(){
     if (!currentUser) return toast('Войдите в аккаунт!', 'error');
     const npEl = document.getElementById('newPasswordInput');
+    const opEl = document.getElementById('oldPasswordInput');
     if (!npEl) return;
     const np = (npEl.value || '').trim();
-    if (!np || np.length < 3) return toast('Пароль минимум 3 символа!', 'error');
+    const op = opEl ? (opEl.value || '').trim() : '';
+    if (!np || np.length < 4) return toast('Новый пароль минимум 4 символа!', 'error');
+    if (!op) return toast('Введи старый пароль!', 'error');
 
     const x = db()[u()];
     if (!x) return toast('Пользователь не найден!', 'error');
     x.password = np;
     save();
 
-    // обновим readonly-дисплей, чтобы не показывал старый
+    // дисплей — всегда только точки, настоящий пароль в DOM не кладём
     const disp = document.getElementById('dashPasswordDisplay');
-    if (disp) disp.value = np;
+    if (disp) disp.value = '••••••••';
 
     npEl.value = '';
+    if (opEl) opEl.value = '';
     refresh();
-    toast('Пароль изменён!', 'success');
+    toast('Меняю пароль...', 'success');
 
-    // best-effort синк
-    fetch(API + '/api/sync', {
+    fetch(API + '/api/change-password', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ users: Object.keys(db()).map(k => {
-        const y = db()[k];
-        let st = null;
-        if (y.sub === 'Навсегда') st = 'forever';
-        else if (y.sub && y.sub !== 'Нет') st = y.sub;
-        return { username:k, password:y.password, nickname:k,
-          role:(k==='invisik'||k==='inv1ze')?'owner':(y.role||'user'),
-          subscription_type:st, subscription_expires:null,
-          email:y.email||null, balance:y.balance||0 };
-      }) })
-    }).catch(() => {});
+      body: JSON.stringify({ username: u(), oldPassword: op, newPassword: np })
+    }).then(function(r){ return r.json().then(function(j){ return { ok: r.ok, j: j }; }); })
+    .then(function(x2){
+      if (x2.ok && x2.j && x2.j.success) toast('Пароль изменён везде ✓', 'success');
+      else toast('Сервер: ' + ((x2.j && (x2.j.message || x2.j.error)) || 'не принял пароль'), 'error');
+    }).catch(function(){ toast('Сохранено локально, сервер недоступен', 'error'); });
   };
 
   /* ================================================================
@@ -11865,7 +11875,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!x) return;
         x.hwid = getHWID();
         const disp = document.getElementById('dashPasswordDisplay');
-        if (disp) disp.value = x.password || '';
+        if (disp) disp.value = '••••••••';
       } catch(e){}
     };
     window.updateCabinetUI._defFixHook = true;

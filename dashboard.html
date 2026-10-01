@@ -148,11 +148,13 @@ body{background:linear-gradient(135deg,#0d0b14,#171524);color:#fff;min-height:10
         </div>
 
         <div class="admin-box">
-          <h3>HWID и бан</h3>
+          <h3>HWID, бан и пароль</h3>
           <input id="adminHwid" class="input" placeholder="HWID (64 hex, пусто = отвязать)" style="font-family:monospace;font-size:.8rem">
           <input id="adminDays" class="input" type="number" min="0" max="3650" value="30" placeholder="Дней подписки">
+          <input id="adminNewPassword" class="input" type="password" placeholder="Новый пароль (пусто = не менять)" autocomplete="new-password">
           <div class="actions">
             <button class="btn success" id="hwidBtn">Привязать + продлить</button>
+            <button class="btn" id="pwBtn">Сбросить пароль</button>
             <button class="btn danger" id="banBtn">Забанить</button>
             <button class="btn" id="unbanBtn">Разбанить</button>
           </div>
@@ -396,6 +398,12 @@ function bindHwid() {
 
 function banUser() { updateAccess({ ban: 1 }, 'Пользователь забанен'); }
 function unbanUser() { updateAccess({ ban: 0 }, 'Пользователь разбанен'); }
+function resetPassword() {
+  var np = el('adminNewPassword').value;
+  if (!np || np.length < 4) { toast('Пароль: минимум 4 символа'); return; }
+  updateAccess({ password: np }, 'Пароль сброшен');
+  el('adminNewPassword').value = '';
+}
 
 function genKeys() {
   var count = Math.max(1, Math.min(100, Number(el('keysCount').value) || 1));
@@ -418,6 +426,7 @@ el('revokeSubBtn').onclick = revokeSubscription;
 el('refreshUsersBtn').onclick = loadUsers;
 el('genKeysBtn').onclick = genKeys;
 el('hwidBtn').onclick = bindHwid;
+el('pwBtn').onclick = resetPassword;
 el('banBtn').onclick = banUser;
 el('unbanBtn').onclick = unbanUser;
 

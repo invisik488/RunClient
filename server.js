@@ -83,7 +83,29 @@ function publicUser(row) {
   };
 }
 
-// Регистрация для консольного инжектора: POST {username, password}
+// Смена пароля из ЛК: POST {username, oldPassword, newPassword}
+app.post('/api/change-password', async (req, res) => {
+  const username = String(req.body.username || '').trim();
+  const oldPassword = String(req.body.oldPassword || '');
+  const newPassword = String(req.body.newPassword || '');
+  if (!username || !oldPassword || !newPassword) {
+    return res.status(400).json({ success: false, message: 'Нужны старый и новый пароль' });
+  }
+  if (newPassword.length < 4 || newPassword.length > 128) {
+    return res.status(400).json({ success: false, message: 'Новый пароль: от 4 символов' });
+  }
+  try {
+    const r = await pool.query('SELECT id, password_hash FROM users WHERE LOWER(username) = $1', [username.toLowerCase()]);
+    const u = r.rows[0];
+    if (!u) return res.status(404).json({ success: false, message: 'Пользователь не найден' });
+    if (!u.password_hash) return res.status(400).json({ success: false, message: 'Пароль не задан, обратись к админу' });
+    if (!checkPassword(oldPassword, u.password_hash)) {
+      return res.status(401).json({ success: false, message: 'Старый пароль неверный' });
+    }
+    await pool.query('UPDATE users SET password_hash = $1 WHERE id = $2', [hashPassword(newPassword), u.id]);
+    res.json({ success: true });
+  } catch (err) { console.error(err); res.status(500).json({ success: false, message: 'Ошибка базы данных' }); }
+});
 app.post('/api/register', async (req, res) => {
   const username = String(req.body.username || '').trim();
   const password = String(req.body.password || '');
@@ -112,6 +134,9 @@ app.post('/api/login', async (req, res) => {
     );
     const u = r.rows[0];
     if (!u || !checkPassword(password, u.password_hash)) {
+      if (u && !u.password_hash) {
+        return res.status(401).json({ success: false, message: 'Пароль не задан, обратись к админу' });
+      }
       return res.status(401).json({ success: false, message: 'Неверный логин или пароль' });
     }
     res.json({ success: true, user: publicUser(u) });
@@ -220,8 +245,8 @@ app.post('/api/keys', requireBoomba, async (req, res) => {
   res.json({ success: true, keys });
 });
 
-// Привязка HWID + продление + бан/разбан одним вызовом (админка).
-// body: { hwid?, days?, ban? }  days: +N дней к expires_at (от max(now, expires_at)); ban: 1/0
+// Привязка HWID + продление + бан/разбан + сброс пароля одним вызовом (админка).
+// body: { hwid?, days?, ban?, password? }  days: +N дней к expires_at; ban: 1/0; password: новый пароль (мин 4)
 app.put('/api/users/:id/access', requireBoomba, async (req, res) => {
   const id = Number(req.params.id);
   if (!Number.isInteger(id)) return res.status(400).json({ error: 'Некорректный id' });
@@ -230,6 +255,10 @@ app.put('/api/users/:id/access', requireBoomba, async (req, res) => {
   const days = req.body.days !== undefined ? Number(req.body.days) : 0;
   if (req.body.days !== undefined && (!Number.isInteger(days) || days < 0 || days > 3650)) return res.status(400).json({ error: 'days: 0-3650' });
   const ban = req.body.ban !== undefined ? (Number(req.body.ban) ? 1 : 0) : undefined;
+  const newPw = req.body.password !== undefined ? String(req.body.password || '') : undefined;
+  if (newPw !== undefined && newPw !== '' && (newPw.length < 4 || newPw.length > 128)) {
+    return res.status(400).json({ error: 'Пароль: от 4 символов' });
+  }
   try {
     if (hwid !== undefined) {
       await pool.query('UPDATE users SET hwid = NULLIF($1, \'\') WHERE id = $2', [hwid, id]);
@@ -242,6 +271,9 @@ app.put('/api/users/:id/access', requireBoomba, async (req, res) => {
     }
     if (ban !== undefined) {
       await pool.query('UPDATE users SET is_banned = $1 WHERE id = $2', [ban, id]);
+    }
+    if (newPw !== undefined && newPw !== '') {
+      await pool.query('UPDATE users SET password_hash = $1 WHERE id = $2', [hashPassword(newPw), id]);
     }
     const result = await pool.query('SELECT id, username, role, subscription, hwid, expires_at, is_banned FROM users WHERE id = $1', [id]);
     if (!result.rows.length) return res.status(404).json({ error: 'Пользователь не найден' });
