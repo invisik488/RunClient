@@ -193,6 +193,7 @@ app.put('/api/users/:id/access', requireBoomba, async (req, res) => {
 app.use(express.static(__dirname));
 app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
 app.get('/dashboard.html', (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
+app.get(['/lk', '/lk.html'], (req, res) => res.sendFile(path.join(__dirname, 'lk.html')));
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
 app.listen(PORT, async () => {
